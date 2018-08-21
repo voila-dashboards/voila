@@ -16,9 +16,8 @@ from pathlib import Path
 from traitlets.config.application import Application
 from traitlets import Unicode, Integer, Bool, default
 
-from tornado.web import RequestHandler
-
 from jupyter_server.utils import url_path_join, url_escape
+from jupyter_server.base.handlers import JupyterHandler
 from jupyter_server.services.kernels.kernelmanager import MappingKernelManager
 from jupyter_server.services.kernels.handlers import KernelHandler, MainKernelHandler, ZMQChannelsHandler
 
@@ -32,22 +31,22 @@ ROOT = Path(os.path.dirname(__file__))
 DEFAULT_STATIC_ROOT = ROOT / 'static'
 
 
-class VoilaKernelHandler(MainKernelHandler):
+class VoilaKernelHandler(JupyterHandler):
 
     def initialize(self, notebook=None, strip_sources=False):
         self.notebook = notebook
-        self.strip_sources = True
+        self.strip_sources = strip_sources
 
     @tornado.web.authenticated
     @tornado.gen.coroutine
     def get(self):
-        km = self.kernel_manager
 
         # Ignore requested kernel name and make use of the one specified in the notebook.
-        kernel_name = self.notebook.metadata.get('kernelspec', {}).get('name', km.default_kernel_name)
+        kernel_name = self.notebook.metadata.get('kernelspec', {}).get('name', self.kernel_manager.default_kernel_name)
 
         # Launch kernel and execute notebook.
-        kernel_id = yield tornado.gen.maybe_future(km.start_kernel(kernel_name=kernel_name))
+        kernel_id = yield tornado.gen.maybe_future(self.kernel_manager.start_kernel(kernel_name=kernel_name))
+        km = self.kernel_manager.get_kernel(kernel_id)
         result = executenb(self.notebook, km=km)
 
         # Optionally, delete source of code cells.
@@ -57,17 +56,19 @@ class VoilaKernelHandler(MainKernelHandler):
                 if cell.cell_type == 'code':
                     cell.source = ''
 
-        # Convert to help
-        html, resources = HTMLExporter(template_file='basic').from_notebook_node(result)
+        # Convert to html
+        html, resources = HTMLExporter(template_file='full').from_notebook_node(result)
+
+        #import IPython
+        #IPython.embed()
 
         # Compose reply
         #model = km.kernel_model(kernel_id)
         #location = url_path_join(self.base_url, 'api', 'kernels', url_escape(kernel_id))
         #self.set_header('Location', location)
-        self.set_status(201)
-        print (html)
+        #self.set_status(201)
         self.set_header('Content-Type', 'text/html')
-        self.write('<h1>Hello maarten</h1>')
+        self.write(html)
         # self.finish(html)
         #self.finish(json.dumps(model, default=date_default))
 
