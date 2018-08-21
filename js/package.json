@@ -1,0 +1,40 @@
+{
+  "name": "ipyserver",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "dependencies": {
+    "@jupyter-widgets/base": "^1.1.8",
+    "@jupyter-widgets/controls": "^1.1.6",
+    "@jupyter-widgets/html-manager": "^0.12.0",
+    "@jupyter-widgets/output": "^1.0.15",
+    "@jupyterlab/outputarea": "^0.15.0",
+    "@jupyterlab/rendermime": "^0.15.0",
+    "@jupyterlab/services": "^0.49.0",
+    "@phosphor/signaling": "^1.2.2",
+    "@phosphor/widgets": "^1.5.0",
+    "font-awesome": "^4.7.0"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-loader": "^7.1.2",
+    "babel-preset-es2015": "^6.24.1",
+    "babel-preset-stage-0": "^6.24.1",
+    "css-loader": "^0.28.7",
+    "file-loader": "^1.1.5",
+    "postcss": "^6.0.11",
+    "postcss-cssnext": "^3.0.2",
+    "postcss-import": "^10.0.0",
+    "postcss-loader": "^2.0.6",
+    "style-loader": "^0.18.2",
+    "url-loader": "^0.6.2",
+    "webpack": "^3.6.0"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "webpack",
+    "build:watch": "webpack --watch"
+  },
+  "author": "",
+  "license": "ISC"
+}
