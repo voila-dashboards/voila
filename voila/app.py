@@ -31,8 +31,7 @@ ROOT = Path(os.path.dirname(__file__))
 DEFAULT_STATIC_ROOT = ROOT / 'static'
 TEMPLATE_ROOT = ROOT / 'templates'
 
-
-class VoilaKernelHandler(JupyterHandler):
+class VoilaHandler(JupyterHandler):
 
     def initialize(self, notebook=None, strip_sources=False):
         self.notebook = notebook
@@ -149,7 +148,7 @@ class Voila(Application):
         handlers = [
             (
                 r'/',
-                VoilaKernelHandler,
+                VoilaHandler,
                 {
                     'notebook': notebook,
                     'strip_sources': self.strip_sources
