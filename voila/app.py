@@ -79,7 +79,7 @@ class Voila(Application):
         """
     )
     notebook_filename = Unicode()
-    strip_sources = Bool().tag(config=True)
+    strip_sources = Bool(True, help='Strip sources from rendered html').tag(config=True)
     port = Integer(
         8866,
         config=True,
@@ -92,7 +92,8 @@ class Voila(Application):
     )
     aliases = {
         'port': 'Voila.port',
-        'static': 'Voila.static_root'
+        'static': 'Voila.static_root',
+        'strip_sources': 'Voila.strip_sources'
     }
     connection_dir_root = Unicode(
         config=True,
