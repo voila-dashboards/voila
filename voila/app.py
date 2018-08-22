@@ -29,6 +29,7 @@ from nbconvert import HTMLExporter
 
 ROOT = Path(os.path.dirname(__file__))
 DEFAULT_STATIC_ROOT = ROOT / 'static'
+TEMPLATE_ROOT = ROOT / 'templates'
 
 
 class VoilaKernelHandler(JupyterHandler):
@@ -49,28 +50,15 @@ class VoilaKernelHandler(JupyterHandler):
         km = self.kernel_manager.get_kernel(kernel_id)
         result = executenb(self.notebook, km=km)
 
-        # Optionally, delete source of code cells.
-        # TODO: make use of global_content_filters instead
-        if self.strip_sources:
-            for cell in result.cells:
-                if cell.cell_type == 'code':
-                    cell.source = ''
-
-        # Convert to html
-        html, resources = HTMLExporter(template_file='full').from_notebook_node(result)
-
-        #import IPython
-        #IPython.embed()
+        # render notebook to html
+        resources = dict(kernel_id=kernel_id)
+        html, resources = HTMLExporter(template_file=str(TEMPLATE_ROOT / 'voila.tpl'), exclude_input=self.strip_sources,
+                                       exclude_output_prompt=self.strip_sources, exclude_input_prompt=self.strip_sources
+                                      ).from_notebook_node(result, resources=resources)
 
         # Compose reply
-        #model = km.kernel_model(kernel_id)
-        #location = url_path_join(self.base_url, 'api', 'kernels', url_escape(kernel_id))
-        #self.set_header('Location', location)
-        #self.set_status(201)
         self.set_header('Content-Type', 'text/html')
         self.write(html)
-        # self.finish(html)
-        #self.finish(json.dumps(model, default=date_default))
 
 _kernel_id_regex = r"(?P<kernel_id>\w+-\w+-\w+-\w+-\w+)"
 
