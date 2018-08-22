@@ -157,7 +157,7 @@ class Voila(Application):
             (r'/api/kernels/%s' % _kernel_id_regex, KernelHandler),
             (r'/api/kernels/%s/channels' % _kernel_id_regex, ZMQChannelsHandler),
             (
-                r"/(.*)",
+                r"/static/(.*)",
                 tornado.web.StaticFileHandler,
                 {
                     'path': self.static_root,

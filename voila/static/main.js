@@ -3,7 +3,7 @@
 // and render widgets on page.
 
 requirejs.config({
-    baseUrl: 'dist'
+    baseUrl: 'static/dist'
 })
 
 require(['libwidgets'], function(lib) {
@@ -17,7 +17,7 @@ require(['libwidgets'], function(lib) {
         WSURL = 'ws://' + window.location.host
     }
 
-    var widgetApp = new lib.WidgetApplication(BASEURL, WSURL, lib.requireLoader);
+    var widgetApp = new lib.WidgetApplication(BASEURL, WSURL, lib.requireLoader, window.kernel_id);
 
     window.addEventListener("beforeunload", function (e) {
         widgetApp.cleanWidgets();

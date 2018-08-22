@@ -10,10 +10,11 @@ import './widgets.css'
 
 
 export class WidgetApplication {
-    constructor (baseUrl, wsUrl, loader) {
+    constructor (baseUrl, wsUrl, loader, kernel_id) {
         this._baseUrl = baseUrl
         this._wsUrl = wsUrl
         this._loader = loader
+        this._kernel_id = kernel_id
     }
 
     async renderWidgets() {
@@ -22,23 +23,16 @@ export class WidgetApplication {
             wsUrl : this._wsUrl
         });
 
-        const kernelSpecs = await Kernel.getSpecs(connectionInfo)
+        // TODO: find out if we need findById and pass that to connectTo
+        // or see if it is a version issue
+        // const model = await Kernel.findById(this._kernel_id)
+        // console.log(`Connecting to kernel ${model.name}`)
 
-        console.log(`Starting kernel ${kernelSpecs.default}`)
-
-        const kernel = await Kernel.startNew({
-            name: kernelSpecs.default,
-            serverSettings: connectionInfo
-        });
+        const kernel = await Kernel.connectTo(this._kernel_id);
 
         this._kernel = kernel;
 
-        const el = document.getElementById('ipywidget-server-result')
-        const manager = new WidgetManager(kernel, el, this._loader);
-
-        const errorEl = document.getElementById('ipywidget-server-errors')
-        const errorView = new ErrorView(errorEl);
-        manager.onError.connect((sender, msg) => errorView.showError(msg.content))
+        const manager = new WidgetManager(kernel, this._loader);
 
         const options = {
             msgType: 'custom_message',
