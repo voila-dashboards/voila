@@ -147,6 +147,7 @@ setup_args = {
     },
     'package_data': {
         'voila': [
+            'templates/*',
             'static/*',
             'static/dist/*',
             'static/dist/@jupyter-widgets/*',
