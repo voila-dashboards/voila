@@ -66,9 +66,7 @@ class NPM(Command):
 
     lib_root = os.path.join(here, 'voila', 'static', 'dist')
     targets = [
-        os.path.join(lib_root, 'libwidgets.js'),
-        os.path.join(lib_root, '@jupyter-widgets', 'base.js'),
-        os.path.join(lib_root, '@jupyter-widgets', 'controls.js')
+        os.path.join(lib_root, 'libwidgets.js')
     ]
 
     def initialize_options(self):
@@ -150,7 +148,6 @@ setup_args = {
             'templates/*',
             'static/*',
             'static/dist/*',
-            'static/dist/@jupyter-widgets/*',
         ]
     },
     'entry_points': {

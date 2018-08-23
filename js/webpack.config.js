@@ -44,26 +44,5 @@ module.exports = [
         },
         module: { loaders: loaders },
         devtool: 'source-map'
-    },
-
-    // Exports needed for custom widget libraries.
-    {// @jupyter-widgets/base
-        entry: '@jupyter-widgets/base/lib/index',
-        output: {
-            filename : 'base.js',
-            path: path.resolve(distRoot, '@jupyter-widgets'),
-            libraryTarget: 'amd'
-        },
-        module: { loaders: loaders }
-    },
-    {// @jupyter-widgets/controls
-        entry: '@jupyter-widgets/controls/lib/index',
-        output: {
-            filename : 'controls.js',
-            path: path.resolve(distRoot, '@jupyter-widgets'),
-            libraryTarget: 'amd'
-        },
-        module: { loaders: loaders },
-        externals: ['@jupyter-widgets/base']
     }
 ]
