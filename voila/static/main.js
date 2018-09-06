@@ -9,7 +9,7 @@ Array.prototype.forEach.call(scripts, (script) => {
 })
 
 requirejs.config({
-    baseUrl: 'static/dist'
+    baseUrl: '/voila/static/dist'
 })
 
 require(['libwidgets'], function(lib) {
@@ -24,6 +24,21 @@ require(['libwidgets'], function(lib) {
     }
 
     var widgetApp = new lib.WidgetApplication(BASEURL, WSURL, lib.requireLoader, kernel_id);
+
+    var path = window.location.pathname.substr(14);
+    var wsWatchdog = new WebSocket(WSURL + '/voila/watchdog/' + path);
+    wsWatchdog.onmessage = (evt) => {
+        var msg = JSON.parse(evt.data)
+        console.log('msg', msg)
+        if(msg.type == 'reload') {
+            var timeout = 0;
+            if(msg.delay == 'long')
+                timeout = 1000;
+            setTimeout(() => {
+                location.href = location.href;
+            }, timeout)
+        }
+    }
 
     window.addEventListener("beforeunload", function (e) {
         widgetApp.cleanWidgets();
