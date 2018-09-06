@@ -23,7 +23,10 @@ class VoilaHandler(JupyterHandler):
         # if the handler got a notebook_path argument, always serve that
         notebook_path = self.notebook_path or path
 
-        notebook = nbformat.read(notebook_path, as_version=4)
+        try:
+            notebook = nbformat.read(notebook_path, as_version=4)
+        except FileNotFoundError:
+            raise tornado.web.HTTPError(404)
 
         # Ignore requested kernel name and make use of the one specified in the notebook.
         kernel_name = notebook.metadata.get('kernelspec', {}).get('name', self.kernel_manager.default_kernel_name)

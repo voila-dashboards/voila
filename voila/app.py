@@ -155,6 +155,7 @@ class Voila(Application):
             allow_remote_access=True,
             autoreload=self.autoreload,
             voila_jinja2_env=env,
+            jinja2_env=env,
             static_path='/',
             server_root_dir='/',
             contents_manager=contents_manager

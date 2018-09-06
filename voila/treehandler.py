@@ -29,7 +29,6 @@ class VoilaTreeHandler(JupyterHandler):
 
     def get(self, path=''):
         cm = self.contents_manager
-        print(path, cm)
 
         if cm.dir_exists(path=path):
             if cm.is_hidden(path) and not cm.allow_hidden:
