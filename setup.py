@@ -137,6 +137,7 @@ setup_args = {
     'description': 'Serving read-only live Jupyter notebooks',
     'packages': find_packages(),
     'zip_safe': False,
+    'data_files': [('etc/jupyter/jupyter_server_config.d', ['etc/jupyter/jupyter_server_config.d/voila.json'])],
     'cmdclass': {
         'build_py': js_prerelease(build_py),
         'egg_info': js_prerelease(egg_info),
