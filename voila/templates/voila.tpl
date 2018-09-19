@@ -9,22 +9,18 @@
 {%- block html_head -%}
 <meta charset="utf-8" />
 {% set nb_title = nb.metadata.get('title', '') or resources['metadata']['name'] %}
-<title>Voila: {{resources.kernel_id}} - {{nb_title}}</title>
-
-<script>
-window.kernel_id = '{{resources.kernel_id}}'
-</script>
-
+<title>Voila: {{nb_title}}</title>
 
 <link rel="stylesheet" href="https://unpkg.com/font-awesome@4.5.0/css/font-awesome.min.css" type="text/css" />
 
 <script
-    data-main="static/main"
-    src="/static/require.min.js"
+    data-main="/voila/static/main"
+    data-jupyter-kernel-id="{{resources.kernel_id}}"
+    src="/voila/static/require.min.js"
     integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA="
     crossorigin="anonymous">
 </script>
-<script src="static/jquery.min.js"></script>
+<script src="/voila/static/jquery.min.js"></script>
 
 
 
@@ -100,7 +96,7 @@ div#notebook-container{
 </style>
 
 <!-- Custom stylesheet, it must be in the same directory as the html file -->
-<link rel="stylesheet" href="custom.css">
+<!-- <link rel="stylesheet" href="custom.css"> -->
 
 <!-- Loading mathjax macro -->
 {{ mathjax() }}

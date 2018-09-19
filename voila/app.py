@@ -7,57 +7,25 @@ import shutil
 import tempfile
 import json
 import logging
+import gettext
+
+import jinja2
 
 import tornado.ioloop
 import tornado.web
 
-from pathlib import Path
-
 from traitlets.config.application import Application
 from traitlets import Unicode, Integer, Bool, default
 
-from jupyter_server.utils import url_path_join, url_escape
-from jupyter_server.base.handlers import JupyterHandler
 from jupyter_server.services.kernels.kernelmanager import MappingKernelManager
-from jupyter_server.services.kernels.handlers import KernelHandler, MainKernelHandler, ZMQChannelsHandler
+from jupyter_server.services.kernels.handlers import KernelHandler, ZMQChannelsHandler
+from jupyter_server.base.handlers import path_regex
+from jupyter_server.services.contents.largefilemanager import LargeFileManager
 
-from jupyter_client.jsonutil import date_default
-
-import nbformat
-from nbconvert.preprocessors.execute import executenb
-from nbconvert import HTMLExporter
-
-ROOT = Path(os.path.dirname(__file__))
-DEFAULT_STATIC_ROOT = ROOT / 'static'
-TEMPLATE_ROOT = ROOT / 'templates'
-
-class VoilaHandler(JupyterHandler):
-
-    def initialize(self, notebook=None, strip_sources=False):
-        self.notebook = notebook
-        self.strip_sources = strip_sources
-
-    @tornado.web.authenticated
-    @tornado.gen.coroutine
-    def get(self):
-
-        # Ignore requested kernel name and make use of the one specified in the notebook.
-        kernel_name = self.notebook.metadata.get('kernelspec', {}).get('name', self.kernel_manager.default_kernel_name)
-
-        # Launch kernel and execute notebook.
-        kernel_id = yield tornado.gen.maybe_future(self.kernel_manager.start_kernel(kernel_name=kernel_name))
-        km = self.kernel_manager.get_kernel(kernel_id)
-        result = executenb(self.notebook, km=km)
-
-        # render notebook to html
-        resources = dict(kernel_id=kernel_id)
-        html, resources = HTMLExporter(template_file=str(TEMPLATE_ROOT / 'voila.tpl'), exclude_input=self.strip_sources,
-                                       exclude_output_prompt=self.strip_sources, exclude_input_prompt=self.strip_sources
-                                      ).from_notebook_node(result, resources=resources)
-
-        # Compose reply
-        self.set_header('Content-Type', 'text/html')
-        self.write(html)
+from .paths import ROOT, STATIC_ROOT, TEMPLATE_ROOT
+from .handler import VoilaHandler
+from .treehandler import VoilaTreeHandler
+from .watchdog import WatchDogHandler
 
 _kernel_id_regex = r"(?P<kernel_id>\w+-\w+-\w+-\w+-\w+)"
 
@@ -73,7 +41,7 @@ class Voila(Application):
     )
     option_description = Unicode(
         """
-        notebook_filename:
+        notebook_path:
             File name of the Jupyter notebook to display.
         """
     )
@@ -84,15 +52,21 @@ class Voila(Application):
         config=True,
         help='Port of the voila server. Default 8866.'
     )
+    autoreload = Bool(
+        False,
+        config=True,
+        help='Will autoreload to server and the page when a template, js file or Python code changes'
+    )
     static_root = Unicode(
-        str(DEFAULT_STATIC_ROOT),
+        str(STATIC_ROOT),
         config=True,
         help='Directory holding static assets (HTML, JS and CSS files).'
     )
     aliases = {
         'port': 'Voila.port',
         'static': 'Voila.static_root',
-        'strip_sources': 'Voila.strip_sources'
+        'strip_sources': 'Voila.strip_sources',
+        'autoreload': 'Voila.autoreload'
     }
     connection_dir_root = Unicode(
         config=True,
@@ -116,14 +90,7 @@ class Voila(Application):
 
     def parse_command_line(self, argv=None):
         super(Voila, self).parse_command_line(argv)
-        try:
-            notebook_filename = self.extra_args[0]
-        except IndexError:
-            self.log.critical('Bad command line parameters.')
-            self.log.critical('Missing NOTEBOOK_FILENAME parameter.')
-            self.log.critical('Run `voila --help` for help on command line parameters.')
-            exit(1)
-        self.notebook_filename = notebook_filename
+        self.notebook_path = self.extra_args[0] if len(self.extra_args) == 1 else None
 
     def start(self):
         connection_dir = tempfile.mkdtemp(
@@ -143,21 +110,11 @@ class Voila(Application):
             ]
         )
 
-        notebook = nbformat.read(self.notebook_filename, as_version=4)
-
         handlers = [
-            (
-                r'/',
-                VoilaHandler,
-                {
-                    'notebook': notebook,
-                    'strip_sources': self.strip_sources
-                }
-            ),
             (r'/api/kernels/%s' % _kernel_id_regex, KernelHandler),
             (r'/api/kernels/%s/channels' % _kernel_id_regex, ZMQChannelsHandler),
             (
-                r"/static/(.*)",
+                r"/voila/static/(.*)",
                 tornado.web.StaticFileHandler,
                 {
                     'path': self.static_root,
@@ -166,10 +123,42 @@ class Voila(Application):
             )
         ]
 
+        if self.notebook_path:
+            handlers.append((
+                r'/',
+                VoilaHandler,
+                {
+                    'notebook_path': self.notebook_path,
+                    'strip_sources': self.strip_sources
+                }
+            ))
+        else:
+            handlers.extend([
+                ('/', VoilaTreeHandler),
+                ('/voila/tree' + path_regex, VoilaTreeHandler),
+                ('/voila/render' + path_regex, VoilaHandler, {'strip_sources': self.strip_sources}),
+            ])
+        if self.autoreload:
+            handlers.append(('/voila/watchdog' + path_regex, WatchDogHandler))
+
+        jenv_opt = {"autoescape": True}  # we might want extra options via cmd line like notebook server
+        env = jinja2.Environment(loader=jinja2.FileSystemLoader(str(TEMPLATE_ROOT)), extensions=['jinja2.ext.i18n'], **jenv_opt)
+        nbui = gettext.translation('nbui', localedir=str(ROOT / 'i18n'), fallback=True)
+        env.install_gettext_translations(nbui, newstyle=False)
+
+        contents_manager = LargeFileManager()  # TODO: make this configurable like notebook
+
+
         app = tornado.web.Application(
             handlers,
             kernel_manager=kernel_manager,
-            allow_remote_access=True
+            allow_remote_access=True,
+            autoreload=self.autoreload,
+            voila_jinja2_env=env,
+            jinja2_env=env,
+            static_path='/',
+            server_root_dir='/',
+            contents_manager=contents_manager
         )
 
         app.listen(self.port)

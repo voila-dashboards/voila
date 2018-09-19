@@ -137,6 +137,7 @@ setup_args = {
     'description': 'Serving read-only live Jupyter notebooks',
     'packages': find_packages(),
     'zip_safe': False,
+    'data_files': [('etc/jupyter/jupyter_server_config.d', ['etc/jupyter/jupyter_server_config.d/voila.json'])],
     'cmdclass': {
         'build_py': js_prerelease(build_py),
         'egg_info': js_prerelease(egg_info),
@@ -157,7 +158,8 @@ setup_args = {
     },
     'install_requires': [
         'jupyter_server',
-        'nbconvert>=5.4,<6'
+        'nbconvert>=5.4,<6',
+        'whatchdog'
     ],
     'author': 'QuantStack',
     'author_email': 'info@quantstack.net',
