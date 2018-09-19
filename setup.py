@@ -158,7 +158,8 @@ setup_args = {
     },
     'install_requires': [
         'jupyter_server',
-        'nbconvert'
+        'nbconvert',
+        'whatchdog'
     ],
     'author': 'QuantStack',
     'author_email': 'info@quantstack.net',
