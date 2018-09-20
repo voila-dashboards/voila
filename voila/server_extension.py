@@ -1,3 +1,4 @@
+import logging
 import os
 import gettext
 from pathlib import Path
@@ -14,6 +15,7 @@ from .handler import VoilaHandler
 from .treehandler import VoilaTreeHandler
 from .watchdog import WatchDogHandler
 
+logger = logging.getLogger('Voila.server_extension')
 
 def load_jupyter_server_extension(server_app):
     web_app = server_app.web_app
@@ -35,3 +37,5 @@ def load_jupyter_server_extension(server_app):
             {'path': str(STATIC_ROOT)})
 
     ])
+    voila_root = web_app.settings['base_url'] + 'voila'
+    server_app.log.info('Voila extension running at %s', voila_root)

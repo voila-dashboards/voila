@@ -26,6 +26,7 @@ from .paths import ROOT, STATIC_ROOT, TEMPLATE_ROOT
 from .handler import VoilaHandler
 from .treehandler import VoilaTreeHandler
 from .watchdog import WatchDogHandler
+from .requirehandler import RequireHandler
 
 _kernel_id_regex = r"(?P<kernel_id>\w+-\w+-\w+-\w+-\w+)"
 
@@ -110,7 +111,9 @@ class Voila(Application):
             ]
         )
 
+        _require_regex = '(.*)'
         handlers = [
+            (r'/voila/require/%s' % _require_regex, RequireHandler),
             (r'/api/kernels/%s' % _kernel_id_regex, KernelHandler),
             (r'/api/kernels/%s/channels' % _kernel_id_regex, ZMQChannelsHandler),
             (
@@ -147,7 +150,6 @@ class Voila(Application):
         env.install_gettext_translations(nbui, newstyle=False)
 
         contents_manager = LargeFileManager()  # TODO: make this configurable like notebook
-
 
         app = tornado.web.Application(
             handlers,
