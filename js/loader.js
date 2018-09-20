@@ -12,7 +12,8 @@ var requirePromise = function (pkg) {
 };
 
 export function requireLoader(moduleName, moduleVersion) {
-    return requirePromise(["" + moduleName]).catch(function (err) {
+    var path = `/voila/require/${moduleName}@${moduleVersion}`
+    return requirePromise([path]).catch(function (err) {
         var failedId = err.requireModules && err.requireModules[0];
         if (failedId) {
             console.log(`Falling back to unpkg.com for ${moduleName}@${moduleVersion}`);

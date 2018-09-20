@@ -9,7 +9,10 @@ Array.prototype.forEach.call(scripts, (script) => {
 })
 
 requirejs.config({
-    baseUrl: '/voila/static/dist'
+    baseUrl: '/voila/require/',
+    paths: {
+        'libwidgets': '/voila/static/dist/libwidgets'
+    }
 })
 
 require(['libwidgets'], function(lib) {
