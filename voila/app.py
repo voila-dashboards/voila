@@ -21,6 +21,7 @@ from jupyter_server.services.kernels.kernelmanager import MappingKernelManager
 from jupyter_server.services.kernels.handlers import KernelHandler, ZMQChannelsHandler
 from jupyter_server.base.handlers import path_regex
 from jupyter_server.services.contents.largefilemanager import LargeFileManager
+from jupyter_server.utils import url_path_join
 
 from .paths import ROOT, STATIC_ROOT, TEMPLATE_ROOT
 from .handler import VoilaHandler
@@ -110,47 +111,13 @@ class Voila(Application):
             ]
         )
 
-        handlers = [
-            (r'/api/kernels/%s' % _kernel_id_regex, KernelHandler),
-            (r'/api/kernels/%s/channels' % _kernel_id_regex, ZMQChannelsHandler),
-            (
-                r"/voila/static/(.*)",
-                tornado.web.StaticFileHandler,
-                {
-                    'path': self.static_root,
-                    'default_filename': 'index.html'
-                }
-            )
-        ]
-
-        if self.notebook_path:
-            handlers.append((
-                r'/',
-                VoilaHandler,
-                {
-                    'notebook_path': self.notebook_path,
-                    'strip_sources': self.strip_sources
-                }
-            ))
-        else:
-            handlers.extend([
-                ('/', VoilaTreeHandler),
-                ('/voila/tree' + path_regex, VoilaTreeHandler),
-                ('/voila/render' + path_regex, VoilaHandler, {'strip_sources': self.strip_sources}),
-            ])
-        if self.autoreload:
-            handlers.append(('/voila/watchdog' + path_regex, WatchDogHandler))
-
         jenv_opt = {"autoescape": True}  # we might want extra options via cmd line like notebook server
         env = jinja2.Environment(loader=jinja2.FileSystemLoader(str(TEMPLATE_ROOT)), extensions=['jinja2.ext.i18n'], **jenv_opt)
         nbui = gettext.translation('nbui', localedir=str(ROOT / 'i18n'), fallback=True)
         env.install_gettext_translations(nbui, newstyle=False)
-
         contents_manager = LargeFileManager()  # TODO: make this configurable like notebook
 
-
-        app = tornado.web.Application(
-            handlers,
+        webapp = tornado.web.Application(
             kernel_manager=kernel_manager,
             allow_remote_access=True,
             autoreload=self.autoreload,
@@ -161,7 +128,46 @@ class Voila(Application):
             contents_manager=contents_manager
         )
 
-        app.listen(self.port)
+        base_url = webapp.settings.get('base_url', '/')
+
+        handlers = []
+
+        handlers.extend([
+            (url_path_join(base_url, r'/api/kernels/%s' % _kernel_id_regex), KernelHandler),
+            (url_path_join(base_url, r'/api/kernels/%s/channels' % _kernel_id_regex), ZMQChannelsHandler),
+            (
+                url_path_join(base_url, r'/voila/static/(.*)'),
+                tornado.web.StaticFileHandler,
+                {
+                    'path': self.static_root,
+                    'default_filename': 'index.html'
+                }
+            )
+        ])
+
+        if self.notebook_path:
+            handlers.append((
+                url_path_join(base_url, r'/'),
+                VoilaHandler,
+                {
+                    'notebook_path': self.notebook_path,
+                    'strip_sources': self.strip_sources
+                }
+            ))
+        else:
+            handlers.extend([
+                (base_url, VoilaTreeHandler),
+                (url_path_join(base_url, r'/voila/tree' + path_regex), VoilaTreeHandler),
+                (url_path_join(base_url, r'/voila/render' + path_regex), VoilaHandler, {'strip_sources': self.strip_sources}),
+            ])
+        if self.autoreload:
+            handlers.append(
+                (url_path_join(base_url, r'/voila/watchdog' + path_regex), WatchDogHandler)
+            )
+
+        webapp.add_handlers('.*$', handlers)
+
+        webapp.listen(self.port)
         self.log.info(f'Voila listening on port {self.port}.')
 
         try:

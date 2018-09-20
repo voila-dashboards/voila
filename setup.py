@@ -64,7 +64,7 @@ class NPM(Command):
 
     node_modules = os.path.join(node_root, 'node_modules')
 
-    lib_root = os.path.join(here, 'voila', 'static', 'dist')
+    lib_root = os.path.join(here, 'voila', 'static')
     targets = [
         os.path.join(lib_root, 'libwidgets.js')
     ]
@@ -137,7 +137,10 @@ setup_args = {
     'description': 'Serving read-only live Jupyter notebooks',
     'packages': find_packages(),
     'zip_safe': False,
-    'data_files': [('etc/jupyter/jupyter_server_config.d', ['etc/jupyter/jupyter_server_config.d/voila.json'])],
+    'data_files': [
+        ('etc/jupyter/jupyter_server_config.d', ['etc/jupyter/jupyter_server_config.d/voila.json']),
+        ('etc/jupyter/jupyter_notebook_config.d', ['etc/jupyter/jupyter_notebook_config.d/voila.json'])
+    ],
     'cmdclass': {
         'build_py': js_prerelease(build_py),
         'egg_info': js_prerelease(egg_info),
@@ -147,8 +150,7 @@ setup_args = {
     'package_data': {
         'voila': [
             'templates/*',
-            'static/*',
-            'static/dist/*',
+            'static/*'
         ]
     },
     'entry_points': {
@@ -159,7 +161,7 @@ setup_args = {
     'install_requires': [
         'jupyter_server',
         'nbconvert>=5.4,<6',
-        'whatchdog'
+        'watchdog'
     ],
     'author': 'QuantStack',
     'author_email': 'info@quantstack.net',

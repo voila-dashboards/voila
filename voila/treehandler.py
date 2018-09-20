@@ -1,6 +1,7 @@
 from jupyter_server.base.handlers import JupyterHandler
 from jupyter_server.utils import url_path_join, url_escape
 
+
 class VoilaTreeHandler(JupyterHandler):
     def get_template(self, name):
         """Return the jinja template object for a given name"""
@@ -12,7 +13,7 @@ class VoilaTreeHandler(JupyterHandler):
         for i in range(len(parts)):
             if parts[i]:
                 link = url_path_join(self.base_url, 'voila/tree',
-                    url_escape(url_path_join(*parts[:i+1])),
+                    url_escape(url_path_join(*parts[:i + 1])),
                 )
                 breadcrumbs.append((link, parts[i]))
         return breadcrumbs
@@ -23,7 +24,7 @@ class VoilaTreeHandler(JupyterHandler):
             parts = parts[-2:]
         page_title = url_path_join(*parts)
         if page_title:
-            return page_title+'/'
+            return page_title + '/'
         else:
             return 'Voila Home'
 

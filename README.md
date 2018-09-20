@@ -1,6 +1,8 @@
 Voila
 =====
 
+[![Binder](https://img.shields.io/badge/launch-binder-brightgreen.svg)](https://mybinder.org/v2/gh/QuantStack/voila/master?urlpath=voila/tree/notebooks)
+
 Rendering of live Jupyter notebooks with interactive widgets.
 
 Introduction
@@ -20,7 +22,6 @@ callbacks to changes in Jupyter interactive widgets.
 When using these default settings, the code powering the Jupyter notebook is
 never sent to the front-end.
 
-
 Usage
 -----
 
@@ -30,13 +31,11 @@ To render the `bqplot` example notebook as a Voila app, run
 voila bqplot.ipynb
 ```
 
-
 Related projects
 ----------------
 
 Voila depends on the [nbconvert](https://github.com/jupyter/nbconvert) and
 [jupyter_server](https://github.com/jupyter/jupyter_server/).
-
 
 License
 -------

@@ -31,7 +31,7 @@ var loaders = [
     { test: /\.svg(\?v=\d+\.\d+\.\d+)?$/, use: 'url-loader?limit=10000&mimetype=image/svg+xml' }
 ]
 
-var distRoot = path.resolve(__dirname, '..', 'voila', 'static', 'dist')
+var distRoot = path.resolve(__dirname, '..', 'voila', 'static')
 
 module.exports = [
     {
@@ -39,8 +39,7 @@ module.exports = [
         output: {
             filename: 'libwidgets.js',
             path: distRoot,
-            libraryTarget: 'amd',
-            publicPath: '/dist/'
+            libraryTarget: 'amd'
         },
         module: { loaders: loaders },
         devtool: 'source-map'

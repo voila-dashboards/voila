@@ -10,10 +10,11 @@ import tornado.autoreload
 
 from .paths import ROOT
 
-# we cache event handler for watchdogs not to waste resources
+# We cache event handlers for watchdogs not to waste resources
 event_handlers = {}
 
 logger = logging.getLogger('Voila.watchdog')
+
 
 class WatchDogEventHandler(watchdog.events.RegexMatchingEventHandler):
     def __init__(self, *args, **kwargs):
@@ -33,7 +34,6 @@ class WatchDogEventHandler(watchdog.events.RegexMatchingEventHandler):
             listener()
 
 
-
 class WatchDogHandler(tornado.websocket.WebSocketHandler):
     #@tornado.gen.coroutine
     def open(self, path=''):
@@ -50,14 +50,14 @@ class WatchDogHandler(tornado.websocket.WebSocketHandler):
             notebook_handler = WatchDogEventHandler(regexes=['\\./' + path])
             watchdog_observer.schedule(notebook_handler, '.', recursive=True)
             handlers.append(notebook_handler)
-            
-            misc_handler = WatchDogEventHandler(regexes=[str(ROOT) +r'/templates/.*', str(ROOT / 'static/main.js'), str(ROOT / 'static/dist/libwidgets.js')])
+
+            misc_handler = WatchDogEventHandler(regexes=[str(ROOT) + r'/templates/.*', str(ROOT / 'static/main.js'), str(ROOT / 'static/dist/libwidgets.js')])
             watchdog_observer.schedule(misc_handler, str(ROOT), recursive=True)
             handlers.append(misc_handler)
-            
+
             watchdog_observer.start()
             event_handlers[path] = handlers
-            
+
             tornado.autoreload.add_reload_hook(self._on_reload)
 
         self.handlers = event_handlers[path]

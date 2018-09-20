@@ -1,5 +1,6 @@
 {% extends "page.html" %}
 
+
 {% block title %}{{page_title}}{% endblock %}
 
 
@@ -33,16 +34,13 @@ data-server-root="{{server_root}}"
 
   {% for content in contents.content %}
     {% if content.type == 'notebook' %}
-      <li><a href="/voila/render/{{content.path.rpartition('.')[0]}}"><i class="fa fa-book"></i>{{content.name.rpartition('.')[0]}}</a></li>
+      <li><a href="{{base_url}}voila/render/{{content.path.rpartition('.')[0]}}"><i class="fa fa-book"></i>{{content.name.rpartition('.')[0]}}</a></li>
     {% endif %}
     {% if content.type == 'directory' %}
-      <li><a href="/voila/tree/{{content.path}}"><i class="fa fa-folder"></i>{{content.name}}</a></li>
+      <li><a href="{{base_url}}voila/tree/{{content.path}}"><i class="fa fa-folder"></i>{{content.name}}</a></li>
     {% endif %}
   {% endfor %}
 </ul>
-
-
-
 
 {% endblock %}
 

@@ -1,7 +1,6 @@
 {%- extends 'basic.tpl' -%}
 {% from 'mathjax.tpl' import mathjax %}
 
-
 {%- block header -%}
 <!DOCTYPE html>
 <html>
@@ -14,15 +13,18 @@
 <link rel="stylesheet" href="https://unpkg.com/font-awesome@4.5.0/css/font-awesome.min.css" type="text/css" />
 
 <script
-    data-main="/voila/static/main"
+    data-main="{{resources.base_url}}voila/static/main"
     data-jupyter-kernel-id="{{resources.kernel_id}}"
-    src="/voila/static/require.min.js"
+    src="{{resources.base_url}}voila/static/require.min.js"
     integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA="
     crossorigin="anonymous">
 </script>
-<script src="/voila/static/jquery.min.js"></script>
-
-
+<script src="{{resources.base_url}}voila/static/jquery.min.js"></script>
+<script>
+requirejs.config({
+    baseUrl: '{{resources.base_url}}voila/static'
+})
+</script>
 
 </script>
 {% block ipywidgets %}
@@ -82,16 +84,15 @@ div#notebook-container{
   div.cell {
     display: block;
     page-break-inside: avoid;
-  } 
-  div.output_wrapper { 
-    display: block;
-    page-break-inside: avoid; 
   }
-  div.output { 
+  div.output_wrapper {
     display: block;
-    page-break-inside: avoid; 
+    page-break-inside: avoid;
   }
-  
+  div.output {
+    display: block;
+    page-break-inside: avoid;
+  }
 }
 </style>
 

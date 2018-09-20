@@ -1,26 +1,19 @@
-
-// Initialize requirejs (for dynamically loading widgets)
-// and render widgets on page.
-
+// Render widgets on page.
 var kernel_id = null;
 var scripts = document.getElementsByTagName('script');
 Array.prototype.forEach.call(scripts, (script) => {
     kernel_id = script.getAttribute('data-jupyter-kernel-id') || kernel_id;
 })
 
-requirejs.config({
-    baseUrl: '/voila/static/dist'
-})
-
 require(['libwidgets'], function(lib) {
-    var BASEURL = window.location.href
+    var BASEURL = window.location.href;
 
     var WSURL;
     if (window.location.protocol.startsWith('https')) {
-        WSURL = 'wss://' + window.location.host
+        WSURL = 'wss://' + window.location.host;
     }
-    else {
-        WSURL = 'ws://' + window.location.host
+    else {;
+        WSURL = 'ws://' + window.location.host;
     }
 
     var widgetApp = new lib.WidgetApplication(BASEURL, WSURL, lib.requireLoader, kernel_id);
@@ -28,12 +21,12 @@ require(['libwidgets'], function(lib) {
     var path = window.location.pathname.substr(14);
     var wsWatchdog = new WebSocket(WSURL + '/voila/watchdog/' + path);
     wsWatchdog.onmessage = (evt) => {
-        var msg = JSON.parse(evt.data)
-        console.log('msg', msg)
+        var msg = JSON.parse(evt.data);
         if(msg.type == 'reload') {
             var timeout = 0;
-            if(msg.delay == 'long')
+            if(msg.delay == 'long') {
                 timeout = 1000;
+            }
             setTimeout(() => {
                 location.href = location.href;
             }, timeout)

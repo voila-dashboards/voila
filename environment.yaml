@@ -1,0 +1,7 @@
+name: voila
+dependencies:
+  - ipyvolume
+  - bqplot
+  - scipy
+  - pip:
+    - https://github.com/QuantStack/voila/master.zip

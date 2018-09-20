@@ -1,4 +1,3 @@
-
 import { Kernel, ServerConnection, KernelMessage } from '@jupyterlab/services'
 
 import { WidgetManager } from './manager'

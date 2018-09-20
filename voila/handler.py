@@ -18,7 +18,7 @@ class VoilaHandler(JupyterHandler):
     @tornado.gen.coroutine
     def get(self, path=None):
         if path:
-            path = path.strip('/')  # remove leading /
+            path = path.strip(self.base_url)
             path += '.ipynb'  # when used as a jupyter server extension, we don't use the extension
         # if the handler got a notebook_path argument, always serve that
         notebook_path = self.notebook_path or path
@@ -37,7 +37,7 @@ class VoilaHandler(JupyterHandler):
         result = executenb(notebook, km=km)
 
         # render notebook to html
-        resources = dict(kernel_id=kernel_id)
+        resources = dict(kernel_id=kernel_id, base_url=self.base_url)
         html, resources = HTMLExporter(template_file=str(TEMPLATE_ROOT / 'voila.tpl'), exclude_input=self.strip_sources,
                                        exclude_output_prompt=self.strip_sources, exclude_input_prompt=self.strip_sources
                                       ).from_notebook_node(result, resources=resources)
