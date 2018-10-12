@@ -83,7 +83,7 @@ class NPM(Command):
         return npmName;
     
     def has_npm(self):
-        npmName = self.get_npm.name();
+        npmName = self.get_npm_name();
         try:
             check_call([npmName, '--version'])
             return True
