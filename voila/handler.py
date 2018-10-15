@@ -18,15 +18,15 @@ class VoilaHandler(JupyterHandler):
     @tornado.gen.coroutine
     def get(self, path=None):
         if path:
-            path = path.strip(self.base_url)
             path += '.ipynb'  # when used as a jupyter server extension, we don't use the extension
         # if the handler got a notebook_path argument, always serve that
         notebook_path = self.notebook_path or path
 
-        try:
-            notebook = nbformat.read(notebook_path, as_version=4)
-        except FileNotFoundError:
-            raise tornado.web.HTTPError(404)
+        model = self.contents_manager.get(path=notebook_path)
+        if 'content' in model:
+            notebook = model['content']
+        else:
+            raise tornado.web.HTTPError(404, 'file not found')
 
         # Ignore requested kernel name and make use of the one specified in the notebook.
         kernel_name = notebook.metadata.get('kernelspec', {}).get('name', self.kernel_manager.default_kernel_name)
@@ -37,10 +37,16 @@ class VoilaHandler(JupyterHandler):
         result = executenb(notebook, km=km)
 
         # render notebook to html
-        resources = dict(kernel_id=kernel_id, base_url=self.base_url)
-        html, resources = HTMLExporter(template_file=str(TEMPLATE_ROOT / 'voila.tpl'), exclude_input=self.strip_sources,
-                                       exclude_output_prompt=self.strip_sources, exclude_input_prompt=self.strip_sources
-                                      ).from_notebook_node(result, resources=resources)
+        resources = {
+            'kernel_id': kernel_id,
+            'base_url': self.base_url
+        }
+        html, resources = HTMLExporter(
+                template_file=str(TEMPLATE_ROOT / 'voila.tpl'),
+                exclude_input=self.strip_sources,
+                exclude_output_prompt=self.strip_sources,
+                exclude_input_prompt=self.strip_sources
+            ).from_notebook_node(result, resources=resources)
 
         # Compose reply
         self.set_header('Content-Type', 'text/html')

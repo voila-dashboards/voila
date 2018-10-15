@@ -19,42 +19,16 @@
     integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA="
     crossorigin="anonymous">
 </script>
+
 <script src="{{resources.base_url}}voila/static/jquery.min.js"></script>
-<script>
-requirejs.config({
-    baseUrl: '{{resources.base_url}}voila/static'
-})
+<script>requirejs.config({ baseUrl: '{{resources.base_url}}voila/static' })</script>
+
+<script id="jupyter-config-data" type="application/json">
+{
+    "baseUrl": "{{resources.base_url}}",
+    "kernelId": "{{resources.kernel_id}}"
+}
 </script>
-
-</script>
-{% block ipywidgets %}
-{%- if "widgets" in nb.metadata -%}
-<script>
-(function() {
-  function addWidgetsRenderer() {
-    var mimeElement = document.querySelector('script[type="application/vnd.jupyter.widget-view+json"]');
-    var scriptElement = document.createElement('script');
-    var widgetRendererSrc = '{{ resources.ipywidgets_base_url }}@jupyter-widgets/html-manager@*/dist/embed-amd.js';
-    var widgetState;
-
-    // Fallback for older version:
-    try {
-      widgetState = mimeElement && JSON.parse(mimeElement.innerHTML);
-
-      if (widgetState && (widgetState.version_major < 2 || !widgetState.version_major)) {
-        widgetRendererSrc = '{{ resources.ipywidgets_base_url }}jupyter-js-widgets@*/dist/embed.js';
-      }
-    } catch(e) {}
-
-    scriptElement.src = widgetRendererSrc;
-    document.body.appendChild(scriptElement);
-  }
-
-  document.addEventListener('DOMContentLoaded', addWidgetsRenderer);
-}());
-</script>
-{%- endif -%}
-{% endblock ipywidgets %}
 
 {% for css in resources.inlining.css -%}
     <style type="text/css">

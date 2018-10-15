@@ -4,4 +4,4 @@ dependencies:
   - bqplot
   - scipy
   - pip:
-    - https://github.com/QuantStack/voila/master.zip
+    - git+https://github.com/QuantStack/voila.git
