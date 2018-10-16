@@ -26,7 +26,6 @@ from jupyter_server.utils import url_path_join
 from .paths import ROOT, STATIC_ROOT, TEMPLATE_ROOT
 from .handler import VoilaHandler
 from .treehandler import VoilaTreeHandler
-from .watchdog import WatchDogHandler
 
 _kernel_id_regex = r"(?P<kernel_id>\w+-\w+-\w+-\w+-\w+)"
 
@@ -160,10 +159,6 @@ class Voila(Application):
                 (url_path_join(base_url, r'/voila/tree' + path_regex), VoilaTreeHandler),
                 (url_path_join(base_url, r'/voila/render' + path_regex), VoilaHandler, {'strip_sources': self.strip_sources}),
             ])
-        if self.autoreload:
-            handlers.append(
-                (url_path_join(base_url, r'/voila/watchdog' + path_regex), WatchDogHandler)
-            )
 
         webapp.add_handlers('.*$', handlers)
 
