@@ -1,7 +1,7 @@
 Voila
 =====
 
-[![Binder](https://img.shields.io/badge/launch-binder-brightgreen.svg)](https://mybinder.org/v2/gh/QuantStack/voila/master?urlpath=voila/tree/notebooks)
+[![Binder](https://img.shields.io/badge/launch-binder-brightgreen.svg)](https://mybinder.org/v2/gh/QuantStack/voila/stable?urlpath=voila/tree/notebooks)
 
 Rendering of live Jupyter notebooks with interactive widgets.
 
