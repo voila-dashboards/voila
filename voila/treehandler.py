@@ -1,3 +1,13 @@
+#############################################################################
+# Copyright (c) 2018, Voila Contributors                                    #
+#                                                                           #
+# Distributed under the terms of the BSD 3-Clause License.                  #
+#                                                                           #
+# The full license is in the file LICENSE, distributed with this software.  #
+#############################################################################
+
+from tornado import web
+
 from jupyter_server.base.handlers import JupyterHandler
 from jupyter_server.utils import url_path_join, url_escape
 
