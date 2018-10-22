@@ -1,12 +1,10 @@
-Voila
-=====
+# Voila
 
 [![Binder](https://img.shields.io/badge/launch-binder-brightgreen.svg)](https://mybinder.org/v2/gh/QuantStack/voila/stable?urlpath=voila/tree/notebooks)
 
 Rendering of live Jupyter notebooks with interactive widgets.
 
-Introduction
-------------
+## Introduction
 
 Voila serves live Jupyter notebook including Jupyter interactive widgets.
 
@@ -22,23 +20,54 @@ callbacks to changes in Jupyter interactive widgets.
 When using these default settings, the code powering the Jupyter notebook is
 never sent to the front-end.
 
-Usage
------
+## Installation
 
-To render the `bqplot` example notebook as a Voila app, run
+Voila can be installed with the conda package manager
+
+```
+conda install -c conda-forge voila
+```
+
+or from pypi
+
+```
+pip install voila
+```
+
+## Usage
+
+### As a standalone tornado application
+
+To render the `bqplot` example notebook as a standalone app, run
 
 ```
 voila bqplot.ipynb
 ```
 
-Related projects
-----------------
+To server a directory of jupyter notebooks, just run `voila` with no argument.
+
+### As a server extension to `notebook` or `jupyter_server`
+
+Voila can also be used as a notebook server extension, both with the
+[notebook](https://github.com/jupyter/notebook) server or with
+[jupyter_server](https://github.com/jupyter/jupyter_server).
+
+When running the notebook server, the voila app is accessible from the base url
+suffixed with `voila`.
+
+## Example
+
+The following screencast shows the voila-rendered version of notebook
+reproducing the "wealth of nation" data visualization with bqplot.
+
+![wealth of nations](voila-won.gif)
+
+## Related projects
 
 Voila depends on the [nbconvert](https://github.com/jupyter/nbconvert) and
 [jupyter_server](https://github.com/jupyter/jupyter_server/).
 
-License
--------
+## License
 
 We use a shared copyright model that enables all contributors to maintain the
 copyright on their contributions.
