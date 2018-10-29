@@ -1,4 +1,6 @@
 name: voila
+channels:
+  - conda-forge
 dependencies:
   - ipyvolume
   - bqplot
