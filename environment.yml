@@ -3,5 +3,4 @@ dependencies:
   - ipyvolume
   - bqplot
   - scipy
-  - pip:
-    - git+https://github.com/QuantStack/voila.git
+  - voila=0.0.4
