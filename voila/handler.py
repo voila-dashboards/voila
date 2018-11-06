@@ -51,6 +51,7 @@ class VoilaHandler(JupyterHandler):
         }
         html, resources = HTMLExporter(
                 template_file='voila.html',
+                template_path=self.settings['template_paths'],
                 exclude_input=self.strip_sources,
                 exclude_output_prompt=self.strip_sources,
                 exclude_input_prompt=self.strip_sources

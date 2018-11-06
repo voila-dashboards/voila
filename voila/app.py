@@ -18,6 +18,7 @@ import logging
 import gettext
 
 import jinja2
+import nbconvert
 
 import tornado.ioloop
 import tornado.web
@@ -119,7 +120,14 @@ class Voila(Application):
         )
 
         jenv_opt = {"autoescape": True}  # we might want extra options via cmd line like notebook server
-        env = jinja2.Environment(loader=jinja2.FileSystemLoader(str(TEMPLATE_ROOT)), extensions=['jinja2.ext.i18n'], **jenv_opt)
+        nbpath = os.path.dirname(nbconvert.__file__)
+        template_paths = [str(TEMPLATE_ROOT),
+                          os.path.join(nbpath, 'templates'),
+                          os.path.join(nbpath, 'templates/skeleton'),
+                          os.path.join(nbpath, 'templates/html')]
+        if self.custom_path:
+            template_paths.insert(0, self.custom_path)
+        env = jinja2.Environment(loader=jinja2.FileSystemLoader(template_paths), extensions=['jinja2.ext.i18n'], **jenv_opt)
         nbui = gettext.translation('nbui', localedir=str(ROOT / 'i18n'), fallback=True)
         env.install_gettext_translations(nbui, newstyle=False)
         contents_manager = LargeFileManager()  # TODO: make this configurable like notebook
@@ -129,6 +137,7 @@ class Voila(Application):
             allow_remote_access=True,
             autoreload=self.autoreload,
             voila_jinja2_env=env,
+            template_paths=template_paths,
             jinja2_env=env,
             static_path='/',
             server_root_dir='/',
