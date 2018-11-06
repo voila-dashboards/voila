@@ -49,6 +49,13 @@ class VoilaHandler(JupyterHandler):
             'kernel_id': kernel_id,
             'base_url': self.base_url
         }
+
+        # I don't think this functionality is in nbconvert,
+        # maybe we want to put this behind a flag
+        def filter_empty_output(cell):
+            return cell.cell_type != 'code' or len(cell.outputs) > 0
+        result.cells = list(filter(filter_empty_output, result.cells))
+
         html, resources = HTMLExporter(
                 template_file='voila.html',
                 template_path=self.settings['template_paths'],
