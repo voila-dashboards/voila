@@ -71,10 +71,17 @@ class Voila(Application):
         config=True,
         help='Directory holding static assets (HTML, JS and CSS files).'
     )
+    custom_path = Unicode(
+        None,
+        config=True,
+        allow_none=True,
+        help='Directory containing templates, js and css.'
+    )
     aliases = {
         'port': 'Voila.port',
         'static': 'Voila.static_root',
         'strip_sources': 'Voila.strip_sources',
+        'custom_path': 'Voila.custom_path',
         'autoreload': 'Voila.autoreload'
     }
     connection_dir_root = Unicode(
@@ -160,6 +167,18 @@ class Voila(Application):
                 }
             )
         ])
+
+        if self.custom_path:
+            for sub in ['css', 'js', 'vendor']:
+                handlers.append((
+                        url_path_join(base_url, r'/voila/custom/{sub}/(.*)'.format(sub=sub)),
+                        tornado.web.StaticFileHandler,
+                        {
+                            'path': os.path.join(self.custom_path, sub)
+                        }
+                    )
+                )
+
 
         if self.notebook_path:
             handlers.append((
