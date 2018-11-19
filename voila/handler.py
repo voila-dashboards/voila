@@ -14,13 +14,16 @@ import nbformat
 from nbconvert.preprocessors.execute import executenb
 from nbconvert import HTMLExporter
 
-from .paths import TEMPLATE_ROOT
+from .paths import NBCONVERT_TEMPLATE_ROOT
 
 
 class VoilaHandler(JupyterHandler):
-    def initialize(self, notebook_path=None, strip_sources=True):
+    def initialize(self, notebook_path=None, strip_sources=True, custom_template_path=None):
         self.notebook_path = notebook_path
         self.strip_sources = strip_sources
+        self.template_path = [str(NBCONVERT_TEMPLATE_ROOT)]
+        if custom_template_path:
+            self.template_path.insert(0, custom_template_path)
 
     @tornado.web.authenticated
     @tornado.gen.coroutine
@@ -36,10 +39,10 @@ class VoilaHandler(JupyterHandler):
         else:
             raise tornado.web.HTTPError(404, 'file not found')
 
-        # Ignore requested kernel name and make use of the one specified in the notebook.
+        # Fetch kernel name from the notebook metadata
         kernel_name = notebook.metadata.get('kernelspec', {}).get('name', self.kernel_manager.default_kernel_name)
 
-        # Launch kernel and execute notebook.
+        # Launch kernel and execute notebook
         kernel_id = yield tornado.gen.maybe_future(self.kernel_manager.start_kernel(kernel_name=kernel_name))
         km = self.kernel_manager.get_kernel(kernel_id)
         result = executenb(notebook, km=km)
@@ -49,12 +52,21 @@ class VoilaHandler(JupyterHandler):
             'kernel_id': kernel_id,
             'base_url': self.base_url
         }
+
+        # Filter out empty cells
+        # Could this be handled by nbconvert?
+        if self.strip_sources:
+            def filter_empty_output(cell):
+                return cell.cell_type != 'code' or len(cell.outputs) > 0
+            result.cells = list(filter(filter_empty_output, result.cells))
+
         html, resources = HTMLExporter(
-                template_file=str(TEMPLATE_ROOT / 'voila.tpl'),
-                exclude_input=self.strip_sources,
-                exclude_output_prompt=self.strip_sources,
-                exclude_input_prompt=self.strip_sources
-            ).from_notebook_node(result, resources=resources)
+            template_file='voila.tpl',
+            template_path=self.template_path,
+            exclude_input=self.strip_sources,
+            exclude_output_prompt=self.strip_sources,
+            exclude_input_prompt=self.strip_sources
+        ).from_notebook_node(result, resources=resources)
 
         # Compose reply
         self.set_header('Content-Type', 'text/html')

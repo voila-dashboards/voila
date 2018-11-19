@@ -74,16 +74,25 @@ class Voila(Application):
         'port': 'Voila.port',
         'static': 'Voila.static_root',
         'strip_sources': 'Voila.strip_sources',
-        'autoreload': 'Voila.autoreload'
+        'autoreload': 'Voila.autoreload',
+        'custom_template_path': 'Voila.custom_template_path'
     }
     connection_dir_root = Unicode(
         config=True,
         help=(
-            'Location of temporary connection files. Defaults '
+            'Location of temporry connection files. Defaults '
             'to system `tempfile.gettempdir()` value.'
         )
     )
     connection_dir = Unicode()
+
+    custom_template_path = Unicode(
+        config=True,
+        allow_none=True,
+        help=(
+            'Custom path for nbconvert templates used by voila.'
+        )
+    )
 
     @default('connection_dir_root')
     def _default_connection_dir(self):
@@ -111,6 +120,7 @@ class Voila(Application):
         kernel_manager = MappingKernelManager(
             connection_dir=connection_dir,
             allowed_message_types=[
+                'comm_msg',
                 'comm_info_request',
                 'kernel_info_request',
                 'custom_message',
@@ -158,7 +168,8 @@ class Voila(Application):
                 VoilaHandler,
                 {
                     'notebook_path': self.notebook_path,
-                    'strip_sources': self.strip_sources
+                    'strip_sources': self.strip_sources,
+                    'custom_template_path': self.custom_template_path
                 }
             ))
         else:

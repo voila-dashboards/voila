@@ -1,35 +1,7 @@
-{%- extends 'basic.tpl' -%}
+{%- extends 'base.tpl' -%}
 {% from 'mathjax.tpl' import mathjax %}
 
-{%- block header -%}
-<!DOCTYPE html>
-<html>
-<head>
-{%- block html_head -%}
-<meta charset="utf-8" />
-{% set nb_title = nb.metadata.get('title', '') or resources['metadata']['name'] %}
-<title>Voila: {{nb_title}}</title>
-
-<link rel="stylesheet" href="https://unpkg.com/font-awesome@4.5.0/css/font-awesome.min.css" type="text/css" />
-
-<script
-    data-main="{{resources.base_url}}voila/static/main"
-    data-jupyter-kernel-id="{{resources.kernel_id}}"
-    src="{{resources.base_url}}voila/static/require.min.js"
-    integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA="
-    crossorigin="anonymous">
-</script>
-
-<script src="{{resources.base_url}}voila/static/jquery.min.js"></script>
-<script>requirejs.config({ baseUrl: '{{resources.base_url}}voila/static' })</script>
-
-<script id="jupyter-config-data" type="application/json">
-{
-    "baseUrl": "{{resources.base_url}}",
-    "kernelId": "{{resources.kernel_id}}"
-}
-</script>
-
+{%- block html_head_css -%}
 {% for css in resources.inlining.css -%}
     <style type="text/css">
     {{ css }}
@@ -82,9 +54,7 @@ div#notebook-container{
 
 <!-- Loading mathjax macro -->
 {{ mathjax() }}
-{%- endblock html_head -%}
-</head>
-{%- endblock header -%}
+{%- endblock html_head_css -%}
 
 {% block body %}
 <body>
@@ -96,7 +66,3 @@ div#notebook-container{
 </body>
 {%- endblock body %}
 
-{% block footer %}
-{{ super() }}
-</html>
-{% endblock footer %}
