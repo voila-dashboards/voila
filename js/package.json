@@ -36,6 +36,12 @@
     "build": "webpack",
     "build:watch": "webpack --watch"
   },
+  "babel": {
+    "presets": [
+      "es2015",
+      "stage-0"
+    ]
+  },
   "author": "",
   "license": "ISC"
 }
