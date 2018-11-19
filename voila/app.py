@@ -119,6 +119,7 @@ class Voila(Application):
         kernel_manager = MappingKernelManager(
             connection_dir=connection_dir,
             allowed_message_types=[
+                'comm_msg',
                 'comm_info_request',
                 'kernel_info_request',
                 'custom_message',
