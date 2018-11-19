@@ -150,6 +150,7 @@ setup_args = {
     'package_data': {
         'voila': [
             'templates/*',
+            'nbconvert_templates/*',
             'static/*'
         ]
     },

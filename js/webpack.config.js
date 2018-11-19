@@ -1,7 +1,6 @@
 
 var path = require('path');
 var postcss = require('postcss');
-// ['babel-preset-es2015', 'babel-preset-stage-0'].map(require.resolve)
 
 var loaders = [
     { test: /\.js$/, loader: 'babel-loader', query: {

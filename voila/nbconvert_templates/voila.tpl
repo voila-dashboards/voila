@@ -1,4 +1,4 @@
-{%- extends 'base.html' -%}
+{%- extends 'base.tpl' -%}
 {% from 'mathjax.tpl' import mathjax %}
 
 {%- block html_head_css -%}

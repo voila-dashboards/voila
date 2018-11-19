@@ -1,5 +1,4 @@
-{%- extends 'base.html' -%}
-
+{%- extends 'base.tpl' -%}
 
 {% block html_head_css %}
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">

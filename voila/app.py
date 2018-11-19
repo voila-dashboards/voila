@@ -18,7 +18,6 @@ import logging
 import gettext
 
 import jinja2
-import nbconvert
 
 import tornado.ioloop
 import tornado.web
@@ -71,27 +70,29 @@ class Voila(Application):
         config=True,
         help='Directory holding static assets (HTML, JS and CSS files).'
     )
-    custom_path = Unicode(
-        None,
-        config=True,
-        allow_none=True,
-        help='Directory containing templates, js and css.'
-    )
     aliases = {
         'port': 'Voila.port',
         'static': 'Voila.static_root',
         'strip_sources': 'Voila.strip_sources',
-        'custom_path': 'Voila.custom_path',
-        'autoreload': 'Voila.autoreload'
+        'autoreload': 'Voila.autoreload',
+        'custom_template_path': 'Voila.custom_template_path'
     }
     connection_dir_root = Unicode(
         config=True,
         help=(
-            'Location of temporary connection files. Defaults '
+            'Location of temporry connection files. Defaults '
             'to system `tempfile.gettempdir()` value.'
         )
     )
     connection_dir = Unicode()
+
+    custom_template_path = Unicode(
+        config=True,
+        allow_none=True,
+        help=(
+            'Custom path for nbconvert templates used by voila.'
+        )
+    )
 
     @default('connection_dir_root')
     def _default_connection_dir(self):
@@ -128,14 +129,7 @@ class Voila(Application):
         )
 
         jenv_opt = {"autoescape": True}  # we might want extra options via cmd line like notebook server
-        nbpath = os.path.dirname(nbconvert.__file__)
-        template_paths = [str(TEMPLATE_ROOT),
-                          os.path.join(nbpath, 'templates'),
-                          os.path.join(nbpath, 'templates/skeleton'),
-                          os.path.join(nbpath, 'templates/html')]
-        if self.custom_path:
-            template_paths.insert(0, self.custom_path)
-        env = jinja2.Environment(loader=jinja2.FileSystemLoader(template_paths), extensions=['jinja2.ext.i18n'], **jenv_opt)
+        env = jinja2.Environment(loader=jinja2.FileSystemLoader(str(TEMPLATE_ROOT)), extensions=['jinja2.ext.i18n'], **jenv_opt)
         nbui = gettext.translation('nbui', localedir=str(ROOT / 'i18n'), fallback=True)
         env.install_gettext_translations(nbui, newstyle=False)
         contents_manager = LargeFileManager()  # TODO: make this configurable like notebook
@@ -145,7 +139,6 @@ class Voila(Application):
             allow_remote_access=True,
             autoreload=self.autoreload,
             voila_jinja2_env=env,
-            template_paths=template_paths,
             jinja2_env=env,
             static_path='/',
             server_root_dir='/',
@@ -169,25 +162,14 @@ class Voila(Application):
             )
         ])
 
-        if self.custom_path:
-            for sub in ['css', 'js', 'vendor']:
-                handlers.append((
-                        url_path_join(base_url, r'/voila/custom/{sub}/(.*)'.format(sub=sub)),
-                        tornado.web.StaticFileHandler,
-                        {
-                            'path': os.path.join(self.custom_path, sub)
-                        }
-                    )
-                )
-
-
         if self.notebook_path:
             handlers.append((
                 url_path_join(base_url, r'/'),
                 VoilaHandler,
                 {
                     'notebook_path': self.notebook_path,
-                    'strip_sources': self.strip_sources
+                    'strip_sources': self.strip_sources,
+                    'custom_template_path': self.custom_template_path
                 }
             ))
         else:
