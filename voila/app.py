@@ -62,6 +62,7 @@ from .configuration import VoilaConfiguration
 from .execute import VoilaExecutor
 from .exporter import VoilaExporter
 from .csspreprocessor import VoilaCSSPreprocessor
+from .utils import add_base_url_to_handlers
 
 ioloop.install()
 _kernel_id_regex = r"(?P<kernel_id>\w+-\w+-\w+-\w+-\w+)"
@@ -69,6 +70,17 @@ _kernel_id_regex = r"(?P<kernel_id>\w+-\w+-\w+-\w+-\w+)"
 
 def _(x):
     return x
+
+class VoilaKernelHandler(KernelHandler):
+    @property
+    def kernel_manager(self):
+        return self.settings['voila_kernel_manager']
+
+
+class VoilaZMQChannelsHandler(ZMQChannelsHandler):
+    @property
+    def kernel_manager(self):
+        return self.settings['voila_kernel_manager']
 
 
 class Voila(Application):
@@ -409,7 +421,7 @@ class Voila(Application):
         self.app = tornado.web.Application(
             base_url=self.base_url,
             server_url=self.server_url or self.base_url,
-            kernel_manager=self.kernel_manager,
+            voila_kernel_manager=self.kernel_manager,
             kernel_spec_manager=self.kernel_spec_manager,
             allow_remote_access=True,
             autoreload=self.autoreload,
@@ -426,10 +438,8 @@ class Voila(Application):
         handlers = []
 
         handlers.extend([
-            (url_path_join(self.server_url, r'/api/kernels/%s' % _kernel_id_regex), KernelHandler),
-            (url_path_join(self.server_url, r'/api/kernels/%s/channels' % _kernel_id_regex), ZMQChannelsHandler),
             (
-                url_path_join(self.server_url, r'/voila/static/(.*)'),
+                r'/voila/static/(.*)',
                 MultiStaticFileHandler,
                 {
                     'paths': self.static_paths,
@@ -438,11 +448,13 @@ class Voila(Application):
             )
         ])
 
+        handlers.extend(base_handlers)
+
         # Serving notebook extensions
         if self.voila_configuration.enable_nbextensions:
             handlers.append(
                 (
-                    url_path_join(self.server_url, r'/voila/nbextensions/(.*)'),
+                    r'/voila/nbextensions/(.*)',
                     FileFindHandler,
                     {
                         'path': self.nbextensions_path,
@@ -452,7 +464,7 @@ class Voila(Application):
             )
         handlers.append(
             (
-                url_path_join(self.server_url, r'/voila/files/(.*)'),
+                r'/voila/files/(.*)',
                 WhiteListFileHandler,
                 {
                     'whitelist': self.voila_configuration.file_whitelist,
@@ -467,7 +479,7 @@ class Voila(Application):
         }
         if self.notebook_path:
             handlers.append((
-                url_path_join(self.server_url, r'/(.*)'),
+                r'/(.*)',
                 VoilaHandler,
                 {
                     'notebook_path': os.path.relpath(self.notebook_path, self.root_dir),
@@ -479,10 +491,9 @@ class Voila(Application):
         else:
             self.log.debug('serving directory: %r', self.root_dir)
             handlers.extend([
-                (self.server_url, VoilaTreeHandler, tree_handler_conf),
-                (url_path_join(self.server_url, r'/voila/tree' + path_regex),
-                 VoilaTreeHandler, tree_handler_conf),
-                (url_path_join(self.server_url, r'/voila/render/(.*)'),
+                ('', VoilaTreeHandler, tree_handler_conf),
+                (r'/voila/tree' + path_regex, VoilaTreeHandler, tree_handler_conf),
+                (r'/voila/render/(.*)',
                  VoilaHandler,
                  {
                      'template_paths': self.template_paths,
@@ -491,7 +502,7 @@ class Voila(Application):
                  }),
             ])
 
-        self.app.add_handlers('.*$', handlers)
+        self.app.add_handlers('.*$', add_base_url_to_handlers(self.server_url, handlers))
         self.listen()
 
     def stop(self):
@@ -574,3 +585,11 @@ class Voila(Application):
 
 
 main = Voila.launch_instance
+
+base_handlers = [
+    (r'/voila/api/kernels/%s' % _kernel_id_regex, VoilaKernelHandler),
+    (r'/voila/api/kernels/%s/channels' % _kernel_id_regex, VoilaZMQChannelsHandler),
+]
+
+if __name__ == '__main__':
+    main()

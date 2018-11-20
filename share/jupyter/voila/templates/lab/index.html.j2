@@ -35,7 +35,7 @@ var voila_process = function(cell_index, cell_count) {
   {%- with kernel_id = kernel_start() -%}
     <script id="jupyter-config-data" type="application/json">
     {
-        "baseUrl": "{{resources.base_url}}",
+        "baseUrl": "{{resources.base_url}}voila/",
         "kernelId": "{{kernel_id}}"
     }
     </script>

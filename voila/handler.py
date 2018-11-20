@@ -32,6 +32,10 @@ class VoilaHandler(JupyterHandler):
         # we want to avoid starting multiple kernels due to template mistakes
         self.kernel_started = False
 
+    @property
+    def kernel_manager(self):
+        return self.settings['voila_kernel_manager']
+
     @tornado.web.authenticated
     async def get(self, path=None):
         # if the handler got a notebook_path argument, always serve that
