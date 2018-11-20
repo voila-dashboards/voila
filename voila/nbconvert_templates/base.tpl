@@ -18,7 +18,7 @@
 
 <script id="jupyter-config-data" type="application/json">
 {
-    "baseUrl": "{{resources.base_url}}",
+    "baseUrl": "{{resources.base_url}}voila/",
     "kernelId": "{{resources.kernel_id}}"
 }
 </script>

@@ -150,8 +150,8 @@ class Voila(Application):
         handlers = []
 
         handlers.extend([
-            (url_path_join(base_url, r'/api/kernels/%s' % _kernel_id_regex), KernelHandler),
-            (url_path_join(base_url, r'/api/kernels/%s/channels' % _kernel_id_regex), ZMQChannelsHandler),
+            (url_path_join(base_url, r'/voila/api/kernels/%s' % _kernel_id_regex), KernelHandler),
+            (url_path_join(base_url, r'/voila/api/kernels/%s/channels' % _kernel_id_regex), ZMQChannelsHandler),
             (
                 url_path_join(base_url, r'/voila/static/(.*)'),
                 tornado.web.StaticFileHandler,
