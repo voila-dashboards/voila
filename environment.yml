@@ -5,4 +5,4 @@ dependencies:
   - ipyvolume
   - bqplot
   - scipy
-  - voila=0.0.4
+  - voila=0.0.5
