@@ -25,8 +25,9 @@ export class WidgetApplication {
         const baseUrl = PageConfig.getBaseUrl();
         const kernelId = PageConfig.getOption('kernelId');
         const connectionInfo = ServerConnection.makeSettings({baseUrl});
-        let kernel = await Kernel.connectTo(kernelId, connectionInfo);
 
+        let model = await Kernel.findById(kernelId, connectionInfo);
+        let kernel = await Kernel.connectTo(model, connectionInfo);
         this._kernel = kernel;
 
         const manager = new WidgetManager(kernel, this._loader);
