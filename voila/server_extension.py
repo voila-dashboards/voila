@@ -17,11 +17,6 @@ from jinja2 import Environment, FileSystemLoader
 
 from jupyter_server.utils import url_path_join
 from jupyter_server.base.handlers import path_regex
-from jupyter_server.services.kernels.kernelmanager import MappingKernelManager
-from jupyter_server.services.kernels.handlers import KernelHandler, ZMQChannelsHandler
-
-from jupyter_client.jsonutil import date_default
-from ipython_genutils.py3compat import cast_unicode
 
 from .paths import ROOT, TEMPLATE_ROOT, STATIC_ROOT
 from .handler import VoilaHandler
@@ -29,7 +24,6 @@ from .treehandler import VoilaTreeHandler
 from .app import base_handlers
 from .utils import add_base_url_to_handlers
 
-from tornado import gen, web
 
 def load_jupyter_server_extension(server_app):
     web_app = server_app.web_app
@@ -53,7 +47,7 @@ def load_jupyter_server_extension(server_app):
             'shutdown_request'
         ]
     )
-    web_app.settings['voila_kernel_manager'] = kernel_mapping_manager
+    web_app.settings['kernel_manager'] = kernel_mapping_manager
 
     host_pattern = '.*$'
     base_url = url_path_join(web_app.settings['base_url'])
@@ -63,5 +57,4 @@ def load_jupyter_server_extension(server_app):
         ('/voila/tree' + path_regex, VoilaTreeHandler),
         ('/voila/static/(.*)',  tornado.web.StaticFileHandler, {'path': str(STATIC_ROOT)})
     ] + base_handlers
-    print(add_base_url_to_handlers(base_url, base_handlers))
     web_app.add_handlers(host_pattern, add_base_url_to_handlers(base_url, handlers))
