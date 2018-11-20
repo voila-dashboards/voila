@@ -2,6 +2,7 @@
 {% from 'mathjax.tpl' import mathjax %}
 
 {%- block html_head_css -%}
+
 {% for css in resources.inlining.css -%}
     <style type="text/css">
     {{ css }}
@@ -9,6 +10,7 @@
 {% endfor %}
 
 <style type="text/css">
+
 /* Overrides of notebook CSS for static HTML export */
 body {
   overflow: visible;
@@ -19,12 +21,6 @@ div#notebook {
   overflow: visible;
   border-top: none;
   padding: 20px;
-}
-
-div.cell {
-  margin: 0;
-  padding: 0;
-  border: 0;
 }
 
 {%- if resources.global_content_filter.no_prompt-%}

@@ -57,17 +57,17 @@ export class WidgetManager extends HTMLManager {
             var comm = await this._create_comm(this.comm_target_name, comm_id);
             return this._update_comm(comm);
         }));
-        // do the creation of the widgets in parallel
+
         await Promise.all(widgets_info.map(async (widget_info) => {
-                let promise = this.new_model({
-                    model_name: widget_info.msg.content.data.state._model_name,
-                    model_module: widget_info.msg.content.data.state._model_module,
-                    model_module_version: widget_info.msg.content.data.state._model_module_version,
-                    comm: widget_info.comm,
-                }, widget_info.msg.content.data.state);
-                let model = await promise;
-                models[model.model_id] = model;
-                return promise;
+            let promise = this.new_model({
+                model_name: widget_info.msg.content.data.state._model_name,
+                model_module: widget_info.msg.content.data.state._model_module,
+                model_module_version: widget_info.msg.content.data.state._model_module_version,
+                comm: widget_info.comm,
+            }, widget_info.msg.content.data.state);
+            let model = await promise;
+            models[model.model_id] = model;
+            return promise;
         }));
         return models
     }
