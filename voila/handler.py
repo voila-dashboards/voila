@@ -18,10 +18,6 @@ from .paths import NBCONVERT_TEMPLATE_ROOT
 
 
 class VoilaHandler(JupyterHandler):
-    @property
-    def kernel_manager(self):
-        return self.settings['voila_kernel_manager']
-
     def initialize(self, notebook_path=None, strip_sources=True, custom_template_path=None):
         self.notebook_path = notebook_path
         self.strip_sources = strip_sources
@@ -29,7 +25,7 @@ class VoilaHandler(JupyterHandler):
         if custom_template_path:
             self.template_path.insert(0, custom_template_path)
 
-    # @tornado.web.authenticated
+    @tornado.web.authenticated
     @tornado.gen.coroutine
     def get(self, path=None):
         if path:

@@ -23,19 +23,44 @@ import tornado.ioloop
 import tornado.web
 
 from traitlets.config.application import Application
-from traitlets import Unicode, Integer, Bool, default
+from traitlets import Unicode, Integer, Bool, Type, default
 
 from jupyter_server.services.kernels.kernelmanager import MappingKernelManager
 from jupyter_server.services.kernels.handlers import KernelHandler, ZMQChannelsHandler
 from jupyter_server.base.handlers import path_regex
 from jupyter_server.services.contents.largefilemanager import LargeFileManager
 from jupyter_server.utils import url_path_join
+from jupyter_server.auth.login import LoginHandler
+
 
 from .paths import ROOT, STATIC_ROOT, TEMPLATE_ROOT
 from .handler import VoilaHandler
 from .treehandler import VoilaTreeHandler
+from .utils import add_base_url_to_handlers
 
 _kernel_id_regex = r"(?P<kernel_id>\w+-\w+-\w+-\w+-\w+)"
+
+
+class VoilaKernelManager(KernelHandler):
+    @property
+    def kernel_manager(self):
+        return self.settings['voila_kernel_manager']
+
+    @property
+    def login_handler(self):
+        """Return the login handler for voila"""
+        print("VOILA", self.settings['login_handler_class'])
+        return self.settings.get('login_handler_class', None)
+
+class VoilaZMQChannelsHandler(ZMQChannelsHandler):
+    @property
+    def login_handler(self):
+        """Return the login handler for voila"""
+        return self.settings.get('login_handler_class', None)
+
+    @property
+    def kernel_manager(self):
+        return self.settings['voila_kernel_manager']
 
 
 class Voila(Application):
@@ -94,6 +119,13 @@ class Voila(Application):
         )
     )
 
+    login_handler_class = Type(
+        default_value=LoginHandler,
+        klass=tornado.web.RequestHandler,
+        config=True,
+        help='The login handler class to use.'
+    )
+
     @default('connection_dir_root')
     def _default_connection_dir(self):
         return tempfile.gettempdir()
@@ -135,36 +167,36 @@ class Voila(Application):
         contents_manager = LargeFileManager()  # TODO: make this configurable like notebook
 
         webapp = tornado.web.Application(
-            kernel_manager=kernel_manager,
+            voila_kernel_manager=kernel_manager,
             allow_remote_access=True,
             autoreload=self.autoreload,
             voila_jinja2_env=env,
             jinja2_env=env,
             static_path='/',
             server_root_dir='/',
-            contents_manager=contents_manager
+            contents_manager=contents_manager,
+            login_handler_class=self.login_handler_class,
         )
 
         base_url = webapp.settings.get('base_url', '/')
 
         handlers = []
-
-        handlers.extend([
-            (url_path_join(base_url, r'/voila/api/kernels/%s' % _kernel_id_regex), KernelHandler),
-            (url_path_join(base_url, r'/voila/api/kernels/%s/channels' % _kernel_id_regex), ZMQChannelsHandler),
-            (
-                url_path_join(base_url, r'/voila/static/(.*)'),
+        handlers.append((
+                r'/voila/static/(.*)',
                 tornado.web.StaticFileHandler,
                 {
                     'path': self.static_root,
                     'default_filename': 'index.html'
                 }
             )
-        ])
+        )
+
+
+        handlers.extend(base_handlers)
 
         if self.notebook_path:
             handlers.append((
-                url_path_join(base_url, r'/'),
+                r'/',
                 VoilaHandler,
                 {
                     'notebook_path': self.notebook_path,
@@ -174,12 +206,15 @@ class Voila(Application):
             ))
         else:
             handlers.extend([
-                (base_url, VoilaTreeHandler),
-                (url_path_join(base_url, r'/voila/tree' + path_regex), VoilaTreeHandler),
-                (url_path_join(base_url, r'/voila/render' + path_regex), VoilaHandler, {'strip_sources': self.strip_sources}),
+                ('', VoilaTreeHandler),
+                (r'/voila/tree' + path_regex, VoilaTreeHandler),
+                (r'/voila/render' + path_regex, VoilaHandler, {'strip_sources': self.strip_sources}),
             ])
 
-        webapp.add_handlers('.*$', handlers)
+
+
+
+        webapp.add_handlers('.*$', add_base_url_to_handlers(base_url, handlers))
 
         webapp.listen(self.port)
         self.log.info(f'Voila listening on port {self.port}.')
@@ -190,6 +225,11 @@ class Voila(Application):
             shutil.rmtree(connection_dir)
 
 main = Voila.launch_instance
+
+base_handlers = [
+    (r'/voila/api/kernels/%s' % _kernel_id_regex, KernelHandler),
+    (r'/voila/api/kernels/%s/channels' % _kernel_id_regex, ZMQChannelsHandler),
+]
 
 if __name__ == '__main__':
     main()

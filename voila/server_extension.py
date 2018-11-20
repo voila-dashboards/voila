@@ -26,37 +26,10 @@ from ipython_genutils.py3compat import cast_unicode
 from .paths import ROOT, TEMPLATE_ROOT, STATIC_ROOT
 from .handler import VoilaHandler
 from .treehandler import VoilaTreeHandler
-from .app import _kernel_id_regex
+from .app import base_handlers
+from .utils import add_base_url_to_handlers
 
 from tornado import gen, web
-
-class VoilaNotebookKernelManager(KernelHandler):
-    @property
-    def kernel_manager(self):
-        return self.settings['voila_kernel_manager']
-
-    # @web.authenticated
-    def get(self, kernel_id):
-        km = self.kernel_manager
-        km._check_kernel_id(kernel_id)
-        model = km.kernel_model(kernel_id)
-        self.finish(json.dumps(model, default=date_default))
-
-    # @web.authenticated
-    @gen.coroutine
-    def delete(self, kernel_id):
-        km = self.kernel_manager
-        yield gen.maybe_future(km.shutdown_kernel(kernel_id))
-        self.set_status(204)
-        self.finish()
-
-class VoilaNotebookZMQChannelsHandler(ZMQChannelsHandler):
-    def get_current_user(self):
-        return "voila"  # bypass AuthenticatedZMQStreamHandler's security handling
-
-    @property
-    def kernel_manager(self):
-        return self.settings['voila_kernel_manager']
 
 def load_jupyter_server_extension(server_app):
     web_app = server_app.web_app
@@ -84,14 +57,11 @@ def load_jupyter_server_extension(server_app):
 
     host_pattern = '.*$'
     base_url = url_path_join(web_app.settings['base_url'])
-    web_app.add_handlers(host_pattern, [
-        (url_path_join(base_url, '/voila/render' + path_regex), VoilaHandler),
-        (url_path_join(base_url, '/voila'), VoilaTreeHandler),
-        (url_path_join(base_url, '/voila/tree' + path_regex), VoilaTreeHandler),
-        (url_path_join(base_url, '/voila/static/(.*)'),  tornado.web.StaticFileHandler, {'path': str(STATIC_ROOT)})
-    ])
-
-    web_app.add_handlers(host_pattern, [
-        (url_path_join(base_url, r'/voila/api/kernels/%s' % _kernel_id_regex), VoilaNotebookKernelManager),
-        (url_path_join(base_url, r'/voila/api/kernels/%s/channels' % _kernel_id_regex), VoilaNotebookZMQChannelsHandler),
-    ])
+    handlers = [
+        ('/voila/render' + path_regex, VoilaHandler),
+        ('/voila', VoilaTreeHandler),
+        ('/voila/tree' + path_regex, VoilaTreeHandler),
+        ('/voila/static/(.*)',  tornado.web.StaticFileHandler, {'path': str(STATIC_ROOT)})
+    ] + base_handlers
+    print(add_base_url_to_handlers(base_url, base_handlers))
+    web_app.add_handlers(host_pattern, add_base_url_to_handlers(base_url, handlers))
