@@ -169,7 +169,8 @@ class Voila(Application):
                 {
                     'notebook_path': self.notebook_path,
                     'strip_sources': self.strip_sources,
-                    'custom_template_path': self.custom_template_path
+                    'custom_template_path': self.custom_template_path,
+                    'config': self.config
                 }
             ))
         else:

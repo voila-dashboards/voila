@@ -33,7 +33,9 @@ def load_jupyter_server_extension(server_app):
     host_pattern = '.*$'
     base_url = url_path_join(web_app.settings['base_url'])
     web_app.add_handlers(host_pattern, [
-        (url_path_join(base_url, '/voila/render' + path_regex), VoilaHandler),
+        (url_path_join(base_url, '/voila/render' + path_regex), VoilaHandler, {
+            'config': server_app.config
+        }),
         (url_path_join(base_url, '/voila'), VoilaTreeHandler),
         (url_path_join(base_url, '/voila/tree' + path_regex), VoilaTreeHandler),
         (url_path_join(base_url, '/voila/static/(.*)'),  tornado.web.StaticFileHandler, {'path': str(STATIC_ROOT)})
