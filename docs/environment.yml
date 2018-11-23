@@ -1,0 +1,7 @@
+name: voila
+channels:
+  - conda-forge
+  - conda
+dependencies:
+  - sphinx
+  - sphinx_rtd_theme
