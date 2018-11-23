@@ -18,10 +18,11 @@ from .paths import NBCONVERT_TEMPLATE_ROOT
 
 
 class VoilaHandler(JupyterHandler):
-    def initialize(self, notebook_path=None, strip_sources=True, custom_template_path=None):
+    def initialize(self, notebook_path=None, strip_sources=True, custom_template_path=None, config=None):
         self.notebook_path = notebook_path
         self.strip_sources = strip_sources
         self.template_path = [str(NBCONVERT_TEMPLATE_ROOT)]
+        self.exporter_config = config
         if custom_template_path:
             self.template_path.insert(0, custom_template_path)
 
@@ -53,20 +54,27 @@ class VoilaHandler(JupyterHandler):
             'base_url': self.base_url
         }
 
-        # Filter out empty cells
-        # Could this be handled by nbconvert?
-        if self.strip_sources:
-            def filter_empty_output(cell):
-                return cell.cell_type != 'code' or len(cell.outputs) > 0
-            result.cells = list(filter(filter_empty_output, result.cells))
-
-        html, resources = HTMLExporter(
+        exporter = HTMLExporter(
             template_file='voila.tpl',
             template_path=self.template_path,
-            exclude_input=self.strip_sources,
-            exclude_output_prompt=self.strip_sources,
-            exclude_input_prompt=self.strip_sources
-        ).from_notebook_node(result, resources=resources)
+            config=self.exporter_config
+        )
+
+        if self.strip_sources:
+            exporter.exclude_input = True
+            exporter.exclude_output_prompt = True
+            exporter.exclude_input_prompt = True
+
+        # Filtering out empty cells.
+        def filter_empty_code_cells(cell):
+            return (
+                cell.cell_type != 'code' or                     # keep non-code cells
+                (cell.outputs and not exporter.exclude_output)  # keep cell if output not excluded and not empty
+                or not exporter.exclude_input                   # keep cell if input not excluded
+            )
+        result.cells = list(filter(filter_empty_code_cells, result.cells))
+
+        html, resources = exporter.from_notebook_node(result, resources=resources)
 
         # Compose reply
         self.set_header('Content-Type', 'text/html')
