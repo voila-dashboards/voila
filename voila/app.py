@@ -31,7 +31,7 @@ from jupyter_server.base.handlers import path_regex
 from jupyter_server.services.contents.largefilemanager import LargeFileManager
 from jupyter_server.utils import url_path_join
 
-from .paths import ROOT, STATIC_ROOT, TEMPLATE_ROOT
+from .paths import STATIC_ROOT, TEMPLATE_ROOT
 from .handler import VoilaHandler
 from .treehandler import VoilaTreeHandler
 
@@ -130,8 +130,8 @@ class Voila(Application):
 
         jenv_opt = {"autoescape": True}  # we might want extra options via cmd line like notebook server
         env = jinja2.Environment(loader=jinja2.FileSystemLoader(str(TEMPLATE_ROOT)), extensions=['jinja2.ext.i18n'], **jenv_opt)
-        nbui = gettext.translation('nbui', localedir=str(ROOT / 'i18n'), fallback=True)
-        env.install_gettext_translations(nbui, newstyle=False)
+        # nbui = gettext.translation('nbui', localedir=str(ROOT / 'i18n'), fallback=True)
+        # env.install_gettext_translations(nbui, newstyle=False)
         contents_manager = LargeFileManager()  # TODO: make this configurable like notebook
 
         webapp = tornado.web.Application(

@@ -8,9 +8,11 @@
 
 import os
 from pathlib import Path
+from jupyter_server import DEFAULT_STATIC_FILES_PATH, DEFAULT_TEMPLATE_PATH_LIST
 
-ROOT = Path(os.path.dirname(__file__))
-STATIC_ROOT = ROOT / 'static'
-TEMPLATE_ROOT = ROOT / 'templates'
-NBCONVERT_TEMPLATE_ROOT = ROOT / 'nbconvert_templates'
 
+STATIC_ROOT = DEFAULT_STATIC_FILES_PATH
+
+TEMPLATE_ROOT = DEFAULT_TEMPLATE_PATH_LIST[-1]
+
+NBCONVERT_TEMPLATE_ROOT = Path(os.path.dirname(__file__)) / 'nbconvert_templates'
