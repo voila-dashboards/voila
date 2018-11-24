@@ -123,7 +123,6 @@ class Voila(Application):
                 'comm_msg',
                 'comm_info_request',
                 'kernel_info_request',
-                'custom_message',
                 'shutdown_request'
             ]
         )
