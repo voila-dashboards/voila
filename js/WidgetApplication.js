@@ -6,11 +6,9 @@
 * The full license is in the file LICENSE, distributed with this software. *
 ****************************************************************************/
 
-import { Kernel, ServerConnection, KernelMessage } from '@jupyterlab/services'
+import { Kernel, ServerConnection } from '@jupyterlab/services'
 import { PageConfig } from '@jupyterlab/coreutils';
-
 import { WidgetManager } from './manager'
-import { ErrorView } from './ErrorView'
 
 import 'font-awesome/css/font-awesome.css'
 import '@phosphor/widgets/style/index.css'
