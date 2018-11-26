@@ -6,7 +6,7 @@
   "dependencies": {
     "@jupyter-widgets/base": "^1.2.2",
     "@jupyter-widgets/controls": "^1.4.2",
-    "@jupyter-widgets/html-manager": "^0.15.0",
+    "@jupyter-widgets/html-manager": "^0.15.2",
     "@jupyter-widgets/output": "^1.1.2",
     "@jupyterlab/coreutils": "^2.2.1",
     "@jupyterlab/outputarea": "^0.19.1",
