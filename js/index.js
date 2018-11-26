@@ -7,4 +7,4 @@
 ****************************************************************************/
 
 export { WidgetApplication } from './WidgetApplication';
-export * from './loader';
+export { requireLoader } from '@jupyter-widgets/html-manager';
