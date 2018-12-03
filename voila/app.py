@@ -66,7 +66,7 @@ class Voila(Application):
         help='Will autoreload to server and the page when a template, js file or Python code changes'
     )
     static_root = Unicode(
-        str(STATIC_ROOT),
+        STATIC_ROOT,
         config=True,
         help='Directory holding static assets (HTML, JS and CSS files).'
     )
@@ -98,7 +98,7 @@ class Voila(Application):
     def _default_connection_dir(self):
         return tempfile.gettempdir()
         connection_dir = tempfile.mkdtemp()
-        self.log.info(f'Using {connection_dir} to store connection files')
+        self.log.info('Using %s to store connection files' % connection_dir)
         return connection_dir
 
     @default('log_level')
@@ -114,8 +114,8 @@ class Voila(Application):
             prefix='voila_',
             dir=self.connection_dir_root
         )
-        self.log.info(f'Storing connection files in {connection_dir}.')
-        self.log.info(f'Serving static files from {self.static_root}.')
+        self.log.info('Storing connection files in %s.' % connection_dir)
+        self.log.info('Serving static files from %s.' % self.static_root)
 
         kernel_manager = MappingKernelManager(
             connection_dir=connection_dir,
@@ -128,8 +128,8 @@ class Voila(Application):
         )
 
         jenv_opt = {"autoescape": True}  # we might want extra options via cmd line like notebook server
-        env = jinja2.Environment(loader=jinja2.FileSystemLoader(str(TEMPLATE_ROOT)), extensions=['jinja2.ext.i18n'], **jenv_opt)
-        nbui = gettext.translation('nbui', localedir=str(ROOT / 'i18n'), fallback=True)
+        env = jinja2.Environment(loader=jinja2.FileSystemLoader(TEMPLATE_ROOT), extensions=['jinja2.ext.i18n'], **jenv_opt)
+        nbui = gettext.translation('nbui', localedir=os.path.join(ROOT, 'i18n'), fallback=True)
         env.install_gettext_translations(nbui, newstyle=False)
         contents_manager = LargeFileManager()  # TODO: make this configurable like notebook
 
@@ -182,7 +182,7 @@ class Voila(Application):
         webapp.add_handlers('.*$', handlers)
 
         webapp.listen(self.port)
-        self.log.info(f'Voila listening on port {self.port}.')
+        self.log.info('Voila listening on port %s.' % self.port)
 
         try:
             tornado.ioloop.IOLoop.current().start()
