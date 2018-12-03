@@ -7,10 +7,9 @@
 #############################################################################
 
 import os
-from pathlib import Path
 
-ROOT = Path(os.path.dirname(__file__))
-STATIC_ROOT = ROOT / 'static'
-TEMPLATE_ROOT = ROOT / 'templates'
-NBCONVERT_TEMPLATE_ROOT = ROOT / 'nbconvert_templates'
+ROOT = os.path.dirname(__file__)
+STATIC_ROOT = os.path.join(ROOT, 'static')
+TEMPLATE_ROOT = os.path.join(ROOT, 'templates')
+NBCONVERT_TEMPLATE_ROOT = os.path.join(ROOT, 'nbconvert_templates')
 
