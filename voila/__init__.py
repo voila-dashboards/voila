@@ -6,3 +6,9 @@
 # The full license is in the file LICENSE, distributed with this software.  #
 #############################################################################
 
+def _jupyter_nbextension_paths():
+    return [dict(
+        section="notebook",
+        src="static",
+        dest="voila",
+        require="voila/nbextension")]
