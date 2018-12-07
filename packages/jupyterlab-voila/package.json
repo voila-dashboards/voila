@@ -1,0 +1,57 @@
+{
+  "name": "jupyterlab-voila",
+  "version": "0.1.0",
+  "description": "A JupyterLab extension for Voila",
+  "keywords": [
+    "jupyter",
+    "jupyterlab",
+    "jupyterlab-extension"
+  ],
+  "homepage": "https://github.com/QuantStack/voila",
+  "bugs": {
+    "url": "https://github.com/QuantStack/voila/issues"
+  },
+  "license": "BSD-3-Clause",
+  "author": "Maarten Breddels, Sylvain Corlay",
+  "files": [
+    "lib/**/*.{d.ts,eot,gif,html,jpg,js,js.map,json,png,svg,woff2,ttf}",
+    "style/**/*.{css,eot,gif,html,jpg,json,png,svg,woff2,ttf}"
+  ],
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/QuantStack/voila.git"
+  },
+  "scripts": {
+    "build": "tsc",
+    "clean": "rimraf lib",
+    "watch": "tsc -w",
+    "prepare": "npm run clean && npm run build"
+  },
+  "peerDependencies": {
+    "@jupyterlab/application": "^0.19.0",
+    "@jupyterlab/apputils": "^0.19.0",
+    "@jupyterlab/notebook": "^0.19.0",
+    "@jupyterlab/mainmenu": "^0.19.0",
+    "@jupyterlab/docregistry": "^0.19.0",
+    "@jupyterlab/fileeditor": "^0.19.0"
+  },
+  "devDependencies": {
+    "rimraf": "^2.6.1",
+    "typescript": "~2.9.2",
+    "@jupyterlab/application": "^0.19.0",
+    "@jupyterlab/apputils": "^0.19.0",
+    "@jupyterlab/notebook": "^0.19.0",
+    "@jupyterlab/mainmenu": "^0.19.0",
+    "@jupyterlab/docregistry": "^0.19.0",
+    "@jupyterlab/fileeditor": "^0.19.0"
+  },
+  "jupyterlab": {
+    "extension": true
+  },
+  "dependencies": {
+    "@jupyterlab/application": "^0.19.0",
+    "@jupyterlab/mainmenu": "^0.8.0"
+  }
+}
