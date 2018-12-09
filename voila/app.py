@@ -34,12 +34,14 @@ from jupyter_server.utils import url_path_join
 from .paths import ROOT, STATIC_ROOT, TEMPLATE_ROOT
 from .handler import VoilaHandler
 from .treehandler import VoilaTreeHandler
+from ._version import __version__
 
 _kernel_id_regex = r"(?P<kernel_id>\w+-\w+-\w+-\w+-\w+)"
 
 
 class Voila(Application):
     name = 'voila'
+    version = __version__
     examples = 'voila example.ipynb --port 8888'
     description = Unicode(
         """voila [OPTIONS] NOTEBOOK_FILENAME
