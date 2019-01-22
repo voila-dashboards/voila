@@ -9,7 +9,7 @@ var loaders = [
           'babel-preset-stage-0',
         ].map(require.resolve),
     },
-    exclude: /node_modules/
+    exclude: /node_modules(?!(\/|\\)@jupyter-widgets(\/|\\)jupyterlab-manager)/
 },
     { test: /\.css$/, use: [
         'style-loader',
