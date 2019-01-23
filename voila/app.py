@@ -192,6 +192,3 @@ class Voila(Application):
             shutil.rmtree(connection_dir)
 
 main = Voila.launch_instance
-
-if __name__ == '__main__':
-    main()
