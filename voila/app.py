@@ -30,11 +30,12 @@ from jupyter_server.services.kernels.handlers import KernelHandler, ZMQChannelsH
 from jupyter_server.base.handlers import path_regex
 from jupyter_server.services.contents.largefilemanager import LargeFileManager
 from jupyter_server.utils import url_path_join
-
-from .paths import ROOT, STATIC_ROOT, TEMPLATE_ROOT
+from jupyter_core.paths import jupyter_path
+from .paths import ROOT, STATIC_ROOT
 from .handler import VoilaHandler
 from .treehandler import VoilaTreeHandler
 from ._version import __version__
+from .static_file_handler import MultiStaticFileHandler
 
 _kernel_id_regex = r"(?P<kernel_id>\w+-\w+-\w+-\w+-\w+)"
 
@@ -77,7 +78,7 @@ class Voila(Application):
         'static': 'Voila.static_root',
         'strip_sources': 'Voila.strip_sources',
         'autoreload': 'Voila.autoreload',
-        'custom_template_path': 'Voila.custom_template_path'
+        'template': 'Voila.template'
     }
     connection_dir_root = Unicode(
         config=True,
@@ -88,11 +89,12 @@ class Voila(Application):
     )
     connection_dir = Unicode()
 
-    custom_template_path = Unicode(
+    template = Unicode(
+        'default',
         config=True,
         allow_none=True,
         help=(
-            'Custom path for nbconvert templates used by voila.'
+            'template name to be used by voila.'
         )
     )
 
@@ -110,6 +112,55 @@ class Voila(Application):
     def parse_command_line(self, argv=None):
         super(Voila, self).parse_command_line(argv)
         self.notebook_path = self.extra_args[0] if len(self.extra_args) == 1 else None
+        self.nbconvert_template_paths = []
+        self.template_paths = []
+        self.static_paths = [self.static_root]
+        if self.template:
+            self._collect_template_paths(self.template)
+            self.log.debug('using template: %s', self.template)
+            self.log.debug('nbconvert template paths: %s', self.nbconvert_template_paths)
+            self.log.debug('template paths: %s', self.template_paths)
+            self.log.debug('static paths: %s', self.static_paths)
+
+    def _collect_template_paths(self, template_name):
+        # we look at the usual jupyter locations, and for development purposes also
+        # relative to the package directory (with highest prio)
+        template_directories = \
+            [os.path.abspath(os.path.join(ROOT, '..', 'share', 'jupyter', 'voila', 'template', template_name))] +\
+            jupyter_path('voila', 'template', template_name)
+        for dirname in template_directories:
+            if os.path.exists(dirname):
+                conf = {}
+                conf_file = os.path.join(dirname, 'conf.json')
+                if os.path.exists(conf_file):
+                    with open(conf_file) as f:
+                        conf = json.load(f)
+                # for templates that are not named default, we assume the default base_template is 'default'
+                # that means that even the default template could have a base_template when explicitly given
+                if template_name != 'default' or 'base_template' in conf:
+                    self._collect_template_paths(conf.get('base_template', 'default'))
+
+                extra_nbconvert_path = os.path.join(dirname, 'nbconvert_templates')
+                if not os.path.exists(extra_nbconvert_path):
+                    self.log.warning('template named %s found at path %r, but %s does not exist', self.template,
+                                     dirname, extra_nbconvert_path)
+                self.nbconvert_template_paths.insert(0, extra_nbconvert_path)
+
+                extra_static_path = os.path.join(dirname, 'static')
+                if not os.path.exists(extra_static_path):
+                    self.log.warning('template named %s found at path %r, but %s does not exist', self.template,
+                                     dirname, extra_static_path)
+                self.static_paths.insert(0, extra_static_path)
+
+                extra_template_path = os.path.join(dirname, 'templates')
+                if not os.path.exists(extra_template_path):
+                    self.log.warning('template named %s found at path %r, but %s does not exist', self.template,
+                                     dirname, extra_template_path)
+                self.template_paths.insert(0, extra_template_path)
+
+                # we don't look at multiple directories, once a directory with a given name is found at ar particular
+                # location (for instance the user dir) don't look further (for instance sys.prefix)
+                break
 
     def start(self):
         connection_dir = tempfile.mkdtemp(
@@ -130,7 +181,7 @@ class Voila(Application):
         )
 
         jenv_opt = {"autoescape": True}  # we might want extra options via cmd line like notebook server
-        env = jinja2.Environment(loader=jinja2.FileSystemLoader(TEMPLATE_ROOT), extensions=['jinja2.ext.i18n'], **jenv_opt)
+        env = jinja2.Environment(loader=jinja2.FileSystemLoader(self.template_paths), extensions=['jinja2.ext.i18n'], **jenv_opt)
         nbui = gettext.translation('nbui', localedir=os.path.join(ROOT, 'i18n'), fallback=True)
         env.install_gettext_translations(nbui, newstyle=False)
         contents_manager = LargeFileManager()  # TODO: make this configurable like notebook
@@ -155,9 +206,9 @@ class Voila(Application):
             (url_path_join(base_url, r'/api/kernels/%s/channels' % _kernel_id_regex), ZMQChannelsHandler),
             (
                 url_path_join(base_url, r'/voila/static/(.*)'),
-                tornado.web.StaticFileHandler,
+                MultiStaticFileHandler,
                 {
-                    'path': self.static_root,
+                    'paths': self.static_paths,
                     'default_filename': 'index.html'
                 }
             )
@@ -170,7 +221,7 @@ class Voila(Application):
                 {
                     'notebook_path': self.notebook_path,
                     'strip_sources': self.strip_sources,
-                    'custom_template_path': self.custom_template_path,
+                    'nbconvert_template_paths': self.nbconvert_template_paths,
                     'config': self.config
                 }
             ))
