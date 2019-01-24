@@ -9,6 +9,7 @@
 from zmq.eventloop import ioloop
 import os
 import shutil
+import signal
 import tempfile
 import logging
 import gettext
@@ -131,6 +132,10 @@ class Voila(Application):
         else:
             return getcwd()
 
+    def initialize(self, argv=None):
+        super(Voila, self).initialize(argv)
+        signal.signal(signal.SIGTERM, self._handle_signal_stop)
+
     def parse_command_line(self, argv=None):
         super(Voila, self).parse_command_line(argv)
         self.notebook_path = self.extra_args[0] if len(self.extra_args) == 1 else None
@@ -149,6 +154,10 @@ class Voila(Application):
             self.log.debug('static paths: %s', self.static_paths)
         if self.notebook_path and not os.path.exists(self.notebook_path):
             raise ValueError('Notebook not found: %s' % self.notebook_path)
+
+    def _handle_signal_stop(self, sig, frame):
+        self.log.info('Handle signal %s.' % sig)
+        self.ioloop.add_callback_from_signal(self.ioloop.stop)
 
     def start(self):
         self.connection_dir = tempfile.mkdtemp(
@@ -245,10 +254,15 @@ class Voila(Application):
         self.app.listen(self.port)
         self.log.info('Voila listening on port %s.' % self.port)
 
+        self.ioloop = tornado.ioloop.IOLoop.current()
         try:
-            tornado.ioloop.IOLoop.current().start()
+            self.ioloop.start()
+        except KeyboardInterrupt:
+            self.log.info('Stopping...')
         finally:
             shutil.rmtree(self.connection_dir)
+            kernel_manager.shutdown_all()
+            shutil.rmtree(connection_dir)
 
 
 main = Voila.launch_instance
