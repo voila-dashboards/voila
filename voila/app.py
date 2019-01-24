@@ -124,7 +124,7 @@ class Voila(Application):
 
     def _collect_template_paths(self, template_name):
         # we look at the usual jupyter locations, and for development purposes also
-        # relative to the package directory (with highest prio)
+        # relative to the package directory (with highest precedence)
         template_directories = \
             [os.path.abspath(os.path.join(ROOT, '..', 'share', 'jupyter', 'voila', 'template', template_name))] +\
             jupyter_path('voila', 'template', template_name)
@@ -158,7 +158,7 @@ class Voila(Application):
                                      dirname, extra_template_path)
                 self.template_paths.insert(0, extra_template_path)
 
-                # we don't look at multiple directories, once a directory with a given name is found at ar particular
+                # we don't look at multiple directories, once a directory with a given name is found at a particular
                 # location (for instance the user dir) don't look further (for instance sys.prefix)
                 break
 
