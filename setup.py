@@ -164,7 +164,7 @@ setup_args = {
         ]
     },
     'install_requires': [
-        'jupyter_server',
+        'jupyter_server>=0.0.3',
         'nbconvert>=5.4,<6'
     ],
     'author': 'QuantStack',
