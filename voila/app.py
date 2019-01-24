@@ -30,7 +30,10 @@ from jupyter_server.services.kernels.handlers import KernelHandler, ZMQChannelsH
 from jupyter_server.base.handlers import path_regex
 from jupyter_server.services.contents.largefilemanager import LargeFileManager
 from jupyter_server.utils import url_path_join
-from jupyter_core.paths import jupyter_path
+from jupyter_server.services.config import ConfigManager
+from jupyter_server.base.handlers import FileFindHandler
+from jupyter_core.paths import jupyter_config_path, jupyter_path
+
 from .paths import ROOT, STATIC_ROOT
 from .handler import VoilaHandler
 from .treehandler import VoilaTreeHandler
@@ -109,6 +112,20 @@ class Voila(Application):
     def _default_log_level(self):
         return logging.INFO
 
+    # similar to NotebookApp, except no extra path
+    @property
+    def nbextensions_path(self):
+        """The path to look for Javascript notebook extensions"""
+        path = jupyter_path('nbextensions')
+        # FIXME: remove IPython nbextensions path after a migration period
+        try:
+            from IPython.paths import get_ipython_dir
+        except ImportError:
+            pass
+        else:
+            path.append(os.path.join(get_ipython_dir(), 'nbextensions'))
+        return path
+
     def parse_command_line(self, argv=None):
         super(Voila, self).parse_command_line(argv)
         self.notebook_path = self.extra_args[0] if len(self.extra_args) == 1 else None
@@ -186,6 +203,11 @@ class Voila(Application):
         env.install_gettext_translations(nbui, newstyle=False)
         contents_manager = LargeFileManager()  # TODO: make this configurable like notebook
 
+        # we create a config manager that load both the serverconfig and nbconfig (classical notebook)
+        read_config_path = [os.path.join(p, 'serverconfig') for p in jupyter_config_path()]
+        read_config_path += [os.path.join(p, 'nbconfig') for p in jupyter_config_path()]
+        self.config_manager = ConfigManager(parent=self, read_config_path=read_config_path)
+
         webapp = tornado.web.Application(
             kernel_manager=kernel_manager,
             allow_remote_access=True,
@@ -194,7 +216,8 @@ class Voila(Application):
             jinja2_env=env,
             static_path='/',
             server_root_dir='/',
-            contents_manager=contents_manager
+            contents_manager=contents_manager,
+            config_manager=self.config_manager
         )
 
         base_url = webapp.settings.get('base_url', '/')
@@ -213,6 +236,18 @@ class Voila(Application):
                 }
             )
         ])
+
+        # this handler serves the nbextensions similar to the classical notebook
+        handlers.append(
+            (
+                url_path_join(base_url, r'/voila/nbextensions/(.*)'),
+                FileFindHandler,
+                {
+                    'path': self.nbextensions_path,
+                    'no_cache_paths': ['/'],  # don't cache anything in nbextensions
+                },
+            )
+        )
 
         if self.notebook_path:
             handlers.append((

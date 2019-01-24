@@ -35,13 +35,21 @@
 {% block footer %}
 {% block footer_js %}
 <script
-    data-main="{{resources.base_url}}voila/static/main"
-    data-jupyter-kernel-id="{{resources.kernel_id}}"
     src="{{resources.base_url}}voila/static/require.min.js"
     integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA="
     crossorigin="anonymous">
 </script>
-<script>requirejs.config({ baseUrl: '{{resources.base_url}}voila/static' })</script>
+<script>
+requirejs.config({ baseUrl: '{{resources.base_url}}voila/' })
+requirejs(
+    [
+        "static/main",
+    {% for ext in resources.nbextensions -%}
+        "{{resources.base_url}}voila/nbextensions/{{ ext }}.js",
+    {% endfor %}
+    ]
+)
+</script>
 
 {% endblock footer_js %}
 {{ super() }}

@@ -14,6 +14,7 @@ from jinja2 import Environment, FileSystemLoader
 
 from jupyter_server.utils import url_path_join
 from jupyter_server.base.handlers import path_regex
+from jupyter_server.base.handlers import FileFindHandler
 
 from .paths import ROOT, TEMPLATE_ROOT, STATIC_ROOT
 from .handler import VoilaHandler
@@ -37,5 +38,14 @@ def load_jupyter_server_extension(server_app):
         }),
         (url_path_join(base_url, '/voila'), VoilaTreeHandler),
         (url_path_join(base_url, '/voila/tree' + path_regex), VoilaTreeHandler),
-        (url_path_join(base_url, '/voila/static/(.*)'),  tornado.web.StaticFileHandler, {'path': STATIC_ROOT})
+        (url_path_join(base_url, '/voila/static/(.*)'),  tornado.web.StaticFileHandler, {'path': STATIC_ROOT}),
+        # this handler serves the nbextensions similar to the classical notebook
+        (
+            url_path_join(base_url, r'/voila/nbextensions/(.*)'),
+            FileFindHandler,
+            {
+                'path': web_app.settings['nbextensions_path'],
+                'no_cache_paths': ['/'],  # don't cache anything in nbextensions
+            },
+        )
     ])

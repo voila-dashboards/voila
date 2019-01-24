@@ -6,7 +6,7 @@
 * The full license is in the file LICENSE, distributed with this software. *
 ****************************************************************************/
 
-require(['libwidgets'], function(lib) {
+require(['static/libwidgets'], function(lib) {
     var widgetApp = new lib.WidgetApplication(lib.requireLoader);
 
     window.addEventListener('beforeunload', function (e) {

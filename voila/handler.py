@@ -30,6 +30,14 @@ class VoilaHandler(JupyterHandler):
         # if the handler got a notebook_path argument, always serve that
         notebook_path = self.notebook_path or path
 
+        # generate a list of nbextensions that are enabled for the classical notebook
+        # a template can use that to load classical notebook extensions, but does not have to
+        notebook_config = self.config_manager.get('notebook')
+        # except for the widget extension itself, since voila has its own
+        if "jupyter-js-widgets/extension" in notebook_config['load_extensions']:
+            notebook_config['load_extensions']["jupyter-js-widgets/extension"] = False
+        nbextensions = [name for name, enabled in notebook_config['load_extensions'].items() if enabled]
+
         model = self.contents_manager.get(path=notebook_path)
         if 'content' in model:
             notebook = model['content']
@@ -47,7 +55,8 @@ class VoilaHandler(JupyterHandler):
         # render notebook to html
         resources = {
             'kernel_id': kernel_id,
-            'base_url': self.base_url
+            'base_url': self.base_url,
+            'nbextensions': nbextensions
         }
 
         exporter = HTMLExporter(
