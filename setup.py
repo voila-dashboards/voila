@@ -130,6 +130,15 @@ version_ns = {}
 with open(os.path.join(here, 'voila', '_version.py')) as f:
     exec(f.read(), {}, version_ns)
 
+data_files = [
+    ('etc/jupyter/jupyter_server_config.d', ['etc/jupyter/jupyter_server_config.d/voila.json']),
+    ('etc/jupyter/jupyter_notebook_config.d', ['etc/jupyter/jupyter_notebook_config.d/voila.json'])
+]
+
+# Add all the templates
+for (dirpath, dirnames, filenames) in os.walk('share/jupyter/voila/template/'):
+    if filenames:
+        data_files.append((dirpath, [os.path.join(dirpath, filename) for filename in filenames]))
 
 setup_args = {
     'name': 'voila',
@@ -137,10 +146,7 @@ setup_args = {
     'description': 'Serving read-only live Jupyter notebooks',
     'packages': find_packages(),
     'zip_safe': False,
-    'data_files': [
-        ('etc/jupyter/jupyter_server_config.d', ['etc/jupyter/jupyter_server_config.d/voila.json']),
-        ('etc/jupyter/jupyter_notebook_config.d', ['etc/jupyter/jupyter_notebook_config.d/voila.json'])
-    ],
+    'data_files': data_files,
     'cmdclass': {
         'build_py': js_prerelease(build_py),
         'egg_info': js_prerelease(egg_info),
@@ -149,8 +155,6 @@ setup_args = {
     },
     'package_data': {
         'voila': [
-            'templates/*',
-            'nbconvert_templates/*',
             'static/*'
         ]
     },

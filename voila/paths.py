@@ -10,6 +10,4 @@ import os
 
 ROOT = os.path.dirname(__file__)
 STATIC_ROOT = os.path.join(ROOT, 'static')
-TEMPLATE_ROOT = os.path.join(ROOT, 'templates')
-NBCONVERT_TEMPLATE_ROOT = os.path.join(ROOT, 'nbconvert_templates')
 

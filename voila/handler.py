@@ -14,17 +14,13 @@ import nbformat
 from nbconvert.preprocessors.execute import executenb
 from nbconvert import HTMLExporter
 
-from .paths import NBCONVERT_TEMPLATE_ROOT
-
 
 class VoilaHandler(JupyterHandler):
-    def initialize(self, notebook_path=None, strip_sources=True, custom_template_path=None, config=None):
+    def initialize(self, notebook_path=None, strip_sources=True, nbconvert_template_paths=None, config=None):
         self.notebook_path = notebook_path
         self.strip_sources = strip_sources
-        self.template_path = [NBCONVERT_TEMPLATE_ROOT]
+        self.template_path = nbconvert_template_paths
         self.exporter_config = config
-        if custom_template_path:
-            self.template_path.insert(0, custom_template_path)
 
     @tornado.web.authenticated
     @tornado.gen.coroutine
