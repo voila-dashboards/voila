@@ -34,7 +34,7 @@ from jupyter_server.services.config import ConfigManager
 from jupyter_server.base.handlers import FileFindHandler
 from jupyter_core.paths import jupyter_config_path, jupyter_path
 
-from .paths import ROOT, STATIC_ROOT
+from .paths import ROOT, STATIC_ROOT, collect_template_paths
 from .handler import VoilaHandler
 from .treehandler import VoilaTreeHandler
 from ._version import __version__
@@ -133,51 +133,15 @@ class Voila(Application):
         self.template_paths = []
         self.static_paths = [self.static_root]
         if self.template:
-            self._collect_template_paths(self.template)
+            collect_template_paths(
+                self.nbconvert_template_paths,
+                self.static_paths,
+                self.template_paths,
+                self.template)
             self.log.debug('using template: %s', self.template)
             self.log.debug('nbconvert template paths: %s', self.nbconvert_template_paths)
             self.log.debug('template paths: %s', self.template_paths)
             self.log.debug('static paths: %s', self.static_paths)
-
-    def _collect_template_paths(self, template_name):
-        # we look at the usual jupyter locations, and for development purposes also
-        # relative to the package directory (with highest precedence)
-        template_directories = \
-            [os.path.abspath(os.path.join(ROOT, '..', 'share', 'jupyter', 'voila', 'template', template_name))] +\
-            jupyter_path('voila', 'template', template_name)
-        for dirname in template_directories:
-            if os.path.exists(dirname):
-                conf = {}
-                conf_file = os.path.join(dirname, 'conf.json')
-                if os.path.exists(conf_file):
-                    with open(conf_file) as f:
-                        conf = json.load(f)
-                # for templates that are not named default, we assume the default base_template is 'default'
-                # that means that even the default template could have a base_template when explicitly given
-                if template_name != 'default' or 'base_template' in conf:
-                    self._collect_template_paths(conf.get('base_template', 'default'))
-
-                extra_nbconvert_path = os.path.join(dirname, 'nbconvert_templates')
-                if not os.path.exists(extra_nbconvert_path):
-                    self.log.warning('template named %s found at path %r, but %s does not exist', self.template,
-                                     dirname, extra_nbconvert_path)
-                self.nbconvert_template_paths.insert(0, extra_nbconvert_path)
-
-                extra_static_path = os.path.join(dirname, 'static')
-                if not os.path.exists(extra_static_path):
-                    self.log.warning('template named %s found at path %r, but %s does not exist', self.template,
-                                     dirname, extra_static_path)
-                self.static_paths.insert(0, extra_static_path)
-
-                extra_template_path = os.path.join(dirname, 'templates')
-                if not os.path.exists(extra_template_path):
-                    self.log.warning('template named %s found at path %r, but %s does not exist', self.template,
-                                     dirname, extra_template_path)
-                self.template_paths.insert(0, extra_template_path)
-
-                # we don't look at multiple directories, once a directory with a given name is found at a particular
-                # location (for instance the user dir) don't look further (for instance sys.prefix)
-                break
 
     def start(self):
         connection_dir = tempfile.mkdtemp(

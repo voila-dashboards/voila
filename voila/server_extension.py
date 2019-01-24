@@ -9,22 +9,36 @@
 import os
 import gettext
 
-import tornado.web
 from jinja2 import Environment, FileSystemLoader
+
+from jupyter_core.paths import jupyter_path
 
 from jupyter_server.utils import url_path_join
 from jupyter_server.base.handlers import path_regex
 from jupyter_server.base.handlers import FileFindHandler
 
-from .paths import ROOT, TEMPLATE_ROOT, STATIC_ROOT
+from .paths import ROOT, STATIC_ROOT, collect_template_paths
 from .handler import VoilaHandler
 from .treehandler import VoilaTreeHandler
+from .static_file_handler import MultiStaticFileHandler
+
 
 def load_jupyter_server_extension(server_app):
     web_app = server_app.web_app
 
+    nbconvert_template_paths = []
+    static_paths = [STATIC_ROOT]
+    template_paths = []
+
+    collect_template_paths(
+        nbconvert_template_paths,
+        static_paths,
+        template_paths,
+        'default'
+    )
+
     jenv_opt = {"autoescape": True}
-    env = Environment(loader=FileSystemLoader(TEMPLATE_ROOT), extensions=['jinja2.ext.i18n'], **jenv_opt)
+    env = Environment(loader=FileSystemLoader(template_paths), extensions=['jinja2.ext.i18n'], **jenv_opt)
     web_app.settings['voila_jinja2_env'] = env
 
     nbui = gettext.translation('nbui', localedir=os.path.join(ROOT, 'i18n'), fallback=True)
@@ -34,11 +48,12 @@ def load_jupyter_server_extension(server_app):
     base_url = url_path_join(web_app.settings['base_url'])
     web_app.add_handlers(host_pattern, [
         (url_path_join(base_url, '/voila/render' + path_regex), VoilaHandler, {
-            'config': server_app.config
+            'config': server_app.config,
+            'nbconvert_template_paths': nbconvert_template_paths,
         }),
         (url_path_join(base_url, '/voila'), VoilaTreeHandler),
         (url_path_join(base_url, '/voila/tree' + path_regex), VoilaTreeHandler),
-        (url_path_join(base_url, '/voila/static/(.*)'),  tornado.web.StaticFileHandler, {'path': STATIC_ROOT}),
+        (url_path_join(base_url, '/voila/static/(.*)'),  MultiStaticFileHandler, {'paths': static_paths}),
         # this handler serves the nbextensions similar to the classical notebook
         (
             url_path_join(base_url, r'/voila/nbextensions/(.*)'),
