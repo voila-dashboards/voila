@@ -11,8 +11,10 @@ import tornado.web
 from jupyter_server.base.handlers import JupyterHandler
 
 import nbformat  # noqa: F401
+from jupyter_server.utils import url_path_join
 from nbconvert.preprocessors.execute import executenb
 from nbconvert import HTMLExporter
+from nbconvert.exporters import SlidesExporter
 
 from .paths import collect_template_paths
 
@@ -72,9 +74,11 @@ class VoilaHandler(JupyterHandler):
             'nbextensions': nbextensions
         }
 
-        exporter = HTMLExporter(
+
+        exporter = SlidesExporter( #HTMLExporter(
             template_file='voila.tpl',
             template_path=self.nbconvert_template_paths,
+            reveal_url_prefix=url_path_join(self.base_url, 'voila/static'),
             config=self.exporter_config
         )
 
