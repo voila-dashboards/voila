@@ -34,9 +34,12 @@ class VoilaHandler(JupyterHandler):
         # a template can use that to load classical notebook extensions, but does not have to
         notebook_config = self.config_manager.get('notebook')
         # except for the widget extension itself, since voila has its own
-        if "jupyter-js-widgets/extension" in notebook_config['load_extensions']:
-            notebook_config['load_extensions']["jupyter-js-widgets/extension"] = False
-        nbextensions = [name for name, enabled in notebook_config['load_extensions'].items() if enabled]
+        load_extensions = notebook_config.get('load_extensions', {})
+        if "jupyter-js-widgets/extension" in load_extensions:
+            load_extensions["jupyter-js-widgets/extension"] = False
+            nbextensions = [name for name, enabled in load_extensions.items() if enabled]
+        else:
+            nbextensions = []
 
         model = self.contents_manager.get(path=notebook_path)
         if 'content' in model:
