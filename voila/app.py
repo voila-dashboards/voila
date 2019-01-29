@@ -26,6 +26,7 @@ from jupyter_server.services.kernels.kernelmanager import MappingKernelManager
 from jupyter_server.services.kernels.handlers import KernelHandler, ZMQChannelsHandler
 from jupyter_server.base.handlers import path_regex
 from jupyter_server.services.contents.largefilemanager import LargeFileManager
+from jupyter_server.services.security.handlers import CSPReportHandler
 from jupyter_server.utils import url_path_join
 from jupyter_server.services.config import ConfigManager
 from jupyter_server.base.handlers import FileFindHandler
@@ -259,6 +260,7 @@ class Voila(Application):
         handlers.extend([
             (url_path_join(base_url, r'/api/kernels/%s' % _kernel_id_regex), KernelHandler),
             (url_path_join(base_url, r'/api/kernels/%s/channels' % _kernel_id_regex), ZMQChannelsHandler),
+            (url_path_join(base_url, r'/api/security/csp-report'), CSPReportHandler),
             (
                 url_path_join(base_url, r'/voila/static/(.*)'),
                 MultiStaticFileHandler,
