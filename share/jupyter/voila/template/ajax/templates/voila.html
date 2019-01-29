@@ -1,0 +1,98 @@
+{% set nb_title = nb.metadata.get('title', '') or resources['metadata']['name'] %}
+{%- block header -%}
+
+<!DOCTYPE html>
+<html>
+<head>
+{%- block html_head -%}
+    <meta charset="utf-8" />
+    <title>Voila: {{nb_title}}</title>
+
+    <link rel="stylesheet" href="https://unpkg.com/font-awesome@4.5.0/css/font-awesome.min.css" type="text/css" />
+
+    {%- block html_head_js -%}
+
+    <script src="{{server_root}}voila/static/jquery.min.js"></script>
+
+    <script id="jupyter-config-data" type="application/json">
+    {
+        "baseUrl": "{{server_root}}",
+        "kernelId": "not-set"
+    }
+    </script>
+
+    <!-- Load mathjax -->
+    <!-- MathJax configuration -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS_HTML"></script>
+    <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+            displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+            processEscapes: true,
+            processEnvironments: true
+        },
+        // Center justify equations in code and markdown cells. Elsewhere
+        // we use CSS to left justify single line equations in code cells.
+        displayAlign: 'center',
+        "HTML-CSS": {
+            styles: {'.MathJax_Display': {"margin": 0}},
+            linebreaks: { automatic: true }
+        }
+    });
+    </script>    
+
+    {%- endblock html_head_js -%}
+
+
+    {%- block html_head_css -%}
+    {%- endblock html_head_css -%}
+{%- endblock html_head -%}
+</head>
+{%- endblock header -%}
+
+{% block body %}
+<body>
+    <h1>
+        Notebook: {{nb_title}}
+    </h1>
+  <div id="notebook_content">
+      <h2>Loading... <i class="fa fa-spinner fa-spin" style="font-size:48px;"></i></h2>
+  </div>
+</body>
+{%- endblock body %}
+
+
+
+{% block footer %}
+{% block footer_js %}
+<script
+    src="{{server_root}}voila/static/require.min.js"
+    integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA="
+    crossorigin="anonymous">
+</script>
+<script>
+requirejs.config({ baseUrl: '{{server_root}}voila/' })
+// load notebook content using ajax
+var xhttp = new XMLHttpRequest();
+xhttp.onreadystatechange = function() {
+    if (this.readyState == 4 && this.status == 200) {
+        document.getElementById("notebook_content").innerHTML = this.responseText;
+        var el = document.getElementById("notebook_content");
+        var scripts = Array.prototype.slice.call(el.getElementsByTagName('script'))
+        scripts.forEach((element, index)  => {
+            var type = element.getAttribute('type')
+            if(type == 'text/javascript' || type == null) {
+                eval(element.innerHTML);
+            }
+        })
+        MathJax.Hub.Queue(["Typeset", MathJax.Hub, el]);
+    }
+};
+xhttp.open("GET", "{{server_root}}{{path}}?phase=1", true);
+xhttp.send()
+</script>
+
+{% endblock footer_js %}
+</html>
+{% endblock footer %}

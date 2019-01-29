@@ -143,8 +143,10 @@ class Voila(Application):
         self.nbconvert_template_paths = []
         self.template_paths = []
         self.static_paths = [self.static_root]
+        self.template_config = {}
         if self.template:
             collect_template_paths(
+                self.template_config,
                 self.nbconvert_template_paths,
                 self.static_paths,
                 self.template_paths,
@@ -234,7 +236,8 @@ class Voila(Application):
                     'notebook_path': os.path.relpath(self.notebook_path, self.root_dir),
                     'strip_sources': self.strip_sources,
                     'nbconvert_template_paths': self.nbconvert_template_paths,
-                    'config': self.config
+                    'config': self.config,
+                    'template_config': self.template_config
                 }
             ))
         else:

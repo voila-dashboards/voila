@@ -8,11 +8,12 @@
 
 import os
 from jupyter_core.paths import jupyter_path
+import json
 
 ROOT = os.path.dirname(__file__)
 STATIC_ROOT = os.path.join(ROOT, 'static')
 
-def collect_template_paths(
+def collect_template_paths(config,
        nbconvert_template_paths,
        static_paths,
        template_paths,
@@ -25,20 +26,22 @@ def collect_template_paths(
 
     for dirname in template_directories:
         if os.path.exists(dirname):
-            conf = {}
+            config_current = {}
             conf_file = os.path.join(dirname, 'conf.json')
             if os.path.exists(conf_file):
                 with open(conf_file) as f:
-                    conf = json.load(f)
+                    config_current = json.load(f)
 
             # For templates that are not named 'default', we assume the default base_template is 'default'
             # that means that even the default template could have a base_template when explicitly given.
-            if template_name != 'default' or 'base_template' in conf:
+            if template_name != 'default' or 'base_template' in config_current:
                 collect_template_paths(
+                    config,
                     nbconvert_template_paths,
                     static_paths,
                     template_paths,
-                    conf.get('base_template', 'default'))
+                    config_current.get('base_template', 'default'))
+                config.update(config_current)
 
             extra_nbconvert_path = os.path.join(dirname, 'nbconvert_templates')
             #if not os.path.exists(extra_nbconvert_path):
