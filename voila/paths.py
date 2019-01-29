@@ -62,5 +62,3 @@ def collect_template_paths(
             # given level of precedence (for instance user directory), we don't look further (for instance
             # in sys.prefix)
             break
-
-    return nbconvert_template_paths, static_paths, template_paths
