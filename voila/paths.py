@@ -7,10 +7,12 @@
 #############################################################################
 
 import os
+import json
 from jupyter_core.paths import jupyter_path
 
 ROOT = os.path.dirname(__file__)
 STATIC_ROOT = os.path.join(ROOT, 'static')
+
 
 def collect_template_paths(
        nbconvert_template_paths,
@@ -41,19 +43,19 @@ def collect_template_paths(
                     conf.get('base_template', 'default'))
 
             extra_nbconvert_path = os.path.join(dirname, 'nbconvert_templates')
-            #if not os.path.exists(extra_nbconvert_path):
+            # if not os.path.exists(extra_nbconvert_path):
             #    log.warning('template named %s found at path %r, but %s does not exist', template_name,
             #                dirname, extra_nbconvert_path)
             nbconvert_template_paths.insert(0, extra_nbconvert_path)
 
             extra_static_path = os.path.join(dirname, 'static')
-            #if not os.path.exists(extra_static_path):
+            # if not os.path.exists(extra_static_path):
             #    log.warning('template named %s found at path %r, but %s does not exist', template_name,
             #                dirname, extra_static_path)
             static_paths.insert(0, extra_static_path)
 
             extra_template_path = os.path.join(dirname, 'templates')
-            #if not os.path.exists(extra_template_path):
+            # if not os.path.exists(extra_template_path):
             #    log.warning('template named %s found at path %r, but %s does not exist', template_name,
             #                dirname, extra_template_path)
             template_paths.insert(0, extra_template_path)

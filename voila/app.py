@@ -7,13 +7,9 @@
 #############################################################################
 
 from zmq.eventloop import ioloop
-
-ioloop.install()
-
 import os
 import shutil
 import tempfile
-import json
 import logging
 import gettext
 
@@ -41,6 +37,7 @@ from .treehandler import VoilaTreeHandler
 from ._version import __version__
 from .static_file_handler import MultiStaticFileHandler
 
+ioloop.install()
 _kernel_id_regex = r"(?P<kernel_id>\w+-\w+-\w+-\w+-\w+)"
 
 
@@ -72,9 +69,7 @@ class Voila(Application):
         config=True,
         help='Will autoreload to server and the page when a template, js file or Python code changes'
     )
-    root_dir = Unicode(config=True,
-        help="The directory to use for notebooks."
-    )
+    root_dir = Unicode(config=True, help="The directory to use for notebooks.")
     static_root = Unicode(
         STATIC_ROOT,
         config=True,
@@ -254,5 +249,6 @@ class Voila(Application):
             tornado.ioloop.IOLoop.current().start()
         finally:
             shutil.rmtree(self.connection_dir)
+
 
 main = Voila.launch_instance

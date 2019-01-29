@@ -11,8 +11,6 @@ import gettext
 
 from jinja2 import Environment, FileSystemLoader
 
-from jupyter_core.paths import jupyter_path
-
 from jupyter_server.utils import url_path_join
 from jupyter_server.base.handlers import path_regex
 from jupyter_server.base.handlers import FileFindHandler

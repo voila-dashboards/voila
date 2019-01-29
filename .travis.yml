@@ -17,9 +17,11 @@ before_install:
   - conda config --set always_yes yes --set changeps1 no
   - conda update -q conda
   - conda info -a
-  - conda create -q -n test-environment -c conda-forge python=$PYTHON_VERSION jupyter_server pytest==3.10.1 pytest-cov nodejs
+  - conda create -q -n test-environment -c conda-forge python=$PYTHON_VERSION jupyter_server pytest==3.10.1 pytest-cov nodejs flake8
   - source activate test-environment
 install:
   - pip install ".[test]"
+before_script:
+  - flake8 voila
 script:
   - py.test tests/

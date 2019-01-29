@@ -10,7 +10,7 @@ import tornado.web
 
 from jupyter_server.base.handlers import JupyterHandler
 
-import nbformat
+import nbformat  # noqa: F401
 from nbconvert.preprocessors.execute import executenb
 from nbconvert import HTMLExporter
 
@@ -87,4 +87,3 @@ class VoilaHandler(JupyterHandler):
         # Compose reply
         self.set_header('Content-Type', 'text/html')
         self.write(html)
-

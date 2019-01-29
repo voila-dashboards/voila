@@ -5,7 +5,7 @@ import tornado.web
 
 class MultiStaticFileHandler(tornado.web.StaticFileHandler):
     """A static file handler that 'merges' a list of directories
-    
+
     If initialized like this::
 
         application = web.Application([
