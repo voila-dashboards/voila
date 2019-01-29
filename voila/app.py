@@ -103,8 +103,7 @@ class Voila(Application):
 
     @default('connection_dir_root')
     def _default_connection_dir(self):
-        return tempfile.gettempdir()
-        connection_dir = tempfile.mkdtemp()
+        connection_dir = tempfile.gettempdir()
         self.log.info('Using %s to store connection files' % connection_dir)
         return connection_dir
 
