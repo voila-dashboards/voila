@@ -23,8 +23,8 @@ class VoilaTreeHandler(JupyterHandler):
         for i in range(len(parts)):
             if parts[i]:
                 link = url_path_join(self.base_url, 'voila/tree',
-                    url_escape(url_path_join(*parts[:i + 1])),
-                )
+                                     url_escape(url_path_join(*parts[:i + 1])),
+                                     )
                 breadcrumbs.append((link, parts[i]))
         return breadcrumbs
 
@@ -49,13 +49,12 @@ class VoilaTreeHandler(JupyterHandler):
             page_title = self.generate_page_title(path)
             contents = cm.get(path)
             self.write(self.render_template('tree.html',
-                page_title=page_title,
-                notebook_path=path,
-                breadcrumbs=breadcrumbs,
-                contents=contents,
-                terminals_available=False,
-                server_root=self.settings['server_root_dir'],
-            ))
+                       page_title=page_title,
+                       notebook_path=path,
+                       breadcrumbs=breadcrumbs,
+                       contents=contents,
+                       terminals_available=False,
+                       server_root=self.settings['server_root_dir']))
         elif cm.file_exists(path):
             # it's not a directory, we have redirecting to do
             model = cm.get(path, content=False)
