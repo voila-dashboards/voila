@@ -40,7 +40,7 @@
     crossorigin="anonymous">
 </script>
 <script>
-requirejs.config({ baseUrl: '{{resources.base_url}}voila/' })
+requirejs.config({ baseUrl: '{{resources.base_url}}voila/', waitSeconds: 30})
 requirejs(
     [
         "static/main",
