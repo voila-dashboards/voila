@@ -33,6 +33,7 @@ from jupyter_server.utils import url_path_join
 from jupyter_server.services.config import ConfigManager
 from jupyter_server.base.handlers import FileFindHandler
 from jupyter_core.paths import jupyter_config_path, jupyter_path
+from ipython_genutils.py3compat import getcwd
 
 from .paths import ROOT, STATIC_ROOT, collect_template_paths
 from .handler import VoilaHandler
@@ -70,6 +71,9 @@ class Voila(Application):
         False,
         config=True,
         help='Will autoreload to server and the page when a template, js file or Python code changes'
+    )
+    root_dir = Unicode(config=True,
+        help="The directory to use for notebooks."
     )
     static_root = Unicode(
         STATIC_ROOT,
@@ -126,6 +130,13 @@ class Voila(Application):
             path.append(os.path.join(get_ipython_dir(), 'nbextensions'))
         return path
 
+    @default('root_dir')
+    def _default_root_dir(self):
+        if self.notebook_path:
+            return os.path.dirname(os.path.abspath(self.notebook_path))
+        else:
+            return getcwd()
+
     def parse_command_line(self, argv=None):
         super(Voila, self).parse_command_line(argv)
         self.notebook_path = self.extra_args[0] if len(self.extra_args) == 1 else None
@@ -142,17 +153,19 @@ class Voila(Application):
             self.log.debug('nbconvert template paths: %s', self.nbconvert_template_paths)
             self.log.debug('template paths: %s', self.template_paths)
             self.log.debug('static paths: %s', self.static_paths)
+        if self.notebook_path and not os.path.exists(self.notebook_path):
+            raise ValueError('Notebook not found: %s' % self.notebook_path)
 
     def start(self):
-        connection_dir = tempfile.mkdtemp(
+        self.connection_dir = tempfile.mkdtemp(
             prefix='voila_',
             dir=self.connection_dir_root
         )
-        self.log.info('Storing connection files in %s.' % connection_dir)
+        self.log.info('Storing connection files in %s.' % self.connection_dir)
         self.log.info('Serving static files from %s.' % self.static_root)
 
         kernel_manager = MappingKernelManager(
-            connection_dir=connection_dir,
+            connection_dir=self.connection_dir,
             allowed_message_types=[
                 'comm_msg',
                 'comm_info_request',
@@ -165,14 +178,14 @@ class Voila(Application):
         env = jinja2.Environment(loader=jinja2.FileSystemLoader(self.template_paths), extensions=['jinja2.ext.i18n'], **jenv_opt)
         nbui = gettext.translation('nbui', localedir=os.path.join(ROOT, 'i18n'), fallback=True)
         env.install_gettext_translations(nbui, newstyle=False)
-        contents_manager = LargeFileManager()  # TODO: make this configurable like notebook
+        contents_manager = LargeFileManager(parent=self)  # TODO: make this configurable like notebook
 
         # we create a config manager that load both the serverconfig and nbconfig (classical notebook)
         read_config_path = [os.path.join(p, 'serverconfig') for p in jupyter_config_path()]
         read_config_path += [os.path.join(p, 'nbconfig') for p in jupyter_config_path()]
         self.config_manager = ConfigManager(parent=self, read_config_path=read_config_path)
 
-        webapp = tornado.web.Application(
+        self.app = tornado.web.Application(
             kernel_manager=kernel_manager,
             allow_remote_access=True,
             autoreload=self.autoreload,
@@ -184,7 +197,7 @@ class Voila(Application):
             config_manager=self.config_manager
         )
 
-        base_url = webapp.settings.get('base_url', '/')
+        base_url = self.app.settings.get('base_url', '/')
 
         handlers = []
 
@@ -218,7 +231,7 @@ class Voila(Application):
                 url_path_join(base_url, r'/'),
                 VoilaHandler,
                 {
-                    'notebook_path': self.notebook_path,
+                    'notebook_path': os.path.relpath(self.notebook_path, self.root_dir),
                     'strip_sources': self.strip_sources,
                     'nbconvert_template_paths': self.nbconvert_template_paths,
                     'config': self.config
@@ -231,14 +244,16 @@ class Voila(Application):
                 (url_path_join(base_url, r'/voila/render' + path_regex), VoilaHandler, {'strip_sources': self.strip_sources}),
             ])
 
-        webapp.add_handlers('.*$', handlers)
+        self.app.add_handlers('.*$', handlers)
+        self.listen()
 
-        webapp.listen(self.port)
+    def listen(self):
+        self.app.listen(self.port)
         self.log.info('Voila listening on port %s.' % self.port)
 
         try:
             tornado.ioloop.IOLoop.current().start()
         finally:
-            shutil.rmtree(connection_dir)
+            shutil.rmtree(self.connection_dir)
 
 main = Voila.launch_instance
