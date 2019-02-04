@@ -24,3 +24,4 @@ require(['static/libwidgets'], function(lib) {
         );
     }
 });
+
