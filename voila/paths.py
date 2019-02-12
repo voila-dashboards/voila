@@ -17,9 +17,24 @@ STATIC_ROOT = os.path.join(ROOT, 'static')
 def collect_template_paths(
        nbconvert_template_paths,
        static_paths,
-       template_paths,
+       tornado_template_paths,
        template_name='default'):
-    # we look at the usual jupyter locations, and for development purposes also
+    """
+    Voila supports custom templates for rendering notebooks.
+
+    For a specified template name, `collect_template_paths` collects
+        - nbconvert template paths,
+        - static paths,
+        - tornado template paths,
+    by looking in the standard Jupyter data directories (PREFIX/share/jupyter/voila/template)
+    with different prefix values (user directory, sys prefix, and then system prefix) which
+    allows users to override templates locally.
+
+    The function will recursively load the base templates upon which the specified template
+    may be based.
+    """
+
+    # We look at the usual jupyter locations, and for development purposes also
     # relative to the package directory (with highest precedence)
     template_directories = \
         [os.path.abspath(os.path.join(ROOT, '..', 'share', 'jupyter', 'voila', 'template', template_name))] +\
@@ -39,7 +54,7 @@ def collect_template_paths(
                 collect_template_paths(
                     nbconvert_template_paths,
                     static_paths,
-                    template_paths,
+                    tornado_template_paths,
                     conf.get('base_template', 'default'))
 
             extra_nbconvert_path = os.path.join(dirname, 'nbconvert_templates')
@@ -58,7 +73,7 @@ def collect_template_paths(
             # if not os.path.exists(extra_template_path):
             #    log.warning('template named %s found at path %r, but %s does not exist', template_name,
             #                dirname, extra_template_path)
-            template_paths.insert(0, extra_template_path)
+            tornado_template_paths.insert(0, extra_template_path)
 
             # We don't look at multiple directories, once a directory with a given name is found at a
             # given level of precedence (for instance user directory), we don't look further (for instance
