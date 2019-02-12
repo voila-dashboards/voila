@@ -7,10 +7,10 @@
 ****************************************************************************/
 
 import { RenderMimeRegistry, standardRendererFactories } from '@jupyterlab/rendermime';
-import { WidgetManager as JupyterLabManager } from '@jupyter-widgets/jupyterlab-manager/lib/manager';
 import { HTMLManager, requireLoader } from '@jupyter-widgets/html-manager';
-import { WidgetRenderer } from '@jupyter-widgets/jupyterlab-manager/lib/renderer';
-import * as output from '@jupyter-widgets/jupyterlab-manager/lib/output';
+import { WidgetManager as JupyterLabManager } from '@jupyter-widgets/jupyterlab-manager';
+import { WidgetRenderer } from '@jupyter-widgets/jupyterlab-manager';
+import { output } from '@jupyter-widgets/jupyterlab-manager';
 import * as base from '@jupyter-widgets/base';
 import * as controls from '@jupyter-widgets/controls';
 
