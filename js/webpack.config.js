@@ -2,15 +2,7 @@
 var path = require('path');
 var postcss = require('postcss');
 
-var loaders = [
-    { test: /\.js$/, loader: 'babel-loader', query: {
-        presets: [
-          'babel-preset-es2015',
-          'babel-preset-stage-0',
-        ].map(require.resolve),
-    },
-    exclude: /node_modules(?!(\/|\\)@jupyter-widgets(\/|\\)jupyterlab-manager)/
-},
+var rules = [
     { test: /\.css$/, use: [
         'style-loader',
         'css-loader',
@@ -42,13 +34,13 @@ var distRoot = path.resolve(__dirname, '..', 'voila', 'static')
 
 module.exports = [
     {
-        entry: ['babel-polyfill', './index.js'],
+        entry: ['./lib/index.js'],
         output: {
             filename: 'libwidgets.js',
             path: distRoot,
             libraryTarget: 'amd'
         },
-        module: { loaders: loaders },
+        module: { rules: rules },
         devtool: 'source-map'
     }
 ]

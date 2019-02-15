@@ -13,7 +13,7 @@ import { WidgetManager } from './manager';
 
 import 'font-awesome/css/font-awesome.css'
 import '@phosphor/widgets/style/index.css'
-import './widgets.css'
+import '../css/widgets.css'
 
 export class WidgetApplication {
 

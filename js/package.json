@@ -2,8 +2,9 @@
   "name": "@QuantStack/voila",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "lib/index.js",
   "dependencies": {
+    "@babel/polyfill": "^7.2.5",
     "@jupyter-widgets/base": "^1.2.2",
     "@jupyter-widgets/controls": "^1.4.2",
     "@jupyter-widgets/html-manager": "^0.15.2",
@@ -18,30 +19,29 @@
     "font-awesome": "^4.7.0"
   },
   "devDependencies": {
-    "babel-cli": "^6.26.0",
-    "babel-loader": "^7.1.2",
-    "babel-preset-es2015": "^6.24.1",
-    "babel-preset-stage-0": "^6.24.1",
+    "@babel/cli": "^7.2.3",
+    "@babel/core": "^7.2.2",
+    "@babel/preset-env": "^7.3.1",
+    "babel-loader": "^8.0.5",
     "css-loader": "^0.28.7",
     "file-loader": "^1.1.5",
+    "npm-run-all": "^4.1.5",
     "postcss": "^6.0.11",
     "postcss-cssnext": "^3.0.2",
     "postcss-import": "^10.0.0",
     "postcss-loader": "^2.0.6",
     "style-loader": "^0.18.2",
     "url-loader": "^0.6.2",
-    "webpack": "^3.6.0"
+    "webpack": "^4.29.3",
+    "webpack-cli": "^3.2.3"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "webpack",
-    "build:watch": "webpack --watch"
-  },
-  "babel": {
-    "presets": [
-      "es2015",
-      "stage-0"
-    ]
+    "prepare": "npm run build:lib && webpack",
+    "build:lib": "babel src --out-dir lib",
+    "watch": "npm-run-all -p watch:*",
+    "watch:lib": "babel src --out-dir lib --watch",
+    "watch:bundle": "webpack --watch --mode=development"
   },
   "author": "",
   "license": "ISC"
