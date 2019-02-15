@@ -7,7 +7,7 @@
 ****************************************************************************/
 
 import { RenderMimeRegistry, standardRendererFactories } from '@jupyterlab/rendermime';
-import { HTMLManager, requireLoader } from '@jupyter-widgets/html-manager';
+import { requireLoader } from '@jupyter-widgets/html-manager';
 import { WidgetManager as JupyterLabManager } from '@jupyter-widgets/jupyterlab-manager';
 import { WidgetRenderer } from '@jupyter-widgets/jupyterlab-manager';
 import { output } from '@jupyter-widgets/jupyterlab-manager';
@@ -21,7 +21,6 @@ if (typeof window !== "undefined" && typeof window.define !== "undefined") {
   }
 
 const WIDGET_MIMETYPE = 'application/vnd.jupyter.widget-view+json';
-const htmlManager = new HTMLManager({ loader: requireLoader });
 
 export class WidgetManager extends JupyterLabManager {
 
@@ -58,7 +57,15 @@ export class WidgetManager extends JupyterLabManager {
             return super.loadClass(className, moduleName, moduleVersion);
         }
         else {
-            return htmlManager.loadClass(className, moduleName, moduleVersion);
+            // TODO: code duplicate from HTMLWidgetManager, consider a refactor
+            return this.loader(moduleName, moduleVersion).then((module) => {
+                if (module[className]) {
+                    return module[className];
+                }
+                else {
+                    return Promise.reject("Class " + className + " not found in module " + moduleName + "@" + moduleVersion);
+                }
+            })
         }
     }
 
