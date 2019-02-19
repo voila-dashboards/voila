@@ -107,13 +107,6 @@ class NPM(Command):
                 stdout=sys.stdout,
                 stderr=sys.stderr
             )
-            log.info('Building JS dependencies.')
-            check_call(
-                ['npm', 'run', 'build'],
-                cwd=node_root,
-                stdout=sys.stdout,
-                stderr=sys.stderr
-            )
             os.utime(self.node_modules, None)
 
         for t in self.targets:

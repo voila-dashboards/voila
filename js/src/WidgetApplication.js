@@ -8,27 +8,26 @@
 
 import { Kernel, ServerConnection } from '@jupyterlab/services'
 import { PageConfig } from '@jupyterlab/coreutils';
-import { WidgetManager } from './manager'
+
+import { WidgetManager } from './manager';
 
 import 'font-awesome/css/font-awesome.css'
 import '@phosphor/widgets/style/index.css'
-import './widgets.css'
+import '../css/widgets.css'
 
 export class WidgetApplication {
-    constructor (loader) {
-        this._loader = loader;
-    }
 
     async renderWidgets() {
         const baseUrl = PageConfig.getBaseUrl();
         const kernelId = PageConfig.getOption('kernelId');
-        const connectionInfo = ServerConnection.makeSettings({baseUrl});
+        const connectionInfo = ServerConnection.makeSettings({ baseUrl });
 
         let model = await Kernel.findById(kernelId, connectionInfo);
         let kernel = await Kernel.connectTo(model, connectionInfo);
         this._kernel = kernel;
 
-        const manager = new WidgetManager(kernel, this._loader);
+        const widgetManager = new WidgetManager(kernel);
+        widgetManager.build_widgets();
     }
 
     async cleanWidgets() {

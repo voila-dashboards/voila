@@ -7,7 +7,7 @@
 ****************************************************************************/
 
 require(['static/libwidgets'], function(lib) {
-    var widgetApp = new lib.WidgetApplication(lib.requireLoader);
+    var widgetApp = new lib.WidgetApplication();
 
     window.addEventListener('beforeunload', function (e) {
         widgetApp.cleanWidgets();
@@ -24,3 +24,4 @@ require(['static/libwidgets'], function(lib) {
         );
     }
 });
+
