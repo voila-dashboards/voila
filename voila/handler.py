@@ -21,6 +21,7 @@ class VoilaHandler(JupyterHandler):
         self.notebook_path = kwargs.pop('notebook_path', [])    # should it be []
         self.strip_sources = kwargs.pop('strip_sources', True)
         self.nbconvert_template_paths = kwargs.pop('nbconvert_template_paths', [])
+        self.template_name = kwargs.pop('template_name', 'default')
         self.exporter_config = kwargs.pop('config', None)
 
     @tornado.web.authenticated

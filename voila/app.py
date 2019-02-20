@@ -20,7 +20,7 @@ import tornado.ioloop
 import tornado.web
 
 from traitlets.config.application import Application
-from traitlets import Unicode, Integer, Bool, List, default
+from traitlets import Unicode, Integer, Bool, Dict, List, default
 
 from jupyter_server.services.kernels.kernelmanager import MappingKernelManager
 from jupyter_server.services.kernels.handlers import KernelHandler, ZMQChannelsHandler
@@ -135,6 +135,15 @@ class Voila(Application):
     )
 
     config_file_paths = List(Unicode(), config=True, help='Paths to search for voila.(py|json)')
+
+    tornado_settings = Dict(
+        {},
+        config=True,
+        help=(
+            'Extra settings to apply to tornado application, e.g. headers, ssl, etc'
+        )
+    )
+
     @default('config_file_paths')
     def _config_file_paths_default(self):
         return [os.getcwd()] + jupyter_config_path()
@@ -243,6 +252,7 @@ class Voila(Application):
         )
 
         base_url = self.app.settings.get('base_url', '/')
+        self.app.settings.update(self.tornado_settings)
 
         handlers = []
 
@@ -279,6 +289,7 @@ class Voila(Application):
                     'notebook_path': os.path.relpath(self.notebook_path, self.root_dir),
                     'strip_sources': self.strip_sources,
                     'nbconvert_template_paths': self.nbconvert_template_paths,
+                    'template_name': self.template,
                     'config': self.config
                 }
             ))
