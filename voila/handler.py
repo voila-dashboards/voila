@@ -10,17 +10,27 @@ import tornado.web
 
 from jupyter_server.base.handlers import JupyterHandler
 
-import nbformat
+import nbformat  # noqa: F401
 from nbconvert.preprocessors.execute import executenb
 from nbconvert import HTMLExporter
 
+from .paths import collect_template_paths
+
 
 class VoilaHandler(JupyterHandler):
-    def initialize(self, notebook_path=None, strip_sources=True, nbconvert_template_paths=None, config=None):
-        self.notebook_path = notebook_path
-        self.strip_sources = strip_sources
-        self.template_path = nbconvert_template_paths
-        self.exporter_config = config
+
+    def initialize(self, **kwargs):
+        self.notebook_path = kwargs.pop('notebook_path', [])    # should it be []
+        self.strip_sources = kwargs.pop('strip_sources', True)
+        self.nbconvert_template_paths = kwargs.pop('nbconvert_template_paths', [])
+        self.exporter_config = kwargs.pop('config', None)
+
+        collect_template_paths(
+            self.nbconvert_template_paths,
+            [],  # static_paths,
+            [],  # tornado templates,
+            'default'
+        )
 
     @tornado.web.authenticated
     @tornado.gen.coroutine
@@ -34,9 +44,12 @@ class VoilaHandler(JupyterHandler):
         # a template can use that to load classical notebook extensions, but does not have to
         notebook_config = self.config_manager.get('notebook')
         # except for the widget extension itself, since voila has its own
-        if "jupyter-js-widgets/extension" in notebook_config['load_extensions']:
-            notebook_config['load_extensions']["jupyter-js-widgets/extension"] = False
-        nbextensions = [name for name, enabled in notebook_config['load_extensions'].items() if enabled]
+        load_extensions = notebook_config.get('load_extensions', {})
+        if "jupyter-js-widgets/extension" in load_extensions:
+            load_extensions["jupyter-js-widgets/extension"] = False
+            nbextensions = [name for name, enabled in load_extensions.items() if enabled]
+        else:
+            nbextensions = []
 
         model = self.contents_manager.get(path=notebook_path)
         if 'content' in model:
@@ -61,7 +74,7 @@ class VoilaHandler(JupyterHandler):
 
         exporter = HTMLExporter(
             template_file='voila.tpl',
-            template_path=self.template_path,
+            template_path=self.nbconvert_template_paths,
             config=self.exporter_config
         )
 
@@ -84,4 +97,3 @@ class VoilaHandler(JupyterHandler):
         # Compose reply
         self.set_header('Content-Type', 'text/html')
         self.write(html)
-

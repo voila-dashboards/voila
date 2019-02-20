@@ -107,13 +107,6 @@ class NPM(Command):
                 stdout=sys.stdout,
                 stderr=sys.stderr
             )
-            log.info('Building JS dependencies.')
-            check_call(
-                ['npm', 'run', 'build'],
-                cwd=node_root,
-                stdout=sys.stdout,
-                stderr=sys.stderr
-            )
             os.utime(self.node_modules, None)
 
         for t in self.targets:
@@ -167,6 +160,9 @@ setup_args = {
         'jupyter_server>=0.0.3',
         'nbconvert>=5.4,<6'
     ],
+    'extras_require': {
+        'test': ['mock', 'pytest<4', 'pytest-tornado5']
+    },
     'author': 'QuantStack',
     'author_email': 'info@quantstack.net',
     'keywords': [
