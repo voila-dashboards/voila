@@ -167,7 +167,7 @@ class Voila(Application):
         self.log.info('Storing connection files in %s.' % self.connection_dir)
         self.log.info('Serving static files from %s.' % self.static_root)
 
-        kernel_manager = MappingKernelManager(
+        self.kernel_manager = MappingKernelManager(
             connection_dir=self.connection_dir,
             allowed_message_types=[
                 'comm_msg',
@@ -189,7 +189,7 @@ class Voila(Application):
         self.config_manager = ConfigManager(parent=self, read_config_path=read_config_path)
 
         self.app = tornado.web.Application(
-            kernel_manager=kernel_manager,
+            kernel_manager=self.kernel_manager,
             allow_remote_access=True,
             autoreload=self.autoreload,
             voila_jinja2_env=env,
@@ -261,8 +261,7 @@ class Voila(Application):
             self.log.info('Stopping...')
         finally:
             shutil.rmtree(self.connection_dir)
-            kernel_manager.shutdown_all()
-            shutil.rmtree(connection_dir)
+            self.kernel_manager.shutdown_all()
 
 
 main = Voila.launch_instance
