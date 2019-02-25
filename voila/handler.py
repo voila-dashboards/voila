@@ -27,12 +27,6 @@ class VoilaHandler(JupyterHandler):
         self.nbconvert_template_paths = kwargs.pop('nbconvert_template_paths', [])
         self.exporter_config = kwargs.pop('config', None)
 
-        collect_template_paths(
-            self.nbconvert_template_paths,
-            [],  # static_paths,
-            [],  # tornado templates,
-            'default'
-        )
 
     @tornado.web.authenticated
     @tornado.gen.coroutine
