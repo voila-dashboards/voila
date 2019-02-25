@@ -9,6 +9,7 @@
 from zmq.eventloop import ioloop
 import os
 import shutil
+import signal
 import tempfile
 import logging
 import gettext
@@ -131,6 +132,10 @@ class Voila(Application):
         else:
             return getcwd()
 
+    def initialize(self, argv=None):
+        super(Voila, self).initialize(argv)
+        signal.signal(signal.SIGTERM, self._handle_signal_stop)
+
     def parse_command_line(self, argv=None):
         super(Voila, self).parse_command_line(argv)
         self.notebook_path = self.extra_args[0] if len(self.extra_args) == 1 else None
@@ -150,6 +155,10 @@ class Voila(Application):
         if self.notebook_path and not os.path.exists(self.notebook_path):
             raise ValueError('Notebook not found: %s' % self.notebook_path)
 
+    def _handle_signal_stop(self, sig, frame):
+        self.log.info('Handle signal %s.' % sig)
+        self.ioloop.add_callback_from_signal(self.ioloop.stop)
+
     def start(self):
         self.connection_dir = tempfile.mkdtemp(
             prefix='voila_',
@@ -158,7 +167,7 @@ class Voila(Application):
         self.log.info('Storing connection files in %s.' % self.connection_dir)
         self.log.info('Serving static files from %s.' % self.static_root)
 
-        kernel_manager = MappingKernelManager(
+        self.kernel_manager = MappingKernelManager(
             connection_dir=self.connection_dir,
             allowed_message_types=[
                 'comm_msg',
@@ -180,7 +189,7 @@ class Voila(Application):
         self.config_manager = ConfigManager(parent=self, read_config_path=read_config_path)
 
         self.app = tornado.web.Application(
-            kernel_manager=kernel_manager,
+            kernel_manager=self.kernel_manager,
             allow_remote_access=True,
             autoreload=self.autoreload,
             voila_jinja2_env=env,
@@ -245,10 +254,14 @@ class Voila(Application):
         self.app.listen(self.port)
         self.log.info('Voila listening on port %s.' % self.port)
 
+        self.ioloop = tornado.ioloop.IOLoop.current()
         try:
-            tornado.ioloop.IOLoop.current().start()
+            self.ioloop.start()
+        except KeyboardInterrupt:
+            self.log.info('Stopping...')
         finally:
             shutil.rmtree(self.connection_dir)
+            self.kernel_manager.shutdown_all()
 
 
 main = Voila.launch_instance
