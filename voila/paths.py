@@ -40,6 +40,11 @@ def collect_template_paths(
         [os.path.abspath(os.path.join(ROOT, '..', 'share', 'jupyter', 'voila', 'template', template_name))] +\
         jupyter_path('voila', 'template', template_name)
 
+    # insert new directories after any user-provided directories
+    nbconvert_template_paths_start = len(nbconvert_template_paths)
+    static_paths_start = len(static_paths)
+    tornado_template_paths_start = len(tornado_template_paths)
+
     for dirname in template_directories:
         if os.path.exists(dirname):
             conf = {}
@@ -61,19 +66,19 @@ def collect_template_paths(
             # if not os.path.exists(extra_nbconvert_path):
             #    log.warning('template named %s found at path %r, but %s does not exist', template_name,
             #                dirname, extra_nbconvert_path)
-            nbconvert_template_paths.insert(0, extra_nbconvert_path)
+            nbconvert_template_paths.insert(nbconvert_template_paths_start, extra_nbconvert_path)
 
             extra_static_path = os.path.join(dirname, 'static')
             # if not os.path.exists(extra_static_path):
             #    log.warning('template named %s found at path %r, but %s does not exist', template_name,
             #                dirname, extra_static_path)
-            static_paths.insert(0, extra_static_path)
+            static_paths.insert(static_paths_start, extra_static_path)
 
             extra_template_path = os.path.join(dirname, 'templates')
             # if not os.path.exists(extra_template_path):
             #    log.warning('template named %s found at path %r, but %s does not exist', template_name,
             #                dirname, extra_template_path)
-            tornado_template_paths.insert(0, extra_template_path)
+            tornado_template_paths.insert(tornado_template_paths_start, extra_template_path)
 
             # We don't look at multiple directories, once a directory with a given name is found at a
             # given level of precedence (for instance user directory), we don't look further (for instance
