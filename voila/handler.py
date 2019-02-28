@@ -13,6 +13,7 @@ from jupyter_server.base.handlers import JupyterHandler
 import nbformat  # noqa: F401
 from .execute import executenb
 from nbconvert import HTMLExporter
+import jinja2
 
 
 class VoilaHandler(JupyterHandler):
@@ -45,6 +46,30 @@ class VoilaHandler(JupyterHandler):
             notebook = model['content']
         else:
             raise tornado.web.HTTPError(404, 'file not found')
+
+        # before rendering/server the voila.tpl (nbconvert) template, we (optionally) send
+        # an html page (voila.html template) to allow progressive loading.
+        # A template can show a spinner for example, or already show a portion of the UI (SPA).
+
+        resources = {}  # we may want to have resources similar to nbconvert for consistency
+        resources['metadata'] = {'name': notebook_path}
+        template = None
+        try:
+            template = self.get_template('voila.html')
+        except jinja2.TemplateNotFound:
+            pass  # voila.html is optional
+        else:
+            html = self.render_template(template,
+                                        page_title='test',
+                                        server_root=self.settings['server_root_dir'],
+                                        nbextensions=nbextensions,
+                                        path=path or '',
+                                        nb=notebook,
+                                        resources=resources
+                                        )
+            self.set_header('Content-Type', 'text/html')
+            self.write(html)
+            self.flush()  # next phase, flush html to client so it can render (progressive)
 
         # Fetch kernel name from the notebook metadata
         kernel_name = notebook.metadata.get('kernelspec', {}).get('name', self.kernel_manager.default_kernel_name)
@@ -84,5 +109,4 @@ class VoilaHandler(JupyterHandler):
         html, resources = exporter.from_notebook_node(result, resources=resources)
 
         # Compose reply
-        self.set_header('Content-Type', 'text/html')
         self.write(html)

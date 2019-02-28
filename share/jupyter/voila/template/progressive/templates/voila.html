@@ -1,0 +1,76 @@
+{% set nb_title = nb.metadata.get('title', '') or resources['metadata']['name'] %}
+{%- block header -%}
+
+<!DOCTYPE html>
+<html>
+<head>
+{%- block html_head -%}
+    <meta charset="utf-8" />
+    <title>Voila: {{nb_title}}</title>
+
+    <link rel="stylesheet" href="https://unpkg.com/font-awesome@4.5.0/css/font-awesome.min.css" type="text/css" />
+
+    {%- block html_head_js -%}
+
+    <script src="{{server_root}}voila/static/jquery.min.js"></script>
+
+
+    <!-- Load mathjax -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS_HTML"></script>
+    <!-- MathJax configuration -->
+    <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+            displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+            processEscapes: true,
+            processEnvironments: true
+        },
+        // Center justify equations in code and markdown cells. Elsewhere
+        // we use CSS to left justify single line equations in code cells.
+        displayAlign: 'center',
+        "HTML-CSS": {
+            styles: {'.MathJax_Display': {"margin": 0}},
+            linebreaks: { automatic: true }
+        }
+    });
+    </script>    
+
+    {%- endblock html_head_js -%}
+
+    {%- block html_head_css -%}
+    <style type="text/css">
+        #loading {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 75vh;
+            color: #444;
+            font-family: sans-serif;
+        }
+        </style>
+    
+    {%- endblock html_head_css -%}
+{%- endblock html_head -%}
+</head>
+{%- endblock header -%}
+
+{% block body %}
+<body>
+  <div id="loading">
+      <h2><i class="fa fa-spinner fa-spin" style="font-size:36px;"></i> Running {{nb_title}}...</i></h2>
+  </div>
+{%- endblock body %}
+
+
+
+{% block footer %}
+{% block footer_js %}
+<script
+    src="{{server_root}}voila/static/require.min.js"
+    integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA="
+    crossorigin="anonymous">
+</script>
+
+{% endblock footer_js %}
+{% endblock footer %}
