@@ -57,7 +57,6 @@ class VoilaHandler(JupyterHandler):
                 load_extensions[extension] = False
         nbextensions = [name for name, enabled in load_extensions.items() if enabled]
 
-
         model = self.contents_manager.get(path=notebook_path)
         if 'content' in model:
             notebook = model['content']
