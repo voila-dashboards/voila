@@ -3,11 +3,16 @@
 
 {%- block html_head_css -%}
 
-{% for css in resources.inlining.css -%}
-    <style type="text/css">
-    {{ css }}
-    </style>
-{% endfor %}
+{#{% for css in resources.inlining.css -%}#}
+{#    <style type="text/css">#}
+{#    {{ css }}#}
+{#    </style>#}
+{#{% endfor %}#}
+
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+<link href="http://gridstackjs.com/dist/gridstack.css" rel="stylesheet">
+{{ super() }}
+
 
 <style type="text/css">
 
@@ -51,6 +56,8 @@ div#notebook-container{
 <!-- Loading mathjax macro -->
 {{ mathjax() }}
 {%- endblock html_head_css -%}
+
+
 
 {% block body %}
 <body>
