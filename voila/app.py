@@ -101,6 +101,16 @@ class Voila(Application):
         )
     )
 
+    cull_idle_timeout = Integer(0, config=True,
+        help="""Timeout (in seconds) after which a kernel is considered idle and ready to be culled.
+        Values of 0 or lower disable culling. Very short timeouts may result in kernels being culled
+        for users with poor network connections."""
+    )
+
+    cull_interval = Integer(MappingKernelManager.cull_interval_default, config=True,
+        help="""The interval (in seconds) on which to check for idle kernels exceeding the cull timeout value."""
+    )
+
     @default('connection_dir_root')
     def _default_connection_dir(self):
         connection_dir = tempfile.gettempdir()
@@ -169,6 +179,8 @@ class Voila(Application):
 
         self.kernel_manager = MappingKernelManager(
             connection_dir=self.connection_dir,
+            cull_idle_timeout=self.cull_idle_timeout,
+            cull_interval=self.cull_interval,
             allowed_message_types=[
                 'comm_msg',
                 'comm_info_request',
