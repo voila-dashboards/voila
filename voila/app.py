@@ -134,6 +134,11 @@ class Voila(Application):
         )
     )
 
+    config_file_paths = List(Unicode(), config=True, help='Paths to search for voila.(py|json)')
+    @default('config_file_paths')
+    def _config_file_paths_default(self):
+        return [os.getcwd()] + jupyter_config_path()
+
     @default('connection_dir_root')
     def _default_connection_dir(self):
         connection_dir = tempfile.gettempdir()
@@ -166,8 +171,15 @@ class Voila(Application):
             return getcwd()
 
     def initialize(self, argv=None):
+        self.log.debug("Searching path %s for config files", self.config_file_paths)
+        # to make config_file_paths settable via cmd line, we first need to parse it
         super(Voila, self).initialize(argv)
         self.notebook_path = self.notebook_path if self.notebook_path else self.extra_args[0] if len(self.extra_args) == 1 else None
+        # then we load the config
+        self.load_config_file('voila', path=self.config_file_paths)
+        # but that cli config has preference, so we overwrite with that
+        self.update_config(self.cli_config)
+        self.setup_template_dirs()
         signal.signal(signal.SIGTERM, self._handle_signal_stop)
 
     def setup_template_dirs(self):
@@ -198,6 +210,7 @@ class Voila(Application):
         self.log.info('Serving static files from %s.' % self.static_root)
 
         self.kernel_manager = MappingKernelManager(
+            parent=self,
             connection_dir=self.connection_dir,
             allowed_message_types=[
                 'comm_msg',
@@ -211,7 +224,7 @@ class Voila(Application):
         env = jinja2.Environment(loader=jinja2.FileSystemLoader(self.template_paths), extensions=['jinja2.ext.i18n'], **jenv_opt)
         nbui = gettext.translation('nbui', localedir=os.path.join(ROOT, 'i18n'), fallback=True)
         env.install_gettext_translations(nbui, newstyle=False)
-        contents_manager = LargeFileManager(parent=self)  # TODO: make this configurable like notebook
+        self.contents_manager = LargeFileManager(parent=self)
 
         # we create a config manager that load both the serverconfig and nbconfig (classical notebook)
         read_config_path = [os.path.join(p, 'serverconfig') for p in jupyter_config_path()]
@@ -226,7 +239,7 @@ class Voila(Application):
             jinja2_env=env,
             static_path='/',
             server_root_dir='/',
-            contents_manager=contents_manager,
+            contents_manager=self.contents_manager,
             config_manager=self.config_manager
         )
 
