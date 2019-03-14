@@ -20,7 +20,7 @@ import tornado.ioloop
 import tornado.web
 
 from traitlets.config.application import Application
-from traitlets import Unicode, Integer, Bool, default
+from traitlets import Unicode, Integer, Bool, List, default
 
 from jupyter_server.services.kernels.kernelmanager import MappingKernelManager
 from jupyter_server.services.kernels.handlers import KernelHandler, ZMQChannelsHandler
@@ -101,6 +101,39 @@ class Voila(Application):
         )
     )
 
+    notebook_path = Unicode(
+        None,
+        config=True,
+        allow_none=True,
+        help=(
+            'path to notebook to serve with voila')
+    )
+
+    nbconvert_template_paths = List(
+        [],
+        config=True,
+        help=(
+            'path to nbconvert templates'
+        )
+    )
+
+    template_paths = List(
+        [],
+        allow_none=True,
+        config=True,
+        help=(
+            'path to nbconvert templates'
+        )
+    )
+
+    static_paths = List(
+        [STATIC_ROOT],
+        config=True,
+        help=(
+            'paths to static assets'
+        )
+    )
+
     @default('connection_dir_root')
     def _default_connection_dir(self):
         connection_dir = tempfile.gettempdir()
@@ -138,20 +171,19 @@ class Voila(Application):
 
     def parse_command_line(self, argv=None):
         super(Voila, self).parse_command_line(argv)
-        self.notebook_path = self.extra_args[0] if len(self.extra_args) == 1 else None
-        self.nbconvert_template_paths = []
-        self.template_paths = []
-        self.static_paths = [self.static_root]
+
+    def setup_template_dirs(self):
+        self.notebook_path = self.notebook_path if self.notebook_path else self.extra_args[0] if len(self.extra_args) == 1 else None
         if self.template:
             collect_template_paths(
                 self.nbconvert_template_paths,
                 self.static_paths,
                 self.template_paths,
                 self.template)
-            self.log.debug('using template: %s', self.template)
-            self.log.debug('nbconvert template paths: %s', self.nbconvert_template_paths)
-            self.log.debug('template paths: %s', self.template_paths)
-            self.log.debug('static paths: %s', self.static_paths)
+        self.log.debug('using template: %s', self.template)
+        self.log.debug('nbconvert template paths: %s', self.nbconvert_template_paths)
+        self.log.debug('template paths: %s', self.template_paths)
+        self.log.debug('static paths: %s', self.static_paths)
         if self.notebook_path and not os.path.exists(self.notebook_path):
             raise ValueError('Notebook not found: %s' % self.notebook_path)
 
@@ -160,6 +192,7 @@ class Voila(Application):
         self.ioloop.add_callback_from_signal(self.ioloop.stop)
 
     def start(self):
+        self.setup_template_dirs()
         self.connection_dir = tempfile.mkdtemp(
             prefix='voila_',
             dir=self.connection_dir_root
