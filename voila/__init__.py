@@ -6,6 +6,8 @@
 # The full license is in the file LICENSE, distributed with this software.  #
 #############################################################################
 
+from ._version import __version__  # noqa
+
 
 def _jupyter_nbextension_paths():
     return [dict(
