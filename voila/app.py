@@ -167,13 +167,10 @@ class Voila(Application):
 
     def initialize(self, argv=None):
         super(Voila, self).initialize(argv)
+        self.notebook_path = self.notebook_path if self.notebook_path else self.extra_args[0] if len(self.extra_args) == 1 else None
         signal.signal(signal.SIGTERM, self._handle_signal_stop)
 
-    def parse_command_line(self, argv=None):
-        super(Voila, self).parse_command_line(argv)
-
     def setup_template_dirs(self):
-        self.notebook_path = self.notebook_path if self.notebook_path else self.extra_args[0] if len(self.extra_args) == 1 else None
         if self.template:
             collect_template_paths(
                 self.nbconvert_template_paths,
@@ -274,10 +271,16 @@ class Voila(Application):
                 }
             ))
         else:
+            self.log.debug('serving directory: %r', self.root_dir)
             handlers.extend([
                 (base_url, VoilaTreeHandler),
                 (url_path_join(base_url, r'/voila/tree' + path_regex), VoilaTreeHandler),
-                (url_path_join(base_url, r'/voila/render' + path_regex), VoilaHandler, {'strip_sources': self.strip_sources}),
+                (url_path_join(base_url, r'/voila/render' + path_regex), VoilaHandler,
+                    {
+                        'strip_sources': self.strip_sources,
+                        'nbconvert_template_paths': self.nbconvert_template_paths,
+                        'config': self.config
+                    }),
             ])
 
         self.app.add_handlers('.*$', handlers)

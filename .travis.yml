@@ -25,4 +25,4 @@ install:
 before_script:
   - flake8 voila
 script:
-  - py.test tests/
+  - VOILA_TEST_DEBUG=1 py.test tests/
