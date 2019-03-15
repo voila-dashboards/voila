@@ -14,8 +14,6 @@ import nbformat  # noqa: F401
 from nbconvert.preprocessors.execute import executenb
 from nbconvert import HTMLExporter
 
-from .paths import collect_template_paths
-
 
 class VoilaHandler(JupyterHandler):
 
@@ -24,13 +22,6 @@ class VoilaHandler(JupyterHandler):
         self.strip_sources = kwargs.pop('strip_sources', True)
         self.nbconvert_template_paths = kwargs.pop('nbconvert_template_paths', [])
         self.exporter_config = kwargs.pop('config', None)
-
-        collect_template_paths(
-            self.nbconvert_template_paths,
-            [],  # static_paths,
-            [],  # tornado templates,
-            'default'
-        )
 
     @tornado.web.authenticated
     @tornado.gen.coroutine

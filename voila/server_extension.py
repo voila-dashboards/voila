@@ -15,7 +15,7 @@ from jupyter_server.utils import url_path_join
 from jupyter_server.base.handlers import path_regex
 from jupyter_server.base.handlers import FileFindHandler
 
-from .paths import ROOT, STATIC_ROOT, collect_template_paths
+from .paths import ROOT, STATIC_ROOT, collect_template_paths, jupyter_path
 from .handler import VoilaHandler
 from .treehandler import VoilaTreeHandler
 from .static_file_handler import MultiStaticFileHandler
@@ -44,6 +44,12 @@ def load_jupyter_server_extension(server_app):
 
     host_pattern = '.*$'
     base_url = url_path_join(web_app.settings['base_url'])
+    # First look into 'nbextensions_path' configuration key (classic notebook)
+    # and fall back to default path for nbextensions (jupyter server).
+    if 'nbextensions_path' in web_app.settings:
+        nbextensions_path = web_app.settings['nbextensions_path']
+    else:
+        nbextensions_path = jupyter_path('nbextensions')
     web_app.add_handlers(host_pattern, [
         (url_path_join(base_url, '/voila/render' + path_regex), VoilaHandler, {
             'config': server_app.config,
@@ -57,7 +63,7 @@ def load_jupyter_server_extension(server_app):
             url_path_join(base_url, r'/voila/nbextensions/(.*)'),
             FileFindHandler,
             {
-                'path': web_app.settings['nbextensions_path'],
+                'path': nbextensions_path,
                 'no_cache_paths': ['/'],  # don't cache anything in nbextensions
             },
         )
