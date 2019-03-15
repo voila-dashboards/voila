@@ -7,8 +7,8 @@ BASE_DIR = os.path.dirname(__file__)
 
 @pytest.fixture
 def voila_args_extra():
-    path_gridstack = os.path.abspath(os.path.join(BASE_DIR, '../share/jupyter/voila/template/gridstack/nbconvert_templates'))
-    path_default = os.path.abspath(os.path.join(BASE_DIR, '../share/jupyter/voila/template/default/nbconvert_templates'))
+    path_gridstack = os.path.abspath(os.path.join(BASE_DIR, '../../share/jupyter/voila/template/gridstack/nbconvert_templates'))
+    path_default = os.path.abspath(os.path.join(BASE_DIR, '../../share/jupyter/voila/template/default/nbconvert_templates'))
     return ['--template=None', '--Voila.nbconvert_template_paths=[%r, %r]' % (path_gridstack, path_default)] 
 
 
