@@ -29,7 +29,8 @@ def voila_args_extra():
 
 @pytest.fixture
 def voila_args(voila_notebook, voila_args_extra):
-    return [voila_notebook, '--VoilaApp.log_level=DEBUG'] + voila_args_extra
+    debug_args = ['--VoilaTest.log_level=DEBUG'] if os.environ.get('VOILA_TEST_DEBUG', False) else []
+    return [voila_notebook] + voila_args_extra + debug_args
 
 
 @pytest.fixture
