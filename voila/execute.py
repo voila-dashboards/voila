@@ -66,7 +66,7 @@ class ExecutePreprocessorWithOutputWidget(ExecutePreprocessor):
             return
         super(ExecutePreprocessorWithOutputWidget, self).output(outs, msg, display_id, cell_index)
 
-    def handle_comm_msg(self, msg):
+    def handle_comm_msg(self, outs, msg, cell_index):
         self.log.debug('comm msg: %r', msg)
         if msg['msg_type'] == 'comm_open':
             content = msg['content']
