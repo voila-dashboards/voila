@@ -38,9 +38,7 @@ class VoilaHandler(JupyterHandler):
         load_extensions = notebook_config.get('load_extensions', {})
         if "jupyter-js-widgets/extension" in load_extensions:
             load_extensions["jupyter-js-widgets/extension"] = False
-            nbextensions = [name for name, enabled in load_extensions.items() if enabled]
-        else:
-            nbextensions = []
+        nbextensions = [name for name, enabled in load_extensions.items() if enabled]
 
         model = self.contents_manager.get(path=notebook_path)
         if 'content' in model:
