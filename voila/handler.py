@@ -11,7 +11,7 @@ import tornado.web
 from jupyter_server.base.handlers import JupyterHandler
 
 import nbformat  # noqa: F401
-from nbconvert.preprocessors.execute import executenb
+from .execute import executenb
 from nbconvert import HTMLExporter
 
 

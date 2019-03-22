@@ -17,10 +17,12 @@ before_install:
   - conda config --set always_yes yes --set changeps1 no
   - conda update -q conda
   - conda info -a
-  - conda create -q -n test-environment -c conda-forge python=$PYTHON_VERSION jupyter_server pytest==3.10.1 pytest-cov nodejs flake8
+  - conda create -q -n test-environment -c conda-forge python=$PYTHON_VERSION jupyter_server pytest==3.10.1 pytest-cov nodejs flake8 ipywidgets
   - source activate test-environment
 install:
   - pip install ".[test]"
+  # we need this branch to perform testing, do it after the pip install above, otherwise we 'downgrade'
+  - pip install --upgrade --no-deps --force-reinstall git+https://github.com/maartenbreddels/nbconvert.git@widget_state#egg=nbconvert
 before_script:
   - flake8 voila
 script:
