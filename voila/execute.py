@@ -22,8 +22,9 @@ class OutputWidget:
             self.outputs = []
             # sync back the state to the kernel
             self.sync_state()
-            # sync the state to the nbconvert state as well, since that is used for testing
-            self.executor.widget_state[self.comm_id]['outputs'] = self.outputs
+            if hasattr(self.executor, 'widget_state'):
+                # sync the state to the nbconvert state as well, since that is used for testing
+                self.executor.widget_state[self.comm_id]['outputs'] = self.outputs
 
     def sync_state(self):
         state = {'outputs': self.outputs}
@@ -54,8 +55,9 @@ class OutputWidget:
             output = {"output_type": "display_data", "data": data, "metadata": {}}
         self.outputs.append(output)
         self.sync_state()
-        # sync the state to the nbconvert state as well, since that is used for testing
-        self.executor.widget_state[self.comm_id]['outputs'] = self.outputs
+        if hasattr(self.executor, 'widget_state'):
+            # sync the state to the nbconvert state as well, since that is used for testing
+            self.executor.widget_state[self.comm_id]['outputs'] = self.outputs
 
     def set_state(self, state):
         if 'msg_id' in state:
