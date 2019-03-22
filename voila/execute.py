@@ -95,10 +95,11 @@ class ExecutePreprocessorWithOutputWidget(ExecutePreprocessor):
         elif msg['msg_type'] == 'comm_msg':
             content = msg['content']
             data = content['data']
-            state = data['state']
-            comm_id = msg['content']['comm_id']
-            if comm_id in self.output_objects:
-                self.output_objects[comm_id].set_state(state)
+            if 'state' in data:
+                state = data['state']
+                comm_id = msg['content']['comm_id']
+                if comm_id in self.output_objects:
+                    self.output_objects[comm_id].set_state(state)
 
     def clear_output(self, outs, msg, cell_index):
         parent_msg_id = msg['parent_header'].get('msg_id')
