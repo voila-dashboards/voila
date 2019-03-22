@@ -157,7 +157,7 @@ setup_args = {
         ]
     },
     'install_requires': [
-        'jupyter_server>=0.0.3',
+        'jupyter_server>=0.0.4',
         'nbconvert>=5.4.1,<6'
     ],
     'extras_require': {
