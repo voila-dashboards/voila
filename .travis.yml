@@ -19,6 +19,8 @@ before_install:
   - conda info -a
   - conda create -q -n test-environment -c conda-forge python=$PYTHON_VERSION jupyter_server pytest==3.10.1 pytest-cov nodejs flake8
   - source activate test-environment
+  # we need this branch to perform testing
+  - pip install --upgrade --no-deps --force-reinstall git+https://github.com/maartenbreddels/nbconvert.git@widget_state#egg=nbconvert
 install:
   - pip install ".[test]"
 before_script:
