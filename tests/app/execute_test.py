@@ -15,7 +15,9 @@ except:
 def test_hello_world(http_client, base_url):
     response = yield http_client.fetch(base_url)
     assert response.code == 200
-    assert 'Hi Voila' in response.body.decode('utf-8')
+    html_text = response.body.decode('utf-8')
+    assert 'Hi Voila' in html_text
+    assert 'gridstack.css' not in html_text, "gridstack should not be the default"
 
 
 @pytest.mark.gen_test
