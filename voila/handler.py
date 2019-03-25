@@ -86,10 +86,15 @@ class VoilaHandler(JupyterHandler):
         result = executenb(notebook, km=km)
 
         # render notebook to html
-        resources = {'kernel_id': kernel_id, 'base_url': self.base_url, 'nbextensions': self.nbextensions}
-
+        resources = {
+            'kernel_id': kernel_id,
+            'base_url': self.base_url,
+            'nbextensions': nbextensions
+        }
         exporter = HTMLExporter(
-            template_file='voila.tpl', template_path=self.nbconvert_template_paths, config=self.exporter_config
+            template_file='voila.tpl',
+            template_path=self.nbconvert_template_paths,
+            config=self.exporter_config
         )
 
         if self.strip_sources:
@@ -100,11 +105,9 @@ class VoilaHandler(JupyterHandler):
         # Filtering out empty cells.
         def filter_empty_code_cells(cell):
             return (
-                cell.cell_type != 'code'
-                or (  # keep non-code cells
-                    cell.outputs and not exporter.exclude_output
-                )  # keep cell if output not excluded and not empty
-                or not exporter.exclude_input  # keep cell if input not excluded
+                cell.cell_type != 'code' or                     # keep non-code cells
+                (cell.outputs and not exporter.exclude_output)  # keep cell if output not excluded and not empty
+                or not exporter.exclude_input                   # keep cell if input not excluded
             )
 
         result.cells = list(filter(filter_empty_code_cells, result.cells))

@@ -69,8 +69,3 @@ div#notebook-container{
     </div>
 
 {%- endblock body %}
-
-
-
-
-
