@@ -89,7 +89,7 @@ class VoilaHandler(JupyterHandler):
         resources = {
             'kernel_id': kernel_id,
             'base_url': self.base_url,
-            'nbextensions': nbextensions
+            'nbextensions': self.nbextensions
         }
         exporter = HTMLExporter(
             template_file='voila.tpl',
