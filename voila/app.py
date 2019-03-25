@@ -201,7 +201,6 @@ class Voila(Application):
         self.ioloop.add_callback_from_signal(self.ioloop.stop)
 
     def start(self):
-        self.setup_template_dirs()
         self.connection_dir = tempfile.mkdtemp(
             prefix='voila_',
             dir=self.connection_dir_root
