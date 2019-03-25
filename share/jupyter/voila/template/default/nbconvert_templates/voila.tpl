@@ -2,6 +2,7 @@
 {%- extends 'base.tpl' -%}
 
 {%- block header -%}
+{# the default voila template loads all js/css in voila_header.html #}
 {%- endblock header -%}
 
 {% block body %}
@@ -24,41 +25,41 @@
     </style>
 {% endfor %}
 
-    <style type="text/css">
+<style type="text/css">
 
-    /* Overrides of notebook CSS for static HTML export */
-    body {
-      overflow: visible;
-      padding: 8px;
-    }
+/* Overrides of notebook CSS for static HTML export */
+body {
+  overflow: visible;
+  padding: 8px;
+}
 
-    div#notebook {
-      overflow: visible;
-      border-top: none;
-      padding: 20px;
-    }
+div#notebook {
+  overflow: visible;
+  border-top: none;
+  padding: 20px;
+}
 
-    {%- if resources.global_content_filter.no_prompt-%}
-    div#notebook-container{
-      padding: 6ex 12ex 8ex 12ex;
-    }
-    {%- endif -%}
+{%- if resources.global_content_filter.no_prompt-%}
+div#notebook-container{
+  padding: 6ex 12ex 8ex 12ex;
+}
+{%- endif -%}
 
-    @media print {
-      div.cell {
-        display: block;
-        page-break-inside: avoid;
-      }
-      div.output_wrapper {
-        display: block;
-        page-break-inside: avoid;
-      }
-      div.output {
-        display: block;
-        page-break-inside: avoid;
-      }
-    }
-    </style>
+@media print {
+  div.cell {
+    display: block;
+    page-break-inside: avoid;
+  }
+  div.output_wrapper {
+    display: block;
+    page-break-inside: avoid;
+  }
+  div.output {
+    display: block;
+    page-break-inside: avoid;
+  }
+}
+</style>
 
 
     <div tabindex="-1" id="notebook" class="border-box-sizing">
@@ -66,7 +67,6 @@
             {{ super() }}
         </div>
     </div>
-</body>
 
 {%- endblock body %}
 
