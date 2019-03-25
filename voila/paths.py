@@ -9,7 +9,6 @@
 import os
 import json
 from jupyter_core.paths import jupyter_path
-import json
 
 ROOT = os.path.dirname(__file__)
 STATIC_ROOT = os.path.join(ROOT, 'static')

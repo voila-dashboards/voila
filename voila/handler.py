@@ -31,7 +31,6 @@ class VoilaHandler(JupyterHandler):
             load_extensions["jupyter-js-widgets/extension"] = False
         self.nbextensions = [name for name, enabled in load_extensions.items() if enabled]
 
-
     @tornado.web.authenticated
     @tornado.gen.coroutine
     def get(self, path=None):
