@@ -46,10 +46,6 @@ class VoilaHandler(JupyterHandler):
         else:
             raise tornado.web.HTTPError(404, 'file not found')
 
-        # before rendering/server the voila.tpl (nbconvert) template, we (optionally) send
-        # an html page (voila.html template) to allow progressive loading.
-        # A template can show a spinner for example, or already show a portion of the UI (SPA).
-
         resources = {}  # we may want to have resources similar to nbconvert for consistency
         resources['metadata'] = {'name': notebook_path}
         html_template_namespace = dict(
@@ -60,6 +56,11 @@ class VoilaHandler(JupyterHandler):
             nb=notebook,
             resources=resources,
         )
+        # before rendering/serving the voila.tpl (nbconvert) template, we (optionally) send
+        # an html page (voila_header.html template) to allow progressive loading.
+        # A template can show a spinner for example, or already show a portion of the UI (SPA).
+        # After the notebook, and voila_footer.html will be rendered, all in 1 http get request
+        self.set_header('Content-Type', 'text/html')
         self.render_fragment('voila_header', **html_template_namespace)
         self.render_fragment_body(notebook)
         self.render_fragment('voila_footer', **html_template_namespace)
@@ -72,7 +73,6 @@ class VoilaHandler(JupyterHandler):
             pass  # a <fragment name>.html is optional
         else:
             html = self.render_template(template, **html_template_namespace)
-            self.set_header('Content-Type', 'text/html')
             self.write(html)
             self.flush()  # next phase, flush html to client so it can render (progressive)
 
