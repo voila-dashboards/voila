@@ -13,6 +13,7 @@ import { WidgetRenderer } from '@jupyter-widgets/jupyterlab-manager';
 import { output } from '@jupyter-widgets/jupyterlab-manager';
 import * as base from '@jupyter-widgets/base';
 import * as controls from '@jupyter-widgets/controls';
+import * as PhosphorWidget from '@phosphor/widgets';
 
 if (typeof window !== "undefined" && typeof window.define !== "undefined") {
     window.define("@jupyter-widgets/base", base);
@@ -44,8 +45,11 @@ export class WidgetManager extends JupyterLabManager {
             widgetTag.className = 'widget-subarea';
             viewtag.parentElement.insertBefore(widgetTag, viewtag);
             const view = await this.display_model(undefined, model, { el : widgetTag });
-            widgetTag.appendChild(view.node);
         }
+    }
+
+    display_view(msg, view, options) {
+        PhosphorWidget.Widget.attach(view.pWidget, options.el);
     }
 
     async loadClass(className, moduleName, moduleVersion) {
