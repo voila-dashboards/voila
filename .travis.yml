@@ -22,7 +22,7 @@ before_install:
 install:
   - pip install ".[test]"
   # we need this branch to perform testing, do it after the pip install above, otherwise we 'downgrade'
-  - pip install --upgrade --no-deps --force-reinstall git+https://github.com/jupyter/nbconvert.git@master#egg=nbconvert
+  - pip install --upgrade --no-deps --force-reinstall git+https://github.com/maartenbreddels/nbconvert.git@fix_non_unique_attachments#egg=nbconvert
 before_script:
   - flake8 voila
 script:
