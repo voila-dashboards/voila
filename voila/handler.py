@@ -5,14 +5,13 @@
 #                                                                           #
 # The full license is in the file LICENSE, distributed with this software.  #
 #############################################################################
-
 import tornado.web
 
 from jupyter_server.base.handlers import JupyterHandler
 
 import nbformat  # noqa: F401
 from .execute import executenb
-from nbconvert import HTMLExporter
+from .html import HTMLExporter
 
 
 class VoilaHandler(JupyterHandler):
@@ -65,7 +64,8 @@ class VoilaHandler(JupyterHandler):
         exporter = HTMLExporter(
             template_file='voila.tpl',
             template_path=self.nbconvert_template_paths,
-            config=self.exporter_config
+            config=self.exporter_config,
+            contents_manager=self.contents_manager  # for the image inlining
         )
 
         if self.strip_sources:
