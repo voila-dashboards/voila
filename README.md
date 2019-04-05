@@ -46,7 +46,10 @@ To render the `bqplot` example notebook as a standalone app, run
 voila bqplot.ipynb
 ```
 
-To server a directory of jupyter notebooks, just run `voila` with no argument.
+To serve a directory of jupyter notebooks, just run `voila` with no argument.
+
+For more command line options (e.g., to specify an alternate port number),
+run `voila --help`.
 
 ### As a server extension to `notebook` or `jupyter_server`
 
