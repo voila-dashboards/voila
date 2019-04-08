@@ -311,7 +311,11 @@ class Voila(Application):
 
     def listen(self):
         self.app.listen(self.port)
-        self.log.info('Voila listening on port %s.' % self.port)
+        if self.tornado_settings.get('ssl_options'):
+            host = 'https://0.0.0.0:%s' % self.port
+        else:
+            host = 'http://0.0.0.0:%s' % self.port
+        self.log.info('Voila listening on %s' % host)
 
         self.ioloop = tornado.ioloop.IOLoop.current()
         try:
