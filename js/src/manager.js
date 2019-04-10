@@ -28,8 +28,15 @@ export class WidgetManager extends JupyterLabManager {
 
     constructor(kernel) {
         const context = createContext(kernel);
-        const rendermime = createRenderMimeRegistry();
+        const rendermime = new RenderMimeRegistry({
+            initialFactories: standardRendererFactories
+        });
         super(context, rendermime);
+        rendermime.addFactory({
+            safe: false,
+            mimeTypes: [WIDGET_MIMETYPE],
+            createRenderer: options => new WidgetRenderer(options, this)
+        }, 1);
         this._registerWidgets();
         this.loader = requireLoader;
     }
@@ -155,14 +162,3 @@ function createContext(kernel) {
     };
 }
 
-function createRenderMimeRegistry() {
-    const rendermime = new RenderMimeRegistry({
-        initialFactories: standardRendererFactories
-    });
-    rendermime.addFactory({
-        safe: false,
-        mimeTypes: [WIDGET_MIMETYPE],
-        createRenderer: options => new WidgetRenderer(options, manager)
-    }, 1);
-    return rendermime;
-}
