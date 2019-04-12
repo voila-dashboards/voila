@@ -53,7 +53,7 @@ div#notebook-container{
 {%- endblock html_head_css -%}
 
 {% block body %}
-<body>
+<body data-base-url="{{resources.base_url}}voila/">
   <div tabindex="-1" id="notebook" class="border-box-sizing">
     <div class="container" id="notebook-container">
 {{ super() }}
