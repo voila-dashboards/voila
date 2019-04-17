@@ -22,6 +22,7 @@ class VoilaHandler(JupyterHandler):
         self.nbconvert_template_paths = kwargs.pop('nbconvert_template_paths', [])
         self.template_name = kwargs.pop('template_name', 'default')
         self.exporter_config = kwargs.pop('config', None)
+        self.extra_extensions = kwargs.pop('extra_extensions', [])
 
     @tornado.web.authenticated
     @tornado.gen.coroutine
@@ -58,7 +59,8 @@ class VoilaHandler(JupyterHandler):
         resources = {
             'kernel_id': kernel_id,
             'base_url': self.base_url,
-            'nbextensions': nbextensions
+            'nbextensions': nbextensions,
+            'extra_extensions': self.extra_extensions,
         }
 
         exporter = HTMLExporter(

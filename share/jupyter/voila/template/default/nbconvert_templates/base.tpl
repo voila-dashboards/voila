@@ -49,6 +49,11 @@ requirejs(
     {% endfor %}
     ]
 )
+requirejs([
+    {% for ext in resources.extra_extensions -%}
+        "{{ ext }}",
+    {% endfor %}
+])
 </script>
 
 {% endblock footer_js %}

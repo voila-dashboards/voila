@@ -144,6 +144,15 @@ class Voila(Application):
         )
     )
 
+    extra_extensions = List(
+        [],
+        config=True,
+        help=(
+            'This setting can be used to pass in extra extensions to requirejs, e.g. \
+             lab-only extensions, custom CDNs, non-standard paths, etc'
+        )
+    )
+
     @default('config_file_paths')
     def _config_file_paths_default(self):
         return [os.getcwd()] + jupyter_config_path()
@@ -302,7 +311,8 @@ class Voila(Application):
                     {
                         'strip_sources': self.strip_sources,
                         'nbconvert_template_paths': self.nbconvert_template_paths,
-                        'config': self.config
+                        'config': self.config,
+                        'extra_extensions': self.extra_extensions
                     }),
             ])
 
