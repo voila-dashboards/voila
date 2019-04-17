@@ -19,6 +19,7 @@ if (typeof window !== "undefined" && typeof window.define !== "undefined") {
     window.define("@jupyter-widgets/base", base);
     window.define("@jupyter-widgets/controls", controls);
     window.define("@jupyter-widgets/output", output);
+    window.define("@phosphor/widgets", PhosphorWidget);
   }
 
 const WIDGET_MIMETYPE = 'application/vnd.jupyter.widget-view+json';
