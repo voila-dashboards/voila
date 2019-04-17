@@ -358,6 +358,7 @@ class Voila(Application):
         self.config_manager = ConfigManager(parent=self, read_config_path=read_config_path)
 
         self.app = tornado.web.Application(
+            base_url=self.base_url,
             kernel_manager=self.kernel_manager,
             allow_remote_access=True,
             autoreload=self.autoreload,
