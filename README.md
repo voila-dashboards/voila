@@ -1,7 +1,7 @@
 # Voila
 
 [![Documentation](http://readthedocs.org/projects/voila/badge/?version=latest)](https://voila.readthedocs.io/en/latest/?badge=latest)
-[![Binder](https://img.shields.io/badge/launch-binder-brightgreen.svg)](https://mybinder.org/v2/gh/QuantStack/voila/stable?urlpath=voila/tree/notebooks)
+[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/QuantStack/voila/master?urlpath=voila%2Ftree%2Fnotebooks)
 [![Join the Gitter Chat](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/QuantStack/Lobby?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 Rendering of live Jupyter notebooks with interactive widgets.
@@ -76,4 +76,3 @@ copyright on their contributions.
 
 This software is licensed under the BSD-3-Clause license. See the
 [LICENSE](LICENSE) file for details.
-
