@@ -30,9 +30,7 @@ To use this template when creating your dashboard, use the following command:
 
 .. code-block:: bash
 
-   voila <path-to-notebook> --template=gridspec
-
-.. todo: double-check the command above
+   voila <path-to-notebook> --template=gridstack
 
 Creating and registering a template
 -----------------------------------
@@ -42,8 +40,9 @@ to control the look and feel of your dashboard.
 
 In order to create your own template, first familiarize yourself with **Jinja**,
 **HTML**, and **CSS**. Each of these is used in creating custom templates.
-For reference, see the TODO: link to nbconvert documentation as well as the
-TODO: link to the default template for a ref.
+For more information, see
+`the nbconvert templates documentation <https://nbconvert.readthedocs.io/en/latest/customizing.html#Custom-Templates>`_.
+For one example, `check out the nbconvert basic HTML template <https://github.com/jupyter/nbconvert/blob/master/nbconvert/templates/html/basic.tpl>`_.
 
 Once you've created your custom template, you can make register it with
 Voila by
