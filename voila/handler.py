@@ -5,9 +5,11 @@
 #                                                                           #
 # The full license is in the file LICENSE, distributed with this software.  #
 #############################################################################
+import os
 import tornado.web
 
 from jupyter_server.base.handlers import JupyterHandler
+
 
 import nbformat  # noqa: F401
 from .execute import executenb
@@ -50,9 +52,10 @@ class VoilaHandler(JupyterHandler):
         kernel_name = notebook.metadata.get('kernelspec', {}).get('name', self.kernel_manager.default_kernel_name)
 
         # Launch kernel and execute notebook
-        kernel_id = yield tornado.gen.maybe_future(self.kernel_manager.start_kernel(kernel_name=kernel_name))
+        cwd = os.path.dirname(notebook_path)
+        kernel_id = yield tornado.gen.maybe_future(self.kernel_manager.start_kernel(kernel_name=kernel_name, path=cwd))
         km = self.kernel_manager.get_kernel(kernel_id)
-        result = executenb(notebook, km=km)
+        result = executenb(notebook, km=km, cwd=cwd)
 
         # render notebook to html
         resources = {
