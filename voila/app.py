@@ -154,8 +154,7 @@ class Voila(Application):
     )
 
     ip = Unicode('localhost', config=True,
-        help=_("The IP address the notebook server will listen on.")
-    )
+                 help=_("The IP address the notebook server will listen on."))
 
     open_browser = Bool(True, config=True,
                         help="""Whether to open in a browser after starting.
@@ -174,26 +173,25 @@ class Voila(Application):
                       """)
 
     webbrowser_open_new = Integer(2, config=True,
-        help=_("""Specify Where to open the notebook on startup. This is the
-        `new` argument passed to the standard library method `webbrowser.open`.
-        The behaviour is not guaranteed, but depends on browser support. Valid
-        values are:
-         - 2 opens a new tab,
-         - 1 opens a new window,
-         - 0 opens in an existing window.
-        See the `webbrowser.open` documentation for details.
-        """))
+                                  help=_("""Specify Where to open the notebook on startup. This is the
+                                  `new` argument passed to the standard library method `webbrowser.open`.
+                                  The behaviour is not guaranteed, but depends on browser support. Valid
+                                  values are:
+                                  - 2 opens a new tab,
+                                  - 1 opens a new window,
+                                  - 0 opens in an existing window.
+                                  See the `webbrowser.open` documentation for details.
+                                  """))
 
     custom_display_url = Unicode(u'', config=True,
-        help=_("""Override URL shown to users.
-        Replace actual URL, including protocol, address, port and base URL,
-        with the given value when displaying URL to the users. Do not change
-        the actual connection URL. If authentication token is enabled, the
-        token is added to the custom URL automatically.
-        This option is intended to be used when the URL to display to the user
-        cannot be determined reliably by the Jupyter notebook server (proxified
-        or containerized setups for example).""")
-    )
+                                 help=_("""Override URL shown to users.
+                                 Replace actual URL, including protocol, address, port and base URL,
+                                 with the given value when displaying URL to the users. Do not change
+                                 the actual connection URL. If authentication token is enabled, the
+                                 token is added to the custom URL automatically.
+                                 This option is intended to be used when the URL to display to the user
+                                 cannot be determined reliably by the Jupyter notebook server (proxified
+                                 or containerized setups for example)."""))
 
     @property
     def display_url(self):
@@ -456,5 +454,6 @@ class Voila(Application):
         def target():
             return browser.open(urljoin('file:', pathname2url(open_file)), new=self.webbrowser_open_new)
         threading.Thread(target=target).start()
+
 
 main = Voila.launch_instance
