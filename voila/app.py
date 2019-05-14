@@ -7,12 +7,22 @@
 #############################################################################
 
 from zmq.eventloop import ioloop
+import gettext
+import logging
+import threading
+import tempfile
 import os
 import shutil
 import signal
-import tempfile
-import logging
-import gettext
+import socket
+import webbrowser
+
+try:
+    from urllib.parse import urljoin
+    from urllib.request import pathname2url
+except ImportError:
+    from urllib import pathname2url
+    from urlparse import urljoin
 
 import jinja2
 
@@ -42,10 +52,19 @@ ioloop.install()
 _kernel_id_regex = r"(?P<kernel_id>\w+-\w+-\w+-\w+-\w+)"
 
 
+# placeholder for i18
+def _(x): return x
+
+
 class Voila(Application):
     name = 'voila'
     version = __version__
     examples = 'voila example.ipynb --port 8888'
+
+    flags = {
+        'no-browser': ({'Voila': {'open_browser': False}}, _('Don\'t open the notebook in a browser after startup.'))
+    }
+
     description = Unicode(
         """voila [OPTIONS] NOTEBOOK_FILENAME
 
@@ -134,6 +153,78 @@ class Voila(Application):
         )
     )
 
+    ip = Unicode('localhost', config=True,
+                 help=_("The IP address the notebook server will listen on."))
+
+    open_browser = Bool(True, config=True,
+                        help="""Whether to open in a browser after starting.
+                        The specific browser used is platform dependent and
+                        determined by the python standard library `webbrowser`
+                        module, unless it is overridden using the --browser
+                        (NotebookApp.browser) configuration option.
+                        """)
+
+    browser = Unicode(u'', config=True,
+                      help="""Specify what command to use to invoke a web
+                      browser when opening the notebook. If not specified, the
+                      default browser will be determined by the `webbrowser`
+                      standard library module, which allows setting of the
+                      BROWSER environment variable to override it.
+                      """)
+
+    webbrowser_open_new = Integer(2, config=True,
+                                  help=_("""Specify Where to open the notebook on startup. This is the
+                                  `new` argument passed to the standard library method `webbrowser.open`.
+                                  The behaviour is not guaranteed, but depends on browser support. Valid
+                                  values are:
+                                  - 2 opens a new tab,
+                                  - 1 opens a new window,
+                                  - 0 opens in an existing window.
+                                  See the `webbrowser.open` documentation for details.
+                                  """))
+
+    custom_display_url = Unicode(u'', config=True,
+                                 help=_("""Override URL shown to users.
+                                 Replace actual URL, including protocol, address, port and base URL,
+                                 with the given value when displaying URL to the users. Do not change
+                                 the actual connection URL. If authentication token is enabled, the
+                                 token is added to the custom URL automatically.
+                                 This option is intended to be used when the URL to display to the user
+                                 cannot be determined reliably by the Jupyter notebook server (proxified
+                                 or containerized setups for example)."""))
+
+    @property
+    def display_url(self):
+        if self.custom_display_url:
+            url = self.custom_display_url
+            if not url.endswith('/'):
+                url += '/'
+        else:
+            if self.ip in ('', '0.0.0.0'):
+                ip = "%s" % socket.gethostname()
+            else:
+                ip = self.ip
+            url = self._url(ip)
+        # TODO: do we want to have the token?
+        # if self.token:
+        #     # Don't log full token if it came from config
+        #     token = self.token if self._token_generated else '...'
+        #     url = (url_concat(url, {'token': token})
+        #           + '\n or '
+        #           + url_concat(self._url('127.0.0.1'), {'token': token}))
+        return url
+
+    @property
+    def connection_url(self):
+        ip = self.ip if self.ip else 'localhost'
+        return self._url(ip)
+
+    def _url(self, ip):
+        # TODO: https / certfile
+        # proto = 'https' if self.certfile else 'http'
+        proto = 'http'
+        return "%s://%s:%i%s" % (proto, ip, self.port, self.base_url)
+
     config_file_paths = List(Unicode(), config=True, help='Paths to search for voila.(py|json)')
 
     tornado_settings = Dict(
@@ -183,7 +274,19 @@ class Voila(Application):
         self.log.debug("Searching path %s for config files", self.config_file_paths)
         # to make config_file_paths settable via cmd line, we first need to parse it
         super(Voila, self).initialize(argv)
-        self.notebook_path = self.notebook_path if self.notebook_path else self.extra_args[0] if len(self.extra_args) == 1 else None
+        if len(self.extra_args) == 1:
+            arg = self.extra_args[0]
+            # I am not sure why we need to check if self.notebook_path is set, can we get rid of this?
+            if not self.notebook_path:
+                if os.path.isdir(arg):
+                    self.root_dir = arg
+                elif os.path.isfile(arg):
+                    self.notebook_path = arg
+                else:
+                    raise ValueError('argument is neither a file nor a directory: %r' % arg)
+        elif len(self.extra_args) != 0:
+            raise ValueError('provided more than 1 argument: %r' % self.extra_args)
+
         # then we load the config
         self.load_config_file('voila', path=self.config_file_paths)
         # but that cli config has preference, so we overwrite with that
@@ -251,16 +354,17 @@ class Voila(Application):
             config_manager=self.config_manager
         )
 
-        base_url = self.app.settings.get('base_url', '/')
+        # TODO: should this be configurable
+        self.base_url = self.app.settings.get('base_url', '/')
         self.app.settings.update(self.tornado_settings)
 
         handlers = []
 
         handlers.extend([
-            (url_path_join(base_url, r'/api/kernels/%s' % _kernel_id_regex), KernelHandler),
-            (url_path_join(base_url, r'/api/kernels/%s/channels' % _kernel_id_regex), ZMQChannelsHandler),
+            (url_path_join(self.base_url, r'/api/kernels/%s' % _kernel_id_regex), KernelHandler),
+            (url_path_join(self.base_url, r'/api/kernels/%s/channels' % _kernel_id_regex), ZMQChannelsHandler),
             (
-                url_path_join(base_url, r'/voila/static/(.*)'),
+                url_path_join(self.base_url, r'/voila/static/(.*)'),
                 MultiStaticFileHandler,
                 {
                     'paths': self.static_paths,
@@ -272,7 +376,7 @@ class Voila(Application):
         # this handler serves the nbextensions similar to the classical notebook
         handlers.append(
             (
-                url_path_join(base_url, r'/voila/nbextensions/(.*)'),
+                url_path_join(self.base_url, r'/voila/nbextensions/(.*)'),
                 FileFindHandler,
                 {
                     'path': self.nbextensions_path,
@@ -283,7 +387,7 @@ class Voila(Application):
 
         if self.notebook_path:
             handlers.append((
-                url_path_join(base_url, r'/'),
+                url_path_join(self.base_url, r'/'),
                 VoilaHandler,
                 {
                     'notebook_path': os.path.relpath(self.notebook_path, self.root_dir),
@@ -296,9 +400,9 @@ class Voila(Application):
         else:
             self.log.debug('serving directory: %r', self.root_dir)
             handlers.extend([
-                (base_url, VoilaTreeHandler),
-                (url_path_join(base_url, r'/voila/tree' + path_regex), VoilaTreeHandler),
-                (url_path_join(base_url, r'/voila/render' + path_regex), VoilaHandler,
+                (self.base_url, VoilaTreeHandler),
+                (url_path_join(self.base_url, r'/voila/tree' + path_regex), VoilaTreeHandler),
+                (url_path_join(self.base_url, r'/voila/render' + path_regex), VoilaHandler,
                     {
                         'strip_sources': self.strip_sources,
                         'nbconvert_template_paths': self.nbconvert_template_paths,
@@ -307,11 +411,13 @@ class Voila(Application):
             ])
 
         self.app.add_handlers('.*$', handlers)
+        if self.open_browser:
+            self.launch_browser()
         self.listen()
 
     def listen(self):
         self.app.listen(self.port)
-        self.log.info('Voila listening on port %s.' % self.port)
+        self.log.info('Voila is running at:\n%s' % self.display_url)
 
         self.ioloop = tornado.ioloop.IOLoop.current()
         try:
@@ -321,6 +427,33 @@ class Voila(Application):
         finally:
             shutil.rmtree(self.connection_dir)
             self.kernel_manager.shutdown_all()
+
+    def launch_browser(self):
+        try:
+            browser = webbrowser.get(self.browser or None)
+        except webbrowser.Error as e:
+            self.log.warning(_('No web browser found: %s.') % e)
+            browser = None
+
+        if not browser:
+            return
+
+        uri = self.base_url
+        fd, open_file = tempfile.mkstemp(suffix='.html')
+        # Write a temporary file to open in the browser
+        with open(fd, 'w', encoding='utf-8') as fh:
+            # TODO: do we want to have the token?
+            # if self.token:
+            #     url = url_concat(url, {'token': self.token})
+            url = url_path_join(self.connection_url, uri)
+
+            jinja2_env = self.app.settings['jinja2_env']
+            template = jinja2_env.get_template('browser-open.html')
+            fh.write(template.render(open_url=url))
+
+        def target():
+            return browser.open(urljoin('file:', pathname2url(open_file)), new=self.webbrowser_open_new)
+        threading.Thread(target=target).start()
 
 
 main = Voila.launch_instance
