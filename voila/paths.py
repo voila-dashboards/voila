@@ -36,14 +36,17 @@ def collect_template_paths(
 
     # We look at the usual jupyter locations, and for development purposes also
     # relative to the package directory (with highest precedence)
-    template_directories = \
-        [os.path.abspath(os.path.join(ROOT, '..', 'share', 'jupyter', 'voila', 'template', template_name))] +\
-        jupyter_path('voila', 'template', template_name)
+    search_directories = \
+        [os.path.abspath(os.path.join(ROOT, '..', 'share', 'jupyter', 'voila', 'template'))] +\
+        jupyter_path('voila', 'template')
 
-    for dirname in template_directories:
-        if os.path.exists(dirname):
+    found_at_least_one = False
+    for search_directory in search_directories:
+        template_directory = os.path.join(search_directory, template_name)
+        if os.path.exists(template_directory):
+            found_at_least_one = True
             conf = {}
-            conf_file = os.path.join(dirname, 'conf.json')
+            conf_file = os.path.join(template_directory, 'conf.json')
             if os.path.exists(conf_file):
                 with open(conf_file) as f:
                     conf = json.load(f)
@@ -57,25 +60,19 @@ def collect_template_paths(
                     tornado_template_paths,
                     conf.get('base_template', 'default'))
 
-            extra_nbconvert_path = os.path.join(dirname, 'nbconvert_templates')
-            # if not os.path.exists(extra_nbconvert_path):
-            #    log.warning('template named %s found at path %r, but %s does not exist', template_name,
-            #                dirname, extra_nbconvert_path)
+            extra_nbconvert_path = os.path.join(template_directory, 'nbconvert_templates')
             nbconvert_template_paths.insert(0, extra_nbconvert_path)
 
-            extra_static_path = os.path.join(dirname, 'static')
-            # if not os.path.exists(extra_static_path):
-            #    log.warning('template named %s found at path %r, but %s does not exist', template_name,
-            #                dirname, extra_static_path)
+            extra_static_path = os.path.join(template_directory, 'static')
             static_paths.insert(0, extra_static_path)
 
-            extra_template_path = os.path.join(dirname, 'templates')
-            # if not os.path.exists(extra_template_path):
-            #    log.warning('template named %s found at path %r, but %s does not exist', template_name,
-            #                dirname, extra_template_path)
+            extra_template_path = os.path.join(template_directory, 'templates')
             tornado_template_paths.insert(0, extra_template_path)
 
             # We don't look at multiple directories, once a directory with a given name is found at a
             # given level of precedence (for instance user directory), we don't look further (for instance
             # in sys.prefix)
             break
+    if not found_at_least_one:
+        paths = "\n\t".join(search_directories)
+        raise ValueError('No template sub-directory with name %r found in the following paths:\n\t%s' % (template_name, paths))
