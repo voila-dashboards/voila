@@ -37,7 +37,7 @@ def voila_args(voila_notebook, voila_args_extra, voila_config_file_paths_arg):
 @pytest.fixture
 def voila_app(voila_args, voila_config):
     voila_app = VoilaTest.instance()
-    voila_app.initialize(voila_args)
+    voila_app.initialize(voila_args + ['--no-browser'])
     voila_config(voila_app)
     voila_app.start()
     yield voila_app
