@@ -407,7 +407,7 @@ class Voila(Application):
 
     def listen(self):
         self.app.listen(self.port)
-        self.log.info('Voila listening on port %s.' % self.port)
+        self.log.info('Voila is running at:\n%s' % self.display_url)
 
         self.ioloop = tornado.ioloop.IOLoop.current()
         try:
