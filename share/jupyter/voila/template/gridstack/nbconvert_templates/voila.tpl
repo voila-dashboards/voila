@@ -50,7 +50,7 @@ body {
                     <hr class="star-light">
                 </div>
             </div>
-    
+
             <div class="grid-stack" data-gs-width="12" data-gs-animate="yes">
                     {{ super() }}
                     <!-- <div class="grid-stack-item" data-gs-x="0" data-gs-y="0" data-gs-width="4" data-gs-height="2">
@@ -59,8 +59,8 @@ body {
             </div>
             </div>
         </div>
-    </section>        
-    
+</section>
+
 {% endblock body %}
 
 
@@ -82,7 +82,7 @@ body {
 {% endif %}
         <div class="grid-stack-item-content">
             <div class="gridhandle">
-                <i class=" fa fa-arrows"></i> 
+                <i class=" fa fa-arrows"></i>
             </div>
         {{ super() }}
         </div>

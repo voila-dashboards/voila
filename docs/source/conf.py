@@ -18,8 +18,12 @@ if _release['version_info'][-1] == 'dev':
 on_rtd = os.environ.get('READTHEDOCS', None) == 'True'
 
 html_theme = "sphinx_rtd_theme"
-
 html_theme_path = [sphinx_rtd_theme.get_html_theme_path()]
+html_theme_options = {
+    # Toc options
+    'sticky_navigation': False,
+    'navigation_depth': 2,
+}
 
 def setup(app):
     app.add_stylesheet("main_stylesheet.css")
@@ -49,4 +53,3 @@ todo_include_todos = False
 htmlhelp_basename = 'voiladoc'
 
 intersphinx_mapping = {'https://docs.python.org/': None}
-

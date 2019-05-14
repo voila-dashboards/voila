@@ -1,14 +1,34 @@
+=====
 Voila
 =====
 
-Voila renders Jupyter notebooks in a read-only fashion, including live
-interactive widgets.
+Create interactive dashboards with Jupyter Notebooks.
 
-Unlike the usual HTML-converted notebooks, each user connected to Voila gets a
-dedicated Jupyter kernel which can execute the callbacks to changes in Jupyter
-interactive widgets.
+Voila allows you to convert a Jupyter Notebook into an
+interactive dashboard that allows you to share your work with others. It
+is secure and customizable, giving you control over what your readers
+experience.
 
-By default, voila disallows execute requests from the front-end, disabling the
-ability to execute arbitrary code. By defaults, voila runs with the
-`strip_source` option set to `True`, which strips out the input cells from the
-rendered notebook.
+For example, here's a dashboard created with Voila. (you can
+try it interactively at the following Binder link)
+
+.. image:: https://mybinder.org/badge_logo.svg
+   :target: https://mybinder.org/v2/gh/QuantStack/voila/master?urlpath=voila%2Ftree%2Fnotebooks
+
+.. raw:: html
+
+   <br />
+
+.. image:: ../../voila-won.gif
+
+Table of contents
+=================
+
+For more information  about Voila, see the sections below.
+
+.. toctree::
+   :maxdepth: 2
+
+   install
+   using
+   customize
