@@ -28,3 +28,7 @@ config.rst
 /.pydevproject
 
 package-lock.json
+
+share/jupyter/voila/template/nbconvert/static/index.css
+share/jupyter/voila/template/nbconvert/static/theme-light.css
+share/jupyter/voila/template/nbconvert/static/theme-dark.css

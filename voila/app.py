@@ -79,6 +79,7 @@ class Voila(Application):
     )
     notebook_filename = Unicode()
     strip_sources = Bool(True, help='Strip sources from rendered html').tag(config=True)
+    theme = Unicode('light').tag(config=True)
     port = Integer(
         8866,
         config=True,
@@ -100,7 +101,8 @@ class Voila(Application):
         'static': 'Voila.static_root',
         'strip_sources': 'Voila.strip_sources',
         'autoreload': 'Voila.autoreload',
-        'template': 'Voila.template'
+        'template': 'Voila.template',
+        'theme': 'Voila.theme'
     }
     connection_dir_root = Unicode(
         config=True,
@@ -394,7 +396,8 @@ class Voila(Application):
                     'strip_sources': self.strip_sources,
                     'nbconvert_template_paths': self.nbconvert_template_paths,
                     'template_name': self.template,
-                    'config': self.config
+                    'config': self.config,
+                    'theme': self.theme
                 }
             ))
         else:
