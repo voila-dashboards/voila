@@ -53,7 +53,7 @@ _kernel_id_regex = r"(?P<kernel_id>\w+-\w+-\w+-\w+-\w+)"
 
 
 # placeholder for i18
-def _(x): x
+def _(x): return x
 
 
 class Voila(Application):
