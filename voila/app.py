@@ -276,7 +276,19 @@ class Voila(Application):
         self.log.debug("Searching path %s for config files", self.config_file_paths)
         # to make config_file_paths settable via cmd line, we first need to parse it
         super(Voila, self).initialize(argv)
-        self.notebook_path = self.notebook_path if self.notebook_path else self.extra_args[0] if len(self.extra_args) == 1 else None
+        if len(self.extra_args) == 1:
+            arg = self.extra_args[0]
+            # I am not sure why we need to check if self.notebook_path is set, can we get rid of this?
+            if not self.notebook_path:
+                if os.path.isdir(arg):
+                    self.root_dir = arg
+                elif os.path.isfile(arg):
+                    self.notebook_path = arg
+                else:
+                    raise ValueError('argument is neither a file nor a directory: %r' % arg)
+        elif len(self.extra_args) != 0:
+            raise ValueError('provided more than 1 argument: %r' % self.extra_args)
+
         # then we load the config
         self.load_config_file('voila', path=self.config_file_paths)
         # but that cli config has preference, so we overwrite with that
