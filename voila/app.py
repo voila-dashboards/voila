@@ -302,9 +302,9 @@ class Voila(Application):
                 self.template_paths,
                 self.template)
         self.log.debug('using template: %s', self.template)
-        self.log.debug('nbconvert template paths: %s', self.nbconvert_template_paths)
-        self.log.debug('template paths: %s', self.template_paths)
-        self.log.debug('static paths: %s', self.static_paths)
+        self.log.debug('nbconvert template paths:\n\t%s', '\n\t'.join(self.nbconvert_template_paths))
+        self.log.debug('template paths:\n\t%s', '\n\t'.join(self.template_paths))
+        self.log.debug('static paths:\n\t%s', '\n\t'.join(self.static_paths))
         if self.notebook_path and not os.path.exists(self.notebook_path):
             raise ValueError('Notebook not found: %s' % self.notebook_path)
 
