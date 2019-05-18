@@ -5,15 +5,16 @@
 #                                                                           #
 # The full license is in the file LICENSE, distributed with this software.  #
 #############################################################################
+
 import os
 import tornado.web
 
 from jupyter_server.base.handlers import JupyterHandler
 
-
 import nbformat  # noqa: F401
+
 from .execute import executenb
-from .html import HTMLExporter
+from .exporter import VoilaExporter
 
 
 class VoilaHandler(JupyterHandler):
@@ -24,6 +25,7 @@ class VoilaHandler(JupyterHandler):
         self.nbconvert_template_paths = kwargs.pop('nbconvert_template_paths', [])
         self.template_name = kwargs.pop('template_name', 'default')
         self.exporter_config = kwargs.pop('config', None)
+        self.theme = kwargs.pop('theme', 'light')
 
     @tornado.web.authenticated
     @tornado.gen.coroutine
@@ -61,11 +63,11 @@ class VoilaHandler(JupyterHandler):
         resources = {
             'kernel_id': kernel_id,
             'base_url': self.base_url,
-            'nbextensions': nbextensions
+            'nbextensions': nbextensions,
+            'theme': self.theme
         }
 
-        exporter = HTMLExporter(
-            template_file='voila.tpl',
+        exporter = VoilaExporter(
             template_path=self.nbconvert_template_paths,
             config=self.exporter_config,
             contents_manager=self.contents_manager  # for the image inlining

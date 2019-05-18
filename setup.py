@@ -1,14 +1,24 @@
+from __future__ import print_function
+
 from setuptools import setup, find_packages, Command
 from setuptools.command.sdist import sdist
 from setuptools.command.build_py import build_py
+from setuptools.command.develop import develop
 from setuptools.command.egg_info import egg_info
+from setuptools.command.bdist_egg import bdist_egg
 
 from subprocess import check_call
 
 import os
 import sys
 
+try:
+    from urllib.request import urlopen
+except ImportError:
+    from urllib import urlopen
+
 from distutils import log
+
 log.set_verbosity(log.DEBUG)
 
 here = os.path.dirname(os.path.abspath(__file__))
@@ -23,8 +33,9 @@ npm_path = os.pathsep.join([
 def in_read_the_docs():
     return os.environ.get('READTHEDOCS') == 'True'
 
-def js_prerelease(command, strict=False):
+def js_first(command, strict=False):
     """decorator for building minified js/css prior to another command"""
+
     class DecoratedCommand(command):
         def run(self):
             jsdeps = self.distribution.get_command_obj('jsdeps')
@@ -119,6 +130,107 @@ class NPM(Command):
         # update package data in case this created new files
         # update_package_data(self.distribution)
 
+
+jupyterlab_css_version = '0.1.0'
+css_url = "https://unpkg.com/@jupyterlab/nbconvert-css@%s/style/index.css" % jupyterlab_css_version
+
+theme_light_version = '0.19.1'
+theme_light_url = "https://unpkg.com/@jupyterlab/theme-light-extension@%s/static/embed.css" % theme_light_version
+
+theme_dark_version = '0.19.1'
+theme_dark_url = "https://unpkg.com/@jupyterlab/theme-dark-extension@%s/static/embed.css" % theme_dark_version
+
+
+class FetchCSS(Command):
+    description = "Fetch Notebook CSS from CDN"
+    user_options = []
+
+    def initialize_options(self):
+        pass
+
+    def finalize_options(self):
+        pass
+
+    def _download(self, url):
+        try:
+            return urlopen(url).read()
+        except Exception as e:
+            if 'ssl' in str(e).lower():
+                try:
+                    import pycurl
+                except ImportError:
+                    print("Failed, try again after installing PycURL with `pip install pycurl` to avoid outdated SSL.", file=sys.stderr)
+                    raise e
+                else:
+                    print("Failed, trying again with PycURL to avoid outdated SSL.", file=sys.stderr)
+                    return self._download_pycurl(url)
+            raise e
+
+    def _download_pycurl(self, url):
+        """Download CSS with pycurl, in case of old SSL (e.g. Python < 2.7.9)."""
+        import pycurl
+        c = pycurl.Curl()
+        c.setopt(c.URL, url)
+        buf = BytesIO()
+        c.setopt(c.WRITEDATA, buf)
+        c.perform()
+        return buf.getvalue()
+
+    def run(self):
+        css_dest          = os.path.join('share', 'jupyter', 'voila', 'template', 'default', 'static', 'index.css')
+        theme_light_dest  = os.path.join('share', 'jupyter', 'voila', 'template', 'default', 'static', 'theme-light.css')
+        theme_dark_dest   = os.path.join('share', 'jupyter', 'voila', 'template', 'default', 'static', 'theme-dark.css')
+
+        try:
+            css = self._download(css_url)
+            theme_light = self._download(theme_light_url)
+            theme_dark = self._download(theme_dark_url)
+        except Exception as e:
+            msg = "Failed to download CSS: %s" % e
+            if os.path.exists(css_dest) and os.path.exists(theme_light_dest) and os.path.exists(theme_dark_dest):
+                print("Already have CSS, moving on.")
+            else:
+                raise OSError("Need Notebook CSS to proceed.")
+            return
+
+        try:
+            os.mkdir(os.path.join('share', 'jupyter', 'voila', 'template', 'default', 'static'))
+        except OSError:  # Use FileExistsError from python 3.3 onward.
+            pass
+        with open(css_dest, 'wb+') as f:
+            f.write(css)
+        with open(theme_light_dest, 'wb+') as f:
+            f.write(theme_light)
+        with open(theme_dark_dest, 'wb+') as f:
+            f.write(theme_dark)
+
+def css_first(command):
+    class CSSFirst(command):
+        def run(self):
+            self.distribution.run_command('css')
+            return command.run(self)
+    return CSSFirst
+
+
+class bdist_egg_disabled(bdist_egg):
+    """Disabled version of bdist_egg
+
+    Prevents setup.py install performing setuptools' default easy_install,
+    which it should never ever do.
+    """
+    def run(self):
+        sys.exit("Aborting implicit building of eggs. Use `pip install .` to install from source.")
+
+cmdclass = {
+    'css': FetchCSS,
+    'jsdeps': NPM,
+    'build_py': css_first(js_first(build_py)),
+    'egg_info': css_first(js_first(egg_info)),
+    'sdist': css_first(js_first(sdist, strict=True)),
+    'develop' : css_first(develop),
+    'bdist_egg': bdist_egg if 'bdist_egg' in sys.argv else bdist_egg_disabled
+}
+
 version_ns = {}
 with open(os.path.join(here, 'voila', '_version.py')) as f:
     exec(f.read(), {}, version_ns)
@@ -140,12 +252,7 @@ setup_args = {
     'packages': find_packages(),
     'zip_safe': False,
     'data_files': data_files,
-    'cmdclass': {
-        'build_py': js_prerelease(build_py),
-        'egg_info': js_prerelease(egg_info),
-        'sdist': js_prerelease(sdist, strict=True),
-        'jsdeps': NPM,
-    },
+    'cmdclass': cmdclass,
     'package_data': {
         'voila': [
             'static/*'

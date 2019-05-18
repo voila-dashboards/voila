@@ -2,63 +2,35 @@
 {% from 'mathjax.tpl' import mathjax %}
 
 {%- block html_head_css -%}
+<link rel="stylesheet" type="text/css" href="{{resources.base_url}}voila/static/index.css"></link>
 
-{% for css in resources.inlining.css -%}
+{% if resources.theme == 'dark' %}
+    <link rel="stylesheet" type="text/css" href="{{resources.base_url}}voila/static/theme-dark.css"></link>
+{% else %}
+    <link rel="stylesheet" type="text/css" href="{{resources.base_url}}voila/static/theme-light.css"></link>
+{% endif %}
+
+{% for css in resources.inlining.css %}
     <style type="text/css">
     {{ css }}
     </style>
 {% endfor %}
 
-<style type="text/css">
-
-/* Overrides of notebook CSS for static HTML export */
-body {
-  overflow: visible;
-  padding: 8px;
+<style>
+a.anchor-link {
+  display: none;
 }
-
-div#notebook {
-  overflow: visible;
-  border-top: none;
-  padding: 20px;
-}
-
-{%- if resources.global_content_filter.no_prompt-%}
-div#notebook-container{
-  padding: 6ex 12ex 8ex 12ex;
-}
-{%- endif -%}
-
-@media print {
-  div.cell {
-    display: block;
-    page-break-inside: avoid;
-  }
-  div.output_wrapper {
-    display: block;
-    page-break-inside: avoid;
-  }
-  div.output {
-    display: block;
-    page-break-inside: avoid;
-  }
+.highlight  {
+  margin: 0.4em;
 }
 </style>
 
-<!-- Custom stylesheet, it must be in the same directory as the html file -->
-<!-- <link rel="stylesheet" href="custom.css"> -->
-
-<!-- Loading mathjax macro -->
 {{ mathjax() }}
 {%- endblock html_head_css -%}
 
-{% block body %}
-<body data-base-url="{{resources.base_url}}voila/">
-  <div tabindex="-1" id="notebook" class="border-box-sizing">
-    <div class="container" id="notebook-container">
+{%- block body -%}
+<body class="jp-Notebook" data-base-url="{{resources.base_url}}voila/">
 {{ super() }}
-    </div>
-  </div>
 </body>
-{%- endblock body %}
+{%- endblock body -%}
 

@@ -1,12 +1,16 @@
 import mimetypes
+import traitlets
 
-import nbconvert.exporters.html
+from traitlets.config import Config
 from jinja2 import contextfilter
+
 from nbconvert.filters.markdown_mistune import IPythonRenderer, MarkdownWithMath
+from nbconvert.exporters.html import HTMLExporter
 
 
 class VoilaMarkdownRenderer(IPythonRenderer):
     """Custom markdown renderer that inlines images"""
+
     def image(self, src, title, text):
         contents_manager = self.options['contents_manager']
         if contents_manager.file_exists(src):
@@ -17,8 +21,12 @@ class VoilaMarkdownRenderer(IPythonRenderer):
         return super(VoilaMarkdownRenderer, self).image(src, title, text)
 
 
-class HTMLExporter(nbconvert.exporters.html.HTMLExporter):
+class VoilaExporter(HTMLExporter):
     """Custom HTMLExporter that inlines the images using VoilaMarkdownRenderer"""
+
+    # The voila exporter overrides the markdown renderer from the HTMLExporter
+    # to inline images.
+
     @contextfilter
     def markdown2html(self, context, source):
         cell = context['cell']
@@ -27,3 +35,27 @@ class HTMLExporter(nbconvert.exporters.html.HTMLExporter):
                                          contents_manager=self.contents_manager,
                                          anchor_link_text=self.anchor_link_text)
         return MarkdownWithMath(renderer=renderer).render(source)
+
+    # The voila exporter disables the CSSHTMLHeaderPreprocessor from the HTMLExporter.
+
+    @property
+    def default_config(self):
+        c = Config({
+            'CSSHTMLHeaderPreprocessor': {
+                'enabled': False
+            },
+        })
+        c.merge(super(VoilaExporter, self).default_config)
+        return c
+
+    # Instead, we use the VoilaCSSPreprocessor.
+
+    @traitlets.default('preprocessors')
+    def _default_preprocessors(self):
+        return ['voila.csspreprocessor.VoilaCSSPreprocessor']
+
+    # Overriding the default template file.
+
+    @traitlets.default('template_file')
+    def default_template_file(self):
+        return 'voila.tpl'
