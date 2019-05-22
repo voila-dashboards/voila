@@ -36,7 +36,7 @@ module.exports = [
     {
         entry: ['./lib/index.js'],
         output: {
-            filename: 'libwidgets.js',
+            filename: 'voila.js',
             path: distRoot,
             libraryTarget: 'amd'
         },

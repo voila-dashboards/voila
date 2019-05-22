@@ -77,7 +77,7 @@ class NPM(Command):
 
     lib_root = os.path.join(here, 'voila', 'static')
     targets = [
-        os.path.join(lib_root, 'libwidgets.js')
+        os.path.join(template_root, 'voila.js')
     ]
 
     def initialize_options(self):
