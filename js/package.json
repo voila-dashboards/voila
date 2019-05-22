@@ -3,8 +3,8 @@
   "version": "1.0.0",
   "description": "",
   "main": "lib/index.js",
+  "browserslist": ">0.8%, not ie 11, not op_mini all, not dead",
   "dependencies": {
-    "@babel/polyfill": "^7.2.5",
     "@jupyter-widgets/base": "^1.2.2",
     "@jupyter-widgets/controls": "^1.4.2",
     "@jupyter-widgets/html-manager": "^0.15.2",
@@ -16,6 +16,7 @@
     "@jupyterlab/services": "^3.2.1",
     "@phosphor/signaling": "^1.2.2",
     "@phosphor/widgets": "^1.5.0",
+    "core-js": "^3.1.0",
     "font-awesome": "^4.7.0"
   },
   "devDependencies": {
