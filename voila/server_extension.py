@@ -19,6 +19,7 @@ from .paths import ROOT, STATIC_ROOT, collect_template_paths, jupyter_path
 from .handler import VoilaHandler
 from .treehandler import VoilaTreeHandler
 from .static_file_handler import MultiStaticFileHandler
+from .configuration import VoilaConfiguration
 
 
 def load_jupyter_server_extension(server_app):
@@ -28,11 +29,13 @@ def load_jupyter_server_extension(server_app):
     static_paths = [STATIC_ROOT]
     template_paths = []
 
+    # common configuration options between the server extension and the application
+    voila_configuration = VoilaConfiguration(parent=server_app)
     collect_template_paths(
         nbconvert_template_paths,
         static_paths,
         template_paths,
-        'default'
+        voila_configuration.template
     )
 
     jenv_opt = {"autoescape": True}
@@ -54,6 +57,7 @@ def load_jupyter_server_extension(server_app):
         (url_path_join(base_url, '/voila/render' + path_regex), VoilaHandler, {
             'config': server_app.config,
             'nbconvert_template_paths': nbconvert_template_paths,
+            'voila_configuration': voila_configuration
         }),
         (url_path_join(base_url, '/voila'), VoilaTreeHandler),
         (url_path_join(base_url, '/voila/tree' + path_regex), VoilaTreeHandler),

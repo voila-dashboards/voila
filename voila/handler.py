@@ -21,11 +21,9 @@ class VoilaHandler(JupyterHandler):
 
     def initialize(self, **kwargs):
         self.notebook_path = kwargs.pop('notebook_path', [])    # should it be []
-        self.strip_sources = kwargs.pop('strip_sources', True)
         self.nbconvert_template_paths = kwargs.pop('nbconvert_template_paths', [])
-        self.template_name = kwargs.pop('template_name', 'default')
         self.exporter_config = kwargs.pop('config', None)
-        self.theme = kwargs.pop('theme', 'light')
+        self.voila_configuration = kwargs['voila_configuration']
 
     @tornado.web.authenticated
     @tornado.gen.coroutine
@@ -64,7 +62,7 @@ class VoilaHandler(JupyterHandler):
             'kernel_id': kernel_id,
             'base_url': self.base_url,
             'nbextensions': nbextensions,
-            'theme': self.theme
+            'theme': self.voila_configuration.theme
         }
 
         exporter = VoilaExporter(
@@ -73,7 +71,7 @@ class VoilaHandler(JupyterHandler):
             contents_manager=self.contents_manager  # for the image inlining
         )
 
-        if self.strip_sources:
+        if self.voila_configuration.strip_sources:
             exporter.exclude_input = True
             exporter.exclude_output_prompt = True
             exporter.exclude_input_prompt = True
