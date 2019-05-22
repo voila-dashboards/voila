@@ -39,7 +39,7 @@ a.anchor-link {
         align-items: center;
         justify-content: center;
         height: 75vh;
-        color: #444;
+        color: var(--jp-content-font-color1);
         font-family: sans-serif;
     }
   </style>
