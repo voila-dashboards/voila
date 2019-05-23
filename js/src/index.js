@@ -6,9 +6,5 @@
 * The full license is in the file LICENSE, distributed with this software. *
 ****************************************************************************/
 
-import 'font-awesome/css/font-awesome.css'
-import '@phosphor/widgets/style/index.css'
-import '../css/widgets.css'
-
 export { WidgetManager } from './manager';
 export { connectKernel } from './kernel'
