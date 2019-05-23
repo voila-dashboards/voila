@@ -12,6 +12,8 @@ from jupyter_core.paths import jupyter_path
 
 ROOT = os.path.dirname(__file__)
 STATIC_ROOT = os.path.join(ROOT, 'static')
+# if the directory above us contains the following paths, it means we are installed in dev mode (pip install -e .)
+DEV_MODE = os.path.exists(os.path.join(ROOT, '../setup.py')) and os.path.exists(os.path.join(ROOT, '../share'))
 
 
 def collect_template_paths(
@@ -35,10 +37,11 @@ def collect_template_paths(
     """
 
     # We look at the usual jupyter locations, and for development purposes also
-    # relative to the package directory (with highest precedence)
-    search_directories = \
-        [os.path.abspath(os.path.join(ROOT, '..', 'share', 'jupyter', 'voila', 'template'))] +\
-        jupyter_path('voila', 'template')
+    # relative to the package directory (first entry, meaning with highest precedence)
+    search_directories = []
+    if DEV_MODE:
+        search_directories.append(os.path.abspath(os.path.join(ROOT, '..', 'share', 'jupyter', 'voila', 'template')))
+    search_directories.extend(jupyter_path('voila', 'template'))
 
     found_at_least_one = False
     for search_directory in search_directories:
