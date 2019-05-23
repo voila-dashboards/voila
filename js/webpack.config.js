@@ -30,13 +30,13 @@ var rules = [
     { test: /\.svg(\?v=\d+\.\d+\.\d+)?$/, use: 'url-loader?limit=10000&mimetype=image/svg+xml' }
 ]
 
-var distRoot = path.resolve(__dirname, '..', 'voila', 'static')
+var distRoot = path.resolve(__dirname, '..', 'share', 'jupyter', 'voila', 'template', 'default', 'static')
 
 module.exports = [
     {
         entry: ['./lib/index.js'],
         output: {
-            filename: 'libwidgets.js',
+            filename: 'voila.js',
             path: distRoot,
             libraryTarget: 'amd'
         },
