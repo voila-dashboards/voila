@@ -190,7 +190,7 @@ class FetchCSS(Command):
             if os.path.exists(css_dest) and os.path.exists(theme_light_dest) and os.path.exists(theme_dark_dest):
                 print("Already have CSS, moving on.")
             else:
-                raise OSError("Need Notebook CSS to proceed.")
+                raise OSError("Need JupyterLab CSS to proceed.")
             return
 
         try:

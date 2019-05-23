@@ -16,6 +16,9 @@
     </style>
 {% endfor %}
 
+<link rel="stylesheet" type="text/css" href="https://unpkg.com/@jupyter-widgets/controls@1.4.4/css/widgets-base.css"></link>
+<link rel="stylesheet" type="text/css" href="https://unpkg.com/@phosphor/widgets@1.6.0/style/index.css"></link>
+
 <style>
 a.anchor-link {
   display: none;
