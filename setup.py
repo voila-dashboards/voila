@@ -264,8 +264,9 @@ setup_args = {
         ]
     },
     'install_requires': [
-        'jupyter_server>=0.0.4',
-        'nbconvert>=5.5.0,<6'
+        'jupyter_server>=0.0.5,<0.0.6',
+        'nbconvert>=5.5.0,<6',
+        'jupyterlab_pygments>=0.1.0,<0.2'
     ],
     'extras_require': {
         'test': ['mock', 'pytest<4', 'pytest-tornado5']
