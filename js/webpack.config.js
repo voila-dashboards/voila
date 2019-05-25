@@ -1,26 +1,10 @@
 
 var path = require('path');
-var postcss = require('postcss');
 
 var rules = [
     { test: /\.css$/, use: [
         'style-loader',
-        'css-loader',
-        {
-            loader: 'postcss-loader',
-            options: {
-                plugins: [
-                    postcss.plugin('delete-tilde', function() {
-                        return function (css) {
-                            css.walkAtRules('import', function(rule) {
-                                rule.params = rule.params.replace('~', '');
-                            });
-                        };
-                    }),
-                    require('postcss-import')(),
-                ]
-            }
-        }
+        'css-loader'
     ]},
     // required to load font-awesome
     { test: /\.woff2(\?v=\d+\.\d+\.\d+)?$/, use: 'url-loader?limit=10000&mimetype=application/font-woff' },
