@@ -48,15 +48,15 @@ Where are Voila templates located?
 ----------------------------------
 
 All voila templates are stored as folders with particular configuration/template files inside.
-These folders can exist in the standard Jupyter configuration locations, in a folder called ``voila/template``.
+These folders can exist in the standard Jupyter configuration locations, in a folder called ``voila/templates``.
 For example:
 
 .. code-block:: bash
 
-   ~/.local/share/jupyter/voila/template
-   ~/path/to/env/dev/share/jupyter/voila/template
-   /usr/local/share/jupyter/voila/template
-   /usr/share/jupyter/voila/template
+   ~/.local/share/jupyter/voila/templates
+   ~/path/to/env/dev/share/jupyter/voila/templates
+   /usr/local/share/jupyter/voila/templates
+   /usr/share/jupyter/voila/templates
 
 Voila will search these locations for a folder, one per template, where
 the folder name defines the template name.
@@ -70,7 +70,7 @@ the folder structure of the base Voila template (called "default"):
 
 .. code-block:: bash
 
-    tree path/to/env/share/jupyter/voila/template/default/
+    tree path/to/env/share/jupyter/voila/templates/default/
     ├── nbconvert_templates
     │   ├── base.tpl
     │   └── voila.tpl
@@ -104,15 +104,15 @@ We'll have two goals:
 1. Add an ``<h1>>`` header displaying "Our awesome template" to the voila dashboard.
 2. Add a custom 404.html page that displays an image.
 
-First, we'll create a folder in ``~/.local/share/jupyter/voila/template`` called ``mytemplate``::
+First, we'll create a folder in ``~/.local/share/jupyter/voila/templates`` called ``mytemplate``::
 
-    mkdir ~/.local/share/jupyter/voila/template/mytemplate
-    cd ~/.local/share/jupyter/voila/template/mytemplate
+    mkdir ~/.local/share/jupyter/voila/templates/mytemplate
+    cd ~/.local/share/jupyter/voila/templates/mytemplate
 
 Next, we'll copy over the base template files for voila, which we'll modify::
 
-    cp -r path/to/env/share/jupyter/voila/template/default/nbconvert_templates ./
-    cp -r path/to/env/share/jupyter/voila/template/default/templates ./
+    cp -r path/to/env/share/jupyter/voila/templates/default/nbconvert_templates ./
+    cp -r path/to/env/share/jupyter/voila/templates/default/templates ./
 
 We should now have a folder structure like this::
 

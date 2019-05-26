@@ -13,10 +13,10 @@ def voila_args_extra():
 @pytest.fixture
 def voila_config():
     def config(app):
-        path_gridstack = os.path.abspath(os.path.join(BASE_DIR, '../../share/jupyter/voila/template/gridstack/nbconvert_templates'))
-        path_default = os.path.abspath(os.path.join(BASE_DIR, '../../share/jupyter/voila/template/default/nbconvert_templates'))
+        path_gridstack = os.path.abspath(os.path.join(BASE_DIR, '../../share/jupyter/voila/templates/gridstack/nbconvert_templates'))
+        path_default = os.path.abspath(os.path.join(BASE_DIR, '../../share/jupyter/voila/templates/default/nbconvert_templates'))
         app.nbconvert_template_paths = [path_gridstack, path_default]
-        path = os.path.abspath(os.path.join(BASE_DIR, '../../share/jupyter/voila/template/default/templates'))
+        path = os.path.abspath(os.path.join(BASE_DIR, '../../share/jupyter/voila/templates/default/templates'))
         app.template_paths = [path]
 
     return config

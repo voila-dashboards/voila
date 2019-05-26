@@ -28,7 +28,7 @@ def collect_template_paths(
         - nbconvert template paths,
         - static paths,
         - tornado template paths,
-    by looking in the standard Jupyter data directories (PREFIX/share/jupyter/voila/template)
+    by looking in the standard Jupyter data directories (PREFIX/share/jupyter/voila/templates)
     with different prefix values (user directory, sys prefix, and then system prefix) which
     allows users to override templates locally.
 
@@ -40,8 +40,8 @@ def collect_template_paths(
     # relative to the package directory (first entry, meaning with highest precedence)
     search_directories = []
     if DEV_MODE:
-        search_directories.append(os.path.abspath(os.path.join(ROOT, '..', 'share', 'jupyter', 'voila', 'template')))
-    search_directories.extend(jupyter_path('voila', 'template'))
+        search_directories.append(os.path.abspath(os.path.join(ROOT, '..', 'share', 'jupyter', 'voila', 'templates')))
+    search_directories.extend(jupyter_path('voila', 'templates'))
 
     found_at_least_one = False
     for search_directory in search_directories:
