@@ -47,6 +47,7 @@ from .handler import VoilaHandler
 from .treehandler import VoilaTreeHandler
 from ._version import __version__
 from .static_file_handler import MultiStaticFileHandler
+from .configuration import VoilaConfiguration
 
 ioloop.install()
 _kernel_id_regex = r"(?P<kernel_id>\w+-\w+-\w+-\w+-\w+)"
@@ -78,8 +79,6 @@ class Voila(Application):
         """
     )
     notebook_filename = Unicode()
-    strip_sources = Bool(True, help='Strip sources from rendered html').tag(config=True)
-    theme = Unicode('light').tag(config=True)
     port = Integer(
         8866,
         config=True,
@@ -99,10 +98,10 @@ class Voila(Application):
     aliases = {
         'port': 'Voila.port',
         'static': 'Voila.static_root',
-        'strip_sources': 'Voila.strip_sources',
+        'strip_sources': 'VoilaConfiguration.strip_sources',
         'autoreload': 'Voila.autoreload',
-        'template': 'Voila.template',
-        'theme': 'Voila.theme'
+        'template': 'VoilaConfiguration.template',
+        'theme': 'VoilaConfiguration.theme'
     }
     connection_dir_root = Unicode(
         config=True,
@@ -112,15 +111,6 @@ class Voila(Application):
         )
     )
     connection_dir = Unicode()
-
-    template = Unicode(
-        'default',
-        config=True,
-        allow_none=True,
-        help=(
-            'template name to be used by voila.'
-        )
-    )
 
     notebook_path = Unicode(
         None,
@@ -293,17 +283,19 @@ class Voila(Application):
         self.load_config_file('voila', path=self.config_file_paths)
         # but that cli config has preference, so we overwrite with that
         self.update_config(self.cli_config)
+        # common configuration options between the server extension and the application
+        self.voila_configuration = VoilaConfiguration(parent=self)
         self.setup_template_dirs()
         signal.signal(signal.SIGTERM, self._handle_signal_stop)
 
     def setup_template_dirs(self):
-        if self.template:
+        if self.voila_configuration.template:
             collect_template_paths(
                 self.nbconvert_template_paths,
                 self.static_paths,
                 self.template_paths,
-                self.template)
-        self.log.debug('using template: %s', self.template)
+                self.voila_configuration.template)
+        self.log.debug('using template: %s', self.voila_configuration.template)
         self.log.debug('nbconvert template paths:\n\t%s', '\n\t'.join(self.nbconvert_template_paths))
         self.log.debug('template paths:\n\t%s', '\n\t'.join(self.template_paths))
         self.log.debug('static paths:\n\t%s', '\n\t'.join(self.static_paths))
@@ -393,11 +385,9 @@ class Voila(Application):
                 VoilaHandler,
                 {
                     'notebook_path': os.path.relpath(self.notebook_path, self.root_dir),
-                    'strip_sources': self.strip_sources,
                     'nbconvert_template_paths': self.nbconvert_template_paths,
-                    'template_name': self.template,
                     'config': self.config,
-                    'theme': self.theme
+                    'voila_configuration': self.voila_configuration
                 }
             ))
         else:
@@ -407,9 +397,9 @@ class Voila(Application):
                 (url_path_join(self.base_url, r'/voila/tree' + path_regex), VoilaTreeHandler),
                 (url_path_join(self.base_url, r'/voila/render' + path_regex), VoilaHandler,
                     {
-                        'strip_sources': self.strip_sources,
                         'nbconvert_template_paths': self.nbconvert_template_paths,
-                        'config': self.config
+                        'config': self.config,
+                        'voila_configuration': self.voila_configuration
                     }),
             ])
 
