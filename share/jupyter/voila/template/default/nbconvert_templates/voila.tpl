@@ -29,7 +29,11 @@ a.anchor-link {
 {%- endblock html_head_css -%}
 
 {%- block body -%}
-<body class="jp-Notebook" data-base-url="{{resources.base_url}}voila/">
+{% if resources.theme == 'dark' %}
+<body class="jp-Notebook theme-dark" data-base-url="{{resources.base_url}}voila/">
+{% else %}
+<body class="jp-Notebook theme-light" data-base-url="{{resources.base_url}}voila/">
+{% endif %}
 {{ super() }}
 </body>
 {%- endblock body -%}
