@@ -14,6 +14,7 @@ python -m pip install -e .
 When making changes to the frontend side of voila, open a new terminal window and run:
 
 ```bash
+cd js/
 npm run watch
 ```
 
