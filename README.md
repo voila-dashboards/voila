@@ -73,6 +73,10 @@ reproducing the "wealth of nation" data visualization with bqplot.
 
 ![wealth of nations](voila-won.gif)
 
+## Development
+
+See [CONTRIBUTING.md](./CONTRIBUTING.md) to know how to contribute and setup a development environment.
+
 ## Related projects
 
 Voila depends on the [nbconvert](https://github.com/jupyter/nbconvert) and
