@@ -28,10 +28,10 @@ config.rst
 
 package-lock.json
 
-share/jupyter/voila/template/nbconvert/static/index.css
-share/jupyter/voila/template/nbconvert/static/theme-light.css
-share/jupyter/voila/template/nbconvert/static/theme-dark.css
-share/jupyter/voila/template/default/static/*voila.js
-share/jupyter/voila/template/default/static/*[woff|woff2|eot|svg]
+share/jupyter/voila/templates/nbconvert/static/index.css
+share/jupyter/voila/templates/nbconvert/static/theme-light.css
+share/jupyter/voila/templates/nbconvert/static/theme-dark.css
+share/jupyter/voila/templates/default/static/*voila.js
+share/jupyter/voila/templates/default/static/*[woff|woff2|eot|svg]
 
 js/lib/
