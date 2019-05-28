@@ -12,7 +12,7 @@ def voila_args_extra():
 
 
 @pytest.mark.gen_test
-def test_template_gridstack(http_client, base_url):
+def test_no_strip_sources(http_client, base_url):
     response = yield http_client.fetch(base_url)
     assert response.code == 200
     html_text = response.body.decode('utf-8')

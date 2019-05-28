@@ -269,7 +269,12 @@ setup_args = {
         'jupyterlab_pygments>=0.1.0,<0.2'
     ],
     'extras_require': {
-        'test': ['mock', 'pytest<4', 'pytest-tornado5']
+        'test': [
+            'mock',
+            'pytest<4',
+            'pytest-tornado5',
+            'voila-gridstack'
+        ]
     },
     'author': 'QuantStack',
     'author_email': 'info@quantstack.net',

@@ -9,7 +9,7 @@ def voila_notebook(notebook_directory):
 
 
 @pytest.mark.gen_test
-def test_template_gridstack(http_client, base_url, notebook_directory):
+def test_image_inlining(http_client, base_url, notebook_directory):
     response = yield http_client.fetch(base_url)
     html_text = response.body.decode('utf-8')
 

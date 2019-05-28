@@ -18,5 +18,4 @@ def test_hello_world(http_client, print_notebook_url):
     html_text = response.body.decode('utf-8')
     assert 'Hi Voila' in html_text
     assert 'print' in html_text, 'the source code should *NOT* be stripped'
-    assert 'gridstack.css' not in html_text, "gridstack should not be the default"
 
