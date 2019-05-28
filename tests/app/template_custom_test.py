@@ -1,6 +1,7 @@
 # tests programmatic config of template sytem
 import pytest
 import os
+import sys
 
 BASE_DIR = os.path.dirname(__file__)
 
@@ -13,7 +14,7 @@ def voila_args_extra():
 @pytest.fixture
 def voila_config():
     def config(app):
-        path_gridstack = os.path.abspath(os.path.join(BASE_DIR, '../../share/jupyter/voila/templates/gridstack/nbconvert_templates'))
+        path_gridstack = os.path.abspath(os.path.join(sys.prefix, 'share/jupyter/voila/templates/gridstack/nbconvert_templates'))
         path_default = os.path.abspath(os.path.join(BASE_DIR, '../../share/jupyter/voila/templates/default/nbconvert_templates'))
         app.nbconvert_template_paths = [path_gridstack, path_default]
         path = os.path.abspath(os.path.join(BASE_DIR, '../../share/jupyter/voila/templates/default/templates'))

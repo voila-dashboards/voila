@@ -26,7 +26,7 @@ and calling it from the command-line like so:
 For example, Voila includes one other template that uses a Javascript library and
 an alternate ``<div>`` layout in order to let the user drag and drop cells.
 
-To use this template when creating your dashboard, use the following command:
+For example, to use the [gridstack](https://github.com/QuantStack/voila-gridstack/) template, use the command:
 
 .. code-block:: bash
 
