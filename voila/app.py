@@ -105,6 +105,9 @@ class Voila(Application):
         'base_url': 'Voila.base_url',
         'server_url': 'Voila.server_url',
     }
+    classes = [
+        VoilaConfiguration
+    ]
     connection_dir_root = Unicode(
         config=True,
         help=(
