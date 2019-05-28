@@ -6,5 +6,5 @@
 # The full license is in the file LICENSE, distributed with this software.  #
 #############################################################################
 
-version_info = (0, 0, 11)
+version_info = (0, 0, 12)
 __version__ = '.'.join(map(str, version_info))
