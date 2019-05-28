@@ -25,3 +25,4 @@ before_script:
   - flake8 voila
 script:
   - VOILA_TEST_DEBUG=1 py.test tests/
+  - voila --help  # Making sure we can run `voila --help` 
