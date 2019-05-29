@@ -13,7 +13,7 @@ def notebook_directory():
 
 @pytest.fixture
 def print_notebook_url(base_url):
-    return base_url +  "/voila/render/print"
+    return base_url +  "/voila/render/print.ipynb"
 
 
 @pytest.fixture
