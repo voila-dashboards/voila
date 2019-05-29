@@ -28,8 +28,6 @@ class VoilaHandler(JupyterHandler):
     @tornado.web.authenticated
     @tornado.gen.coroutine
     def get(self, path=None):
-        if path:
-            path += '.ipynb'  # when used as a jupyter server extension, we don't use the extension
         # if the handler got a notebook_path argument, always serve that
         notebook_path = self.notebook_path or path
 
