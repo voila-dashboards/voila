@@ -26,7 +26,7 @@ and calling it from the command-line like so:
 For example, Voila includes one other template that uses a Javascript library and
 an alternate ``<div>`` layout in order to let the user drag and drop cells.
 
-For example, to use the [gridstack](https://github.com/QuantStack/voila-gridstack/) template, use the command:
+For example, to use the `gridstack <https://github.com/QuantStack/voila-gridstack/>`_ template, use the command:
 
 .. code-block:: bash
 
@@ -133,6 +133,6 @@ As well as ``templates/tree.html`` to include an image.
 Finally, we can tell ``Voila`` to use this custom template the next time we use it on
 a Jupyter notebook by using the name of the folder in the ``--template`` parameter::
 
-voila mynotebook.ipynb --template=mytemplate
+    voila mynotebook.ipynb --template=mytemplate
 
 The result should be a Voila dashboard with your custom modifications made!
