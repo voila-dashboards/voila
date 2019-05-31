@@ -135,4 +135,51 @@ a Jupyter notebook by using the name of the folder in the ``--template`` paramet
 
     voila mynotebook.ipynb --template=mytemplate
 
+
 The result should be a Voila dashboard with your custom modifications made!
+
+
+Adding your own static files
+============================
+
+If you create your own theme, you may also want to define and use your
+own static files, such as CSS and Javascript. To use your own static files,
+follow these steps:
+
+1. Create a folder along with your template (e.g., ``mytemplate/static/``).
+2. Put your static files in this template.
+3. In your template file (e.g. ``voila.tpl``), link these static files with
+   the following path::
+
+      {{resources.base_url}}voila/static/<path-to-static-files>
+
+4. When you call ``voila``, configure the static folder by using the
+   ``--static`` kwarg, or by configuring ``--VoilaConfiguration.static_root``.
+
+Any folders / files that are inside the folder given with this configuration
+will be copied to ``{{resources.base_url}}voila/static/``.
+
+For example, if you had a CSS file called ``custom.css`` in ``static/css``,
+you would link it in your template like so::
+
+   <link rel="stylesheet" type="text/css" href="{{resources.base_url}}voila/static/css/custom.css"></link>
+
+
+Configure voila for the Jupyter Server
+======================================
+
+Several pieces of ``voila``'s functionality can be controlled when it is
+run. This can be done either as a part of the standalone CLI, or with the
+Jupyter Server. To configure ``voila`` when run by the Jupyter Server,
+use the following pattern when invoking the command that runs Jupyter (e.g.,
+Jupyter Lab or Jupyter Notebook)::
+
+   <jupyter-command> --VoilaConfiguration.<config-key>=<config-value>
+
+For example, to control the template used by ``voila`` from within a Jupyter
+Lab session, use the following command when starting the server::
+
+   jupyter lab --VoilaConfiguration.template=distill
+
+When users run ``voila`` by hitting the ``voila/`` endpoint, this configuration
+will be used.
