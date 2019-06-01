@@ -36,6 +36,23 @@ npm run watch
 
 Then reload the browser tab.
 
+## Extensions
+
+To manually enable the classic notebook server extension:
+
+```bash
+jupyter serverextension enable voila.server_extension --sys-prefix [--py | --user]
+```
+
+This makes voila available as a server extension: [http://localhost:8888/voila/tree](http://localhost:8888/voila/tree).
+
+To install the notebook extension:
+
+```bash
+jupyter nbextension install voila --sys-prefix [--py | --user]
+jupyter nbextension enable voila --sys-prefix [--py | --user]
+```
+
 ## Running the examples
 
 A few additional libraries can be installed to run the example notebooks:
