@@ -1,9 +1,7 @@
 define(['jquery', 'base/js/namespace'], function($, Jupyter) {
     "use strict";
     var open_voila = function() {
-        let notebook_path =  Jupyter.notebook.notebook_path;
-        let voila_path = notebook_path.slice(0, notebook_path.length-6);  // without .ipynb
-        let voila_url = Jupyter.notebook.base_url + "voila/render/" + voila_path;
+        let voila_url = Jupyter.notebook.base_url + "voila/render/" + Jupyter.notebook.notebook_path;
         window.open(voila_url)
 
     }
