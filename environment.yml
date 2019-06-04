@@ -5,4 +5,5 @@ dependencies:
   - ipyvolume
   - bqplot
   - scipy
+  - ipympl
   - voila=0.0.13
