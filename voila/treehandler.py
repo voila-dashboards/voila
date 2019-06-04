@@ -38,6 +38,7 @@ class VoilaTreeHandler(JupyterHandler):
         else:
             return 'Voila Home'
 
+    @web.authenticated
     def get(self, path=''):
         cm = self.contents_manager
 
