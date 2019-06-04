@@ -7,3 +7,4 @@ dependencies:
   - scipy
   - ipympl
   - voila=0.0.13
+  - ipympl
