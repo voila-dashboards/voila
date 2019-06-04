@@ -60,12 +60,8 @@ Voila can also be used as a notebook server extension, both with the
 To install the notebook server extension, run
 
 ```
-jupyter serverextension enable voila.server_extension
+jupyter serverextension enable voila --sys-prefix
 ```
-
-You may wish to add `--sys-prefix` to the previous command if you are running it
-inside of a conda environment or a virtualenv, to enable voila only for that
-environment.
 
 When running the notebook server, the voila app is accessible from the base url
 suffixed with `voila`.
