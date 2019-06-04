@@ -14,4 +14,4 @@ def _jupyter_nbextension_paths():
         section="notebook",
         src="static",
         dest="voila",
-        require="voila/nbextension")]
+        require="voila/extension")]

@@ -237,7 +237,9 @@ with open(os.path.join(here, 'voila', '_version.py')) as f:
 
 data_files = [
     ('etc/jupyter/jupyter_server_config.d', ['etc/jupyter/jupyter_server_config.d/voila.json']),
-    ('etc/jupyter/jupyter_notebook_config.d', ['etc/jupyter/jupyter_notebook_config.d/voila.json'])
+    ('etc/jupyter/jupyter_notebook_config.d', ['etc/jupyter/jupyter_notebook_config.d/voila.json']),
+    ('etc/jupyter/nbconfig/notebook.d', ['etc/jupyter/nbconfig/notebook.d/voila.json']),
+    ('share/jupyter/nbextensions/voila', ['voila/static/extension.js'])
 ]
 
 # Add all the templates
