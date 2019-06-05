@@ -16,6 +16,9 @@ def voila_config_file_paths_arg():
 def test_config_app(voila_app):
     assert voila_app.voila_configuration.template == 'gridstack'
 
+def test_config_app(voila_app):
+    assert voila_app.voila_configuration.enable_nbextensions == True
+
 
 def test_config_kernel_manager(voila_app):
     assert voila_app.kernel_manager.cull_interval == 10
