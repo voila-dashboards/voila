@@ -22,3 +22,4 @@ class VoilaConfiguration(traitlets.config.Configurable):
     )
     theme = Unicode('light').tag(config=True)
     strip_sources = Bool(True, help='Strip sources from rendered html').tag(config=True)
+    enable_nbextensions = Bool(False, config=True, help=('Set to True for Voila to load notebook extensions'))

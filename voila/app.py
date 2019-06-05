@@ -82,18 +82,24 @@ class Voila(Application):
     port = Integer(
         8866,
         config=True,
-        help='Port of the voila server. Default 8866.'
+        help=_(
+            'Port of the voila server. Default 8866.'
+        )
     )
     autoreload = Bool(
         False,
         config=True,
-        help='Will autoreload to server and the page when a template, js file or Python code changes'
+        help=_(
+            'Will autoreload to server and the page when a template, js file or Python code changes'
+        )
     )
-    root_dir = Unicode(config=True, help="The directory to use for notebooks.")
+    root_dir = Unicode(config=True, help=_('The directory to use for notebooks.'))
     static_root = Unicode(
         STATIC_ROOT,
         config=True,
-        help='Directory holding static assets (HTML, JS and CSS files).'
+        help=_(
+            'Directory holding static assets (HTML, JS and CSS files).'
+        )
     )
     aliases = {
         'port': 'Voila.port',
@@ -104,13 +110,14 @@ class Voila(Application):
         'theme': 'VoilaConfiguration.theme',
         'base_url': 'Voila.base_url',
         'server_url': 'Voila.server_url',
+        'enable_nbextensions': 'VoilaConfiguration.enable_nbextensions'
     }
     classes = [
         VoilaConfiguration
     ]
     connection_dir_root = Unicode(
         config=True,
-        help=(
+        help=_(
             'Location of temporry connection files. Defaults '
             'to system `tempfile.gettempdir()` value.'
         )
@@ -120,34 +127,37 @@ class Voila(Application):
     base_url = Unicode(
         '/',
         config=True,
-        help=(
+        help=_(
             'Path for voila API calls. If server_url is unset, this will be \
             used for both the base route of the server and the client. \
             If server_url is set, the server will server the routes prefixed \
             by server_url, while the client will prefix by base_url (this is \
-            useful in reverse proxies).')
+            useful in reverse proxies).'
+        )
     )
 
     server_url = Unicode(
         None,
         config=True,
         allow_none=True,
-        help=(
-            'Path to prefix to voila API handlers. Leave unset to default to base_url')
+        help=_(
+            'Path to prefix to voila API handlers. Leave unset to default to base_url'
+        )
     )
 
     notebook_path = Unicode(
         None,
         config=True,
         allow_none=True,
-        help=(
-            'path to notebook to serve with voila')
+        help=_(
+            'path to notebook to serve with voila'
+        )
     )
 
     nbconvert_template_paths = List(
         [],
         config=True,
-        help=(
+        help=_(
             'path to nbconvert templates'
         )
     )
@@ -156,7 +166,7 @@ class Voila(Application):
         [],
         allow_none=True,
         config=True,
-        help=(
+        help=_(
             'path to nbconvert templates'
         )
     )
@@ -164,7 +174,7 @@ class Voila(Application):
     static_paths = List(
         [STATIC_ROOT],
         config=True,
-        help=(
+        help=_(
             'paths to static assets'
         )
     )
@@ -173,12 +183,12 @@ class Voila(Application):
                  help=_("The IP address the notebook server will listen on."))
 
     open_browser = Bool(True, config=True,
-                        help="""Whether to open in a browser after starting.
+                        help=_("""Whether to open in a browser after starting.
                         The specific browser used is platform dependent and
                         determined by the python standard library `webbrowser`
                         module, unless it is overridden using the --browser
                         (NotebookApp.browser) configuration option.
-                        """)
+                        """))
 
     browser = Unicode(u'', config=True,
                       help="""Specify what command to use to invoke a web
@@ -241,12 +251,18 @@ class Voila(Application):
         proto = 'http'
         return "%s://%s:%i%s" % (proto, ip, self.port, self.base_url)
 
-    config_file_paths = List(Unicode(), config=True, help='Paths to search for voila.(py|json)')
+    config_file_paths = List(
+        Unicode(),
+        config=True,
+        help=_(
+            'Paths to search for voila.(py|json)'
+        )
+    )
 
     tornado_settings = Dict(
         {},
         config=True,
-        help=(
+        help=_(
             'Extra settings to apply to tornado application, e.g. headers, ssl, etc'
         )
     )
@@ -394,17 +410,18 @@ class Voila(Application):
             )
         ])
 
-        # this handler serves the nbextensions similar to the classical notebook
-        handlers.append(
-            (
-                url_path_join(self.server_url, r'/voila/nbextensions/(.*)'),
-                FileFindHandler,
-                {
-                    'path': self.nbextensions_path,
-                    'no_cache_paths': ['/'],  # don't cache anything in nbextensions
-                },
+        # Serving notebook extensions
+        if self.voila_configuration.enable_nbextensions:
+            handlers.append(
+                (
+                    url_path_join(self.server_url, r'/voila/nbextensions/(.*)'),
+                    FileFindHandler,
+                    {
+                        'path': self.nbextensions_path,
+                        'no_cache_paths': ['/'],  # don't cache anything in nbextensions
+                    },
+                )
             )
-        )
 
         if self.notebook_path:
             handlers.append((
