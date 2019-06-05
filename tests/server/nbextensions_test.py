@@ -8,9 +8,10 @@ BASE_DIR = os.path.dirname(__file__)
 def jupyter_server_config():
     def config(app):
         pass
-    os.environ['JUPYTER_CONFIG_DIR'] = os.path.join(BASE_DIR, 'configs', 'general')
+    os.environ['JUPYTER_CONFIG_DIR'] = os.path.join(BASE_DIR, '..', 'configs', 'general')
     yield config
     del os.environ['JUPYTER_CONFIG_DIR']
+
 
 @pytest.mark.xfail(reason='needs to be fixed')
 @pytest.mark.gen_test
