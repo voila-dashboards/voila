@@ -6,7 +6,7 @@
 # The full license is in the file LICENSE, distributed with this software.  #
 #############################################################################
 
-from nbconvert.preprocessors.execute import ExecutePreprocessor
+from nbconvert.preprocessors.execute import CellExecutionError, ExecutePreprocessor
 from ipykernel.jsonutil import json_clean
 
 
@@ -83,7 +83,12 @@ class ExecutePreprocessorWithOutputWidget(ExecutePreprocessor):
     def preprocess(self, nb, resources, km=None):
         self.output_hook = {}
         self.output_objects = {}
-        return super(ExecutePreprocessorWithOutputWidget, self).preprocess(nb, resources=resources, km=km)
+        try:
+            result = super(ExecutePreprocessorWithOutputWidget, self).preprocess(nb, resources=resources, km=km)
+        except CellExecutionError as e:
+            self.log.error(e)
+            result = (nb, resources)
+        return result
 
     def output(self, outs, msg, display_id, cell_index):
         parent_msg_id = msg['parent_header'].get('msg_id')
