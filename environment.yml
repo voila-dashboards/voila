@@ -6,5 +6,5 @@ dependencies:
   - bqplot
   - scipy
   - ipympl
-  - voila=0.0.14
+  - voila=0.1.0
   - ipympl
