@@ -41,7 +41,13 @@ Then reload the browser tab.
 To manually enable the classic notebook server extension:
 
 ```bash
-jupyter serverextension enable voila.server_extension --sys-prefix [--py | --user]
+jupyter serverextension enable voila --sys-prefix [--py | --user]
+```
+
+For Jupyter Server:
+
+```bash
+jupyter extension enable voila --sys-prefix [--py | --user]
 ```
 
 This makes voila available as a server extension: [http://localhost:8888/voila/tree](http://localhost:8888/voila/tree).
