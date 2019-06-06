@@ -129,13 +129,11 @@ const extension: JupyterLabPlugin<void> = {
     let buttonExtension = new VoilaRenderButton(app);
     app.docRegistry.addWidgetExtension('Notebook', buttonExtension);
 
-    // TODO: what would be a good place to add it to the menu?
-    // menu.fileMenu.addGroup(
-    //     [
-    //       { command: CommandIDs.voilaRender },
-    //     ],
-    //     1000
-    // );
+    menu.viewMenu.addGroup([
+      {
+        command: CommandIDs.voilaRender
+      }
+    ], 1000)
     
   }
 };
