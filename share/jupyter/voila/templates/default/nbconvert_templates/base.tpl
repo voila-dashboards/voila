@@ -54,3 +54,15 @@ requirejs(
 {{ super() }}
 </html>
 {% endblock footer %}
+
+{%- block codecell %}
+{% if 'remove_cell' not in cell.metadata.tags %}
+{{- super() }}
+{% endif %}
+{% endblock codecell %}
+
+{% block markdowncell %}
+{% if 'remove_cell' not in cell.metadata.tags %}
+{{- super() }}
+{% endif %}
+{%- endblock markdowncell %}
