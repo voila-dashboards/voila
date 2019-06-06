@@ -128,7 +128,10 @@ class NPM(Command):
                 raise ValueError(msg)
 
         # update package data in case this created new files
-        # update_package_data(self.distribution)
+        self.distribution.data_files = get_data_files()
+
+        # update package data in case this created new files
+        update_package_data(self.distribution)
 
 
 jupyterlab_css_version = '0.1.0'
@@ -235,17 +238,20 @@ version_ns = {}
 with open(os.path.join(here, 'voila', '_version.py')) as f:
     exec(f.read(), {}, version_ns)
 
-data_files = [
-    ('etc/jupyter/jupyter_server_config.d', ['etc/jupyter/jupyter_server_config.d/voila.json']),
-    ('etc/jupyter/jupyter_notebook_config.d', ['etc/jupyter/jupyter_notebook_config.d/voila.json']),
-    ('etc/jupyter/nbconfig/notebook.d', ['etc/jupyter/nbconfig/notebook.d/voila.json']),
-    ('share/jupyter/nbextensions/voila', ['voila/static/extension.js'])
-]
-
-# Add all the templates
-for (dirpath, dirnames, filenames) in os.walk('share/jupyter/voila/templates/'):
-    if filenames:
-        data_files.append((dirpath, [os.path.join(dirpath, filename) for filename in filenames]))
+def get_data_files():
+    """Get the data files for the package.
+    """
+    data_files = [
+        ('etc/jupyter/jupyter_server_config.d', ['etc/jupyter/jupyter_server_config.d/voila.json']),
+        ('etc/jupyter/jupyter_notebook_config.d', ['etc/jupyter/jupyter_notebook_config.d/voila.json']),
+        ('etc/jupyter/nbconfig/notebook.d', ['etc/jupyter/nbconfig/notebook.d/voila.json']),
+        ('share/jupyter/nbextensions/voila', ['voila/static/extension.js'])
+    ]
+    # Add all the templates
+    for (dirpath, dirnames, filenames) in os.walk('share/jupyter/voila/templates/'):
+        if filenames:
+            data_files.append((dirpath, [os.path.join(dirpath, filename) for filename in filenames]))
+    return data_files
 
 setup_args = {
     'name': 'voila',
@@ -253,7 +259,7 @@ setup_args = {
     'description': 'Serving read-only live Jupyter notebooks',
     'packages': find_packages(),
     'zip_safe': False,
-    'data_files': data_files,
+    'data_files': get_data_files(),
     'cmdclass': cmdclass,
     'package_data': {
         'voila': [
