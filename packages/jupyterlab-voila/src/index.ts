@@ -28,9 +28,11 @@ import {
   ToolbarButton
 } from '@jupyterlab/apputils';
 
-import '../style/index.css';
-import { DocumentRegistry } from '@jupyterlab/docregistry';
+import { DocumentRegistry } from "@jupyterlab/docregistry";
+
 import { IDisposable } from '@phosphor/disposable';
+
+import '../style/index.css';
 
 class VoilaRenderButton implements DocumentRegistry.IWidgetExtension<NotebookPanel, INotebookModel> {
 
@@ -45,7 +47,6 @@ class VoilaRenderButton implements DocumentRegistry.IWidgetExtension<NotebookPan
       this.app.commands.execute('notebook:render-with-voila');
     };
 
-    // Create the toolbar button
     let button = new ToolbarButton({
       className: 'voilaRender',
       iconClassName: 'fa fa-desktop',
@@ -55,7 +56,6 @@ class VoilaRenderButton implements DocumentRegistry.IWidgetExtension<NotebookPan
     });
 
     panel.toolbar.insertItem(9, 'voilaRender', button);
-
 
     return button;
   }
@@ -69,7 +69,6 @@ const extension: JupyterLabPlugin<void> = {
   autoStart: true,
   requires: [INotebookTracker, ICommandPalette, IMainMenu, IDocumentManager],
   activate: (app: JupyterLab, notebooks: INotebookTracker, palette: ICommandPalette, menu: IMainMenu | null, docManager: IDocumentManager) => {
-    console.log('JupyterLab extension jupyterlab-voila is activated!!!!!!!!');
 
     function getCurrent(args: ReadonlyJSONObject): NotebookPanel | null {
         const widget = notebooks.currentWidget;
@@ -102,7 +101,7 @@ const extension: JupyterLabPlugin<void> = {
     }
 
     app.commands.addCommand(CommandIDs.voilaRender, {
-        label: 'Open/Render Notebook with Voila',
+        label: 'Render Notebook with Voila',
         execute: async (args) => {
           const current = getCurrent(args);
 
@@ -110,24 +109,19 @@ const extension: JupyterLabPlugin<void> = {
             const voilaPath = current.context.path;
             const baseUrl = PageConfig.getBaseUrl();
             const voilaUrl = baseUrl + "voila/render/" + voilaPath;
-            // window.open(voilaUrl)
 
             let widget = voilaIFrame(voilaUrl, "Voila");
             app.shell.addToMainArea(widget, { mode: 'split-right'});
             return widget;
-
-            // return app.commands.execute('docmanager:open', {
-            //   path: voilaUrl,
-            //   factory: 'HTML Viewer'
-            // });
           }
         },
         isEnabled
     });
+
     palette.addItem({command:CommandIDs.voilaRender, category:'Notebook Operations'})
 
-    let buttonExtension = new VoilaRenderButton(app);
-    app.docRegistry.addWidgetExtension('Notebook', buttonExtension);
+    let voilaButton = new VoilaRenderButton(app);
+    app.docRegistry.addWidgetExtension('Notebook', voilaButton);
 
     menu.viewMenu.addGroup([
       {
