@@ -59,11 +59,17 @@ class VoilaHandler(JupyterHandler):
             return
         self.cwd = os.path.dirname(notebook_path)
 
+        # Get path content
+        dir_path, notebook_name = os.path.split(notebook_path)
+        contents = self.contents_manager.get(dir_path)
+
         # render notebook to html
         resources = {
             'base_url': self.base_url,
             'nbextensions': nbextensions,
-            'theme': self.voila_configuration.theme
+            'theme': self.voila_configuration.theme,
+            'contents': contents,
+            'notebook_name': notebook_name
         }
 
         # include potential extra resources
