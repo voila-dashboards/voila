@@ -14,7 +14,7 @@ def voila_config_file_paths_arg():
 
 
 def test_config_app(voila_app):
-    assert voila_app.voila_configuration.template == 'gridstack'
+    assert voila_app.voila_configuration.template == 'test_template'
 
 def test_config_app(voila_app):
     assert voila_app.voila_configuration.enable_nbextensions == True
@@ -29,8 +29,8 @@ def test_config_contents_manager(voila_app):
 
 
 @pytest.mark.gen_test
-def test_template_gridstack(http_client, base_url):
+def test_template(http_client, base_url):
     response = yield http_client.fetch(base_url)
     assert response.code == 200
-    assert 'gridstack.css' in response.body.decode('utf-8')
+    assert 'test_template.css' in response.body.decode('utf-8')
     assert 'Hi Voila' in response.body.decode('utf-8')
