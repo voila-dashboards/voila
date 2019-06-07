@@ -26,7 +26,7 @@ class VoilaHandler(JupyterHandler):
 
     def initialize(self, **kwargs):
         self.notebook_path = kwargs.pop('notebook_path', [])    # should it be []
-        self.nbconvert_template_paths = kwargs.pop('nbconvert_template_paths', [])
+        self.template_paths = kwargs.pop('template_paths', [])
         self.traitlet_config = kwargs.pop('config', None)
         self.voila_configuration = kwargs['voila_configuration']
         # we want to avoid starting multiple kernels due to template mistakes
@@ -82,9 +82,11 @@ class VoilaHandler(JupyterHandler):
             recursive_update(resources, extra_resources)
 
         self.exporter = VoilaExporter(
-            template_path=self.nbconvert_template_paths,
+            template_path=self.template_paths,
             config=self.traitlet_config,
-            contents_manager=self.contents_manager  # for the image inlining
+            contents_manager=self.contents_manager,  # for the image inlining
+            theme=self.voila_configuration.theme,  # we now have the theme in two places
+            base_url=self.base_url,
         )
         if self.voila_configuration.strip_sources:
             self.exporter.exclude_input = True

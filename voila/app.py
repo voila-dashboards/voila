@@ -53,7 +53,7 @@ from jupyter_core.paths import jupyter_config_path, jupyter_path
 
 from ipython_genutils.py3compat import getcwd
 
-from .paths import ROOT, STATIC_ROOT, collect_template_paths
+from .paths import ROOT, STATIC_ROOT, collect_template_paths, collect_static_paths
 from .handler import VoilaHandler
 from .treehandler import VoilaTreeHandler
 from ._version import __version__
@@ -172,20 +172,11 @@ class Voila(Application):
         )
     )
 
-    nbconvert_template_paths = List(
-        [],
-        config=True,
-        help=_(
-            'path to nbconvert templates'
-        )
-    )
-
     template_paths = List(
         [],
-        allow_none=True,
         config=True,
         help=_(
-            'path to nbconvert templates'
+            'path to jinja2 templates'
         )
     )
 
@@ -350,14 +341,10 @@ class Voila(Application):
 
     def setup_template_dirs(self):
         if self.voila_configuration.template:
-            collect_template_paths(
-                self.nbconvert_template_paths,
-                self.static_paths,
-                self.template_paths,
-                self.voila_configuration.template)
-            # look for possible template-related config files
-            template_conf_dir = [os.path.join(k, '..') for k in self.nbconvert_template_paths]
-            conf_paths = [os.path.join(d, 'conf.json') for d in template_conf_dir]
+            template_name = self.voila_configuration.template
+            self.template_paths = collect_template_paths(['voila', 'nbconvert'], template_name, prune=True)
+            self.static_paths = collect_static_paths(['voila', 'nbconvert'], template_name)
+            conf_paths = [os.path.join(d, 'conf.json') for d in self.template_paths]
             for p in conf_paths:
                 # see if config file exists
                 if os.path.exists(p):
@@ -370,7 +357,6 @@ class Voila(Application):
                         # pass merged config to overall voila config
                         self.voila_configuration.config.VoilaConfiguration = Config(conf['traitlet_configuration'])
         self.log.debug('using template: %s', self.voila_configuration.template)
-        self.log.debug('nbconvert template paths:\n\t%s', '\n\t'.join(self.nbconvert_template_paths))
         self.log.debug('template paths:\n\t%s', '\n\t'.join(self.template_paths))
         self.log.debug('static paths:\n\t%s', '\n\t'.join(self.static_paths))
         if self.notebook_path and not os.path.exists(self.notebook_path):
@@ -485,7 +471,7 @@ class Voila(Application):
                 VoilaHandler,
                 {
                     'notebook_path': os.path.relpath(self.notebook_path, self.root_dir),
-                    'nbconvert_template_paths': self.nbconvert_template_paths,
+                    'template_paths': self.template_paths,
                     'config': self.config,
                     'voila_configuration': self.voila_configuration
                 }
@@ -499,7 +485,7 @@ class Voila(Application):
                 (url_path_join(self.server_url, r'/voila/render/(.*)'),
                  VoilaHandler,
                  {
-                     'nbconvert_template_paths': self.nbconvert_template_paths,
+                     'template_paths': self.template_paths,
                      'config': self.config,
                      'voila_configuration': self.voila_configuration
                  }),

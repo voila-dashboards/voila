@@ -7,17 +7,11 @@ from setuptools.command.develop import develop
 from setuptools.command.egg_info import egg_info
 from setuptools.command.bdist_egg import bdist_egg
 
-from io import BytesIO
 from subprocess import check_call, CalledProcessError
 
 import os
 import shlex
 import sys
-
-try:
-    from urllib.request import urlopen
-except ImportError:
-    from urllib import urlopen
 
 from distutils import log
 
@@ -180,7 +174,7 @@ class NPM(Command):
 
     node_modules = os.path.join(node_root, 'node_modules')
 
-    template_root = os.path.join(here, 'share', 'jupyter', 'voila', 'templates', 'default', 'static')
+    template_root = os.path.join(here, 'share', 'jupyter', 'voila', 'templates', 'classic', 'static')
     targets = [
         os.path.join(template_root, 'voila.js')
     ]
@@ -234,87 +228,6 @@ class NPM(Command):
         update_package_data(self.distribution)
 
 
-jupyterlab_css_version = '0.1.0'
-css_url = "https://unpkg.com/@jupyterlab/nbconvert-css@%s/style/index.css" % jupyterlab_css_version
-
-theme_light_version = '0.19.1'
-theme_light_url = "https://unpkg.com/@jupyterlab/theme-light-extension@%s/static/embed.css" % theme_light_version
-
-theme_dark_version = '0.19.1'
-theme_dark_url = "https://unpkg.com/@jupyterlab/theme-dark-extension@%s/static/embed.css" % theme_dark_version
-
-
-class FetchCSS(Command):
-    description = "Fetch Notebook CSS from CDN"
-    user_options = []
-
-    def initialize_options(self):
-        pass
-
-    def finalize_options(self):
-        pass
-
-    def _download(self, url):
-        try:
-            return urlopen(url).read()
-        except Exception as e:
-            if 'ssl' in str(e).lower():
-                try:
-                    import pycurl  # noqa
-                except ImportError:
-                    print("Failed, try again after installing PycURL with `pip install pycurl` to avoid outdated SSL.", file=sys.stderr)
-                    raise e
-                else:
-                    print("Failed, trying again with PycURL to avoid outdated SSL.", file=sys.stderr)
-                    return self._download_pycurl(url)
-            raise e
-
-    def _download_pycurl(self, url):
-        """Download CSS with pycurl, in case of old SSL (e.g. Python < 2.7.9)."""
-        import pycurl
-        c = pycurl.Curl()
-        c.setopt(c.URL, url)
-        buf = BytesIO()
-        c.setopt(c.WRITEDATA, buf)
-        c.perform()
-        return buf.getvalue()
-
-    def run(self):
-        css_dest = os.path.join('share', 'jupyter', 'voila', 'templates', 'default', 'static', 'index.css')
-        theme_light_dest = os.path.join('share', 'jupyter', 'voila', 'templates', 'default', 'static', 'theme-light.css')
-        theme_dark_dest = os.path.join('share', 'jupyter', 'voila', 'templates', 'default', 'static', 'theme-dark.css')
-
-        try:
-            css = self._download(css_url)
-            theme_light = self._download(theme_light_url)
-            theme_dark = self._download(theme_dark_url)
-        except Exception:
-            if os.path.exists(css_dest) and os.path.exists(theme_light_dest) and os.path.exists(theme_dark_dest):
-                print("Already have CSS, moving on.")
-            else:
-                raise OSError("Need Notebook CSS to proceed.")
-            return
-
-        try:
-            os.mkdir(os.path.join('share', 'jupyter', 'voila', 'templates', 'default', 'static'))
-        except OSError:  # Use FileExistsError from python 3.3 onward.
-            pass
-        with open(css_dest, 'wb+') as f:
-            f.write(css)
-        with open(theme_light_dest, 'wb+') as f:
-            f.write(theme_light)
-        with open(theme_dark_dest, 'wb+') as f:
-            f.write(theme_dark)
-
-
-def css_first(command):
-    class CSSFirst(command):
-        def run(self):
-            self.distribution.run_command('css')
-            return command.run(self)
-    return CSSFirst
-
-
 class BdistEggDisabled(bdist_egg):
     """Disabled version of bdist_egg
 
@@ -326,12 +239,11 @@ class BdistEggDisabled(bdist_egg):
 
 
 cmdclass = {
-    'css': FetchCSS,
     'jsdeps': NPM,
-    'build_py': css_first(js_first(build_py)),
-    'egg_info': css_first(js_first(egg_info)),
-    'sdist': css_first(js_first(sdist, strict=True)),
-    'develop': css_first(develop),
+    'build_py': js_first(build_py),
+    'egg_info': js_first(egg_info),
+    'sdist': js_first(sdist, strict=True),
+    'develop': develop,
     'bdist_egg': bdist_egg if 'bdist_egg' in sys.argv else BdistEggDisabled
 }
 
