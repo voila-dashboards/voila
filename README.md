@@ -14,13 +14,10 @@ Unlike the usual HTML-converted notebooks, each user connecting to the Voila
 tornado application gets a dedicated Jupyter kernel which can execute the
 callbacks to changes in Jupyter interactive widgets.
 
-- By default, voila disallows execute requests from the front-end, disabling
-  the ability to execute arbitrary code.
+- By default, voila disallows execute requests from the front-end, preventing
+  execution of arbitrary code.
 - By defaults, voila runs with the `strip_source` option, which strips out the
   input cells from the rendered notebook.
-
-When using these default settings, the code powering the Jupyter notebook is
-never sent to the front-end.
 
 ## Installation
 
@@ -66,12 +63,28 @@ jupyter serverextension enable voila --sys-prefix
 When running the notebook server, the voila app is accessible from the base url
 suffixed with `voila`.
 
-## Example
+## Examples
 
-The following screencast shows the voila-rendered version of notebook
-reproducing the "wealth of nation" data visualization with bqplot.
+The following two examples show how a standalone Jupyter notebook can be turned into a separate app, from the command-line integration.
 
-![wealth of nations](voila-won.gif)
+**Rendering a notebook including interactive widgets and rich mime-type rendering**
+![voila basics](voila-basics.gif)
+
+**Rendering a notebook making use of a custom widget library ([bqplot](https://github.com/bloomberg/bqplot))**
+
+![voila bqplot](voila-bqplot.gif)
+
+**Showing the source code for a voila notebook**
+
+The sources of the Jupyter notebook can be displayed in a voila app if option `strip_sources` is set to `False`.
+
+![voila sources](voila-sources.gif)
+
+**Voila dashboards with other language kernels**
+
+Voila is built upon Jupyter standard formats and protocols, and is agnostic to the programming language of the notebook. In this example, we present an example of a voila application powered by the C++ Jupyter kernel [xeus-cling](https://github.com/QuantStack/xeus-cling), and the [xleaflet](https://github.com/QuantStack/xleaflet) project.
+
+![voila cling](voila-cling.gif)
 
 ## Related projects
 
