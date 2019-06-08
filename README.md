@@ -67,18 +67,24 @@ suffixed with `voila`.
 
 The following two examples show how a standalone Jupyter notebook can be turned into a separate app, from the command-line integration.
 
-**Rendering a notebook including interactive widgets and rich mime-type rendering.**
+**Rendering a notebook including interactive widgets and rich mime-type rendering**
 ![voila basics](voila-basics.gif)
 
 **Rendering a notebook making use of a custom widget library ([bqplot](https://github.com/bloomberg/bqplot)).**
 
 ![voila bqplot](voila-bqplot.gif)
 
+**Showing the source of the notebook in the voila dashboard**
+
 The sources of the Jupyter notebook can be displayed in a voila app if option `strip_sources` is set to `False`.
 
-**Showing the source code for a voila notebook.**
-
 ![voila sources](voila-sources.gif)
+
+**Creating a voila dashboard with other language kernels**
+
+Voila is built upon Jupyter standard formats and protocols and is agnostic to the kernel language. In this example, we show how to create a voila application with the C++ kernel [xeus-cling](https://github.com/QuantStack/xeus-cling).
+
+![voila cling](voila-cling.gif)
 
 ## Related projects
 
