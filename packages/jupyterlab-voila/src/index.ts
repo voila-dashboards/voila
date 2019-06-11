@@ -19,7 +19,7 @@ import {
 } from '@jupyterlab/mainmenu';
 
 import {
-  PageConfig
+  PageConfig, PathExt
 } from '@jupyterlab/coreutils';	
 
 import {
@@ -103,15 +103,18 @@ const extension: JupyterLabPlugin<void> = {
         execute: async (args) => {
           const current = getCurrent(args);
 
-          if (current) {
-            const voilaPath = current.context.path;
-            const baseUrl = PageConfig.getBaseUrl();
-            const voilaUrl = baseUrl + "voila/render/" + voilaPath;
-
-            let widget = voilaIFrame(voilaUrl, "Voila");
-            app.shell.addToMainArea(widget, { mode: 'split-right'});
-            return widget;
+          if (!current) {
+            return;
           }
+
+          const voilaPath = current.context.path;
+          const baseUrl = PageConfig.getBaseUrl();
+          const voilaUrl = `${baseUrl}voila/render/${voilaPath}`;
+
+          const name = PathExt.basename(voilaPath);
+          let widget = voilaIFrame(voilaUrl, `Voila: ${name}`);
+          app.shell.addToMainArea(widget, { mode: 'split-right'});
+          return widget;
         },
         isEnabled
     });
