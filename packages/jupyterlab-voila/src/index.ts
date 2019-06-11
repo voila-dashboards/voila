@@ -32,6 +32,13 @@ import { IDisposable } from '@phosphor/disposable';
 
 import '../style/index.css';
 
+export namespace CommandIDs {
+
+    export const voilaRender = 'notebook:render-with-voila';
+
+    export const voilaOpen = "notebook:open-with-voila";
+}
+
 class VoilaRenderButton implements DocumentRegistry.IWidgetExtension<NotebookPanel, INotebookModel> {
 
   constructor(app: JupyterLab) {
@@ -99,19 +106,20 @@ const extension: JupyterLabPlugin<void> = {
       return widget;
     }
 
+    function getVoilaUrl(path: string): string {
+        const baseUrl = PageConfig.getBaseUrl();
+        return `${baseUrl}voila/render/${path}`;
+    }
+
     app.commands.addCommand(CommandIDs.voilaRender, {
         label: 'Render Notebook with Voila',
         execute: async (args) => {
           const current = getCurrent(args);
-
           if (!current) {
             return;
           }
-
           const voilaPath = current.context.path;
-          const baseUrl = PageConfig.getBaseUrl();
-          const voilaUrl = `${baseUrl}voila/render/${voilaPath}`;
-
+          const voilaUrl = getVoilaUrl(voilaPath);
           const name = PathExt.basename(voilaPath);
           let widget = voilaIFrame(voilaUrl, `Voila: ${name}`);
           app.shell.addToMainArea(widget, { mode: 'split-right'});
@@ -120,26 +128,44 @@ const extension: JupyterLabPlugin<void> = {
         isEnabled
     });
 
+    app.commands.addCommand(CommandIDs.voilaOpen, {
+        label: 'Open with Voila in New Browser Tab',
+        execute: async (args) => {
+          const current = getCurrent(args);
+          if (!current) {
+            return;
+          }
+          const voilaUrl = getVoilaUrl(current.context.path);
+          window.open(voilaUrl);
+        },
+        isEnabled
+    });
+
     if (palette) {
-      palette.addItem({command:CommandIDs.voilaRender, category:'Notebook Operations'})
+      const category = 'Notebook Operations';
+      [
+        CommandIDs.voilaRender,
+        CommandIDs.voilaOpen,
+      ].forEach(command => {
+        palette.addItem({ command, category })
+      });
     }
 
     if (menu) {
       menu.viewMenu.addGroup([
         {
           command: CommandIDs.voilaRender
+        },
+        {
+          command: CommandIDs.voilaOpen
         }
-      ], 1000)
+      ], 1000);
     }
 
     let voilaButton = new VoilaRenderButton(app);
     app.docRegistry.addWidgetExtension('Notebook', voilaButton);
-
     
   }
 };
 
 export default extension;
-export namespace CommandIDs{
-    export const voilaRender = 'notebook:render-with-voila'
-}
