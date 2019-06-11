@@ -52,7 +52,6 @@
   },
   "dependencies": {
     "@jupyterlab/application": "^0.19.0",
-    "@jupyterlab/mainmenu": "^0.8.0",
-    "@jupyterlab/docmanager": "^0.19.1"
+    "@jupyterlab/mainmenu": "^0.8.0"
   }
 }

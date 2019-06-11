@@ -6,8 +6,6 @@ import {
   INotebookTracker, NotebookPanel, INotebookModel
 } from '@jupyterlab/notebook';
 
-import { IDocumentManager } from '@jupyterlab/docmanager';
-
 import {
   ReadonlyJSONObject
 } from '@phosphor/coreutils';
@@ -67,8 +65,8 @@ class VoilaRenderButton implements DocumentRegistry.IWidgetExtension<NotebookPan
 const extension: JupyterLabPlugin<void> = {
   id: 'jupyterlab-voila',
   autoStart: true,
-  requires: [INotebookTracker, ICommandPalette, IMainMenu, IDocumentManager],
-  activate: (app: JupyterLab, notebooks: INotebookTracker, palette: ICommandPalette, menu: IMainMenu | null, docManager: IDocumentManager) => {
+  requires: [INotebookTracker, ICommandPalette, IMainMenu],
+  activate: (app: JupyterLab, notebooks: INotebookTracker, palette: ICommandPalette, menu: IMainMenu | null) => {
 
     function getCurrent(args: ReadonlyJSONObject): NotebookPanel | null {
         const widget = notebooks.currentWidget;
