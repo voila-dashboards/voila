@@ -39,6 +39,8 @@ export namespace CommandIDs {
     export const voilaOpen = "notebook:open-with-voila";
 }
 
+const VOILA_ICON_CLASS = 'jp-MaterialIcon jp-VoilaIcon';
+
 class VoilaRenderButton implements DocumentRegistry.IWidgetExtension<NotebookPanel, INotebookModel> {
 
   constructor(app: JupyterLab) {
@@ -54,9 +56,8 @@ class VoilaRenderButton implements DocumentRegistry.IWidgetExtension<NotebookPan
 
     let button = new ToolbarButton({
       className: 'voilaRender',
-      iconClassName: 'fa fa-desktop',
+      iconClassName: VOILA_ICON_CLASS,
       onClick: renderVoila,
-      label: 'Voila',
       tooltip: 'Render with Voila'
     });
 
@@ -101,6 +102,7 @@ const extension: JupyterLabPlugin<void> = {
 
       content.url = url;
       content.title.label = text;
+      content.title.icon = VOILA_ICON_CLASS;
       content.id = `voila-${++counter}`;
       let widget = new MainAreaWidget({ content });
       return widget;
@@ -121,7 +123,7 @@ const extension: JupyterLabPlugin<void> = {
           const voilaPath = current.context.path;
           const voilaUrl = getVoilaUrl(voilaPath);
           const name = PathExt.basename(voilaPath);
-          let widget = voilaIFrame(voilaUrl, `Voila: ${name}`);
+          let widget = voilaIFrame(voilaUrl, name);
           app.shell.addToMainArea(widget, { mode: 'split-right'});
           return widget;
         },
