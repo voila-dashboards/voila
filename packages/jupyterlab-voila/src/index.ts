@@ -65,7 +65,8 @@ class VoilaRenderButton implements DocumentRegistry.IWidgetExtension<NotebookPan
 const extension: JupyterLabPlugin<void> = {
   id: 'jupyterlab-voila',
   autoStart: true,
-  requires: [INotebookTracker, ICommandPalette, IMainMenu],
+  requires: [INotebookTracker],
+  optional: [ICommandPalette, IMainMenu],
   activate: (app: JupyterLab, notebooks: INotebookTracker, palette: ICommandPalette, menu: IMainMenu | null) => {
 
     function getCurrent(args: ReadonlyJSONObject): NotebookPanel | null {
@@ -119,16 +120,21 @@ const extension: JupyterLabPlugin<void> = {
         isEnabled
     });
 
-    palette.addItem({command:CommandIDs.voilaRender, category:'Notebook Operations'})
+    if (palette) {
+      palette.addItem({command:CommandIDs.voilaRender, category:'Notebook Operations'})
+    }
+
+    if (menu) {
+      menu.viewMenu.addGroup([
+        {
+          command: CommandIDs.voilaRender
+        }
+      ], 1000)
+    }
 
     let voilaButton = new VoilaRenderButton(app);
     app.docRegistry.addWidgetExtension('Notebook', voilaButton);
 
-    menu.viewMenu.addGroup([
-      {
-        command: CommandIDs.voilaRender
-      }
-    ], 1000)
     
   }
 };
