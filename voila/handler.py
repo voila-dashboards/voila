@@ -24,6 +24,7 @@ class VoilaHandler(JupyterHandler):
         self.nbconvert_template_paths = kwargs.pop('nbconvert_template_paths', [])
         self.exporter_config = kwargs.pop('config', None)
         self.voila_configuration = kwargs['voila_configuration']
+        self.prelaunch_hook = kwargs.get('prelaunch_hook')
 
     @tornado.web.authenticated
     @tornado.gen.coroutine
@@ -54,6 +55,16 @@ class VoilaHandler(JupyterHandler):
 
         # Launch kernel and execute notebook
         cwd = os.path.dirname(notebook_path)
+
+        if self.prelaunch_hook:
+            # Allow for preprocessing the notebook.
+            # Can be used to add auth, do custom formatting/standardization
+            # of the notebook, raise exceptions, etc
+            self.prelaunch_hook(self,
+                                notebook=notebook,
+                                kernel_name=kernel_name,
+                                cwd=cwd)
+
         kernel_id = yield tornado.gen.maybe_future(self.kernel_manager.start_kernel(kernel_name=kernel_name, path=cwd))
         km = self.kernel_manager.get_kernel(kernel_id)
         result = executenb(notebook, km=km, cwd=cwd)
