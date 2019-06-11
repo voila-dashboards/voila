@@ -74,6 +74,15 @@ cd notebooks/
 voila
 ```
 
+## Tests
+
+To run the tests:
+
+```bash
+python -m pip install ".[test]"
+python -m pytest
+```
+
 ## Editing templates
 
 The default templates are located in the following folder: [share/jupyter/voila/templates/default](./share/jupyter/voila/templates/default). They are automatically picked up when running voila in development mode.
