@@ -35,3 +35,5 @@ share/jupyter/voila/templates/default/static/*voila.js
 share/jupyter/voila/templates/default/static/*[woff|woff2|eot|svg]
 
 js/lib/
+
+packages/jupyterlab-voila/lib/
