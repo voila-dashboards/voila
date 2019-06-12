@@ -280,8 +280,7 @@ setup_args = {
         'test': [
             'mock',
             'pytest<4',
-            'pytest-tornado5',
-            'voila-gridstack'
+            'pytest-tornado5'
         ]
     },
     'author': 'QuantStack',

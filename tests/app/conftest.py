@@ -3,7 +3,6 @@ import os
 import pytest
 import voila.app
 
-
 BASE_DIR = os.path.dirname(__file__)
 
 

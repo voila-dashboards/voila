@@ -21,8 +21,9 @@ before_install:
   - source activate test-environment
 install:
   - pip install ".[test]"
+  - cd tests/test_template; pip install .; cd ../../;
 before_script:
   - flake8 voila
 script:
   - VOILA_TEST_DEBUG=1 py.test tests/
-  - voila --help  # Making sure we can run `voila --help` 
+  - voila --help  # Making sure we can run `voila --help`
