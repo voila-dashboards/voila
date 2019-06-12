@@ -86,6 +86,10 @@ Voila is built upon Jupyter standard formats and protocols, and is agnostic to t
 
 ![voila cling](voila-cling.gif)
 
+## Development
+
+See [CONTRIBUTING.md](./CONTRIBUTING.md) to know how to contribute and setup a development environment.
+
 ## Related projects
 
 Voila depends on the [nbconvert](https://github.com/jupyter/nbconvert) and
