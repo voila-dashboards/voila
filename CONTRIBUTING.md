@@ -38,25 +38,47 @@ Then reload the browser tab.
 
 ## Extensions
 
+### Server extension
+
 To manually enable the classic notebook server extension:
 
 ```bash
-jupyter serverextension enable voila --sys-prefix [--py | --user]
+jupyter serverextension enable voila --sys-prefix
 ```
 
 For Jupyter Server:
 
 ```bash
-jupyter extension enable voila --sys-prefix [--py | --user]
+jupyter extension enable voila --sys-prefix
 ```
 
 This makes voila available as a server extension: [http://localhost:8888/voila/tree](http://localhost:8888/voila/tree).
 
+### Notebook extension
+
 To install the notebook extension:
 
 ```bash
-jupyter nbextension install voila --sys-prefix [--py | --user]
-jupyter nbextension enable voila --sys-prefix [--py | --user]
+jupyter nbextension install voila --sys-prefix
+jupyter nbextension enable voila --sys-prefix
+```
+
+### JupyterLab extension
+
+Node.js is required and can be installed with conda:
+
+```bash
+conda install -c conda-forge nodejs
+```
+
+To install the JupyterLab extension locally:
+
+```bash
+jupyter labextension install @jupyter-widgets/jupyterlab-manager
+jupyter labextension install ./packages/jupyterlab-voila
+
+# start in watch mode to pick up changes automatically
+jupyter lab --watch
 ```
 
 ## Running the examples
