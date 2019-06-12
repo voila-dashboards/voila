@@ -1,10 +1,9 @@
-=====
-Voila
-=====
+.. image:: voila.svg
+   :alt: voila
 
-Create interactive dashboards with Jupyter Notebooks.
+From notebooks to standalone web applications and dashboards.
 
-Voila allows you to convert a Jupyter Notebook into an
+Voilà allows you to convert a Jupyter Notebook into an
 interactive dashboard that allows you to share your work with others. It
 is secure and customizable, giving you control over what your readers
 experience.
@@ -19,7 +18,7 @@ try it interactively at the following Binder link)
 
    <br />
 
-.. image:: ../../voila-won.gif
+.. image:: ../../voila-basics.gif
 
 Table of contents
 =================
