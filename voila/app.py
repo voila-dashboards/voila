@@ -34,15 +34,15 @@ from traitlets import Unicode, Integer, Bool, Dict, List, default
 
 from jupyter_server.services.kernels.kernelmanager import MappingKernelManager
 from jupyter_server.services.kernels.handlers import KernelHandler, ZMQChannelsHandler
-from jupyter_server.base.handlers import path_regex
 from jupyter_server.services.contents.largefilemanager import LargeFileManager
+from jupyter_server.base.handlers import path_regex
 from jupyter_server.utils import url_path_join
 from jupyter_server.services.config import ConfigManager
 from jupyter_server.base.handlers import FileFindHandler
 from jupyter_core.paths import jupyter_config_path, jupyter_path
 from ipython_genutils.py3compat import getcwd
 
-from .paths import ROOT, STATIC_ROOT, collect_template_paths
+from .paths import ROOT, STATIC_ROOT, collect_template_paths, notebook_path_regex
 from .handler import VoilaHandler
 from .treehandler import VoilaTreeHandler
 from ._version import __version__
@@ -439,7 +439,7 @@ class Voila(Application):
             handlers.extend([
                 (self.server_url, VoilaTreeHandler),
                 (url_path_join(self.server_url, r'/voila/tree' + path_regex), VoilaTreeHandler),
-                (url_path_join(self.server_url, r'/voila/render' + path_regex), VoilaHandler,
+                (url_path_join(self.server_url, r'/voila/render' + notebook_path_regex), VoilaHandler,
                     {
                         'nbconvert_template_paths': self.nbconvert_template_paths,
                         'config': self.config,
