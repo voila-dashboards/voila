@@ -7,6 +7,7 @@ from setuptools.command.develop import develop
 from setuptools.command.egg_info import egg_info
 from setuptools.command.bdist_egg import bdist_egg
 
+from io import BytesIO
 from subprocess import check_call
 
 import os
