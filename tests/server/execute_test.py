@@ -1,14 +1,5 @@
 # test basics of voila running a notebook
 import pytest
-import tornado.web
-import tornado.gen
-import re
-import json
-
-try:
-    from unittest import mock
-except:
-    import mock
 
 
 @pytest.mark.gen_test

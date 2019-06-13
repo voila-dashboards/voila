@@ -8,6 +8,7 @@
 
 import os
 import json
+
 from jupyter_core.paths import jupyter_path
 
 ROOT = os.path.dirname(__file__)
@@ -19,10 +20,10 @@ notebook_path_regex = r'(.*\.ipynb)'
 
 
 def collect_template_paths(
-       nbconvert_template_paths,
-       static_paths,
-       tornado_template_paths,
-       template_name='default'):
+        nbconvert_template_paths,
+        static_paths,
+        tornado_template_paths,
+        template_name='default'):
     """
     Voila supports custom templates for rendering notebooks.
 

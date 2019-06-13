@@ -56,7 +56,7 @@ def load_jupyter_server_extension(server_app):
         }),
         (url_path_join(base_url, '/voila'), VoilaTreeHandler),
         (url_path_join(base_url, '/voila/tree' + path_regex), VoilaTreeHandler),
-        (url_path_join(base_url, '/voila/static/(.*)'),  MultiStaticFileHandler, {'paths': static_paths}),
+        (url_path_join(base_url, '/voila/static/(.*)'), MultiStaticFileHandler, {'paths': static_paths}),
     ])
 
     # Serving notebook extensions

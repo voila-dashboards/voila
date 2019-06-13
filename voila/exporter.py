@@ -7,9 +7,10 @@
 #############################################################################
 
 import mimetypes
-import traitlets
 
+import traitlets
 from traitlets.config import Config
+
 from jinja2 import contextfilter
 
 from nbconvert.filters.markdown_mistune import IPythonRenderer, MarkdownWithMath

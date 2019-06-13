@@ -1,7 +1,7 @@
 # tests programmatic config of template sytem
 import pytest
+
 import os
-import sys
 
 BASE_DIR = os.path.dirname(__file__)
 
