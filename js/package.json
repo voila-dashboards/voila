@@ -40,6 +40,6 @@
     "watch:lib": "babel src --out-dir lib --watch",
     "watch:bundle": "webpack --watch --mode=development"
   },
-  "author": "",
-  "license": "ISC"
+  "author": "QuantStack",
+  "license": "BSD-3-Clause"
 }
