@@ -8,7 +8,7 @@ from setuptools.command.egg_info import egg_info
 from setuptools.command.bdist_egg import bdist_egg
 
 from io import BytesIO
-from subprocess import check_call
+from subprocess import check_call, CalledProcessError
 
 import os
 import sys
@@ -28,11 +28,13 @@ is_repo = os.path.exists(os.path.join(here, '.git'))
 
 npm_path = os.pathsep.join([
     os.path.join(node_root, 'node_modules', '.bin'),
-                os.environ.get('PATH', os.defpath),
+    os.environ.get('PATH', os.defpath),
 ])
+
 
 def in_read_the_docs():
     return os.environ.get('READTHEDOCS') == 'True'
+
 
 def js_first(command, strict=False):
     """decorator for building minified js/css prior to another command"""
@@ -60,6 +62,7 @@ def js_first(command, strict=False):
             command.run(self)
             update_package_data(self.distribution)
     return DecoratedCommand
+
 
 def update_package_data(distribution):
     """update package_data to catch changes during setup"""
@@ -91,12 +94,10 @@ class NPM(Command):
         try:
             check_call(['npm', '--version'])
             return True
-        except:
+        except CalledProcessError:
             return False
 
     def should_run_npm_install(self):
-        package_json = os.path.join(node_root, 'package.json')
-        node_modules_exists = os.path.exists(self.node_modules)
         return self.has_npm()
 
     def run(self):
@@ -161,7 +162,7 @@ class FetchCSS(Command):
         except Exception as e:
             if 'ssl' in str(e).lower():
                 try:
-                    import pycurl
+                    import pycurl  # noqa
                 except ImportError:
                     print("Failed, try again after installing PycURL with `pip install pycurl` to avoid outdated SSL.", file=sys.stderr)
                     raise e
@@ -181,16 +182,15 @@ class FetchCSS(Command):
         return buf.getvalue()
 
     def run(self):
-        css_dest          = os.path.join('share', 'jupyter', 'voila', 'templates', 'default', 'static', 'index.css')
-        theme_light_dest  = os.path.join('share', 'jupyter', 'voila', 'templates', 'default', 'static', 'theme-light.css')
-        theme_dark_dest   = os.path.join('share', 'jupyter', 'voila', 'templates', 'default', 'static', 'theme-dark.css')
+        css_dest = os.path.join('share', 'jupyter', 'voila', 'templates', 'default', 'static', 'index.css')
+        theme_light_dest = os.path.join('share', 'jupyter', 'voila', 'templates', 'default', 'static', 'theme-light.css')
+        theme_dark_dest = os.path.join('share', 'jupyter', 'voila', 'templates', 'default', 'static', 'theme-dark.css')
 
         try:
             css = self._download(css_url)
             theme_light = self._download(theme_light_url)
             theme_dark = self._download(theme_dark_url)
-        except Exception as e:
-            msg = "Failed to download CSS: %s" % e
+        except Exception:
             if os.path.exists(css_dest) and os.path.exists(theme_light_dest) and os.path.exists(theme_dark_dest):
                 print("Already have CSS, moving on.")
             else:
@@ -208,6 +208,7 @@ class FetchCSS(Command):
         with open(theme_dark_dest, 'wb+') as f:
             f.write(theme_dark)
 
+
 def css_first(command):
     class CSSFirst(command):
         def run(self):
@@ -216,7 +217,7 @@ def css_first(command):
     return CSSFirst
 
 
-class bdist_egg_disabled(bdist_egg):
+class BdistEggDisabled(bdist_egg):
     """Disabled version of bdist_egg
 
     Prevents setup.py install performing setuptools' default easy_install,
@@ -225,19 +226,21 @@ class bdist_egg_disabled(bdist_egg):
     def run(self):
         sys.exit("Aborting implicit building of eggs. Use `pip install .` to install from source.")
 
+
 cmdclass = {
     'css': FetchCSS,
     'jsdeps': NPM,
     'build_py': css_first(js_first(build_py)),
     'egg_info': css_first(js_first(egg_info)),
     'sdist': css_first(js_first(sdist, strict=True)),
-    'develop' : css_first(develop),
-    'bdist_egg': bdist_egg if 'bdist_egg' in sys.argv else bdist_egg_disabled
+    'develop': css_first(develop),
+    'bdist_egg': bdist_egg if 'bdist_egg' in sys.argv else BdistEggDisabled
 }
 
 version_ns = {}
 with open(os.path.join(here, 'voila', '_version.py')) as f:
     exec(f.read(), {}, version_ns)
+
 
 def get_data_files():
     """Get the data files for the package.
@@ -253,6 +256,7 @@ def get_data_files():
         if filenames:
             data_files.append((dirpath, [os.path.join(dirpath, filename) for filename in filenames]))
     return data_files
+
 
 setup_args = {
     'name': 'voila',

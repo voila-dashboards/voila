@@ -1,7 +1,10 @@
 # tests the --template argument of voila
 import pytest
+
 import base64
+
 import os
+
 
 @pytest.fixture
 def voila_notebook(notebook_directory):

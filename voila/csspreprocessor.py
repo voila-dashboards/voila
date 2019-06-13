@@ -9,7 +9,9 @@
 import hashlib
 
 from traitlets import Unicode, Union, Type
+
 from pygments.style import Style
+
 from jupyterlab_pygments import JupyterStyle
 
 from nbconvert.preprocessors.base import Preprocessor

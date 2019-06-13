@@ -1,5 +1,6 @@
 # fixtures common for app and server
 import os
+
 import pytest
 
 
@@ -13,10 +14,9 @@ def notebook_directory():
 
 @pytest.fixture
 def print_notebook_url(base_url):
-    return base_url +  "/voila/render/print.ipynb"
+    return base_url + "/voila/render/print.ipynb"
 
 
 @pytest.fixture
 def voila_notebook(notebook_directory):
     return os.path.join(notebook_directory, 'print.ipynb')
-

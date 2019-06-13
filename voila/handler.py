@@ -7,11 +7,10 @@
 #############################################################################
 
 import os
+
 import tornado.web
 
 from jupyter_server.base.handlers import JupyterHandler
-
-import nbformat  # noqa: F401
 
 from .execute import executenb
 from .exporter import VoilaExporter

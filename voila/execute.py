@@ -7,6 +7,7 @@
 #############################################################################
 
 from nbconvert.preprocessors.execute import CellExecutionError, ExecutePreprocessor
+
 from ipykernel.jsonutil import json_clean
 
 

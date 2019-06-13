@@ -7,6 +7,7 @@
 #############################################################################
 
 from zmq.eventloop import ioloop
+
 import gettext
 import logging
 import threading
@@ -39,7 +40,9 @@ from jupyter_server.base.handlers import path_regex
 from jupyter_server.utils import url_path_join
 from jupyter_server.services.config import ConfigManager
 from jupyter_server.base.handlers import FileFindHandler
+
 from jupyter_core.paths import jupyter_config_path, jupyter_path
+
 from ipython_genutils.py3compat import getcwd
 
 from .paths import ROOT, STATIC_ROOT, collect_template_paths, notebook_path_regex
@@ -53,8 +56,8 @@ ioloop.install()
 _kernel_id_regex = r"(?P<kernel_id>\w+-\w+-\w+-\w+-\w+)"
 
 
-# placeholder for i18
-def _(x): return x
+def _(x):
+    return x
 
 
 class Voila(Application):
