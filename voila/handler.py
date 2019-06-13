@@ -55,7 +55,7 @@ class VoilaHandler(JupyterHandler):
         cwd = os.path.dirname(notebook_path)
         kernel_id = yield tornado.gen.maybe_future(self.kernel_manager.start_kernel(kernel_name=kernel_name, path=cwd))
         km = self.kernel_manager.get_kernel(kernel_id)
-        result = executenb(notebook, km=km, cwd=cwd)
+        result = executenb(notebook, km=km, cwd=cwd, config=self.exporter_config)
 
         # render notebook to html
         resources = {
