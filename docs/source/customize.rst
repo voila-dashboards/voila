@@ -84,7 +84,7 @@ the folder structure of the base Voila template (called "default"):
 In the case of the default template, we also provide a ``base.tpl`` that our custom template uses as a base.
 The name ``voila.tpl`` is special - you cannot name your custom nbconvert something else.
 
-**To customize the HTML page templates**, store them i na folder called ``templatename/templates/<name>.html``.
+**To customize the HTML page templates**, store them in a folder called ``templatename/templates/<name>.html``.
 These are files that Voila can serve as standalone HTML (for example, the ``tree.html`` template defines how
 folders/files are displayed in ``localhost:8866/voila/tree``). You can override the defaults by providing your
 own HTML files of the same name.
