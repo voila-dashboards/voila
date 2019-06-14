@@ -455,6 +455,10 @@ class Voila(Application):
             self.launch_browser()
         self.listen()
 
+    def stop(self):
+        shutil.rmtree(self.connection_dir)
+        self.kernel_manager.shutdown_all()
+
     def listen(self):
         self.app.listen(self.port)
         self.log.info('Voila is running at:\n%s' % self.display_url)
@@ -465,8 +469,7 @@ class Voila(Application):
         except KeyboardInterrupt:
             self.log.info('Stopping...')
         finally:
-            shutil.rmtree(self.connection_dir)
-            self.kernel_manager.shutdown_all()
+            self.stop()
 
     def launch_browser(self):
         try:
