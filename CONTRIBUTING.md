@@ -105,6 +105,13 @@ python -m pip install ".[test]"
 python -m pytest
 ```
 
+Running the tests locally requires the `test_template` to be installed:
+
+```bash
+cd tests/test_template
+python -m pip install .
+```
+
 ## Editing templates
 
 The default templates are located in the following folder: [share/jupyter/voila/templates/default](./share/jupyter/voila/templates/default). They are automatically picked up when running voila in development mode.
