@@ -41,6 +41,7 @@ def voila_app(voila_args, voila_config):
     voila_config(voila_app)
     voila_app.start()
     yield voila_app
+    voila_app.stop()
     voila_app.clear_instance()
 
 
