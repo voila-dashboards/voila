@@ -451,13 +451,14 @@ class Voila(Application):
             ])
 
         self.app.add_handlers('.*$', handlers)
-        if self.open_browser:
-            self.launch_browser()
         self.listen()
 
     def listen(self):
         self.app.listen(self.port)
         self.log.info('Voila is running at:\n%s' % self.display_url)
+
+        if self.open_browser:
+            self.launch_browser()
 
         self.ioloop = tornado.ioloop.IOLoop.current()
         try:
