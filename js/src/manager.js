@@ -162,7 +162,7 @@ function createRenderMimeRegistry() {
     rendermime.addFactory({
         safe: false,
         mimeTypes: [WIDGET_MIMETYPE],
-        createRenderer: options => new WidgetRenderer(options, manager)
+        createRenderer: options => new WidgetRenderer(options)
     }, 1);
     return rendermime;
 }
