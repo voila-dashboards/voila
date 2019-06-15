@@ -50,10 +50,9 @@ export class WidgetManager extends JupyterLabManager {
                 const widgetViewObject = JSON.parse(viewtag.innerHTML);
                 const { model_id } = widgetViewObject;
                 const model = models[model_id];
-                const widgetTag = document.createElement('div');
-                widgetTag.className = 'widget-subarea';
-                viewtag.parentElement.insertBefore(widgetTag, viewtag);
-                const view = await this.display_model(undefined, model, { el : widgetTag });
+                const widgetel = document.createElement('div');
+                viewtag.parentElement.insertBefore(widgetel, viewtag);
+                const view = await this.display_model(undefined, model, { el : widgetel });
             } catch (error) {
                // Each widget view tag rendering is wrapped with a try-catch statement.
                //
@@ -69,7 +68,10 @@ export class WidgetManager extends JupyterLabManager {
     }
 
     display_view(msg, view, options) {
-        PhosphorWidget.Widget.attach(view.pWidget, options.el);
+        if (options.el) {
+            PhosphorWidget.Widget.attach(view.pWidget, options.el);
+        }
+        return view.pWidget;
     }
 
     async loadClass(className, moduleName, moduleVersion) {
@@ -121,8 +123,7 @@ export class WidgetManager extends JupyterLabManager {
 
         await Promise.all(widgets_info.map(async (widget_info) => {
             const state = widget_info.msg.content.data.state;
-            const modelPromise = this.new_model(
-                {
+            const modelPromise = this.new_model({
                     model_name: state._model_name,
                     model_module: state._model_module,
                     model_module_version: state._model_module_version,
