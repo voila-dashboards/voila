@@ -8,7 +8,7 @@ import {
 
 import { ReadonlyJSONObject } from "@phosphor/coreutils";
 
-import { ICommandPalette, MainAreaWidget, IFrame } from "@jupyterlab/apputils";
+import { ICommandPalette } from "@jupyterlab/apputils";
 
 import { IMainMenu } from "@jupyterlab/mainmenu";
 
@@ -20,6 +20,8 @@ import { DocumentRegistry } from "@jupyterlab/docregistry";
 
 import { IDisposable } from "@phosphor/disposable";
 
+import { VOILA_ICON_CLASS, VoilaPreview } from "./preview";
+
 import "../style/index.css";
 
 export namespace CommandIDs {
@@ -27,8 +29,6 @@ export namespace CommandIDs {
 
   export const voilaOpen = "notebook:open-with-voila";
 }
-
-const VOILA_ICON_CLASS = "jp-MaterialIcon jp-VoilaIcon";
 
 class VoilaRenderButton
   implements DocumentRegistry.IWidgetExtension<NotebookPanel, INotebookModel> {
@@ -53,6 +53,7 @@ class VoilaRenderButton
       tooltip: "Render with Voila"
     });
 
+    // TODO: use `insertAfter` after migrating to JupyterLab 1.0
     panel.toolbar.insertItem(9, "voilaRender", button);
 
     return button;
@@ -91,19 +92,6 @@ const extension: JupyterLabPlugin<void> = {
       );
     }
 
-    let counter = 0;
-
-    function voilaIFrame(url: string, text: string): MainAreaWidget {
-      let content = new IFrame();
-
-      content.url = url;
-      content.title.label = text;
-      content.title.icon = VOILA_ICON_CLASS;
-      content.id = `voila-${++counter}`;
-      let widget = new MainAreaWidget({ content });
-      return widget;
-    }
-
     function getVoilaUrl(path: string): string {
       const baseUrl = PageConfig.getBaseUrl();
       return `${baseUrl}voila/render/${path}`;
@@ -117,9 +105,9 @@ const extension: JupyterLabPlugin<void> = {
           return;
         }
         const voilaPath = current.context.path;
-        const voilaUrl = getVoilaUrl(voilaPath);
+        const url = getVoilaUrl(voilaPath);
         const name = PathExt.basename(voilaPath);
-        let widget = voilaIFrame(voilaUrl, name);
+        let widget = new VoilaPreview({ url, label: name });
         app.shell.addToMainArea(widget, { mode: "split-right" });
         return widget;
       },
