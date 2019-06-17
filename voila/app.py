@@ -9,6 +9,7 @@
 from zmq.eventloop import ioloop
 
 import gettext
+import io
 import logging
 import threading
 import tempfile
@@ -485,7 +486,7 @@ class Voila(Application):
         uri = self.base_url
         fd, open_file = tempfile.mkstemp(suffix='.html')
         # Write a temporary file to open in the browser
-        with open(fd, 'w', encoding='utf-8') as fh:
+        with io.open(fd, 'w', encoding='utf-8') as fh:
             # TODO: do we want to have the token?
             # if self.token:
             #     url = url_concat(url, {'token': self.token})
