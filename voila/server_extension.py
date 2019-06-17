@@ -34,8 +34,7 @@ def load_jupyter_server_extension(server_app):
     collect_template_paths(
         nbconvert_template_paths,
         static_paths,
-        template_paths,
-        voila_configuration.template
+        template_paths
     )
 
     jenv_opt = {"autoescape": True}

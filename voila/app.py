@@ -337,8 +337,7 @@ class Voila(Application):
             collect_template_paths(
                 self.nbconvert_template_paths,
                 self.static_paths,
-                self.template_paths,
-                self.voila_configuration.template)
+                self.template_paths)
         self.log.debug('using template: %s', self.voila_configuration.template)
         self.log.debug('nbconvert template paths:\n\t%s', '\n\t'.join(self.nbconvert_template_paths))
         self.log.debug('template paths:\n\t%s', '\n\t'.join(self.template_paths))

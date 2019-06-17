@@ -65,8 +65,18 @@ class VoilaHandler(JupyterHandler):
             'theme': self.voila_configuration.theme
         }
 
+        # choose the template
+        template_name = (
+            self.get_query_argument('template', '') or
+            self.voila_configuration.template or
+            'default'
+        )
+
+        # prioritize paths based on the template name
+        templates = sorted(self.nbconvert_template_paths, key=lambda p: -(template_name in p))
+
         exporter = VoilaExporter(
-            template_path=self.nbconvert_template_paths,
+            template_path=templates,
             config=self.exporter_config,
             contents_manager=self.contents_manager  # for the image inlining
         )
