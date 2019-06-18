@@ -68,12 +68,13 @@ class VoilaHandler(JupyterHandler):
         # choose the template
         template_name = (
             self.get_query_argument('template', '') or
-            self.voila_configuration.template or
-            'default'
+            self.voila_configuration.template
         )
 
-        # prioritize paths based on the template name
-        templates = sorted(self.nbconvert_template_paths, key=lambda p: -(template_name in p))
+        templates = self.nbconvert_template_paths
+        if self.voila_configuration.template:
+            # prioritize paths based on the template name if specified
+            templates = sorted(self.nbconvert_template_paths, key=lambda p: -(template_name in p))
 
         exporter = VoilaExporter(
             template_path=templates,
