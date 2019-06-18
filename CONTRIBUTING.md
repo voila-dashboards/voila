@@ -98,19 +98,30 @@ voila
 
 ## Tests
 
-To run the tests:
+Install the test dependencies
 
 ```bash
-python -m pip install ".[test]"
+python -m pip install -e ".[test]"
+```
+
+Enable the Jupyter server extension:
+
+```bash
+jupyter extension enable voila --sys-prefix
+```
+
+Running the tests locally also requires the `test_template` to be installed:
+
+```bash
+python -m pip install ./tests/test_template
+```
+
+Finally, to run the tests:
+
+```bash
 python -m pytest
 ```
 
-Running the tests locally requires the `test_template` to be installed:
-
-```bash
-cd tests/test_template
-python -m pip install .
-```
 
 ## Editing templates
 
