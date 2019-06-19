@@ -12,7 +12,7 @@
     "url": "https://github.com/QuantStack/voila/issues"
   },
   "license": "BSD-3-Clause",
-  "author": "Maarten Breddels, Sylvain Corlay",
+  "author": "Voila contributors",
   "files": [
     "lib/**/*.{d.ts,eot,gif,html,jpg,js,js.map,json,png,svg,woff2,ttf}",
     "style/**/*.{css,eot,gif,html,jpg,json,png,svg,woff2,ttf}"
@@ -31,14 +31,6 @@
     "prepare": "npm run clean && npm run build"
   },
   "dependencies": {
-    "@jupyterlab/application": "^0.19.0",
-    "@jupyterlab/apputils": "^0.19.0",
-    "@jupyterlab/docregistry": "^0.19.0",
-    "@jupyterlab/fileeditor": "^0.19.0",
-    "@jupyterlab/mainmenu": "^0.8.1",
-    "@jupyterlab/notebook": "^0.19.0"
-  },
-  "peerDependencies": {
     "@jupyterlab/application": "^0.19.0",
     "@jupyterlab/apputils": "^0.19.0",
     "@jupyterlab/docregistry": "^0.19.0",
