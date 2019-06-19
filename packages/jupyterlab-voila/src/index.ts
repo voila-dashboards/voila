@@ -56,8 +56,7 @@ class VoilaRenderButton
       tooltip: "Render with Voila"
     });
 
-    // TODO: use `insertAfter` after migrating to JupyterLab 1.0
-    panel.toolbar.insertItem(9, "voilaRender", button);
+    panel.toolbar.insertAfter("cellType", "voilaRender", button);
 
     return button;
   }
