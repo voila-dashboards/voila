@@ -78,7 +78,7 @@ High level instructions, specific to voila can be found below:
 
    .. code:: bash
 
-       git init <your-files>
+       git init
        git add <your-files>
        git commit -m "my message"
 
