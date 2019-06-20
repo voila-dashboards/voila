@@ -44,7 +44,7 @@ version = '.'.join(map(str, _release['version_info'][:2]))
 release = _release['__version__']
 language = None
 
-html_logo = 'quantstack-white.svg'
+html_logo = 'voila.svg'
 
 exclude_patterns = []
 highlight_language = 'python'
