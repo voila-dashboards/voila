@@ -285,7 +285,7 @@ setup_args = {
         'test': [
             'mock',
             'pytest<4',
-            'pytest-tornado5'
+            'pytest-tornado'
         ]
     },
     'author': 'QuantStack',
