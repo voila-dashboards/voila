@@ -104,6 +104,7 @@ const extension: JupyterLabPlugin<void> = {
         if (!current) {
           return;
         }
+        await current.context.save();
         const voilaPath = current.context.path;
         const url = getVoilaUrl(voilaPath);
         const name = PathExt.basename(voilaPath);
@@ -121,6 +122,7 @@ const extension: JupyterLabPlugin<void> = {
         if (!current) {
           return;
         }
+        await current.context.save();
         const voilaUrl = getVoilaUrl(current.context.path);
         window.open(voilaUrl);
       },
