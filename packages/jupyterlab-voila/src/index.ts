@@ -1,4 +1,7 @@
-import { JupyterLab, JupyterLabPlugin } from "@jupyterlab/application";
+import {
+  JupyterFrontEnd,
+  JupyterFrontEndPlugin
+} from "@jupyterlab/application";
 
 import {
   INotebookTracker,
@@ -32,11 +35,11 @@ export namespace CommandIDs {
 
 class VoilaRenderButton
   implements DocumentRegistry.IWidgetExtension<NotebookPanel, INotebookModel> {
-  constructor(app: JupyterLab) {
+  constructor(app: JupyterFrontEnd) {
     this.app = app;
   }
 
-  readonly app: JupyterLab;
+  readonly app: JupyterFrontEnd;
 
   createNew(
     panel: NotebookPanel,
@@ -53,8 +56,7 @@ class VoilaRenderButton
       tooltip: "Render with Voila"
     });
 
-    // TODO: use `insertAfter` after migrating to JupyterLab 1.0
-    panel.toolbar.insertItem(9, "voilaRender", button);
+    panel.toolbar.insertAfter("cellType", "voilaRender", button);
 
     return button;
   }
@@ -63,13 +65,13 @@ class VoilaRenderButton
 /**
  * Initialization data for the jupyterlab-voila extension.
  */
-const extension: JupyterLabPlugin<void> = {
-  id: "jupyterlab-voila",
+const extension: JupyterFrontEndPlugin<void> = {
+  id: "@voici/jupyterlab-preview",
   autoStart: true,
   requires: [INotebookTracker],
   optional: [ICommandPalette, IMainMenu],
   activate: (
-    app: JupyterLab,
+    app: JupyterFrontEnd,
     notebooks: INotebookTracker,
     palette: ICommandPalette,
     menu: IMainMenu | null
@@ -109,7 +111,7 @@ const extension: JupyterLabPlugin<void> = {
         const url = getVoilaUrl(voilaPath);
         const name = PathExt.basename(voilaPath);
         let widget = new VoilaPreview({ url, label: name });
-        app.shell.addToMainArea(widget, { mode: "split-right" });
+        app.shell.add(widget, "main", { mode: "split-right" });
         return widget;
       },
       isEnabled

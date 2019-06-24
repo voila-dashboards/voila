@@ -14,7 +14,7 @@ export class VoilaPreview extends MainAreaWidget<IFrame> {
     let { url, label, ...opts } = options;
     super({
       ...opts,
-      content: new IFrame()
+      content: new IFrame({ sandbox: ["allow-same-origin", "allow-scripts"] })
     });
 
     this.content.url = url;
@@ -23,8 +23,7 @@ export class VoilaPreview extends MainAreaWidget<IFrame> {
     this.content.id = `voila-${++Private.count}`;
 
     const reloadButton = new ToolbarButton({
-      // TODO: remove extras jp-Icon after migrating to JupyterLab 1.0
-      iconClassName: "jp-RefreshIcon jp-Icon jp-Icon-16",
+      iconClassName: "jp-RefreshIcon",
       onClick: () => {
         const iframe = this.content.node.querySelector("iframe")!;
         if (iframe.contentWindow) {
