@@ -48,13 +48,25 @@ export class VoilaPreview extends MainAreaWidget<IFrame> {
   }
 
   reload() {
+    if (!this.renderOnSave) {
+      return;
+    }
     const iframe = this.content.node.querySelector("iframe")!;
     if (iframe.contentWindow) {
       iframe.contentWindow.location.reload();
     }
   }
 
+  get renderOnSave(): boolean {
+    return this._renderOnSave;
+  }
+
+  set renderOnSave(renderOnSave: boolean) {
+    this._renderOnSave = renderOnSave;
+  }
+
   private _context: DocumentRegistry.IContext<INotebookModel>;
+  private _renderOnSave: boolean;
 }
 
 namespace Private {

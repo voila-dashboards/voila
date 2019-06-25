@@ -15,7 +15,7 @@ import { ICommandPalette } from "@jupyterlab/apputils";
 
 import { IMainMenu } from "@jupyterlab/mainmenu";
 
-import { PageConfig, PathExt } from "@jupyterlab/coreutils";
+import { PageConfig, PathExt, ISettingRegistry } from "@jupyterlab/coreutils";
 
 import { ToolbarButton } from "@jupyterlab/apputils";
 
@@ -66,15 +66,16 @@ class VoilaRenderButton
  * Initialization data for the jupyterlab-voila extension.
  */
 const extension: JupyterFrontEndPlugin<void> = {
-  id: "@voici/jupyterlab-preview",
+  id: "@voici/jupyterlab-preview:plugin",
   autoStart: true,
   requires: [INotebookTracker],
-  optional: [ICommandPalette, IMainMenu],
+  optional: [ICommandPalette, IMainMenu, ISettingRegistry],
   activate: (
     app: JupyterFrontEnd,
     notebooks: INotebookTracker,
     palette: ICommandPalette,
-    menu: IMainMenu | null
+    menu: IMainMenu | null,
+    settingRegistry: ISettingRegistry
   ) => {
     function getCurrent(args: ReadonlyJSONObject): NotebookPanel | null {
       const widget = notebooks.currentWidget;
@@ -99,6 +100,24 @@ const extension: JupyterFrontEndPlugin<void> = {
       return `${baseUrl}voila/render/${path}`;
     }
 
+    function watchSettings(preview: VoilaPreview) {
+      const updateSettings = (settings: ISettingRegistry.ISettings): void => {
+        const renderOnSave = settings.get("renderOnSave").composite as boolean;
+        preview.renderOnSave = renderOnSave;
+      };
+      Promise.all([settingRegistry.load(extension.id), app.restored])
+        .then(([settings]) => {
+          updateSettings(settings);
+          settings.changed.connect(updateSettings);
+          preview.disposed.connect(() => {
+            settings.changed.disconnect(updateSettings);
+          });
+        })
+        .catch((reason: Error) => {
+          console.error(reason.message);
+        });
+    }
+
     app.commands.addCommand(CommandIDs.voilaRender, {
       label: "Render Notebook with Voila",
       execute: async args => {
@@ -115,6 +134,11 @@ const extension: JupyterFrontEndPlugin<void> = {
           label: name,
           context: current.context
         });
+
+        if (settingRegistry) {
+          watchSettings(widget);
+        }
+
         app.shell.add(widget, "main", { mode: "split-right" });
         return widget;
       },
