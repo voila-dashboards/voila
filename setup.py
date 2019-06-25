@@ -371,7 +371,7 @@ setup_args = {
     },
     'entry_points': {
         'console_scripts': [
-            'voila = voila.app:main'
+            'jupyter-voila = voila.app:main'
         ]
     },
     'install_requires': [

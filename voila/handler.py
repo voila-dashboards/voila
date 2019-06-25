@@ -11,10 +11,7 @@ import os
 
 import tornado.web
 
-from jupyter_server.base.handlers import JupyterHandler
-from jupyter_server.config_manager import recursive_update
-from jupyter_server.utils import url_path_join
-import nbformat
+from jupyter_server.extension.handler import ExtensionHandler
 
 from nbconvert.preprocessors import ClearOutputPreprocessor
 
@@ -31,15 +28,24 @@ def filter_empty_code_cells(cell, exporter):
     )
 
 
-class VoilaHandler(JupyterHandler):
+class VoilaHandler(ExtensionHandler):
+    
+    @property
+    def notebook_path(self):
+        return self.settings.get('notebook_path', [])
 
-    def initialize(self, **kwargs):
-        self.notebook_path = kwargs.pop('notebook_path', [])    # should it be []
-        self.nbconvert_template_paths = kwargs.pop('nbconvert_template_paths', [])
-        self.traitlet_config = kwargs.pop('config', None)
-        self.voila_configuration = kwargs['voila_configuration']
-        # we want to avoid starting multiple kernels due to template mistakes
-        self.kernel_started = False
+    @property
+    def nbconvert_template_paths(self):
+        return self.settings.get('nbconvert_template_paths', [])
+
+    @property
+    def exporter_config(self):
+        return self.settings.get('config', None)
+
+    @property
+    def voila_configuration(self):
+        return self.settings['voila_configuration']
+
 
     @tornado.web.authenticated
     @tornado.gen.coroutine
@@ -50,7 +56,7 @@ class VoilaHandler(JupyterHandler):
             self.redirect_to_file(path)
             return
 
-        if self.voila_configuration.enable_nbextensions:
+        if self.voila_configuration['enable_nbextensions']:
             # generate a list of nbextensions that are enabled for the classical notebook
             # a template can use that to load classical notebook extensions, but does not have to
             notebook_config = self.config_manager.get('notebook')
@@ -73,7 +79,7 @@ class VoilaHandler(JupyterHandler):
         resources = {
             'base_url': self.base_url,
             'nbextensions': nbextensions,
-            'theme': self.voila_configuration.theme
+            'theme': self.voila_configuration['theme']
         }
 
         # include potential extra resources

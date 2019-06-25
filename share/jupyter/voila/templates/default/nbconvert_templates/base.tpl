@@ -14,11 +14,10 @@
 
 {%- block html_head_js -%}
 <script
-    src="{{resources.base_url}}voila/static/require.min.js"
+    src="{{resources.base_url}}static/voila/require.min.js"
     integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA="
     crossorigin="anonymous">
 </script>
-
 {% block notebook_execute %}
     {%- set kernel_id = kernel_start() -%}
     <script id="jupyter-config-data" type="application/json">
@@ -50,10 +49,13 @@
 {% block footer %}
 {% block footer_js %}
 <script>
-requirejs.config({ baseUrl: '{{resources.base_url}}voila/', waitSeconds: 30})
+requirejs.config({
+    baseUrl: '{{resources.base_url}}static/voila/',
+    waitSeconds: 30
+})
 requirejs(
     [
-        "static/main",
+        "main",
     {% for ext in resources.nbextensions -%}
         "{{resources.base_url}}voila/nbextensions/{{ ext }}.js",
     {% endfor %}

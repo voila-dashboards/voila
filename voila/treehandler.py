@@ -10,16 +10,13 @@ import os
 
 from tornado import web
 
-from jupyter_server.base.handlers import JupyterHandler
+from jupyter_server.extension.handler import ExtensionHandler
 from jupyter_server.utils import url_path_join, url_escape
 
 from .utils import get_server_root_dir
 
 
-class VoilaTreeHandler(JupyterHandler):
-    def initialize(self, **kwargs):
-        self.voila_configuration = kwargs['voila_configuration']
-        self.allowed_extensions = list(self.voila_configuration.extension_language_mapping.keys()) + ['.ipynb']
+class VoilaTreeHandler(ExtensionHandler):
 
     def get_template(self, name):
         """Return the jinja template object for a given name"""
