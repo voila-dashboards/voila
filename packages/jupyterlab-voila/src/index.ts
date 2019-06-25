@@ -110,7 +110,11 @@ const extension: JupyterFrontEndPlugin<void> = {
         const voilaPath = current.context.path;
         const url = getVoilaUrl(voilaPath);
         const name = PathExt.basename(voilaPath);
-        let widget = new VoilaPreview({ url, label: name });
+        let widget = new VoilaPreview({
+          url,
+          label: name,
+          context: current.context
+        });
         app.shell.add(widget, "main", { mode: "split-right" });
         return widget;
       },
