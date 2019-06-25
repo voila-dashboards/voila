@@ -1,0 +1,6 @@
+{
+    "Voila": {
+        "template": "test_template",
+        "enable_nbextensions": true
+    }
+}

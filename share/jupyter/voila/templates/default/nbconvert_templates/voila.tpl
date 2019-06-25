@@ -8,12 +8,12 @@
 {%- block html_head_css -%}
 {{ super() }}
 
-<link rel="stylesheet" type="text/css" href="{{resources.base_url}}voila/static/index.css">
+<link rel="stylesheet" type="text/css" href="{{resources.base_url}}static/voila/index.css"></link>
 
 {% if resources.theme == 'dark' %}
-    <link rel="stylesheet" type="text/css" href="{{resources.base_url}}voila/static/theme-dark.css">
+    <link rel="stylesheet" type="text/css" href="{{resources.base_url}}static/voila/theme-dark.css"></link>
 {% else %}
-    <link rel="stylesheet" type="text/css" href="{{resources.base_url}}voila/static/theme-light.css">
+    <link rel="stylesheet" type="text/css" href="{{resources.base_url}}static/voila/theme-light.css"></link>
 {% endif %}
 
 {% for css in resources.inlining.css %}
