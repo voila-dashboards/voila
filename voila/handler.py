@@ -11,26 +11,29 @@ import os
 
 import tornado.web
 
-from jupyter_server.base.handlers import JupyterHandler
-from jupyter_server.config_manager import recursive_update
-from jupyter_server.utils import url_path_join
 import nbformat
-
+from jupyter_server.utils import url_path_join
+from jupyter_server.extension import ExtensionHandlerMixin
+from jupyter_server.config_manager import recursive_update
 from nbconvert.preprocessors import ClearOutputPreprocessor
 
 from .execute import executenb, VoilaExecutePreprocessor
 from .exporter import VoilaExporter
 
 
-class VoilaHandler(JupyterHandler):
+class VoilaHandler(ExtensionHandler):
 
     def initialize(self, **kwargs):
-        self.notebook_path = kwargs.pop('notebook_path', [])    # should it be []
-        self.nbconvert_template_paths = kwargs.pop('nbconvert_template_paths', [])
-        self.traitlet_config = kwargs.pop('config', None)
-        self.voila_configuration = kwargs['voila_configuration']
-        # we want to avoid starting multiple kernels due to template mistakes
         self.kernel_started = False
+        super(VoilaHandler, self).initialize(**kwargs)
+
+    @property
+    def notebook_path(self):
+        path = self.settings.get("notebook_path")
+        # Get relative path to notebook.
+        if path:  # path can be '', which is the default of ServerApp.file_to_run
+            path = os.path.relpath(path, self.config["root_dir"])
+        return path
 
     @tornado.web.authenticated
     async def get(self, path=None):
@@ -40,7 +43,7 @@ class VoilaHandler(JupyterHandler):
             self.redirect_to_file(path)
             return
 
-        if self.voila_configuration.enable_nbextensions:
+        if self.config.enable_nbextensions:
             # generate a list of nbextensions that are enabled for the classical notebook
             # a template can use that to load classical notebook extensions, but does not have to
             notebook_config = self.config_manager.get('notebook')
@@ -66,14 +69,14 @@ class VoilaHandler(JupyterHandler):
         resources = {
             'base_url': self.base_url,
             'nbextensions': nbextensions,
-            'theme': self.voila_configuration.theme,
+            'theme': self.config.theme,
             'metadata': {
                 'name': notebook_name
             }
         }
 
         # include potential extra resources
-        extra_resources = self.voila_configuration.config.VoilaConfiguration.resources
+        extra_resources = self.config.Voila.resources
         # if no resources get configured from neither the CLI nor a config file,
         # extra_resources is a traitlets.config.loader.LazyConfigValue object
         if not isinstance(extra_resources, dict):
@@ -82,11 +85,11 @@ class VoilaHandler(JupyterHandler):
             recursive_update(resources, extra_resources)
 
         self.exporter = VoilaExporter(
-            template_path=self.nbconvert_template_paths,
-            config=self.traitlet_config,
+            template_path=self.config.nbconvert_template_paths,
+            config=self.server_config,
             contents_manager=self.contents_manager  # for the image inlining
         )
-        if self.voila_configuration.strip_sources:
+        if self.config.strip_sources:
             self.exporter.exclude_input = True
             self.exporter.exclude_output_prompt = True
             self.exporter.exclude_input_prompt = True
@@ -127,7 +130,7 @@ class VoilaHandler(JupyterHandler):
 
     def _jinja_notebook_execute(self, nb, kernel_id):
         km = self.kernel_manager.get_kernel(kernel_id)
-        result = executenb(nb, km=km, cwd=self.cwd, config=self.traitlet_config)
+        result = executenb(nb, km=km, cwd=self.cwd, config=self.server_config)
         # we modify the notebook in place, since the nb variable cannot be reassigned it seems in jinja2
         # e.g. if we do {% with nb = notebook_execute(nb, kernel_id) %}, the base template/blocks will not
         # see the updated variable (it seems to be local to our block)
@@ -138,7 +141,7 @@ class VoilaHandler(JupyterHandler):
         km = self.kernel_manager.get_kernel(kernel_id)
 
         nb, resources = ClearOutputPreprocessor().preprocess(nb, {'metadata': {'path': self.cwd}})
-        ep = VoilaExecutePreprocessor(config=self.traitlet_config)
+        ep = VoilaExecutePreprocessor(config=self.server_config)
 
         with ep.setup_preprocessor(nb, resources, km=km):
             for cell_idx, cell in enumerate(nb.cells):
@@ -146,7 +149,6 @@ class VoilaHandler(JupyterHandler):
 
                 yield res[0]
 
-    # @tornado.gen.coroutine
     async def load_notebook(self, path):
         model = self.contents_manager.get(path=path)
         if 'content' not in model:
@@ -156,8 +158,8 @@ class VoilaHandler(JupyterHandler):
             notebook = model['content']
             notebook = await self.fix_notebook(notebook)
             return notebook
-        elif extension in self.voila_configuration.extension_language_mapping:
-            language = self.voila_configuration.extension_language_mapping[extension]
+        elif extension in self.config.extension_language_mapping:
+            language = self.config.extension_language_mapping[extension]
             notebook = await self.create_notebook(model, language=language)
             return notebook
         else:
@@ -209,8 +211,8 @@ class VoilaHandler(JupyterHandler):
 
         If multiple kernels matches are found, we try to return the same kernel name each time.
         """
-        if kernel_language in self.voila_configuration.language_kernel_mapping:
-            return self.voila_configuration.language_kernel_mapping[kernel_language]
+        if kernel_language in self.config.language_kernel_mapping:
+            return self.config.language_kernel_mapping[kernel_language]
         if kernel_specs is None:
             kernel_specs = await tornado.gen.maybe_future(self.kernel_spec_manager.get_all_specs())
         matches = [

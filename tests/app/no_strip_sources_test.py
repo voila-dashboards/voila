@@ -8,12 +8,12 @@ BASE_DIR = os.path.dirname(__file__)
 
 @pytest.fixture
 def voila_args_extra():
-    return ['--VoilaConfiguration.strip_sources=False']
+    return ['--Voila.strip_sources=False']
 
 
 @pytest.mark.gen_test
-def test_no_strip_sources(http_client, base_url):
-    response = yield http_client.fetch(base_url)
+def test_no_strip_sources(http_client, default_url):
+    response = yield http_client.fetch(default_url)
     assert response.code == 200
     html_text = response.body.decode('utf-8')
     assert 'Hi Voila' in html_text

@@ -14,8 +14,8 @@ except ImportError:
 
 
 @pytest.mark.gen_test
-def test_hello_world(http_client, base_url):
-    response = yield http_client.fetch(base_url)
+def test_hello_world(http_client, default_url):
+    response = yield http_client.fetch(default_url)
     assert response.code == 200
     html_text = response.body.decode('utf-8')
     assert 'Hi Voila' in html_text
@@ -24,19 +24,18 @@ def test_hello_world(http_client, base_url):
 
 
 @pytest.mark.gen_test
-def test_no_execute_allowed(voila_app, app, http_client, base_url):
-    assert voila_app.app is app
-    response = (yield http_client.fetch(base_url)).body.decode('utf-8')
+def test_no_execute_allowed(voila_app, app, http_client, add_token, base_url):
+    url_to_request = add_token(base_url)
+    response = (yield http_client.fetch(url_to_request)).body.decode('utf-8')
     pattern = r"""kernelId": ["']([0-9a-zA-Z-]+)["']"""
     groups = re.findall(pattern, response)
     kernel_id = groups[0]
-    print(kernel_id, base_url)
     session_id = '445edd75-c6f5-45d2-8b58-5fe8f84a7123'
     url = '{base_url}/api/kernels/{kernel_id}/channels?session_id={session_id}'.format(
         kernel_id=kernel_id, base_url=base_url, session_id=session_id
     ).replace('http://', 'ws://')
+    url = add_token(url)
     conn = yield tornado.websocket.websocket_connect(url)
-
     msg = {
         "header": {
             "msg_id": "8573fb401ac848aab63c3bf0081e9b65",
@@ -58,7 +57,7 @@ def test_no_execute_allowed(voila_app, app, http_client, base_url):
         "parent_header": {},
         "channel": "shell",
     }
-    with mock.patch.object(voila_app.log, 'warning') as mock_warning:
+    with mock.patch.object(voila_app.serverapp.log, 'warning') as mock_warning:
         yield conn.write_message(json.dumps(msg))
         # make sure the warning method is called
         while not mock_warning.called:

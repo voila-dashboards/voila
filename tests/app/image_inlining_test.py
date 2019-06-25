@@ -1,8 +1,6 @@
 # tests the --template argument of voila
 import pytest
-
 import base64
-
 import os
 
 
@@ -12,8 +10,8 @@ def voila_notebook(notebook_directory):
 
 
 @pytest.mark.gen_test
-def test_image_inlining(http_client, base_url, notebook_directory):
-    response = yield http_client.fetch(base_url)
+def test_image_inlining(http_client, default_url, notebook_directory):
+    response = yield http_client.fetch(default_url)
     html_text = response.body.decode('utf-8')
 
     assert 'data:image/svg+xml;base64,' in html_text
