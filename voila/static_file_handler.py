@@ -33,7 +33,7 @@ class MultiStaticFileHandler(tornado.web.StaticFileHandler):
     def get_absolute_path(self, root, path):
         # find the first absolute path that exists
         self.root = self.roots[0]
-        for root in self.roots:
+        for root in self.roots:git 
             abspath = os.path.abspath(os.path.join(root, path))
             if os.path.exists(abspath):
                 self.root = root  # make sure all the other methods in the base class know how to find the file

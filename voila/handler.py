@@ -12,8 +12,9 @@ import os
 import tornado.web
 
 from jupyter_server.extension.handler import ExtensionHandler
-
+from jupyter_server.config_manager import recursive_update
 from nbconvert.preprocessors import ClearOutputPreprocessor
+import nbformat
 
 from .execute import executenb, VoilaExecutePreprocessor
 from .exporter import VoilaExporter
@@ -29,23 +30,6 @@ def filter_empty_code_cells(cell, exporter):
 
 
 class VoilaHandler(ExtensionHandler):
-    
-    @property
-    def notebook_path(self):
-        return self.settings.get('notebook_path', [])
-
-    @property
-    def nbconvert_template_paths(self):
-        return self.settings.get('nbconvert_template_paths', [])
-
-    @property
-    def exporter_config(self):
-        return self.settings.get('config', None)
-
-    @property
-    def voila_configuration(self):
-        return self.settings['voila_configuration']
-
 
     @tornado.web.authenticated
     @tornado.gen.coroutine
@@ -56,7 +40,7 @@ class VoilaHandler(ExtensionHandler):
             self.redirect_to_file(path)
             return
 
-        if self.voila_configuration['enable_nbextensions']:
+        if self.config.enable_nbextensions:
             # generate a list of nbextensions that are enabled for the classical notebook
             # a template can use that to load classical notebook extensions, but does not have to
             notebook_config = self.config_manager.get('notebook')
@@ -75,24 +59,29 @@ class VoilaHandler(ExtensionHandler):
             return
         self.cwd = os.path.dirname(notebook_path)
 
+        # Launch kernel and execute notebook
+        kernel_id = yield tornado.gen.maybe_future(self.kernel_manager.start_kernel(kernel_name=notebook.metadata.kernelspec.name, path=self.cwd))
+        km = self.kernel_manager.get_kernel(kernel_id)
+        result = executenb(notebook, km=km, cwd=self.cwd, config=self.server_config)
+
         # render notebook to html
         resources = {
             'base_url': self.base_url,
             'nbextensions': nbextensions,
-            'theme': self.voila_configuration['theme']
+            'theme': self.config.theme
         }
 
         # include potential extra resources
-        extra_resources = self.voila_configuration.resources
+        extra_resources = self.config.resources
         if extra_resources:
             recursive_update(resources, extra_resources)
 
         self.exporter = VoilaExporter(
-            template_path=self.nbconvert_template_paths,
-            config=self.traitlet_config,
+            template_path=self.config.nbconvert_template_paths,
+            config=self.server_config,
             contents_manager=self.contents_manager  # for the image inlining
         )
-        if self.voila_configuration.strip_sources:
+        if self.config.strip_sources:
             self.exporter.exclude_input = True
             self.exporter.exclude_output_prompt = True
             self.exporter.exclude_input_prompt = True
