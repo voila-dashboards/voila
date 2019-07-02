@@ -174,5 +174,7 @@ function createContext(kernel) {
 }
 
 function createSettings() {
-    return {};
+    return {
+        saveState: false
+    };
 }
