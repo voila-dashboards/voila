@@ -28,10 +28,11 @@ export class WidgetManager extends JupyterLabManager {
 
     constructor(kernel) {
         const context = createContext(kernel);
+        const settings = createSettings();
         const rendermime = new RenderMimeRegistry({
             initialFactories: standardRendererFactories
         });
-        super(context, rendermime);
+        super(context, rendermime, settings);
         rendermime.addFactory({
             safe: false,
             mimeTypes: [WIDGET_MIMETYPE],
@@ -93,6 +94,9 @@ export class WidgetManager extends JupyterLabManager {
                 }
             })
         }
+    }
+
+    restoreWidgets(notebook) {
     }
 
     _registerWidgets() {
@@ -158,8 +162,19 @@ function createContext(kernel) {
             kernel,
             kernelChanged: {
                 connect: () => {}
-            }
-        }
+            },
+            statusChanged: {
+                connect: () => {}
+            },
+        },
+        saveState: {
+            connect: () => {}
+        },
     };
 }
 
+function createSettings() {
+    return {
+        saveState: false
+    };
+}
