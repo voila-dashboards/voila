@@ -60,6 +60,17 @@
     }
   },
   "jupyterlab": {
-    "extension": true
+    "extension": true,
+    "discovery": {
+      "server": {
+        "managers": [
+          "conda",
+          "pip"
+        ],
+        "base": {
+          "name": "voila"
+        }
+      }
+    }
   }
 }
