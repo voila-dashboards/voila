@@ -71,13 +71,6 @@ Node.js is required and can be installed with conda:
 conda install -c conda-forge nodejs
 ```
 
-The extension is being developed for JupyterLab 1.0, which is going to be [released very soon](https://github.com/jupyterlab/jupyterlab/issues/6504). To install the alpha 1.0 release:
-
-```bash
-pip install --pre jupyterlab
-```
-
-
 To install the JupyterLab extension locally:
 
 ```bash
