@@ -254,6 +254,7 @@ def get_data_files():
     # Add all the templates
     for (dirpath, dirnames, filenames) in os.walk('share/jupyter/voila/templates/'):
         if filenames:
+            filenames = [f for f in filenames if not f.endswith('.map')]
             data_files.append((dirpath, [os.path.join(dirpath, filename) for filename in filenames]))
     return data_files
 
