@@ -2,8 +2,9 @@
   "compilerOptions": {
     "allowSyntheticDefaultImports": true,
     "declaration": true,
-    "lib": ["es2015", "dom"],
-    "module": "commonjs",
+    "esModuleInterop": true,
+    "incremental": true,
+    "module": "esnext",
     "moduleResolution": "node",
     "noEmitOnError": true,
     "noImplicitAny": true,
@@ -14,7 +15,7 @@
     "rootDir": "src",
     "strict": true,
     "strictNullChecks": false,
-    "target": "es2015",
+    "target": "es2017",
     "types": []
   },
   "include": ["src/*"]
