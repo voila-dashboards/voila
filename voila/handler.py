@@ -36,8 +36,10 @@ class VoilaHandler(JupyterHandler):
             notebook_config = self.config_manager.get('notebook')
             # except for the widget extension itself, since voila has its own
             load_extensions = notebook_config.get('load_extensions', {})
-            if "jupyter-js-widgets/extension" in load_extensions:
-                load_extensions["jupyter-js-widgets/extension"] = False
+            if 'jupyter-js-widgets/extension' in load_extensions:
+                load_extensions['jupyter-js-widgets/extension'] = False
+            if 'voila/extension' in load_extensions:
+                load_extensions['voila/extension'] = False
             nbextensions = [name for name, enabled in load_extensions.items() if enabled]
         else:
             nbextensions = []
