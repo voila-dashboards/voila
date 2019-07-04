@@ -8,5 +8,5 @@ dependencies:
   - ipympl
   - voila=0.1.5
   - ipympl
-  - xleaflet=0.7.0
+  - xleaflet=0.8.0
   - xeus-cling=0.6.0
