@@ -13,9 +13,6 @@
 <link rel="stylesheet" href="https://unpkg.com/font-awesome@4.5.0/css/font-awesome.min.css" type="text/css" />
 
 {%- block html_head_js -%}
-
-<script src="{{resources.base_url}}voila/static/jquery.min.js"></script>
-
 <script
     src="{{resources.base_url}}voila/static/require.min.js"
     integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA="
