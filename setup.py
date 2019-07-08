@@ -24,7 +24,7 @@ from distutils import log
 log.set_verbosity(log.DEBUG)
 
 here = os.path.dirname(os.path.abspath(__file__))
-node_root = os.path.join(here, 'js')
+node_root = os.path.join(here, 'packages', 'js')
 is_repo = os.path.exists(os.path.join(here, '.git'))
 
 
