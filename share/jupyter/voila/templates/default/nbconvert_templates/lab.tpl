@@ -222,7 +222,6 @@ class="unconfined"
 <div id="{{ div_id }}"></div>
 <div class="jp-RenderedJavaScript jp-OutputArea-output {{ extra_class }}" data-mime-type="application/javascript">
 <script type="text/javascript">
-var element = $('#{{ div_id }}');
 {{ output.data['application/javascript'] }}
 </script>
 </div>
@@ -234,9 +233,6 @@ var element = $('#{{ div_id }}');
 {% set datatype = datatype_list[0]%} 
 <div id="{{ div_id }}"></div>
 <div class="output_subarea output_widget_state {{ extra_class }}">
-<script type="text/javascript">
-var element = $('#{{ div_id }}');
-</script>
 <script type="{{ datatype }}">
 {{ output.data[datatype] | json_dumps }}
 </script>
@@ -249,9 +245,6 @@ var element = $('#{{ div_id }}');
 {% set datatype = datatype_list[0]%} 
 <div id="{{ div_id }}"></div>
 <div class="jupyter-widgets jp-OutputArea-output {{ extra_class }}">
-<script type="text/javascript">
-var element = $('#{{ div_id }}');
-</script>
 <script type="{{ datatype }}">
 {{ output.data[datatype] | json_dumps }}
 </script>
