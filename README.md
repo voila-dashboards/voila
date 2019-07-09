@@ -41,9 +41,7 @@ To render the `bqplot` example notebook as a standalone app, run
 `voila bqplot.ipynb`.
 To serve a directory of jupyter notebooks, run `voila` with no argument.
 
-For example, assuming you have already created and activated a
-[conda environment](https://docs.conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html),
-you want to run, specifically:
+For example, to render the example notebook `bqplot.ipynb` from this repository with voila, you can first update your current environment with the requirements of this notebook (in this case in a [conda environment](https://docs.conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html) and render the notebook with
 
 ```
 conda env update -f environment.yml
