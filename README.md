@@ -33,6 +33,14 @@ or from pypi
 pip install voila
 ```
 
+### JupyterLab preview extension
+
+Voila provides a JupyterLab extension that displays a Voila preview of your Notebook in a side-pane:
+
+```
+jupyter labextension install @jupyter-voila/jupyterlab-preview
+```
+
 ## Usage
 
 ### As a standalone tornado application
