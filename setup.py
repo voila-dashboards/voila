@@ -279,7 +279,8 @@ setup_args = {
     'install_requires': [
         'jupyter_server>=0.0.5,<0.0.6',
         'nbconvert>=5.5.0,<6',
-        'jupyterlab_pygments>=0.1.0,<0.2'
+        'jupyterlab_pygments>=0.1.0,<0.2',
+        'pygments>=2.4.1,<3'
     ],
     'extras_require': {
         'test': [
