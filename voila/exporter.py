@@ -14,7 +14,7 @@ from traitlets.config import Config
 from jinja2 import contextfilter
 
 from nbconvert.filters.markdown_mistune import IPythonRenderer, MarkdownWithMath
-from nbconvert.exporters.html import HTMLExporter
+from nbconvert.exporters.slides import SlidesExporter
 
 
 class VoilaMarkdownRenderer(IPythonRenderer):
@@ -30,8 +30,10 @@ class VoilaMarkdownRenderer(IPythonRenderer):
         return super(VoilaMarkdownRenderer, self).image(src, title, text)
 
 
-class VoilaExporter(HTMLExporter):
-    """Custom HTMLExporter that inlines the images using VoilaMarkdownRenderer"""
+class VoilaExporter(SlidesExporter):
+    """Custom SlidesExporter (which itself inherits from HTMLExporter) that
+    inlines the images using VoilaMarkdownRenderer.
+    """
 
     # The voila exporter overrides the markdown renderer from the HTMLExporter
     # to inline images.
