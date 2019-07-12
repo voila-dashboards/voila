@@ -67,6 +67,16 @@ class VoilaHandler(JupyterHandler):
             'theme': self.voila_configuration.theme
         }
 
+        # extra resources for reveal template
+        resources_reveal = {
+            'reveal': {
+                'theme': 'simple',
+                'transition': 'slide',
+                'scroll': 'False',
+            }
+        }
+        resources.update(resources_reveal)
+
         exporter = VoilaExporter(
             template_path=self.nbconvert_template_paths,
             config=self.exporter_config,
