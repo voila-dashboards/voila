@@ -20,7 +20,8 @@ class VoilaConfiguration(traitlets.config.Configurable):
             'template name to be used by voila.'
         )
     )
-    reveal_theme = Unicode('simple',
+    reveal_theme = Unicode(
+        'simple',
         allow_none=True,
         help="""
         Used only with template reveal, ignored otherwise.
@@ -31,7 +32,8 @@ class VoilaConfiguration(traitlets.config.Configurable):
         list of themes that ship by default with reveal.js.
         """
     ).tag(config=True)
-    reveal_transition = Unicode('slide',
+    reveal_transition = Unicode(
+        'slide',
         allow_none=True,
         help="""
         Used only with template reveal, ignored otherwise.
@@ -40,7 +42,8 @@ class VoilaConfiguration(traitlets.config.Configurable):
         none, fade, slide, convex, concave and zoom.
         """
     ).tag(config=True)
-    reveal_scroll = Bool(False,
+    reveal_scroll = Bool(
+        False,
         allow_none=True,
         help="""
         Used only with template reveal, ignored otherwise.
