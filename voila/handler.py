@@ -101,7 +101,8 @@ class VoilaHandler(JupyterHandler):
         result.cells = list(filter(filter_empty_code_cells, result.cells))
 
         # add convenience metadata on cells for reveal template
-        result = prepare(result)
+        if self.voila_configuration.template == 'reveal':
+            result = prepare(result)
 
         html, resources = exporter.from_notebook_node(result, resources=resources)
 
