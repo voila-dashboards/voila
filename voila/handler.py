@@ -69,16 +69,15 @@ class VoilaHandler(JupyterHandler):
             'theme': self.voila_configuration.theme
         }
 
-        # add extra resources for reveal template
-        if self.voila_configuration.template == 'reveal':
-            resources_reveal = {
-                'reveal': {
-                    'theme': self.voila_configuration.reveal_theme,
-                    'transition': self.voila_configuration.reveal_transition,
-                    'scroll': self.voila_configuration.reveal_scroll,
-                }
+        # add extra resources (necessary for reveal template)
+        resources_reveal = {
+            'reveal': {
+                'theme': self.voila_configuration.reveal_theme,
+                'transition': self.voila_configuration.reveal_transition,
+                'scroll': self.voila_configuration.reveal_scroll,
             }
-            resources.update(resources_reveal)
+        }
+        resources.update(resources_reveal)
 
         exporter = VoilaExporter(
             template_path=self.nbconvert_template_paths,
