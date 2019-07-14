@@ -7,6 +7,14 @@
 conda create -n voila -c conda-forge notebook nodejs
 conda activate voila
 
+# download voila from GitHub
+git clone https://github.com/QuantStack/voila.git
+
+# install JS dependencies and build js assets
+cd js
+npm install
+cd ..
+
 # install voila in editable mode
 python -m pip install -e .
 ```
