@@ -11,6 +11,7 @@ conda activate voila
 git clone https://github.com/QuantStack/voila.git
 
 # install JS dependencies and build js assets
+cd voila
 cd js
 npm install
 cd ..
