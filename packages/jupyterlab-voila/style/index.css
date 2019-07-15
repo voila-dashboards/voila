@@ -1,3 +1,5 @@
+@import "variables.css";
+
 .jp-VoilaIcon {
-  background-image: url("./voila.svg");
+  background-image: var(--jp-icon-voila);
 }
