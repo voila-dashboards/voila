@@ -2,10 +2,20 @@
 
 ## Setting up a development environment
 
+First, you need to fork the project. Then setup your environment:
+
 ```bash
 # create a new conda environment
 conda create -n voila -c conda-forge notebook nodejs
 conda activate voila
+
+# download voila from your GitHub fork
+git clone https://github.com/<your-github-username>/voila.git
+
+# install JS dependencies and build js assets
+cd voila/js
+npm install
+cd ..
 
 # install voila in editable mode
 python -m pip install -e .
