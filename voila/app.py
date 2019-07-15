@@ -67,6 +67,7 @@ class Voila(Application):
     examples = 'voila example.ipynb --port 8888'
 
     flags = {
+        'debug': ({'Voila': {'log_level': logging.DEBUG}}, _("Set the log level to logging.DEBUG")),
         'no-browser': ({'Voila': {'open_browser': False}}, _('Don\'t open the notebook in a browser after startup.'))
     }
 
