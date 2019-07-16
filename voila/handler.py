@@ -12,8 +12,6 @@ import tornado.web
 
 from jupyter_server.base.handlers import JupyterHandler
 
-from nbconvert.exporters.slides import prepare
-
 from .execute import executenb
 from .exporter import VoilaExporter
 
@@ -80,7 +78,7 @@ class VoilaHandler(JupyterHandler):
         resources.update(resources_reveal)
 
         # include potential extra resources
-        extra_resources = self.voila_configuration.extra_resources
+        extra_resources = self.voila_configuration.resources
         if extra_resources:
             for k in extra_resources.keys():
                 if k in resources.keys():
@@ -114,10 +112,6 @@ class VoilaHandler(JupyterHandler):
                 or not exporter.exclude_input                   # keep cell if input not excluded
             )
         result.cells = list(filter(filter_empty_code_cells, result.cells))
-
-        # add convenience metadata on cells for reveal template
-        if self.voila_configuration.template == 'reveal':
-            result = prepare(result)
 
         html, resources = exporter.from_notebook_node(result, resources=resources)
 

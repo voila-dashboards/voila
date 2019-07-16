@@ -20,13 +20,12 @@ class VoilaConfiguration(traitlets.config.Configurable):
             'template name to be used by voila.'
         )
     )
-    extra_resources = Dict(
-        {},
+    resources = Dict(
         allow_none=True,
         help="""
         extra resources used by templates;
         example use with --template=reveal
-        --extra_resources="{'reveal': {'transition': 'fade', 'scroll': True}}"
+        --resources="{'reveal': {'transition': 'fade', 'scroll': True}}"
         """
     ).tag(config=True)
     theme = Unicode('light').tag(config=True)
