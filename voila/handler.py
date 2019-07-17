@@ -64,6 +64,7 @@ class VoilaHandler(JupyterHandler):
                 if kernel["spec"]["language"].lower() == kernel_language
             ]
             if matches:
+                matches.sort(key=lambda name: all_kernel_specs[name]["spec"]["display_name"])
                 kernel_name = matches[0]
 
         # Launch kernel and execute notebook
