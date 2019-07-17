@@ -52,13 +52,19 @@ class VoilaHandler(JupyterHandler):
             raise tornado.web.HTTPError(404, 'file not found')
 
         # Fetch kernel name from the notebook metadata
-        default_kernel_name = self.kernel_manager.default_kernel_name
-        kernel_name = notebook.metadata.get('kernelspec', {}).get('name', default_kernel_name)
+        kernelspec = notebook.metadata.get('kernelspec', {})
+        kernel_name = kernelspec.get('name', self.kernel_manager.default_kernel_name)
 
-        # Use the default kernel name if the kernel from the metadata is not in the kernel specs
+        # Find a spec matching the language if the kernel name does not exist in the kernelspecs
         all_kernel_specs = yield tornado.gen.maybe_future(self.kernel_spec_manager.get_all_specs())
         if kernel_name not in all_kernel_specs:
-            kernel_name = default_kernel_name
+            kernel_language = kernelspec.get('language', 'python').lower()
+            matches = [
+                name for name, kernel in all_kernel_specs.items()
+                if kernel["spec"]["language"].lower() == kernel_language
+            ]
+            if matches:
+                kernel_name = matches[0]
 
         # Launch kernel and execute notebook
         cwd = os.path.dirname(notebook_path)
