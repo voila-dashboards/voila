@@ -6,5 +6,7 @@
 * The full license is in the file LICENSE, distributed with this software. *
 ****************************************************************************/
 
+export { RenderMimeRegistry, standardRendererFactories } from '@jupyterlab/rendermime';
+
 export { WidgetManager } from './manager';
 export { connectKernel } from './kernel'
