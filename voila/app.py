@@ -42,6 +42,8 @@ from jupyter_server.utils import url_path_join
 from jupyter_server.services.config import ConfigManager
 from jupyter_server.base.handlers import FileFindHandler
 
+from jupyter_client.kernelspec import KernelSpecManager
+
 from jupyter_core.paths import jupyter_config_path, jupyter_path
 
 from ipython_genutils.py3compat import getcwd
@@ -359,9 +361,14 @@ class Voila(Application):
         self.log.info('Storing connection files in %s.' % self.connection_dir)
         self.log.info('Serving static files from %s.' % self.static_root)
 
+        self.kernel_spec_manager = KernelSpecManager(
+            parent=self
+        )
+
         self.kernel_manager = MappingKernelManager(
             parent=self,
             connection_dir=self.connection_dir,
+            kernel_spec_manager=self.kernel_spec_manager,
             allowed_message_types=[
                 'comm_msg',
                 'comm_info_request',
@@ -388,6 +395,7 @@ class Voila(Application):
             base_url=self.base_url,
             server_url=self.server_url or self.base_url,
             kernel_manager=self.kernel_manager,
+            kernel_spec_manager=self.kernel_spec_manager,
             allow_remote_access=True,
             autoreload=self.autoreload,
             voila_jinja2_env=env,
