@@ -6,6 +6,7 @@
 # The full license is in the file LICENSE, distributed with this software.  #
 #############################################################################
 
+from nbconvert.preprocessors import ClearOutputPreprocessor
 from nbconvert.preprocessors.execute import CellExecutionError, ExecutePreprocessor
 
 from ipykernel.jsonutil import json_clean
@@ -129,5 +130,7 @@ def executenb(nb, cwd=None, km=None, **kwargs):
     resources = {}
     if cwd is not None:
         resources['metadata'] = {'path': cwd}  # pragma: no cover
+    # Clear any stale output, in case of exception
+    nb, resources = ClearOutputPreprocessor().preprocess(nb, resources)
     ep = ExecutePreprocessorWithOutputWidget(**kwargs)
     return ep.preprocess(nb, resources, km=km)[0]
