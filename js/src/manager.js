@@ -6,10 +6,10 @@
 * The full license is in the file LICENSE, distributed with this software. *
 ****************************************************************************/
 
-import { RenderMimeRegistry, standardRendererFactories } from '@jupyterlab/rendermime';
 import { WidgetManager as JupyterLabManager } from '@jupyter-widgets/jupyterlab-manager';
 import { WidgetRenderer } from '@jupyter-widgets/jupyterlab-manager';
 import { output } from '@jupyter-widgets/jupyterlab-manager';
+
 import * as base from '@jupyter-widgets/base';
 import * as controls from '@jupyter-widgets/controls';
 import * as PhosphorWidget from '@phosphor/widgets';
@@ -21,18 +21,13 @@ if (typeof window !== "undefined" && typeof window.define !== "undefined") {
     window.define("@jupyter-widgets/controls", controls);
     window.define("@jupyter-widgets/output", output);
     window.define("@phosphor/widgets", PhosphorWidget);
-  }
+}
 
 const WIDGET_MIMETYPE = 'application/vnd.jupyter.widget-view+json';
 
 export class WidgetManager extends JupyterLabManager {
 
-    constructor(kernel) {
-        const context = createContext(kernel);
-        const settings = createSettings();
-        const rendermime = new RenderMimeRegistry({
-            initialFactories: standardRendererFactories
-        });
+    constructor(context, rendermime, settings) {
         super(context, rendermime, settings);
         rendermime.addFactory({
             safe: false,
@@ -154,28 +149,4 @@ export class WidgetManager extends JupyterLabManager {
             comm.send({method: 'request_state'}, {});
         });
     }
-
-}
-
-function createContext(kernel) {
-    return {
-        session: {
-            kernel,
-            kernelChanged: {
-                connect: () => {}
-            },
-            statusChanged: {
-                connect: () => {}
-            },
-        },
-        saveState: {
-            connect: () => {}
-        },
-    };
-}
-
-function createSettings() {
-    return {
-        saveState: false
-    };
 }
