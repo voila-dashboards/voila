@@ -6,25 +6,15 @@
 # The full license is in the file LICENSE, distributed with this software.  #
 #############################################################################
 
-import collections
 import os
 
 import tornado.web
 
 from jupyter_server.base.handlers import JupyterHandler
+from jupyter_server.config_manager import recursive_update
 
 from .execute import executenb
 from .exporter import VoilaExporter
-
-
-def update_nested_dict(d, u):
-    """Update (nested) dictionaries: update keys down to any depth."""
-    for k, v in u.items():
-        if isinstance(v, collections.Mapping):
-            d[k] = update_nested_dict(d.get(k, {}), v)
-        else:
-            d[k] = v
-    return d
 
 
 class VoilaHandler(JupyterHandler):
@@ -91,7 +81,7 @@ class VoilaHandler(JupyterHandler):
         # include potential extra resources
         extra_resources = self.voila_configuration.resources
         if extra_resources:
-            resources = update_nested_dict(resources, extra_resources)
+            recursive_update(resources, extra_resources)
 
         exporter = VoilaExporter(
             template_path=self.nbconvert_template_paths,
