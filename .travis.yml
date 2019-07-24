@@ -26,5 +26,5 @@ install:
 before_script:
   - flake8 voila tests setup.py
 script:
-  - VOILA_TEST_DEBUG=1 py.test tests/
+  - VOILA_TEST_DEBUG=1 py.test tests/ --async-test-timeout=20
   - voila --help  # Making sure we can run `voila --help`
