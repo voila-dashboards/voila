@@ -22,7 +22,7 @@ class VoilaHandler(JupyterHandler):
     def initialize(self, **kwargs):
         self.notebook_path = kwargs.pop('notebook_path', [])    # should it be []
         self.nbconvert_template_paths = kwargs.pop('nbconvert_template_paths', [])
-        self.exporter_config = kwargs.pop('config', None)
+        self.traitlet_config = kwargs.pop('config', None)
         self.voila_configuration = kwargs['voila_configuration']
 
     @tornado.web.authenticated
@@ -58,7 +58,7 @@ class VoilaHandler(JupyterHandler):
         cwd = os.path.dirname(notebook_path)
         kernel_id = yield tornado.gen.maybe_future(self.kernel_manager.start_kernel(kernel_name=kernel_name, path=cwd))
         km = self.kernel_manager.get_kernel(kernel_id)
-        result = executenb(notebook, km=km, cwd=cwd)
+        result = executenb(notebook, km=km, cwd=cwd, config=self.traitlet_config)
 
         # render notebook to html
         resources = {
@@ -75,7 +75,7 @@ class VoilaHandler(JupyterHandler):
 
         exporter = VoilaExporter(
             template_path=self.nbconvert_template_paths,
-            config=self.exporter_config,
+            config=self.traitlet_config,
             contents_manager=self.contents_manager  # for the image inlining
         )
 
