@@ -102,7 +102,7 @@ class ExecutePreprocessorWithOutputWidget(ExecutePreprocessor):
     def handle_comm_msg(self, outs, msg, cell_index):
         super(ExecutePreprocessorWithOutputWidget, self).handle_comm_msg(outs, msg, cell_index)
         self.log.debug('comm msg: %r', msg)
-        if msg['msg_type'] == 'comm_open':
+        if msg['msg_type'] == 'comm_open' and msg['content'].get('target_name') == 'jupyter.widget':
             content = msg['content']
             data = content['data']
             state = data['state']
