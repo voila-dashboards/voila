@@ -122,7 +122,6 @@ def which(cmd, mode=os.F_OK | os.X_OK, path=None):
     return None
 
 
-
 # `run` function copied from jupyter_packaging under the following license:
 # -------------------------------------------------------------------------
 #
