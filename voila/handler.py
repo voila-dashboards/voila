@@ -68,16 +68,6 @@ class VoilaHandler(JupyterHandler):
             'theme': self.voila_configuration.theme
         }
 
-        # add extra resources (necessary for reveal template)
-        resources_reveal = {
-            'reveal': {
-                'theme': 'simple',
-                'transition': 'slide',
-                'scroll': False,
-            }
-        }
-        resources.update(resources_reveal)
-
         # include potential extra resources
         extra_resources = self.voila_configuration.resources
         if extra_resources:
