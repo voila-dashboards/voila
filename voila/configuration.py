@@ -25,7 +25,7 @@ class VoilaConfiguration(traitlets.config.Configurable):
         help="""
         extra resources used by templates;
         example use with --template=reveal
-        --resources="{'reveal': {'transition': 'fade', 'scroll': True}}"
+        --VoilaConfiguration.resources="{'reveal': {'transition': 'fade', 'scroll': True}}"
         """
     ).tag(config=True)
     theme = Unicode('light').tag(config=True)
