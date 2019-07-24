@@ -7,7 +7,7 @@
 #############################################################################
 
 import traitlets.config
-from traitlets import Unicode, Bool
+from traitlets import Unicode, Bool, Dict
 
 
 class VoilaConfiguration(traitlets.config.Configurable):
@@ -20,6 +20,14 @@ class VoilaConfiguration(traitlets.config.Configurable):
             'template name to be used by voila.'
         )
     )
+    resources = Dict(
+        allow_none=True,
+        help="""
+        extra resources used by templates;
+        example use with --template=reveal
+        --resources="{'reveal': {'transition': 'fade', 'scroll': True}}"
+        """
+    ).tag(config=True)
     theme = Unicode('light').tag(config=True)
     strip_sources = Bool(True, help='Strip sources from rendered html').tag(config=True)
     enable_nbextensions = Bool(False, config=True, help=('Set to True for Voila to load notebook extensions'))
