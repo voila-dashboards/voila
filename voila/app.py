@@ -38,11 +38,10 @@ from traitlets import Unicode, Integer, Bool, Dict, List, default
 from jupyter_server.services.kernels.kernelmanager import MappingKernelManager
 from jupyter_server.services.kernels.handlers import KernelHandler, ZMQChannelsHandler
 from jupyter_server.services.contents.largefilemanager import LargeFileManager
-from jupyter_server.base.handlers import path_regex
+from jupyter_server.base.handlers import FileFindHandler, path_regex
 from jupyter_server.config_manager import recursive_update
 from jupyter_server.utils import url_path_join
 from jupyter_server.services.config import ConfigManager
-from jupyter_server.base.handlers import FileFindHandler
 
 from jupyter_core.paths import jupyter_config_path, jupyter_path
 
@@ -327,8 +326,6 @@ class Voila(Application):
 
         # then we load the config
         self.load_config_file('voila', path=self.config_file_paths)
-        # but that cli config has preference, so we overwrite with that
-        self.update_config(self.cli_config)
         # common configuration options between the server extension and the application
         self.voila_configuration = VoilaConfiguration(parent=self)
         self.setup_template_dirs()
@@ -451,12 +448,13 @@ class Voila(Application):
             handlers.extend([
                 (self.server_url, VoilaTreeHandler),
                 (url_path_join(self.server_url, r'/voila/tree' + path_regex), VoilaTreeHandler),
-                (url_path_join(self.server_url, r'/voila/render' + notebook_path_regex), VoilaHandler,
-                    {
-                        'nbconvert_template_paths': self.nbconvert_template_paths,
-                        'config': self.config,
-                        'voila_configuration': self.voila_configuration
-                    }),
+                (url_path_join(self.server_url, r'/voila/render' + notebook_path_regex),
+                 VoilaHandler,
+                 {
+                     'nbconvert_template_paths': self.nbconvert_template_paths,
+                     'config': self.config,
+                     'voila_configuration': self.voila_configuration
+                 }),
             ])
 
         self.app.add_handlers('.*$', handlers)
