@@ -340,10 +340,14 @@ class Voila(Application):
                 self.voila_configuration.template)
             # then we load the template-related config
             loader = JSONFileConfigLoader('conf.json', self.nbconvert_template_paths)
-            conf = loader.load_config()
-            # and update the overall config with it, preserving CLI config priority
-            recursive_update(dict(conf), dict(self.voila_configuration.config))
-            self.voila_configuration.config.VoilaConfiguration = conf.VoilaConfiguration
+            for path in self.nbconvert_template_paths:
+                conf = {}
+                conf_file = os.path.join(path, 'conf.json')
+                if os.path.exists(conf_file):
+                    conf = loader.load_config()
+                    # and update the overall config with it, preserving CLI config priority
+                    recursive_update(dict(conf), dict(self.voila_configuration.config))
+                    self.voila_configuration.config.VoilaConfiguration = conf.VoilaConfiguration
         self.log.debug('using template: %s', self.voila_configuration.template)
         self.log.debug('nbconvert template paths:\n\t%s', '\n\t'.join(self.nbconvert_template_paths))
         self.log.debug('template paths:\n\t%s', '\n\t'.join(self.template_paths))
