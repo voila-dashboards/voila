@@ -32,12 +32,14 @@ import tornado.ioloop
 import tornado.web
 
 from traitlets.config.application import Application
+from traitlets.config.loader import JSONFileConfigLoader
 from traitlets import Unicode, Integer, Bool, Dict, List, default
 
 from jupyter_server.services.kernels.kernelmanager import MappingKernelManager
 from jupyter_server.services.kernels.handlers import KernelHandler, ZMQChannelsHandler
 from jupyter_server.services.contents.largefilemanager import LargeFileManager
 from jupyter_server.base.handlers import path_regex
+from jupyter_server.config_manager import recursive_update
 from jupyter_server.utils import url_path_join
 from jupyter_server.services.config import ConfigManager
 from jupyter_server.base.handlers import FileFindHandler
@@ -339,6 +341,12 @@ class Voila(Application):
                 self.static_paths,
                 self.template_paths,
                 self.voila_configuration.template)
+            # then we load the template-related config
+            loader = JSONFileConfigLoader('conf.json', self.nbconvert_template_paths)
+            conf = loader.load_config()
+            # and update the overall config with it, preserving CLI config priority
+            recursive_update(dict(conf), dict(self.voila_configuration.config))
+            self.voila_configuration.config.VoilaConfiguration = conf.VoilaConfiguration
         self.log.debug('using template: %s', self.voila_configuration.template)
         self.log.debug('nbconvert template paths:\n\t%s', '\n\t'.join(self.nbconvert_template_paths))
         self.log.debug('template paths:\n\t%s', '\n\t'.join(self.template_paths))
