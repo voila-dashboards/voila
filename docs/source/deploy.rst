@@ -1,6 +1,6 @@
 ======
-Deploy
-======
+Deploying Voila
+===============
 
 The deployment docs are split up in two parts. First there is the
 general section, which should always be followed. Then there is a cloud
@@ -8,7 +8,7 @@ service provider specific section of which one provider should be chosen.
 
 If you are not sure where to deploy your app, we suggest Heroku. You can test 
 deploying and serving your app without having to enter any credit card details,
- and with very little prior experience of deployments.
+and with very little prior experience of deployments.
 
 Setup an example project
 ========================
@@ -30,12 +30,11 @@ Setup an example project
 
    .. code:: txt
 
-       ipyvolume
        bqplot
+       ipympl
+       ipyvolume
        scipy
-       ipympl
-       voila==0.1.2
-       ipympl
+       voila
 
 Cloud Service Providers
 =======================
@@ -121,7 +120,7 @@ The general steps for deployment at Google App Engine can be found
 High level instructions specific to voila can be found below:
 
 1. Follow the “Before you begin steps” from the official documentation
-   to create your: 1) account, 2) project and 3) App Engine app.
+   to create your account, project and App Engine app.
 2. Add an app.yaml file to the project directory with the following content:
 
    .. code:: yaml
@@ -129,7 +128,7 @@ High level instructions specific to voila can be found below:
        runtime: python
        env: flex
        runtime_config:
-       python_version: 3
+         python_version: 3
        entrypoint: voila --port=$PORT --no-browser 
 
 3. Edit the last line if you want to show only one notebook
