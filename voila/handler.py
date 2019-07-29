@@ -95,15 +95,22 @@ class VoilaHandler(JupyterHandler):
 
     @tornado.gen.coroutine
     def load_notebook(self, path):
+        model = self.contents_manager.get(path=path)
+        if 'content' not in model:
+            raise tornado.web.HTTPError(404, 'file not found')
+        if model.get('type') == 'notebook':
+            notebook = model['content']
+            notebook = yield self.fix_notebook(notebook)
+            return notebook
+        else:
+            raise tornado.web.HTTPError(500, 'file not supported')
+
+    @tornado.gen.coroutine
+    def fix_notebook(self, notebook):
         """Returns a notebook object with a valid kernelspec.
 
         In case the kernel is not found, we search for a matching kernel based on the language.
         """
-        model = self.contents_manager.get(path=path)
-        if 'content' not in model:
-            raise tornado.web.HTTPError(404, 'file not found')
-
-        notebook = model['content']
 
         # Fetch kernel name from the notebook metadata
         if 'kernelspec' not in notebook.metadata:
