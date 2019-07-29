@@ -107,9 +107,14 @@ class VoilaHandler(JupyterHandler):
         model = self.contents_manager.get(path=path)
         if 'content' not in model:
             raise tornado.web.HTTPError(404, 'file not found')
+        __, extension = os.path.splitext(model.get('path', ''))
         if model.get('type') == 'notebook':
             notebook = model['content']
             notebook = yield self.fix_notebook(notebook)
+            raise tornado.gen.Return(notebook)  # TODO py2: replace by return
+        elif extension in self.voila_configuration.extension_language_mapping:
+            language = self.voila_configuration.extension_language_mapping[extension]
+            notebook = yield self.create_notebook(model, language=language)
             raise tornado.gen.Return(notebook)  # TODO py2: replace by return
         else:
             self.redirect_to_file(path)
@@ -141,16 +146,35 @@ class VoilaHandler(JupyterHandler):
         raise tornado.gen.Return(notebook)  # TODO py2: replace by return
 
     @tornado.gen.coroutine
+    def create_notebook(self, model, language):
+        all_kernel_specs = yield tornado.gen.maybe_future(self.kernel_spec_manager.get_all_specs())
+        kernel_name = yield self.find_kernel_name_for_language(language, kernel_specs=all_kernel_specs)
+        spec = all_kernel_specs[kernel_name]
+        notebook = nbformat.v4.new_notebook(
+            metadata={
+                'kernelspec': {
+                    'display_name': spec['spec']['display_name'],
+                    'language': spec['spec']['language'],
+                    'name': kernel_name
+                }
+            },
+            cells=[nbformat.v4.new_code_cell(model['content'])],
+        )
+        raise tornado.gen.Return(notebook)  # TODO py2: replace by return
+
+    @tornado.gen.coroutine
     def find_kernel_name_for_language(self, kernel_language, kernel_specs=None):
         """Finds a best matching kernel name given a kernel language.
 
         If multiple kernels matches are found, we try to return the same kernel name each time.
         """
+        if kernel_language in self.voila_configuration.language_kernel_mapping:
+            raise tornado.gen.Return(self.voila_configuration.language_kernel_mapping[kernel_language])  # TODO py2: replace by return
         if kernel_specs is None:
             kernel_specs = yield tornado.gen.maybe_future(self.kernel_spec_manager.get_all_specs())
         matches = [
             name for name, kernel in kernel_specs.items()
-            if kernel["spec"]["language"].lower() == kernel_language
+            if kernel["spec"]["language"].lower() == kernel_language.lower()
         ]
         if matches:
             # Sort by display name to get the same kernel each time.

@@ -5,6 +5,7 @@
 #                                                                           #
 # The full license is in the file LICENSE, distributed with this software.  #
 #############################################################################
+import os
 
 from tornado import web
 
@@ -13,6 +14,10 @@ from jupyter_server.utils import url_path_join, url_escape
 
 
 class VoilaTreeHandler(JupyterHandler):
+    def initialize(self, **kwargs):
+        self.voila_configuration = kwargs['voila_configuration']
+        self.allowed_extensions = list(self.voila_configuration.extension_language_mapping.keys()) + ['.ipynb']
+
     def get_template(self, name):
         """Return the jinja template object for a given name"""
         return self.settings['voila_jinja2_env'].get_template(name)
@@ -49,6 +54,14 @@ class VoilaTreeHandler(JupyterHandler):
             breadcrumbs = self.generate_breadcrumbs(path)
             page_title = self.generate_page_title(path)
             contents = cm.get(path)
+
+            def allowed_content(content):
+                if content['type'] in ['directory', 'notebook']:
+                    return True
+                __, ext = os.path.splitext(content.get('path'))
+                return ext in self.allowed_extensions
+
+            contents['content'] = filter(allowed_content, contents['content'])
             self.write(self.render_template('tree.html',
                        page_title=page_title,
                        notebook_path=path,

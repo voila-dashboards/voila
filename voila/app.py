@@ -453,6 +453,9 @@ class Voila(Application):
             )
         )
 
+        tree_handler_conf = {
+            'voila_configuration': self.voila_configuration
+        }
         if self.notebook_path:
             handlers.append((
                 url_path_join(self.server_url, r'/(.*)'),
@@ -467,8 +470,8 @@ class Voila(Application):
         else:
             self.log.debug('serving directory: %r', self.root_dir)
             handlers.extend([
-                (self.server_url, VoilaTreeHandler),
-                (url_path_join(self.server_url, r'/voila/tree' + path_regex), VoilaTreeHandler),
+                (self.server_url, VoilaTreeHandler, tree_handler_conf),
+                (url_path_join(self.server_url, r'/voila/tree' + path_regex), VoilaTreeHandler, tree_handler_conf),
                 (url_path_join(self.server_url, r'/voila/render/(.*)'), VoilaHandler,
                     {
                         'nbconvert_template_paths': self.nbconvert_template_paths,
