@@ -123,6 +123,7 @@ def which(cmd, mode=os.F_OK | os.X_OK, path=None):
                     return name
     return None
 
+
 # TODO: remove this function once we can depend on jupyter_packing, see:
 #  https://github.com/QuantStack/voila/pull/322
 # `run` function copied from jupyter_packaging under the following license:
