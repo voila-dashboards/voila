@@ -11,6 +11,7 @@ from io import BytesIO
 from subprocess import check_call, CalledProcessError
 
 import os
+import shlex
 import sys
 
 try:
@@ -25,11 +26,6 @@ log.set_verbosity(log.DEBUG)
 here = os.path.dirname(os.path.abspath(__file__))
 node_root = os.path.join(here, 'js')
 is_repo = os.path.exists(os.path.join(here, '.git'))
-
-npm_path = os.pathsep.join([
-    os.path.join(node_root, 'node_modules', '.bin'),
-    os.environ.get('PATH', os.defpath),
-])
 
 
 def in_read_the_docs():
@@ -72,6 +68,111 @@ def update_package_data(distribution):
     build_py.finalize_options()
 
 
+# TODO: remove this function once we drop Python2, see:
+#  https://github.com/QuantStack/voila/pull/322
+# `shutils.which` function copied verbatim from the Python-3.3 source.
+def which(cmd, mode=os.F_OK | os.X_OK, path=None):
+    """Given a command, mode, and a PATH string, return the path which
+    conforms to the given mode on the PATH, or None if there is no such
+    file.
+    `mode` defaults to os.F_OK | os.X_OK. `path` defaults to the result
+    of os.environ.get("PATH"), or can be overridden with a custom search
+    path.
+    """
+
+    # Check that a given file can be accessed with the correct mode.
+    # Additionally check that `file` is not a directory, as on Windows
+    # directories pass the os.access check.
+    def _access_check(fn, mode):
+        return (os.path.exists(fn) and os.access(fn, mode) and
+                not os.path.isdir(fn))
+
+    # Short circuit. If we're given a full path which matches the mode
+    # and it exists, we're done here.
+    if _access_check(cmd, mode):
+        return cmd
+
+    path = (path or os.environ.get("PATH", os.defpath)).split(os.pathsep)
+
+    if sys.platform == "win32":
+        # The current directory takes precedence on Windows.
+        if os.curdir not in path:
+            path.insert(0, os.curdir)
+
+        # PATHEXT is necessary to check on Windows.
+        pathext = os.environ.get("PATHEXT", "").split(os.pathsep)
+        # See if the given file matches any of the expected path extensions.
+        # This will allow us to short circuit when given "python.exe".
+        matches = [cmd for ext in pathext if cmd.lower().endswith(ext.lower())]
+        # If it does match, only test that one, otherwise we have to try
+        # others.
+        files = [cmd] if matches else [cmd + ext.lower() for ext in pathext]
+    else:
+        # On other platforms you don't have things like PATHEXT to tell you
+        # what file suffixes are executable, so just pass on cmd as-is.
+        files = [cmd]
+
+    seen = set()
+    for dir in path:
+        dir = os.path.normcase(dir)
+        if dir not in seen:
+            seen.add(dir)
+            for thefile in files:
+                name = os.path.join(dir, thefile)
+                if _access_check(name, mode):
+                    return name
+    return None
+
+
+# TODO: remove this function once we can depend on jupyter_packing, see:
+#  https://github.com/QuantStack/voila/pull/322
+# `run` function copied from jupyter_packaging under the following license:
+# -------------------------------------------------------------------------
+#
+# BSD 3-Clause License
+#
+# Copyright (c) 2017, Project Jupyter
+# All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions are met:
+#
+# * Redistributions of source code must retain the above copyright notice, this
+#   list of conditions and the following disclaimer.
+#
+# * Redistributions in binary form must reproduce the above copyright notice,
+#   this list of conditions and the following disclaimer in the documentation
+#   and/or other materials provided with the distribution.
+#
+# * Neither the name of the copyright holder nor the names of its
+#   contributors may be used to endorse or promote products derived from
+#   this software without specific prior written permission.
+#
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+# IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+# DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
+# FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+# DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+# SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+# CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+# OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+def run(cmd, **kwargs):
+    """Defaults to repo as cwd"""
+    kwargs.setdefault('cwd', here)
+    kwargs.setdefault('shell', os.name == 'nt')
+    if not isinstance(cmd, (list, tuple)):
+        cmd = shlex.split(cmd)
+    cmd_path = which(cmd[0])
+    if not cmd_path:
+        sys.exit("Aborting. Could not find cmd (%s) in path. "
+                 "If command is not expected to be in user's path, "
+                 "use an absolute path." % cmd[0])
+    cmd[0] = cmd_path
+    return check_call(cmd, **kwargs)
+
+
 class NPM(Command):
     description = 'install package.json dependencies using npm'
 
@@ -92,7 +193,7 @@ class NPM(Command):
 
     def has_npm(self):
         try:
-            check_call(['npm', '--version'])
+            run(['npm', '--version'])
             return True
         except CalledProcessError:
             return False
@@ -109,12 +210,9 @@ class NPM(Command):
         if not has_npm:
             log.error("`npm` unavailable.  If you're running this command using sudo, make sure `npm` is available to sudo")
 
-        env = os.environ.copy()
-        env['PATH'] = npm_path
-
         if self.should_run_npm_install():
             log.info('Installing build dependencies with npm.  This may take a while...')
-            check_call(
+            run(
                 ['npm', 'install'],
                 cwd=node_root,
                 stdout=sys.stdout,
