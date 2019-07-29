@@ -101,7 +101,7 @@ class VoilaHandler(JupyterHandler):
         if model.get('type') == 'notebook':
             notebook = model['content']
             notebook = yield self.fix_notebook(notebook)
-            return notebook
+            raise tornado.gen.Return(notebook)  # TODO py2: replace by return
         else:
             raise tornado.web.HTTPError(500, 'file not supported')
 
