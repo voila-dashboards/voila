@@ -80,13 +80,13 @@ class OutputWidget:
                 self.msg_id = msg_id
 
 
-class ExecutePreprocessorWithOutputWidget(ExecutePreprocessor):
+class VoilaExecutePreprocessor(ExecutePreprocessor):
     """Execute, but respect the output widget behaviour"""
     def preprocess(self, nb, resources, km=None):
         self.output_hook = {}
         self.output_objects = {}
         try:
-            result = super(ExecutePreprocessorWithOutputWidget, self).preprocess(nb, resources=resources, km=km)
+            result = super(VoilaExecutePreprocessor, self).preprocess(nb, resources=resources, km=km)
         except CellExecutionError as e:
             self.log.error(e)
             result = (nb, resources)
@@ -97,10 +97,10 @@ class ExecutePreprocessorWithOutputWidget(ExecutePreprocessor):
         if parent_msg_id in self.output_hook:
             self.output_hook[parent_msg_id].output(outs, msg, display_id, cell_index)
             return
-        super(ExecutePreprocessorWithOutputWidget, self).output(outs, msg, display_id, cell_index)
+        super(VoilaExecutePreprocessor, self).output(outs, msg, display_id, cell_index)
 
     def handle_comm_msg(self, outs, msg, cell_index):
-        super(ExecutePreprocessorWithOutputWidget, self).handle_comm_msg(outs, msg, cell_index)
+        super(VoilaExecutePreprocessor, self).handle_comm_msg(outs, msg, cell_index)
         self.log.debug('comm msg: %r', msg)
         if msg['msg_type'] == 'comm_open' and msg['content'].get('target_name') == 'jupyter.widget':
             content = msg['content']
@@ -123,7 +123,7 @@ class ExecutePreprocessorWithOutputWidget(ExecutePreprocessor):
         if parent_msg_id in self.output_hook:
             self.output_hook[parent_msg_id].clear_output(outs, msg, cell_index)
             return
-        super(ExecutePreprocessorWithOutputWidget, self).clear_output(outs, msg, cell_index)
+        super(VoilaExecutePreprocessor, self).clear_output(outs, msg, cell_index)
 
 
 def executenb(nb, cwd=None, km=None, **kwargs):
@@ -132,5 +132,5 @@ def executenb(nb, cwd=None, km=None, **kwargs):
         resources['metadata'] = {'path': cwd}  # pragma: no cover
     # Clear any stale output, in case of exception
     nb, resources = ClearOutputPreprocessor().preprocess(nb, resources)
-    ep = ExecutePreprocessorWithOutputWidget(**kwargs)
+    ep = VoilaExecutePreprocessor(**kwargs)
     return ep.preprocess(nb, resources, km=km)[0]

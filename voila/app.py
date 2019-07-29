@@ -54,6 +54,9 @@ from .treehandler import VoilaTreeHandler
 from ._version import __version__
 from .static_file_handler import MultiStaticFileHandler
 from .configuration import VoilaConfiguration
+from .execute import VoilaExecutePreprocessor
+from .exporter import VoilaExporter
+from .csspreprocessor import VoilaCSSPreprocessor
 
 ioloop.install()
 _kernel_id_regex = r"(?P<kernel_id>\w+-\w+-\w+-\w+-\w+)"
@@ -120,7 +123,10 @@ class Voila(Application):
         'enable_nbextensions': 'VoilaConfiguration.enable_nbextensions'
     }
     classes = [
-        VoilaConfiguration
+        VoilaConfiguration,
+        VoilaExecutePreprocessor,
+        VoilaExporter,
+        VoilaCSSPreprocessor
     ]
     connection_dir_root = Unicode(
         config=True,
