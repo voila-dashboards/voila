@@ -128,7 +128,7 @@ class VoilaHandler(JupyterHandler):
         notebook.metadata.kernelspec.name = kernel_name
         notebook.metadata.kernelspec.display_name = all_kernel_specs[kernel_name]['spec']['display_name']
         notebook.metadata.kernelspec.language = all_kernel_specs[kernel_name]['spec']['language']
-        return notebook
+        raise tornado.gen.Return(notebook)  # TODO py2: replace by return
 
     @tornado.gen.coroutine
     def find_kernel_name_for_language(self, kernel_language, kernel_specs=None):
@@ -145,6 +145,6 @@ class VoilaHandler(JupyterHandler):
         if matches:
             # Sort by display name to get the same kernel each time.
             matches.sort(key=lambda name: kernel_specs[name]["spec"]["display_name"])
-            return matches[0]
+            raise tornado.gen.Return(matches[0])  # TODO py2: replace by return
         else:
             raise tornado.web.HTTPError(500, 'No Jupyter kernel for language %r not found' % kernel_language)
