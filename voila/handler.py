@@ -12,6 +12,7 @@ import tornado.web
 
 from jupyter_server.base.handlers import JupyterHandler
 from jupyter_server.config_manager import recursive_update
+import nbformat
 
 from .execute import executenb
 from .exporter import VoilaExporter
@@ -45,18 +46,11 @@ class VoilaHandler(JupyterHandler):
         else:
             nbextensions = []
 
-        model = self.contents_manager.get(path=notebook_path)
-        if 'content' in model:
-            notebook = model['content']
-        else:
-            raise tornado.web.HTTPError(404, 'file not found')
-
-        # Fetch kernel name from the notebook metadata
-        kernel_name = notebook.metadata.get('kernelspec', {}).get('name', self.kernel_manager.default_kernel_name)
+        notebook = yield self.load_notebook(notebook_path)
 
         # Launch kernel and execute notebook
         cwd = os.path.dirname(notebook_path)
-        kernel_id = yield tornado.gen.maybe_future(self.kernel_manager.start_kernel(kernel_name=kernel_name, path=cwd))
+        kernel_id = yield tornado.gen.maybe_future(self.kernel_manager.start_kernel(kernel_name=notebook.metadata.kernelspec.name, path=cwd))
         km = self.kernel_manager.get_kernel(kernel_id)
         result = executenb(notebook, km=km, cwd=cwd, config=self.traitlet_config)
 
@@ -98,3 +92,59 @@ class VoilaHandler(JupyterHandler):
         # Compose reply
         self.set_header('Content-Type', 'text/html')
         self.write(html)
+
+    @tornado.gen.coroutine
+    def load_notebook(self, path):
+        model = self.contents_manager.get(path=path)
+        if 'content' not in model:
+            raise tornado.web.HTTPError(404, 'file not found')
+        if model.get('type') == 'notebook':
+            notebook = model['content']
+            notebook = yield self.fix_notebook(notebook)
+            raise tornado.gen.Return(notebook)  # TODO py2: replace by return
+        else:
+            raise tornado.web.HTTPError(500, 'file not supported')
+
+    @tornado.gen.coroutine
+    def fix_notebook(self, notebook):
+        """Returns a notebook object with a valid kernelspec.
+
+        In case the kernel is not found, we search for a matching kernel based on the language.
+        """
+
+        # Fetch kernel name from the notebook metadata
+        if 'kernelspec' not in notebook.metadata:
+            notebook.metadata.kernelspec = nbformat.NotebookNode()
+        kernelspec = notebook.metadata.kernelspec
+        kernel_name = kernelspec.get('name', self.kernel_manager.default_kernel_name)
+        # We use `maybe_future` to support RemoteKernelSpecManager
+        all_kernel_specs = yield tornado.gen.maybe_future(self.kernel_spec_manager.get_all_specs())
+        # Find a spec matching the language if the kernel name does not exist in the kernelspecs
+        if kernel_name not in all_kernel_specs:
+            missing_kernel_name = kernel_name
+            kernel_name = yield self.find_kernel_name_for_language(kernelspec.language.lower(), kernel_specs=all_kernel_specs)
+            self.log.warning('Could not find a kernel named %r, will use  %r', missing_kernel_name, kernel_name)
+        # We make sure the notebook's kernelspec is correct
+        notebook.metadata.kernelspec.name = kernel_name
+        notebook.metadata.kernelspec.display_name = all_kernel_specs[kernel_name]['spec']['display_name']
+        notebook.metadata.kernelspec.language = all_kernel_specs[kernel_name]['spec']['language']
+        raise tornado.gen.Return(notebook)  # TODO py2: replace by return
+
+    @tornado.gen.coroutine
+    def find_kernel_name_for_language(self, kernel_language, kernel_specs=None):
+        """Finds a best matching kernel name given a kernel language.
+
+        If multiple kernels matches are found, we try to return the same kernel name each time.
+        """
+        if kernel_specs is None:
+            kernel_specs = yield tornado.gen.maybe_future(self.kernel_spec_manager.get_all_specs())
+        matches = [
+            name for name, kernel in kernel_specs.items()
+            if kernel["spec"]["language"].lower() == kernel_language
+        ]
+        if matches:
+            # Sort by display name to get the same kernel each time.
+            matches.sort(key=lambda name: kernel_specs[name]["spec"]["display_name"])
+            raise tornado.gen.Return(matches[0])  # TODO py2: replace by return
+        else:
+            raise tornado.web.HTTPError(500, 'No Jupyter kernel for language %r found' % kernel_language)
