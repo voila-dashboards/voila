@@ -31,3 +31,4 @@ For more information  about Voila, see the sections below.
    install
    using
    customize
+   deploy
