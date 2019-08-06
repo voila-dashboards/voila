@@ -9,4 +9,9 @@
 export { RenderMimeRegistry, standardRendererFactories } from '@jupyterlab/rendermime';
 
 export { WidgetManager } from './manager';
+import { WidgetManager } from './manager';
 export { connectKernel } from './kernel'
+
+export function createWidgetManager(kernel) {
+    return new WidgetManager(kernel);
+}

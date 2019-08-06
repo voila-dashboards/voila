@@ -26,5 +26,15 @@ module.exports = [
         },
         module: { rules: rules },
         devtool: 'source-map'
+    },
+    {
+        entry: ['./lib/labindex.js'],
+        output: {
+            filename: 'voila-lab.js',
+            path: distRoot,
+            libraryTarget: 'amd'
+        },
+        module: { rules: rules },
+        devtool: 'source-map'
     }
 ]

@@ -2,7 +2,7 @@
 {% from 'mathjax.tpl' import mathjax %}
 
 {%- block html_head_css -%}
-<link rel="stylesheet" type="text/css" href="{{resources.base_url}}voila/static/index.css"></link>
+<link rel="stylesheet" type="text/css" href="{{resources.base_url}}voila/static/lab-index.css"></link>
 
 {% if resources.theme == 'dark' %}
     <link rel="stylesheet" type="text/css" href="{{resources.base_url}}voila/static/theme-dark.css"></link>
