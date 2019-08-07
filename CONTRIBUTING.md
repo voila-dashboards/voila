@@ -69,8 +69,8 @@ This makes voila available as a server extension: [http://localhost:8888/voila/t
 To install the notebook extension:
 
 ```bash
-jupyter nbextension install voila --sys-prefix
-jupyter nbextension enable voila --sys-prefix
+jupyter nbextension install voila --sys-prefix --py
+jupyter nbextension enable voila --sys-prefix --py
 ```
 
 ### JupyterLab extension
