@@ -90,7 +90,7 @@ class VoilaHandler(JupyterHandler):
             # Launch kernel and execute notebook
             kernel_id = yield tornado.gen.maybe_future(self.kernel_manager.start_kernel(kernel_name=notebook.metadata.kernelspec.name, path=cwd))
             self.kernel_started = True
-            return kernel_id
+            raise tornado.gen.Return(kernel_id)
 
         @tornado.gen.coroutine
         def notebook_execute(nb, kernel_id):
