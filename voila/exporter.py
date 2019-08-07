@@ -15,6 +15,8 @@ from jinja2 import contextfilter
 
 from nbconvert.filters.markdown_mistune import IPythonRenderer, MarkdownWithMath
 from nbconvert.exporters.html import HTMLExporter
+from nbconvert.exporters.templateexporter import TemplateExporter
+from nbconvert.filters.highlight import Highlight2HTML
 
 
 class VoilaMarkdownRenderer(IPythonRenderer):
@@ -73,3 +75,36 @@ class VoilaExporter(HTMLExporter):
     @traitlets.default('template_file')
     def default_template_file(self):
         return 'voila.tpl'
+
+    def generate_from_notebook_node(self, nb, resources=None, extra_context={}, **kw):
+        # this replaces from_notebook_node, but calls template.generate instead of template.render
+        langinfo = nb.metadata.get('language_info', {})
+        lexer = langinfo.get('pygments_lexer', langinfo.get('name', None))
+        highlight_code = self.filters.get('highlight_code', Highlight2HTML(pygments_lexer=lexer, parent=self))
+        self.register_filter('highlight_code', highlight_code)
+
+        # NOTE: we don't call HTML or TemplateExporter' from_notebook_node
+        nb_copy, resources = super(TemplateExporter, self).from_notebook_node(nb, resources, **kw)
+        resources.setdefault('raw_mimetypes', self.raw_mimetypes)
+        resources['global_content_filter'] = {
+                'include_code': not self.exclude_code_cell,
+                'include_markdown': not self.exclude_markdown,
+                'include_raw': not self.exclude_raw,
+                'include_unknown': not self.exclude_unknown,
+                'include_input': not self.exclude_input,
+                'include_output': not self.exclude_output,
+                'include_input_prompt': not self.exclude_input_prompt,
+                'include_output_prompt': not self.exclude_output_prompt,
+                'no_prompt': self.exclude_input_prompt and self.exclude_output_prompt,
+                }
+
+        # Top level variables are passed to the template_exporter here.
+        for output in self.template.generate(nb=nb_copy, resources=resources, **extra_context):
+            yield output, resources
+
+    @property
+    def environment(self):
+        env = super(type(self), self).environment
+        if 'jinja2.ext.do' not in env.extensions:
+            env.add_extension('jinja2.ext.do')
+        return env

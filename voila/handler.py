@@ -56,13 +56,9 @@ class VoilaHandler(JupyterHandler):
 
         # Launch kernel and execute notebook
         cwd = os.path.dirname(notebook_path)
-        kernel_id = yield tornado.gen.maybe_future(self.kernel_manager.start_kernel(kernel_name=notebook.metadata.kernelspec.name, path=cwd))
-        km = self.kernel_manager.get_kernel(kernel_id)
-        result = executenb(notebook, km=km, cwd=cwd, config=self.traitlet_config)
 
         # render notebook to html
         resources = {
-            'kernel_id': kernel_id,
             'base_url': self.base_url,
             'nbextensions': nbextensions,
             'theme': self.voila_configuration.theme
@@ -78,26 +74,56 @@ class VoilaHandler(JupyterHandler):
             config=self.traitlet_config,
             contents_manager=self.contents_manager  # for the image inlining
         )
-
         if self.voila_configuration.strip_sources:
             exporter.exclude_input = True
             exporter.exclude_output_prompt = True
             exporter.exclude_input_prompt = True
 
-        # Filtering out empty cells.
-        def filter_empty_code_cells(cell):
-            return (
-                cell.cell_type != 'code' or                     # keep non-code cells
-                (cell.outputs and not exporter.exclude_output)  # keep cell if output not excluded and not empty
-                or not exporter.exclude_input                   # keep cell if input not excluded
-            )
-        result.cells = list(filter(filter_empty_code_cells, result.cells))
+        cwd = os.path.dirname(notebook_path)
+        # we want to avoid starting multiple kernels due to template mistakes
+        self.kernel_started = False
 
-        html, resources = exporter.from_notebook_node(result, resources=resources)
+        @tornado.gen.coroutine
+        def kernel_start():
+            assert not self.kernel_started
+
+            # Launch kernel and execute notebook
+            kernel_id = yield tornado.gen.maybe_future(self.kernel_manager.start_kernel(kernel_name=notebook.metadata.kernelspec.name, path=cwd))
+            self.kernel_started = True
+            return kernel_id
+
+        @tornado.gen.coroutine
+        def notebook_execute(nb, kernel_id):
+            km = self.kernel_manager.get_kernel(kernel_id)
+
+            # Filtering out empty cells.
+            def filter_empty_code_cells(cell):
+                return (
+                    cell.cell_type != 'code' or                     # keep non-code cells
+                    (cell.outputs and not exporter.exclude_output)  # keep cell if output not excluded and not empty
+                    or not exporter.exclude_input                   # keep cell if input not excluded
+                )
+            result = executenb(notebook, km=km, cwd=cwd, config=self.traitlet_config)
+            result.cells = list(filter(filter_empty_code_cells, result.cells))
+            # we modify the notebook in place, since the nb variable cannot be reassigned it seems in jinja2
+            # e.g. if we do {% with nb = notebook_execute(nb, kernel_id) %}, the base template/blocks will not
+            # see the updated variable (it seems to be local to our block)
+            nb.cells = result.cells
+
+        # these functions allow the start of a kernel and execution of the notebook after (parts of) the template
+        # has been rendered and send to the client to allow progresssive rendering.
+        extra_context = {
+            'kernel_start': lambda: kernel_start().result(),  # pass the result (not the future) to the template
+            'notebook_execute': notebook_execute
+        }
 
         # Compose reply
         self.set_header('Content-Type', 'text/html')
-        self.write(html)
+        # render notebook in snippets, and flush them out to the browser can render progresssively
+        for html_snippet, resources in exporter.generate_from_notebook_node(notebook, resources=resources, extra_context=extra_context):
+            self.write(html_snippet)
+            self.flush()
+        self.flush()
 
     def redirect_to_file(self, path):
         self.redirect(url_path_join(self.base_url, 'voila', 'files', path))

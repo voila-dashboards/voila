@@ -1,6 +1,11 @@
 {%- extends 'base.tpl' -%}
 {% from 'mathjax.tpl' import mathjax %}
 
+{# this overrides the default behaviour of directly starting the kernel and executing the notebook #}
+{% block notebook_execute %}
+{% endblock notebook_execute %}
+
+
 {%- block html_head_css -%}
 <link rel="stylesheet" type="text/css" href="{{resources.base_url}}voila/static/index.css"></link>
 
@@ -26,6 +31,18 @@ a.anchor-link {
 </style>
 
 {{ mathjax() }}
+
+  <!-- voila spinner -->
+  <style type="text/css">
+    #loading {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 75vh;
+        color: #444;
+        font-family: sans-serif;
+    }
+  </style>
 {%- endblock html_head_css -%}
 
 {%- block body -%}
@@ -34,7 +51,28 @@ a.anchor-link {
 {% else %}
 <body class="jp-Notebook theme-light" data-base-url="{{resources.base_url}}voila/">
 {% endif %}
-{{ super() }}
+  <div id="loading">
+    <h2><i class="fa fa-spinner fa-spin" style="font-size:36px;"></i> Running {{nb_title}}...</i></h2>
+  </div>
+{# from this point on, the kernel is started #}
+{%- with kernel_id = kernel_start() -%}
+  <script id="jupyter-config-data" type="application/json">
+  {
+      "baseUrl": "{{resources.base_url}}",
+      "kernelId": "{{kernel_id}}"
+  }
+  </script>
+  {# from this point on, nb.cells contains output of the executed cells #}
+  {% do notebook_execute(nb, kernel_id) %}
+    {{ super() }}
+{% endwith %}
+<script type="text/javascript">
+    // remove the loading element
+    (function() {
+      var el = document.getElementById("loading")
+      el.parentNode.removeChild(el)
+    })()
+</script>
 </body>
 {%- endblock body -%}
 
