@@ -72,6 +72,12 @@ var voila_process = function(cell_index, cell_count) {
   }
   </script>
   {% set cell_count = nb.cells|length %}
+  {#
+  Voila is using Jinja's Template.generate method to not render the whole template in one go.
+  The current implementation of Jinja will however not yield template snippets if we call a blocks' super()
+  Therefore it is important to have the cell loop in the template.
+  The issue for Jinja is: https://github.com/pallets/jinja/issues/1044
+  #}
   {%- for cell in cell_generator(nb, kernel_id) -%}
     {% set cellloop = loop %}
     {%- block any_cell scoped -%}

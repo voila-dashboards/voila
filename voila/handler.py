@@ -122,8 +122,10 @@ class VoilaHandler(JupyterHandler):
                 # we don't filter empty cells, since we do not know how many empty code cells we will have
                 yield cell
 
-        # these functions allow the start of a kernel and execution of the notebook after (parts of) the template
+        # These functions allow the start of a kernel and execution of the notebook after (parts of) the template
         # has been rendered and send to the client to allow progressive rendering.
+        # Template should first call kernel_start, and then decide to use notebook_execute
+        # or cell_generator to implement progressive cell rendering
         extra_context = {
             'kernel_start': lambda: kernel_start().result(),  # pass the result (not the future) to the template
             'cell_generator': cell_generator,
@@ -135,7 +137,7 @@ class VoilaHandler(JupyterHandler):
         # render notebook in snippets, and flush them out to the browser can render progresssively
         for html_snippet, resources in exporter.generate_from_notebook_node(notebook, resources=resources, extra_context=extra_context):
             self.write(html_snippet)
-            self.flush()
+            self.flush()  # we may not want to consider not flusing after each snippet, but add an explicit flush function to the jinja context
         self.flush()
 
     def redirect_to_file(self, path):
