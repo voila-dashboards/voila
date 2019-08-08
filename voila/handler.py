@@ -83,26 +83,24 @@ class VoilaHandler(JupyterHandler):
         # we want to avoid starting multiple kernels due to template mistakes
         self.kernel_started = False
 
+        # Filter for empty cells.
+        def filter_empty_code_cells(cell):
+            return (
+                cell.cell_type != 'code' or                     # keep non-code cells
+                (cell.outputs and not exporter.exclude_output)  # keep cell if output not excluded and not empty
+                or not exporter.exclude_input                   # keep cell if input not excluded
+            )
+
         @tornado.gen.coroutine
         def kernel_start():
             assert not self.kernel_started
-
-            # Launch kernel and execute notebook
+            # Launch kernel
             kernel_id = yield tornado.gen.maybe_future(self.kernel_manager.start_kernel(kernel_name=notebook.metadata.kernelspec.name, path=cwd))
             self.kernel_started = True
             raise tornado.gen.Return(kernel_id)
 
-        @tornado.gen.coroutine
         def notebook_execute(nb, kernel_id):
             km = self.kernel_manager.get_kernel(kernel_id)
-
-            # Filtering out empty cells.
-            def filter_empty_code_cells(cell):
-                return (
-                    cell.cell_type != 'code' or                     # keep non-code cells
-                    (cell.outputs and not exporter.exclude_output)  # keep cell if output not excluded and not empty
-                    or not exporter.exclude_input                   # keep cell if input not excluded
-                )
             result = executenb(notebook, km=km, cwd=cwd, config=self.traitlet_config)
             result.cells = list(filter(filter_empty_code_cells, result.cells))
             # we modify the notebook in place, since the nb variable cannot be reassigned it seems in jinja2
@@ -110,11 +108,26 @@ class VoilaHandler(JupyterHandler):
             # see the updated variable (it seems to be local to our block)
             nb.cells = result.cells
 
+        def cell_generator(nb, kernel_id):
+            """Generator that will execute a single notebook cell at a time"""
+            km = self.kernel_manager.get_kernel(kernel_id)
+
+            all_cells = list(nb.cells)  # copy the cells, since we will modify in place
+            for cell in all_cells:
+                # we execute one cell at a time
+                nb.cells = [cell]  # reuse the same notebook
+                result = executenb(nb, km=km, cwd=cwd, config=self.traitlet_config)
+                cell = result.cells[0]  # keep a reference to the executed cell
+                nb.cells = all_cells  # restore notebook in case we access it from the template
+                # we don't filter empty cells, since we do not know how many empty code cells we will have
+                yield cell
+
         # these functions allow the start of a kernel and execution of the notebook after (parts of) the template
-        # has been rendered and send to the client to allow progresssive rendering.
+        # has been rendered and send to the client to allow progressive rendering.
         extra_context = {
             'kernel_start': lambda: kernel_start().result(),  # pass the result (not the future) to the template
-            'notebook_execute': notebook_execute
+            'cell_generator': cell_generator,
+            'notebook_execute': notebook_execute,
         }
 
         # Compose reply

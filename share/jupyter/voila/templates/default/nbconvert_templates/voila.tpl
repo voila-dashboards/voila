@@ -52,8 +52,17 @@ a.anchor-link {
 <body class="jp-Notebook theme-light" data-base-url="{{resources.base_url}}voila/">
 {% endif %}
   <div id="loading">
-    <h2><i class="fa fa-spinner fa-spin" style="font-size:36px;"></i> Running {{nb_title}}...</i></h2>
+    <h2><i class="fa fa-spinner fa-spin" style="font-size:36px;"></i><span id="loading_text">Running {{nb_title}}...</text></i></h2>
   </div>
+<script>
+var voila_process = function(cell_index, cell_count) {
+  console.log(cell_index, "out of", cell_count)
+  var el = document.getElementById("loading_text")
+  el.innerHTML = `Executing ${cell_index} of ${cell_count}`
+}
+</script>
+
+<div id="rendered_cells" style="display: none">
 {# from this point on, the kernel is started #}
 {%- with kernel_id = kernel_start() -%}
   <script id="jupyter-config-data" type="application/json">
@@ -62,16 +71,26 @@ a.anchor-link {
       "kernelId": "{{kernel_id}}"
   }
   </script>
-  {# from this point on, nb.cells contains output of the executed cells #}
-  {% do notebook_execute(nb, kernel_id) %}
-    {{ super() }}
+  {% set cell_count = nb.cells|length %}
+  {%- for cell in cell_generator(nb, kernel_id) -%}
+    {% set cellloop = loop %}
+    {%- block any_cell scoped -%}
+    <script>
+      voila_process({{ cellloop.index }}, {{ cell_count }})
+    </script>
+      {{ super() }}
+    {%- endblock any_cell -%}
+  {%- endfor -%}
 {% endwith %}
 <script type="text/javascript">
-    // remove the loading element
     (function() {
+      // remove the loading element
       var el = document.getElementById("loading")
       el.parentNode.removeChild(el)
-    })()
+      // show the cell output
+      el = document.getElementById("rendered_cells")
+      el.style.display = 'unset'
+    })();
 </script>
 </body>
 {%- endblock body -%}
