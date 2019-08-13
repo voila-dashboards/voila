@@ -98,6 +98,14 @@ Voila is built upon Jupyter standard formats and protocols, and is agnostic to t
 
 ![voila cling](voila-cling.gif)
 
+## Voila Gallery
+
+The [Voila Gallery](https://voila-gallery.org) is a collection of live dashboards and applications built with Voila and Jupyter widgets.
+
+Most of the examples rely on widget libraries such as ipywidgets, ipyleaflet, ipyvolume, bqplot and ipympl, and showcase how to build complex web applications entirely based on notebooks.
+
+New examples can be added to the gallery by following the steps listed in the [voila-gallery/gallery](https://github.com/voila-gallery/gallery) repository.
+
 ## Development
 
 See [CONTRIBUTING.md](./CONTRIBUTING.md) to know how to contribute and setup a development environment.
