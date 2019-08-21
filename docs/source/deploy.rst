@@ -6,7 +6,7 @@ The deployment docs are split up in two parts. First there is the
 general section, which should always be followed. Then there is a cloud
 service provider specific section of which one provider should be chosen.
 
-If you are not sure where to deploy your app, we suggest Heroku. You can test 
+If you are not sure where to deploy your app, we suggest Heroku. You can test
 deploying and serving your app without having to enter any credit card details,
 and with very little prior experience of deployments.
 
@@ -22,7 +22,7 @@ Setup an example project
        git clone git@github.com:QuantStack/voila.git
        cd voila/notebooks/
 
-2. Add a requirements.txt file to the project directory. This file should 
+2. Add a requirements.txt file to the project directory. This file should
    contain all the Python dependencies your voila app needs to run. For this
    tutorial we will copy the contents of the environment.yml of voila.
    We omit xleaflet and xeus-cling because these require extra work that is
@@ -129,7 +129,7 @@ High level instructions specific to voila can be found below:
        env: flex
        runtime_config:
          python_version: 3
-       entrypoint: voila --port=$PORT --no-browser 
+       entrypoint: voila --port=$PORT --no-browser
 
 3. Edit the last line if you want to show only one notebook
 
@@ -148,3 +148,39 @@ High level instructions specific to voila can be found below:
    .. code:: bash
 
        gcloud app browse
+
+
+Sharing voila applications with ngrok
+=====================================
+
+`ngrok <https://ngrok.com>`__ is a useful tool to expose local servers to the public internet over secure tunnels.
+It can be used to share voila applications served by a local instance of voila.
+
+The main use case for using voila with ngrok is to quickly share a notebook as an interactive application with
+
+.. warning::
+
+   Don't forget to exercise caution before exposing local apps and data to the public over the internet.
+
+   While voila does not permit arbitrary code execution, be aware that sensitive information could be exposed,
+   depending on the content and the logic of the notebook.
+
+   It's good practice to keep the ngrok tunnel connection short-lived, and limit its use to quick sharing purposes.
+
+Setup ngrok
+-----------
+
+To setup ngrok, follow the `Download and setup ngrok <https://ngrok.com/download>`__ guide.
+
+Sharing voila applications
+-----------------------------
+
+1. Start voila locally: ``voila --no-browser my_notebook.ipynb``
+
+2. In a new terminal window, start ngrok: ``ngrok http 8866``
+
+3. Copy the link from the ngrok terminal window. The links looks like the following: https://8bb6fded.ngrok.io/
+
+4. Send the link
+
+5. When using the ngrok link, the requests will be forwared to your local instance of voila.
