@@ -7,7 +7,7 @@
 #############################################################################
 
 import traitlets.config
-from traitlets import Unicode, Bool, Dict
+from traitlets import Unicode, Bool, Dict, List
 
 
 class VoilaConfiguration(traitlets.config.Configurable):
@@ -31,3 +31,25 @@ class VoilaConfiguration(traitlets.config.Configurable):
     theme = Unicode('light').tag(config=True)
     strip_sources = Bool(True, help='Strip sources from rendered html').tag(config=True)
     enable_nbextensions = Bool(False, config=True, help=('Set to True for Voila to load notebook extensions'))
+
+    file_whitelist = List(
+        Unicode(),
+        [r'.*\.(png|jpg|gif|svg)'],
+        help=r"""
+    List of regular expressions for controlling which static files are served.
+    All files that are served should at least match 1 whitelist rule, and no blacklist rule
+    Example: --VoilaConfiguration.file_whitelist="['.*\.(png|jpg|gif|svg)', 'public.*']"
+    """,
+    ).tag(config=True)
+
+    file_blacklist = List(
+        Unicode(),
+        [r'.*\.(ipynb|py)'],
+        help=r"""
+    List of regular expressions for controlling which static files are forbidden to be served.
+    All files that are served should at least match 1 whitelist rule, and no blacklist rule
+    Example:
+    --VoilaConfiguration.file_whitelist="['.*']" # all files
+    --VoilaConfiguration.file_blacklist="['private.*', '.*\.(ipynb)']" # except files in the private dir and notebook files
+    """,
+    ).tag(config=True)

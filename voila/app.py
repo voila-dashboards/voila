@@ -48,11 +48,11 @@ from jupyter_core.paths import jupyter_config_path, jupyter_path
 
 from ipython_genutils.py3compat import getcwd
 
-from .paths import ROOT, STATIC_ROOT, collect_template_paths, notebook_path_regex
+from .paths import ROOT, STATIC_ROOT, collect_template_paths
 from .handler import VoilaHandler
 from .treehandler import VoilaTreeHandler
 from ._version import __version__
-from .static_file_handler import MultiStaticFileHandler
+from .static_file_handler import MultiStaticFileHandler, WhiteListFileHandler
 from .configuration import VoilaConfiguration
 from .execute import VoilaExecutePreprocessor
 from .exporter import VoilaExporter
@@ -441,10 +441,21 @@ class Voila(Application):
                     },
                 )
             )
+        handlers.append(
+            (
+                url_path_join(self.server_url, r'/voila/files/(.*)'),
+                WhiteListFileHandler,
+                {
+                    'whitelist': self.voila_configuration.file_whitelist,
+                    'blacklist': self.voila_configuration.file_blacklist,
+                    'path': self.root_dir,
+                },
+            )
+        )
 
         if self.notebook_path:
             handlers.append((
-                url_path_join(self.server_url, r'/'),
+                url_path_join(self.server_url, r'/(.*)'),
                 VoilaHandler,
                 {
                     'notebook_path': os.path.relpath(self.notebook_path, self.root_dir),
@@ -458,7 +469,7 @@ class Voila(Application):
             handlers.extend([
                 (self.server_url, VoilaTreeHandler),
                 (url_path_join(self.server_url, r'/voila/tree' + path_regex), VoilaTreeHandler),
-                (url_path_join(self.server_url, r'/voila/render' + notebook_path_regex), VoilaHandler,
+                (url_path_join(self.server_url, r'/voila/render/(.*)'), VoilaHandler,
                     {
                         'nbconvert_template_paths': self.nbconvert_template_paths,
                         'config': self.config,
