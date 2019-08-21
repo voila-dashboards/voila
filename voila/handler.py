@@ -12,6 +12,7 @@ import tornado.web
 
 from jupyter_server.base.handlers import JupyterHandler
 from jupyter_server.config_manager import recursive_update
+from jupyter_server.utils import url_path_join
 import nbformat
 
 from .execute import executenb
@@ -31,6 +32,9 @@ class VoilaHandler(JupyterHandler):
     def get(self, path=None):
         # if the handler got a notebook_path argument, always serve that
         notebook_path = self.notebook_path or path
+        if self.notebook_path and path:  # when we are in single notebook mode but have a path
+            self.redirect_to_file(path)
+            return
 
         if self.voila_configuration.enable_nbextensions:
             # generate a list of nbextensions that are enabled for the classical notebook
@@ -47,6 +51,8 @@ class VoilaHandler(JupyterHandler):
             nbextensions = []
 
         notebook = yield self.load_notebook(notebook_path)
+        if not notebook:
+            return
 
         # Launch kernel and execute notebook
         cwd = os.path.dirname(notebook_path)
@@ -93,6 +99,9 @@ class VoilaHandler(JupyterHandler):
         self.set_header('Content-Type', 'text/html')
         self.write(html)
 
+    def redirect_to_file(self, path):
+        self.redirect(url_path_join(self.base_url, 'voila', 'files', path))
+
     @tornado.gen.coroutine
     def load_notebook(self, path):
         model = self.contents_manager.get(path=path)
@@ -103,7 +112,8 @@ class VoilaHandler(JupyterHandler):
             notebook = yield self.fix_notebook(notebook)
             raise tornado.gen.Return(notebook)  # TODO py2: replace by return
         else:
-            raise tornado.web.HTTPError(500, 'file not supported')
+            self.redirect_to_file(path)
+            raise tornado.gen.Return(None)
 
     @tornado.gen.coroutine
     def fix_notebook(self, notebook):

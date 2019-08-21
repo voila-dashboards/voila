@@ -15,10 +15,10 @@ from jupyter_server.utils import url_path_join
 from jupyter_server.base.handlers import path_regex
 from jupyter_server.base.handlers import FileFindHandler
 
-from .paths import ROOT, STATIC_ROOT, collect_template_paths, jupyter_path, notebook_path_regex
+from .paths import ROOT, STATIC_ROOT, collect_template_paths, jupyter_path
 from .handler import VoilaHandler
 from .treehandler import VoilaTreeHandler
-from .static_file_handler import MultiStaticFileHandler
+from .static_file_handler import MultiStaticFileHandler, WhiteListFileHandler
 from .configuration import VoilaConfiguration
 
 
@@ -49,7 +49,7 @@ def load_jupyter_server_extension(server_app):
     base_url = url_path_join(web_app.settings['base_url'])
 
     web_app.add_handlers(host_pattern, [
-        (url_path_join(base_url, '/voila/render' + notebook_path_regex), VoilaHandler, {
+        (url_path_join(base_url, '/voila/render/(.*)'), VoilaHandler, {
             'config': server_app.config,
             'nbconvert_template_paths': nbconvert_template_paths,
             'voila_configuration': voila_configuration
@@ -57,6 +57,15 @@ def load_jupyter_server_extension(server_app):
         (url_path_join(base_url, '/voila'), VoilaTreeHandler),
         (url_path_join(base_url, '/voila/tree' + path_regex), VoilaTreeHandler),
         (url_path_join(base_url, '/voila/static/(.*)'), MultiStaticFileHandler, {'paths': static_paths}),
+        (
+            url_path_join(base_url, r'/voila/files/(.*)'),
+            WhiteListFileHandler,
+            {
+                'whitelist': voila_configuration.file_whitelist,
+                'blacklist': voila_configuration.file_blacklist,
+                'path': os.path.expanduser(web_app.settings['server_root_dir']),
+            },
+        ),
     ])
 
     # Serving notebook extensions
