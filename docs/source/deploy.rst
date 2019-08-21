@@ -270,7 +270,7 @@ Steps
 
         sudo apt update && sudo apt install python3-pip
 
-7. Install the dependencies for running voila applications:
+7. Follow the instructions in `Setup an example project`_, and install the dependencies:
 
     .. code:: text
 
