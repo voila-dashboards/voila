@@ -1,8 +1,8 @@
 .. Copyright (c) 2018, Voila Contributors
    Copyright (c) 2018, QuantStack
-   
+
    Distributed under the terms of the BSD 3-Clause License.
-   
+
    The full license is in the file LICENSE, distributed with this software.
 
 ===============
@@ -315,6 +315,53 @@ You can edit the command to change this behavior and the notebooks voila is serv
 
 
 10. Now go to ``yourdomain.com`` to access the voila application.
+
+Enable HTTPS with Let's Encrypt
+-------------------------------
+
+1. Install ``certbot``:
+
+    .. code:: text
+
+        sudo add-apt-repository ppa:certbot/certbot
+        sudo apt update
+        sudo apt install python-certbot-nginx
+
+2. Obtain the certificates from Let's Encrypt. The ``--nginx`` flag will edit the nginx configuration automatically:
+
+    .. code:: text
+
+        sudo certbot --nginx -d yourdomain.com
+
+3. ``/etc/nginx/sites-enabled/yourdomain.com`` should now contain a few more entries:
+
+    .. code :: text
+
+        $ cat /etc/nginx/sites-enabled/yourdomain.com
+
+        ...
+        listen 443 ssl; # managed by Certbot
+        ssl_certificate /etc/letsencrypt/live/yourdomain.com/fullchain.pem; # managed by Certbot
+        ssl_certificate_key /etc/letsencrypt/live/yourdomain.com/privkey.pem; # managed by Certbot
+        include /etc/letsencrypt/options-ssl-nginx.conf; # managed by Certbot
+        ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem; # managed by Certbot
+        ...
+
+4. Visit https://yourdomain.com to access the voila applications over HTTPS.
+
+5. To automatically renew the certificates (they expire after 90 days), open the ``contrab`` file:
+
+    .. code :: text
+
+        crontab -e
+
+And add the following line:
+
+    .. code :: text
+
+        0 12 * * * /usr/bin/certbot renew --quiet
+
+For more information, you can also follow `the guide on the nginx blog <https://www.nginx.com/blog/using-free-ssltls-certificates-from-lets-encrypt-with-nginx/>`__.
 
 Sharing Voilà applications with ngrok
 =====================================
