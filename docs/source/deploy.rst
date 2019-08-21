@@ -349,7 +349,7 @@ Enable HTTPS with Let's Encrypt
 
 4. Visit https://yourdomain.com to access the voila applications over HTTPS.
 
-5. To automatically renew the certificates (they expire after 90 days), open the ``contrab`` file:
+5. To automatically renew the certificates (they expire after 90 days), open the ``crontab`` file:
 
     .. code :: text
 
