@@ -202,6 +202,119 @@ High level instructions specific to Voilà can be found below:
 
        gcloud app browse
 
+Running voila on a private server
+=================================
+
+Prerequisites
+-------------
+
+- A server running Ubuntu 18.04 (or later) with root access.
+- Ability to SSH into the server and run commands from the prompt.
+- The public IP address of the server.
+- A domain name pointing to the IP address of the server.
+
+Steps
+-----
+
+1. SSH into the server:
+
+    .. code:: text
+
+        ssh ubuntu@<ip-address>
+
+2. Install nginx:
+
+    .. code:: text
+
+        sudo apt install nginx
+
+3. To check that ``nginx`` is correctly installed:
+
+    .. code:: text
+
+        sudo systemctl status nginx
+
+4. Create the file ``/etc/nginx/sites-enabled/yourdomain.com`` with the following content:
+
+    .. code:: text
+
+        server {
+            listen 80;
+            server_name yourdomain.com;
+            location / {
+                    proxy_pass http://localhost:8866;
+                    proxy_set_header Host $host;
+                    proxy_set_header X-Real-IP $remote_addr;
+                    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+
+                    proxy_http_version 1.1;
+                    proxy_set_header Upgrade $http_upgrade;
+                    proxy_set_header Connection "upgrade";
+                    proxy_read_timeout 86400;
+            }
+
+            client_max_body_size 100M;
+            error_log /var/log/nginx/error.log;
+        }
+
+5. Enable and start the ``nginx`` service:
+
+    .. code:: text
+
+        sudo systemctl enable nginx.service
+        sudo systemctl start nginx.service
+
+6. Install pip:
+
+    .. code:: text
+
+        sudo apt update && sudo apt install python3-pip
+
+7. Install the dependencies for running voila applications:
+
+    .. code:: text
+
+        sudo python3 -m pip install -r requirements.txt
+
+8. Create a new systemd service for running voila in ``/usr/lib/systemd/system/voila.service``.
+The service will ensure voila is automatically restarted on startup:
+
+    .. code:: text
+
+        [Unit]
+        Description=Voila
+
+        [Service]
+        Type=simple
+        PIDFile=/run/voila.pid
+        ExecStart=voila --no-browser voila/notebooks/basics.ipynb
+        User=ubuntu
+        WorkingDirectory=/home/ubuntu/
+        Restart=always
+        RestartSec=10
+
+        [Install]
+        WantedBy=multi-user.target
+
+In this example voila is started with ``voila --no-browser voila/notebooks/basics.ipynb`` to serve a single notebook.
+You can edit the command to change this behavior and the notebooks voila is serving.
+
+9. Enable and start the ``voila`` service:
+
+    .. code:: text
+
+        sudo systemctl enable voila.service
+        sudo systemctl start voila.service
+
+.. note::
+    To check the logs for voila:
+
+    .. code:: text
+
+        journalctl -u voila.service
+
+
+10. Now go to ``yourdomain.com`` to access the voila application.
 
 Sharing Voilà applications with ngrok
 =====================================
