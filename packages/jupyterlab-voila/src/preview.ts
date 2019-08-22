@@ -14,11 +14,12 @@ export namespace VoilaPreview {
 
 export class VoilaPreview extends MainAreaWidget<IFrame> {
   constructor(options: VoilaPreview.IOptions) {
-    let { url, label, context, ...opts } = options;
     super({
-      ...opts,
+      ...options,
       content: new IFrame({ sandbox: ["allow-same-origin", "allow-scripts"] })
     });
+
+    let { url, label, context } = options;
 
     this.content.url = url;
     this.content.title.label = label;
@@ -36,26 +37,23 @@ export class VoilaPreview extends MainAreaWidget<IFrame> {
       if (this.isDisposed) {
         return;
       }
-      this._context.fileChanged.connect(this.reload, this);
+      this._context.fileChanged.connect(this.onFileChanged, this);
     });
 
     this.toolbar.addItem("reload", reloadButton);
   }
 
   dispose() {
-    this._context.fileChanged.disconnect(this.reload, this);
+    this._context.fileChanged.disconnect(this.onFileChanged, this);
     super.dispose();
   }
 
-  reload() {
-    if (!this.renderOnSave) {
-      return;
-    }
+  reload = () => {
     const iframe = this.content.node.querySelector("iframe")!;
     if (iframe.contentWindow) {
       iframe.contentWindow.location.reload();
     }
-  }
+  };
 
   get renderOnSave(): boolean {
     return this._renderOnSave;
@@ -63,6 +61,13 @@ export class VoilaPreview extends MainAreaWidget<IFrame> {
 
   set renderOnSave(renderOnSave: boolean) {
     this._renderOnSave = renderOnSave;
+  }
+
+  private onFileChanged(): void {
+    if (!this.renderOnSave) {
+      return;
+    }
+    this.reload();
   }
 
   private _context: DocumentRegistry.IContext<INotebookModel>;
