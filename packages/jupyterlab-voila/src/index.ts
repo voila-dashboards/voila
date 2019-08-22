@@ -100,23 +100,20 @@ const extension: JupyterFrontEndPlugin<void> = {
       return `${baseUrl}voila/render/${path}`;
     }
 
-    function watchSettings(preview: VoilaPreview) {
-      const updateSettings = (settings: ISettingRegistry.ISettings): void => {
-        const renderOnSave = settings.get("renderOnSave").composite as boolean;
-        preview.renderOnSave = renderOnSave;
-      };
-      Promise.all([settingRegistry.load(extension.id), app.restored])
-        .then(([settings]) => {
-          updateSettings(settings);
-          settings.changed.connect(updateSettings);
-          preview.disposed.connect(() => {
-            settings.changed.disconnect(updateSettings);
-          });
-        })
-        .catch((reason: Error) => {
-          console.error(reason.message);
-        });
-    }
+    let renderOnSave = false;
+
+    const updateSettings = (settings: ISettingRegistry.ISettings): void => {
+      renderOnSave = settings.get("renderOnSave").composite as boolean;
+    };
+
+    Promise.all([settingRegistry.load(extension.id), app.restored])
+      .then(([settings]) => {
+        updateSettings(settings);
+        settings.changed.connect(updateSettings);
+      })
+      .catch((reason: Error) => {
+        console.error(reason.message);
+      });
 
     app.commands.addCommand(CommandIDs.voilaRender, {
       label: "Render Notebook with Voila",
@@ -132,12 +129,9 @@ const extension: JupyterFrontEndPlugin<void> = {
         let widget = new VoilaPreview({
           url,
           label: name,
-          context: current.context
+          context: current.context,
+          renderOnSave
         });
-
-        if (settingRegistry) {
-          watchSettings(widget);
-        }
 
         app.shell.add(widget, "main", { mode: "split-right" });
         return widget;

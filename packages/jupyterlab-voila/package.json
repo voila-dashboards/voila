@@ -37,9 +37,13 @@
     "@jupyterlab/docregistry": "^1.0.0",
     "@jupyterlab/fileeditor": "^1.0.0",
     "@jupyterlab/mainmenu": "^1.0.0",
-    "@jupyterlab/notebook": "^1.0.0"
+    "@jupyterlab/notebook": "^1.0.0",
+    "react": "~16.8.4",
+    "react-dom": "~16.8.4"
   },
   "devDependencies": {
+    "@types/react": "~16.8.13",
+    "@types/react-dom": "~16.0.5",
     "husky": "^2.3.0",
     "lint-staged": "^8.1.5",
     "prettier": "^1.17.0",

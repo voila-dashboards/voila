@@ -1,6 +1,13 @@
-import { MainAreaWidget, IFrame, ToolbarButton } from "@jupyterlab/apputils";
+import {
+  MainAreaWidget,
+  IFrame,
+  ToolbarButton,
+  ReactWidget
+} from "@jupyterlab/apputils";
 import { DocumentRegistry } from "@jupyterlab/docregistry";
 import { INotebookModel } from "@jupyterlab/notebook";
+
+import * as React from "react";
 
 export const VOILA_ICON_CLASS = "jp-MaterialIcon jp-VoilaIcon";
 
@@ -9,6 +16,7 @@ export namespace VoilaPreview {
     url: string;
     label: string;
     context: DocumentRegistry.IContext<INotebookModel>;
+    renderOnSave: boolean;
   }
 }
 
@@ -19,7 +27,7 @@ export class VoilaPreview extends MainAreaWidget<IFrame> {
       content: new IFrame({ sandbox: ["allow-same-origin", "allow-scripts"] })
     });
 
-    let { url, label, context } = options;
+    let { url, label, context, renderOnSave } = options;
 
     this.content.url = url;
     this.content.title.label = label;
@@ -32,6 +40,25 @@ export class VoilaPreview extends MainAreaWidget<IFrame> {
       tooltip: "Reload Preview"
     });
 
+    const renderOnSaveCheckbox = ReactWidget.create(
+      <label>
+        <input
+          name="renderOnSave"
+          type="checkbox"
+          defaultChecked={renderOnSave}
+          onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+            this.renderOnSave = event.target.checked;
+          }}
+        />
+        Render on Save
+      </label>
+    );
+
+    this.renderOnSave = renderOnSave;
+
+    this.toolbar.addItem("reload", reloadButton);
+    this.toolbar.addItem("renderOnSave", renderOnSaveCheckbox);
+
     this._context = context;
     this._context.ready.then(() => {
       if (this.isDisposed) {
@@ -39,8 +66,6 @@ export class VoilaPreview extends MainAreaWidget<IFrame> {
       }
       this._context.fileChanged.connect(this.onFileChanged, this);
     });
-
-    this.toolbar.addItem("reload", reloadButton);
   }
 
   dispose() {
