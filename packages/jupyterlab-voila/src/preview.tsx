@@ -43,6 +43,7 @@ export class VoilaPreview extends MainAreaWidget<IFrame> {
     const renderOnSaveCheckbox = ReactWidget.create(
       <label>
         <input
+          style={{ verticalAlign: "middle" }}
           name="renderOnSave"
           type="checkbox"
           defaultChecked={renderOnSave}
@@ -53,11 +54,12 @@ export class VoilaPreview extends MainAreaWidget<IFrame> {
         Render on Save
       </label>
     );
-
-    this.renderOnSave = renderOnSave;
+    renderOnSaveCheckbox.addClass("jp-VoilaPreview-renderOnSave");
 
     this.toolbar.addItem("reload", reloadButton);
     this.toolbar.addItem("renderOnSave", renderOnSaveCheckbox);
+
+    this.renderOnSave = renderOnSave;
 
     this._context = context;
     this._context.ready.then(() => {
