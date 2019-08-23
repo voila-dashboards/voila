@@ -138,7 +138,6 @@ class VoilaExecutePreprocessor(ExecutePreprocessor):
             if 'state' in data:
                 state = data['state']
                 comm_id = msg['content']['comm_id']
-                print('set_state', comm_id, state)
                 if comm_id in self.output_objects:
                     self.output_objects[comm_id].set_state(state)
 
