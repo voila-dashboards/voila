@@ -5,6 +5,7 @@
 #                                                                           #
 # The full license is in the file LICENSE, distributed with this software.  #
 #############################################################################
+import collections
 
 from nbconvert.preprocessors import ClearOutputPreprocessor
 from nbconvert.preprocessors.execute import CellExecutionError, ExecutePreprocessor
@@ -63,7 +64,17 @@ class OutputWidget:
         else:
             data = content['data']
             output = {"output_type": "display_data", "data": data, "metadata": {}}
-        self.outputs.append(output)
+        if self.outputs:
+            # try to coalesce/merge output text
+            last_output = self.outputs[-1]
+            if (last_output['output_type'] == 'stream' and
+                    output['output_type'] == 'stream' and
+                    last_output['name'] == output['name']):
+                last_output['text'] += output['text']
+            else:
+                self.outputs.append(output)
+        else:
+            self.outputs.append(output)
         self.sync_state()
         if hasattr(self.executor, 'widget_state'):
             # sync the state to the nbconvert state as well, since that is used for testing
@@ -73,17 +84,17 @@ class OutputWidget:
         if 'msg_id' in state:
             msg_id = state.get('msg_id')
             if msg_id:
-                self.executor.output_hook[msg_id] = self
+                self.executor.register_output_hook(msg_id, self)
                 self.msg_id = msg_id
             else:
-                del self.executor.output_hook[self.msg_id]
+                self.executor.remove_output_hook(self.msg_id, self)
                 self.msg_id = msg_id
 
 
 class VoilaExecutePreprocessor(ExecutePreprocessor):
     """Execute, but respect the output widget behaviour"""
     def preprocess(self, nb, resources, km=None):
-        self.output_hook = {}
+        self.output_hook_stack = collections.defaultdict(list)  # maps to list of hooks, where the last is used
         self.output_objects = {}
         try:
             result = super(VoilaExecutePreprocessor, self).preprocess(nb, resources=resources, km=km)
@@ -92,10 +103,22 @@ class VoilaExecutePreprocessor(ExecutePreprocessor):
             result = (nb, resources)
         return result
 
+    def register_output_hook(self, msg_id, hook):
+        # mimics
+        # https://jupyterlab.github.io/jupyterlab/services/interfaces/kernel.ikernelconnection.html#registermessagehook
+        self.output_hook_stack[msg_id].append(hook)
+
+    def remove_output_hook(self, msg_id, hook):
+        # mimics
+        # https://jupyterlab.github.io/jupyterlab/services/interfaces/kernel.ikernelconnection.html#removemessagehook
+        removed_hook = self.output_hook_stack[msg_id].pop()
+        assert removed_hook == hook
+
     def output(self, outs, msg, display_id, cell_index):
         parent_msg_id = msg['parent_header'].get('msg_id')
-        if parent_msg_id in self.output_hook:
-            self.output_hook[parent_msg_id].output(outs, msg, display_id, cell_index)
+        if self.output_hook_stack[parent_msg_id]:
+            hook = self.output_hook_stack[parent_msg_id][-1]
+            hook.output(outs, msg, display_id, cell_index)
             return
         super(VoilaExecutePreprocessor, self).output(outs, msg, display_id, cell_index)
 
@@ -120,8 +143,9 @@ class VoilaExecutePreprocessor(ExecutePreprocessor):
 
     def clear_output(self, outs, msg, cell_index):
         parent_msg_id = msg['parent_header'].get('msg_id')
-        if parent_msg_id in self.output_hook:
-            self.output_hook[parent_msg_id].clear_output(outs, msg, cell_index)
+        if self.output_hook_stack[parent_msg_id]:
+            hook = self.output_hook_stack[parent_msg_id][-1]
+            hook.clear_output(outs, msg, cell_index)
             return
         super(VoilaExecutePreprocessor, self).clear_output(outs, msg, cell_index)
 
