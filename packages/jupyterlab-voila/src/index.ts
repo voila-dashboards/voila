@@ -15,7 +15,7 @@ import { ICommandPalette } from "@jupyterlab/apputils";
 
 import { IMainMenu } from "@jupyterlab/mainmenu";
 
-import { PageConfig, PathExt } from "@jupyterlab/coreutils";
+import { PageConfig, PathExt, ISettingRegistry } from "@jupyterlab/coreutils";
 
 import { ToolbarButton } from "@jupyterlab/apputils";
 
@@ -66,15 +66,16 @@ class VoilaRenderButton
  * Initialization data for the jupyterlab-voila extension.
  */
 const extension: JupyterFrontEndPlugin<void> = {
-  id: "@voici/jupyterlab-preview",
+  id: "@jupyter-voila/jupyterlab-preview:plugin",
   autoStart: true,
   requires: [INotebookTracker],
-  optional: [ICommandPalette, IMainMenu],
+  optional: [ICommandPalette, IMainMenu, ISettingRegistry],
   activate: (
     app: JupyterFrontEnd,
     notebooks: INotebookTracker,
     palette: ICommandPalette,
-    menu: IMainMenu | null
+    menu: IMainMenu | null,
+    settingRegistry: ISettingRegistry
   ) => {
     function getCurrent(args: ReadonlyJSONObject): NotebookPanel | null {
       const widget = notebooks.currentWidget;
@@ -99,6 +100,21 @@ const extension: JupyterFrontEndPlugin<void> = {
       return `${baseUrl}voila/render/${path}`;
     }
 
+    let renderOnSave = false;
+
+    const updateSettings = (settings: ISettingRegistry.ISettings): void => {
+      renderOnSave = settings.get("renderOnSave").composite as boolean;
+    };
+
+    Promise.all([settingRegistry.load(extension.id), app.restored])
+      .then(([settings]) => {
+        updateSettings(settings);
+        settings.changed.connect(updateSettings);
+      })
+      .catch((reason: Error) => {
+        console.error(reason.message);
+      });
+
     app.commands.addCommand(CommandIDs.voilaRender, {
       label: "Render Notebook with Voila",
       execute: async args => {
@@ -110,7 +126,13 @@ const extension: JupyterFrontEndPlugin<void> = {
         const voilaPath = current.context.path;
         const url = getVoilaUrl(voilaPath);
         const name = PathExt.basename(voilaPath);
-        let widget = new VoilaPreview({ url, label: name });
+        let widget = new VoilaPreview({
+          url,
+          label: name,
+          context: current.context,
+          renderOnSave
+        });
+
         app.shell.add(widget, "main", { mode: "split-right" });
         return widget;
       },
