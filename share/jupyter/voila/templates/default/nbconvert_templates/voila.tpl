@@ -7,16 +7,16 @@
 
 
 {%- block html_head_css -%}
-<link rel="stylesheet" type="text/css" href="{{resources.base_url}}voila/static/index.css"></link>
+<link rel="stylesheet" type="text/css" href="{{resources.base_url}}voila/static/index.css">
 
 {% if resources.theme == 'dark' %}
-    <link rel="stylesheet" type="text/css" href="{{resources.base_url}}voila/static/theme-dark.css"></link>
+    <link rel="stylesheet" type="text/css" href="{{resources.base_url}}voila/static/theme-dark.css">
 {% else %}
-    <link rel="stylesheet" type="text/css" href="{{resources.base_url}}voila/static/theme-light.css"></link>
+    <link rel="stylesheet" type="text/css" href="{{resources.base_url}}voila/static/theme-light.css">
 {% endif %}
 
 {% for css in resources.inlining.css %}
-    <style type="text/css">
+    <style>
     {{ css }}
     </style>
 {% endfor %}
@@ -33,7 +33,7 @@ a.anchor-link {
 {{ mathjax() }}
 
   <!-- voila spinner -->
-  <style type="text/css">
+  <style>
     #loading {
         display: flex;
         align-items: center;
@@ -53,7 +53,7 @@ a.anchor-link {
 <body class="jp-Notebook theme-light" data-base-url="{{resources.base_url}}voila/">
 {% endif %}
   <div id="loading">
-    <h2><i class="fa fa-spinner fa-spin" style="font-size:36px;"></i><span id="loading_text">Running {{nb_title}}...</text></i></h2>
+    <h2><i class="fa fa-spinner fa-spin" style="font-size:36px;"></i><span id="loading_text">Running {{nb_title}}...</span></h2>
   </div>
 <script>
 var voila_process = function(cell_index, cell_count) {
@@ -95,6 +95,8 @@ var voila_process = function(cell_index, cell_count) {
 {%- endblock body_loop -%}
 
 {%- block body_footer -%}
+</div>
+
 <script type="text/javascript">
     (function() {
       // remove the loading element
