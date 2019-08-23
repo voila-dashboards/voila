@@ -36,15 +36,11 @@ def voila_args(voila_notebook, voila_args_extra, voila_config_file_paths_arg):
 
 @pytest.fixture
 def voila_app(voila_args, voila_config):
-    voila_app = VoilaTest.instance()
-    voila_app.initialize(voila_args + ['--no-browser'])
+    server_app = VoilaTest.initialize_server(argv=['--ServerApp.open_browser=False'])
+    voila_app = VoilaTest._prepare_launch(server_app, argv=voila_args)
     voila_config(voila_app)
-    voila_app.start()
+    voila_app.start_server()
     yield voila_app
-    voila_app.stop()
+    server_app.stop()
+    server_app.clear_instance()
     voila_app.clear_instance()
-
-
-@pytest.fixture
-def app(voila_app):
-    return voila_app.app

@@ -241,6 +241,9 @@ class Voila(ExtensionApp):
 
     default_url = Unicode("/voila", config=True)
 
+    def initialize_settings(self):
+        self.settings.update({ 'notebook_path': self.notebook_path })
+
     def initialize_templates(self):
         # common configuration options between the server extension and the application
         collect_template_paths(

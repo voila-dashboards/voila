@@ -31,6 +31,10 @@ def filter_empty_code_cells(cell, exporter):
 
 class VoilaHandler(ExtensionHandler):
 
+    @property
+    def notebook_path(self):
+        return self.settings['notebook_path']
+
     @tornado.web.authenticated
     @tornado.gen.coroutine
     def get(self, path=None):
