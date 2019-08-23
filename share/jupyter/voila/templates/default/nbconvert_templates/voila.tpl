@@ -46,6 +46,7 @@ a.anchor-link {
 {%- endblock html_head_css -%}
 
 {%- block body -%}
+{%- block body_header -%}
 {% if resources.theme == 'dark' %}
 <body class="jp-Notebook theme-dark" data-base-url="{{resources.base_url}}voila/">
 {% else %}
@@ -63,6 +64,9 @@ var voila_process = function(cell_index, cell_count) {
 </script>
 
 <div id="rendered_cells" style="display: none">
+{%- endblock body_header -%}
+
+{%- block body_loop -%}
 {# from this point on, the kernel is started #}
 {%- with kernel_id = kernel_start() -%}
   <script id="jupyter-config-data" type="application/json">
@@ -88,6 +92,9 @@ var voila_process = function(cell_index, cell_count) {
     {%- endblock any_cell -%}
   {%- endfor -%}
 {% endwith %}
+{%- endblock body_loop -%}
+
+{%- block body_footer -%}
 <script type="text/javascript">
     (function() {
       // remove the loading element
@@ -99,5 +106,6 @@ var voila_process = function(cell_index, cell_count) {
     })();
 </script>
 </body>
+{%- endblock body_footer -%}
 {%- endblock body -%}
 
