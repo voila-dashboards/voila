@@ -40,7 +40,7 @@ This will open a new browser tab at [http://localhost:8866/](http://localhost:88
 When making changes to the frontend side of voila, open a new terminal window and run:
 
 ```bash
-cd packages/js/
+cd packages/voila/
 npm run watch
 ```
 
