@@ -138,6 +138,7 @@ class VoilaHandler(JupyterHandler):
         for html_snippet, resources in exporter.generate_from_notebook_node(notebook, resources=resources, extra_context=extra_context):
             self.write(html_snippet)
             self.flush()  # we may not want to consider not flusing after each snippet, but add an explicit flush function to the jinja context
+            yield  # give control back to tornado's IO loop, so it can handle static files or other requests
         self.flush()
 
     def redirect_to_file(self, path):
