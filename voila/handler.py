@@ -7,8 +7,10 @@
 #############################################################################
 
 import os
+from concurrent.futures import ThreadPoolExecutor
 
 import tornado.web
+from tornado.concurrent import run_on_executor
 
 from jupyter_server.base.handlers import JupyterHandler
 from jupyter_server.config_manager import recursive_update
@@ -20,6 +22,8 @@ from .exporter import VoilaExporter
 
 
 class VoilaHandler(JupyterHandler):
+
+    executor = ThreadPoolExecutor()
 
     def initialize(self, **kwargs):
         self.notebook_path = kwargs.pop('notebook_path', [])    # should it be []
@@ -58,7 +62,7 @@ class VoilaHandler(JupyterHandler):
         cwd = os.path.dirname(notebook_path)
         kernel_id = yield tornado.gen.maybe_future(self.kernel_manager.start_kernel(kernel_name=notebook.metadata.kernelspec.name, path=cwd))
         km = self.kernel_manager.get_kernel(kernel_id)
-        result = executenb(notebook, km=km, cwd=cwd, config=self.traitlet_config)
+        result = yield self.execute_notebook(notebook, km=km, cwd=cwd, config=self.traitlet_config)
 
         # render notebook to html
         resources = {
@@ -101,6 +105,11 @@ class VoilaHandler(JupyterHandler):
 
     def redirect_to_file(self, path):
         self.redirect(url_path_join(self.base_url, 'voila', 'files', path))
+
+    @run_on_executor
+    def execute_notebook(self, notebook, km, cwd, config):
+        """Execute a notebook asynchronously on the executor"""
+        return executenb(notebook, km=km, cwd=cwd, config=config)
 
     @tornado.gen.coroutine
     def load_notebook(self, path):
