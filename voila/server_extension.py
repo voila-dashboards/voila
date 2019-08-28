@@ -48,14 +48,17 @@ def load_jupyter_server_extension(server_app):
     host_pattern = '.*$'
     base_url = url_path_join(web_app.settings['base_url'])
 
+    tree_handler_conf = {
+        'voila_configuration': voila_configuration
+    }
     web_app.add_handlers(host_pattern, [
         (url_path_join(base_url, '/voila/render/(.*)'), VoilaHandler, {
             'config': server_app.config,
             'nbconvert_template_paths': nbconvert_template_paths,
             'voila_configuration': voila_configuration
         }),
-        (url_path_join(base_url, '/voila'), VoilaTreeHandler),
-        (url_path_join(base_url, '/voila/tree' + path_regex), VoilaTreeHandler),
+        (url_path_join(base_url, '/voila'), VoilaTreeHandler, tree_handler_conf),
+        (url_path_join(base_url, '/voila/tree' + path_regex), VoilaTreeHandler, tree_handler_conf),
         (url_path_join(base_url, '/voila/static/(.*)'), MultiStaticFileHandler, {'paths': static_paths}),
         (
             url_path_join(base_url, r'/voila/files/(.*)'),

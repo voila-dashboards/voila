@@ -51,5 +51,21 @@ class VoilaConfiguration(traitlets.config.Configurable):
     Example:
     --VoilaConfiguration.file_whitelist="['.*']" # all files
     --VoilaConfiguration.file_blacklist="['private.*', '.*\.(ipynb)']" # except files in the private dir and notebook files
-    """,
+    """
+    ).tag(config=True)
+
+    language_kernel_mapping = Dict(
+        {},
+        help="""Mapping of language name to kernel name
+        Example mapping python to use xeus-python, and C++11 to use xeus-cling:
+        --VoilaConfiguration.extension_language_mapping='{"python": "xpython", "C++11": "xcpp11"}'
+        """,
+    ).tag(config=True)
+
+    extension_language_mapping = Dict(
+        {},
+        help='''Mapping of file extension to kernel language
+        Example mapping .py files to a python language kernel, and .cpp to a C++11 language kernel:
+        --VoilaConfiguration.extension_language_mapping='{".py": "python", ".cpp": "C++11"}'
+        ''',
     ).tag(config=True)

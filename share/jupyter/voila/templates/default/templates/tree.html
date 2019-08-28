@@ -80,7 +80,7 @@ data-server-root="{{server_root}}"
   {% endif %}
 
   {% for content in contents.content %}
-    {% if content.type == 'notebook' %}
+    {% if content.type in ['notebook', 'file'] %}
       <li><a href="{{base_url}}voila/render/{{content.path}}"><i class="fa fa-book"></i>{{content.name}}</a></li>
     {% endif %}
     {% if content.type == 'directory' %}
