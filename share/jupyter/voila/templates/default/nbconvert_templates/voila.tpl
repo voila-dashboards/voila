@@ -57,7 +57,6 @@ a.anchor-link {
   </div>
 <script>
 var voila_process = function(cell_index, cell_count) {
-  console.log(cell_index, "out of", cell_count)
   var el = document.getElementById("loading_text")
   el.innerHTML = `Executing ${cell_index} of ${cell_count}`
 }
