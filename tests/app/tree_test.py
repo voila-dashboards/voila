@@ -19,4 +19,4 @@ def test_tree(http_client, base_url):
     text = response.body.decode('utf-8')
     assert 'print.ipynb' in text, 'tree handler should render ipynb files'
     assert 'print.xcpp' in text, 'tree handler should render xcpp files (due to extension_language_mapping)'
-    assert 'print.py' not in text, 'treeh handler should not render .py files (due to extension_language_mapping)'
+    assert 'print.py' not in text, 'tree handler should not render .py files (due to extension_language_mapping)'
