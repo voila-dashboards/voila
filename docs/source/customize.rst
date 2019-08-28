@@ -183,3 +183,36 @@ Lab session, use the following command when starting the server::
 
 When users run ``voila`` by hitting the ``voila/`` endpoint, this configuration
 will be used.
+
+Serving static files
+====================
+
+Unlike JupyterLab or the classic notebook server, ``voila`` does not serve
+all files that are present in the directory of the notebook. Only files that
+match one of the whitelists and none of the blacklist regular expression are
+served by voila::
+
+    voila mydir --VoilaConfiguration.file_whitelist="['.*']" \
+      --VoilaConfiguration.file_blacklist="['private.*', '.*\.(ipynb)']"
+
+Which will serve all files, except anything starting with private, or notebook files::
+
+   voila mydir --VoilaConfiguration.file_whitelist="['.*\.(png|jpg|gif|svg|mp4|avi|ogg)']"
+
+Will serve many media files, and also never serve notebook files (which is the default blacklist).
+
+Run scripts
+===========
+
+Voila can run text (or script) files, by configuring how a file extension maps to a kernel language::
+
+   voila mydir --VoilaConfiguration.extension_language_mapping='{".py": "python", ".jl": "julia"}'
+
+Voila will find a kernel that matches the language specified, but can also be
+configured to use a specific kernel for each language::
+
+   voila mydir --VoilaConfiguration.extension_language_mapping='{".py": "python", ".jl": "julia"}'\
+     --VoilaConfiguration.language_kernel_mapping='{"python": "xpython"}'
+
+In this case it will use the `xeus-python
+<https://github.com/QuantStack/xeus-python/>`_. kernel to run `.py` files.
