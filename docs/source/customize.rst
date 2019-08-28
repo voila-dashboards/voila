@@ -187,7 +187,7 @@ will be used.
 Serving static files
 ====================
 
-Unlike the Jupyter lab or classical notebook server, ``voila`` does not serve
+Unlike JupyterLab or the classic notebook server, ``voila`` does not serve
 all files that are present in the directory of the notebook. Only files that
 match one of the whitelists and none of the blacklist regular expression are
 served by voila::
