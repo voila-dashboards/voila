@@ -5,7 +5,7 @@
 Creating a new environment can help avoid pushing local changes and any extra tag.
 
 ```bash
-conda create -n voila-release -c conda-forge twine nodejs
+conda create -n voila-release -c conda-forge twine nodejs keyring
 conda activate voila-release
 ```
 
@@ -22,7 +22,10 @@ Make sure the `dist/` folder is empty.
 1. Update [voila/_version.py](./voila/_version.py) and [environment.yml](./environment.yml) with the new version number (see and [example diff](https://github.com/QuantStack/voila/commit/5c6fd8dd3ea71412ae9c20c25248453d22a3b60a))
 2. `python setup.py sdist bdist_wheel`
 3. Double check the size of the bundles in the `dist/` folder
-4. `twine upload dist/*`
+4. Run the tests
+   * (pip install ".[test]" && cd tests/test_template && pip install . && cd .. && py.test)
+5. `export TWINE_USERNAME=mypypi_username`
+6. `twine upload dist/*`
 
 ## Releasing on conda-forge
 
@@ -42,6 +45,6 @@ git add voila/_version.py environment.yml
 git commit -m "Release x.y.z"
 git tag x.y.z
 git checkout stable
-git reset master
+git reset --hard master
 git push origin master stable x.y.z
 ```
