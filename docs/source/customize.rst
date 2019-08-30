@@ -218,7 +218,7 @@ In this case it will use the `xeus-python
 <https://github.com/QuantStack/xeus-python/>`_. kernel to run `.py` files.
 
 Note that the script will be executed as notebook with a single cell, meaning
-that only the last expression will be printed as out output. Use the Jupyter
+that only the last expression will be printed as output. Use the Jupyter
 display mechanism to output any text or rich output such as Jupyter widgets. For
 Python this would be a call to `IPython.display.display`.
 
