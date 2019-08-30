@@ -77,7 +77,9 @@ class VoilaHandler(JupyterHandler):
         }
 
         # include potential extra resources
-        extra_resources = self.voila_configuration.resources
+        extra_resources = self.voila_configuration.config.VoilaConfiguration.resources
+        if not isinstance(extra_resources, dict):
+            extra_resources = extra_resources.to_dict()
         if extra_resources:
             recursive_update(resources, extra_resources)
 
