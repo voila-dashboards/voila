@@ -179,8 +179,7 @@ class CellExecutor(traitlets.config.LoggingConfigurable):
         raise NotImplementedError
 
     def notebook_execute(self, nb, kernel_id):
-        # default implementation
-        nb.cells = [async for cell in self.cell_generator(nb, kernel_id)]
+        raise NotImplementedError
 
 
 class CellExecutorNbConvert(CellExecutor):

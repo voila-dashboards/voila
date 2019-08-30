@@ -4,7 +4,7 @@ import pytest
 
 @pytest.fixture
 def voila_args_extra():
-    return ['--VoilaExporter.cell_executor_class=voila.execute_threaded.CellExecutorThreaded']
+    return ['--VoilaExporter.cell_executor_class=voila.execute_asyncio.CellExecutorAsyncio']
 
 
 @pytest.mark.gen_test
