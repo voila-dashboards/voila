@@ -36,6 +36,9 @@ class VoilaExporter(HTMLExporter):
     """Custom HTMLExporter that inlines the images using VoilaMarkdownRenderer"""
 
     markdown_renderer_class = traitlets.Type('mistune.Renderer').tag(config=True)
+    cell_executor_class = traitlets.Type('voila.execute.CellExecutorNbConvert', 'voila.execute.CellExecutor').tag(
+        config=True
+    )
 
     # The voila exporter overrides the markdown renderer from the HTMLExporter
     # to inline images.
@@ -76,8 +79,16 @@ class VoilaExporter(HTMLExporter):
     def default_template_file(self):
         return 'voila.tpl'
 
-    def generate_from_notebook_node(self, nb, resources=None, extra_context={}, **kw):
-        # this replaces from_notebook_node, but calls template.generate instead of template.render
+    async def generate_from_notebook_node(self, nb, cwd, multi_kernel_manager, resources=None, **kw):
+        cell_executor = self.cell_executor_class(nb, cwd, multi_kernel_manager)
+        # cell_executor = ThreadedNotebookCellExecutor(self.kernel_manager, self.traitlet_config, exporter)
+        # cell_executor = AsyncioCellExecutor(self.kernel_manager, self.traitlet_config, exporter)
+        # this replaces from_notebook_node, but calls template.generate_async instead of template.render
+        extra_context = {
+            'kernel_start': cell_executor.kernel_start,  # pass the result (not the future) to the template
+            'cell_generator': cell_executor.cell_generator,
+            'notebook_execute': cell_executor.notebook_execute,
+        }
         langinfo = nb.metadata.get('language_info', {})
         lexer = langinfo.get('pygments_lexer', langinfo.get('name', None))
         highlight_code = self.filters.get('highlight_code', Highlight2HTML(pygments_lexer=lexer, parent=self))
@@ -99,7 +110,7 @@ class VoilaExporter(HTMLExporter):
                 }
 
         # Top level variables are passed to the template_exporter here.
-        for output in self.template.generate(nb=nb_copy, resources=resources, **extra_context):
+        async for output in self.template.generate_async(nb=nb_copy, resources=resources, **extra_context):
             yield output, resources
 
     @property
@@ -107,4 +118,5 @@ class VoilaExporter(HTMLExporter):
         env = super(type(self), self).environment
         if 'jinja2.ext.do' not in env.extensions:
             env.add_extension('jinja2.ext.do')
+        env.is_async = True
         return env

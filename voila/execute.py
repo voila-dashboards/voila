@@ -6,10 +6,11 @@
 # The full license is in the file LICENSE, distributed with this software.  #
 #############################################################################
 import collections
+import traitlets
 
 from nbconvert.preprocessors import ClearOutputPreprocessor
 from nbconvert.preprocessors.execute import CellExecutionError, ExecutePreprocessor
-
+import tornado.gen
 from ipykernel.jsonutil import json_clean
 
 
@@ -158,3 +159,59 @@ def executenb(nb, cwd=None, km=None, **kwargs):
     nb, resources = ClearOutputPreprocessor().preprocess(nb, resources)
     ep = VoilaExecutePreprocessor(**kwargs)
     return ep.preprocess(nb, resources, km=km)[0]
+
+
+class CellExecutor(traitlets.config.LoggingConfigurable):
+    def __init__(self, notebook, cwd, multi_kernel_manager):
+        self.notebook = notebook
+        self.cwd = cwd
+        self.multi_kernel_manager = multi_kernel_manager
+        self.kernel_started = False
+
+    @property
+    def cells(self):
+        return self.notebook.cells
+
+    async def kernel_start(self):
+        raise NotImplementedError
+
+    async def cell_generator(self, nb, kernel_id):
+        raise NotImplementedError
+
+    def notebook_execute(self, nb, kernel_id):
+        # default implementation
+        nb.cells = [async for cell in self.cell_generator(nb, kernel_id)]
+
+
+class CellExecutorNbConvert(CellExecutor):
+    async def kernel_start(self):
+        assert not self.kernel_started, "kernel was already started"
+        # Launch kernel
+        kernel_id = await tornado.gen.maybe_future(self.multi_kernel_manager.start_kernel(kernel_name=self.notebook.metadata.kernelspec.name, path=self.cwd))
+        self.kernel_started = True
+        return kernel_id
+
+    async def cell_generator(self, nb, kernel_id):
+        """Generator that will execute a single notebook cell at a time"""
+        assert self.kernel_started
+        km = self.multi_kernel_manager.get_kernel(kernel_id)
+
+        all_cells = list(nb.cells)  # copy the cells, since we will modify in place
+        for cell in all_cells:
+            # we execute one cell at a time
+            nb.cells = [cell]  # reuse the same notebook
+            result = executenb(nb, km=km, cwd=self.cwd)  # , config=self.traitlet_config)
+            cell = result.cells[0]  # keep a reference to the executed cell
+            nb.cells = all_cells  # restore notebook in case we access it from the template
+            # we don't filter empty cells, since we do not know how many empty code cells we will have
+            yield cell
+
+    def notebook_execute(self, nb, kernel_id):
+        assert self.kernel_started
+        km = self.kernel_manager.get_kernel(kernel_id)
+        result = executenb(nb, km=km, cwd=self.cwd, parent=self.multi_kernel_manager)
+        # result.cells = list(filter(lambda cell: filter_empty_code_cells(cell, self.exporter), result.cells))
+        # we modify the notebook in place, since the nb variable cannot be reassigned it seems in jinja2
+        # e.g. if we do {% with nb = notebook_execute(nb, kernel_id) %}, the base template/blocks will not
+        # see the updated variable (it seems to be local to our block)
+        nb.cells = result.cells
