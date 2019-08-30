@@ -19,6 +19,15 @@ from .execute import executenb
 from .exporter import VoilaExporter
 
 
+# Filter for empty cells.
+def filter_empty_code_cells(cell, exporter):
+    return (
+        cell.cell_type != 'code' or                     # keep non-code cells
+        (cell.outputs and not exporter.exclude_output)  # keep cell if output not excluded and not empty
+        or not exporter.exclude_input                   # keep cell if input not excluded
+    )
+
+
 class VoilaHandler(JupyterHandler):
 
     def initialize(self, **kwargs):
@@ -26,6 +35,8 @@ class VoilaHandler(JupyterHandler):
         self.nbconvert_template_paths = kwargs.pop('nbconvert_template_paths', [])
         self.traitlet_config = kwargs.pop('config', None)
         self.voila_configuration = kwargs['voila_configuration']
+        # we want to avoid starting multiple kernels due to template mistakes
+        self.kernel_started = False
 
     @tornado.web.authenticated
     @tornado.gen.coroutine
@@ -50,19 +61,13 @@ class VoilaHandler(JupyterHandler):
         else:
             nbextensions = []
 
-        notebook = yield self.load_notebook(notebook_path)
-        if not notebook:
+        self.notebook = yield self.load_notebook(notebook_path)
+        if not self.notebook:
             return
-
-        # Launch kernel and execute notebook
-        cwd = os.path.dirname(notebook_path)
-        kernel_id = yield tornado.gen.maybe_future(self.kernel_manager.start_kernel(kernel_name=notebook.metadata.kernelspec.name, path=cwd))
-        km = self.kernel_manager.get_kernel(kernel_id)
-        result = executenb(notebook, km=km, cwd=cwd, config=self.traitlet_config)
+        self.cwd = os.path.dirname(notebook_path)
 
         # render notebook to html
         resources = {
-            'kernel_id': kernel_id,
             'base_url': self.base_url,
             'nbextensions': nbextensions,
             'theme': self.voila_configuration.theme
@@ -78,29 +83,64 @@ class VoilaHandler(JupyterHandler):
             config=self.traitlet_config,
             contents_manager=self.contents_manager  # for the image inlining
         )
-
         if self.voila_configuration.strip_sources:
             exporter.exclude_input = True
             exporter.exclude_output_prompt = True
             exporter.exclude_input_prompt = True
 
-        # Filtering out empty cells.
-        def filter_empty_code_cells(cell):
-            return (
-                cell.cell_type != 'code' or                     # keep non-code cells
-                (cell.outputs and not exporter.exclude_output)  # keep cell if output not excluded and not empty
-                or not exporter.exclude_input                   # keep cell if input not excluded
-            )
-        result.cells = list(filter(filter_empty_code_cells, result.cells))
-
-        html, resources = exporter.from_notebook_node(result, resources=resources)
+        # These functions allow the start of a kernel and execution of the notebook after (parts of) the template
+        # has been rendered and send to the client to allow progressive rendering.
+        # Template should first call kernel_start, and then decide to use notebook_execute
+        # or cell_generator to implement progressive cell rendering
+        extra_context = {
+            # NOTE: we can remove the lambda is we use jinja's async feature, which will automatically await the future
+            'kernel_start': lambda: self._jinja_kernel_start().result(),  # pass the result (not the future) to the template
+            'cell_generator': self._jinja_cell_generator,
+            'notebook_execute': self._jinja_notebook_execute,
+        }
 
         # Compose reply
         self.set_header('Content-Type', 'text/html')
-        self.write(html)
+        # render notebook in snippets, and flush them out to the browser can render progresssively
+        for html_snippet, resources in exporter.generate_from_notebook_node(self.notebook, resources=resources, extra_context=extra_context):
+            self.write(html_snippet)
+            self.flush()  # we may not want to consider not flusing after each snippet, but add an explicit flush function to the jinja context
+            yield  # give control back to tornado's IO loop, so it can handle static files or other requests
+        self.flush()
 
     def redirect_to_file(self, path):
         self.redirect(url_path_join(self.base_url, 'voila', 'files', path))
+
+    @tornado.gen.coroutine
+    def _jinja_kernel_start(self):
+        assert not self.kernel_started, "kernel was already started"
+        # Launch kernel
+        kernel_id = yield tornado.gen.maybe_future(self.kernel_manager.start_kernel(kernel_name=self.notebook.metadata.kernelspec.name, path=self.cwd))
+        self.kernel_started = True
+        raise tornado.gen.Return(kernel_id)
+
+    def _jinja_notebook_execute(self, nb, kernel_id):
+        km = self.kernel_manager.get_kernel(kernel_id)
+        result = executenb(nb, km=km, cwd=self.cwd, config=self.traitlet_config)
+        result.cells = list(filter(lambda cell: filter_empty_code_cells(cell, self.exporter), result.cells))
+        # we modify the notebook in place, since the nb variable cannot be reassigned it seems in jinja2
+        # e.g. if we do {% with nb = notebook_execute(nb, kernel_id) %}, the base template/blocks will not
+        # see the updated variable (it seems to be local to our block)
+        nb.cells = result.cells
+
+    def _jinja_cell_generator(self, nb, kernel_id):
+        """Generator that will execute a single notebook cell at a time"""
+        km = self.kernel_manager.get_kernel(kernel_id)
+
+        all_cells = list(nb.cells)  # copy the cells, since we will modify in place
+        for cell in all_cells:
+            # we execute one cell at a time
+            nb.cells = [cell]  # reuse the same notebook
+            result = executenb(nb, km=km, cwd=self.cwd, config=self.traitlet_config)
+            cell = result.cells[0]  # keep a reference to the executed cell
+            nb.cells = all_cells  # restore notebook in case we access it from the template
+            # we don't filter empty cells, since we do not know how many empty code cells we will have
+            yield cell
 
     @tornado.gen.coroutine
     def load_notebook(self, path):
