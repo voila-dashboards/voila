@@ -23,7 +23,7 @@ before_install:
 install:
   - pip install ".[test]"
   - cd tests/test_template; pip install .; cd ../../;
-before_script:
+after_script:
   - flake8 voila tests setup.py
 script:
   - VOILA_TEST_DEBUG=1 VOILA_TEST_XEUS_CLING=1 py.test tests/ --async-test-timeout=240
