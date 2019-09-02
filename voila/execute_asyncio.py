@@ -8,6 +8,7 @@ import sys
 import nbformat
 import zmq.asyncio
 import tornado.gen
+from jupyter_client import KernelManager
 
 from .execute import CellExecutor
 
@@ -24,6 +25,11 @@ class CellExecutorAsyncio(CellExecutor):
         self.idle_future = collections.defaultdict(asyncio.Future)
         self.started_io = asyncio.Future()
         self.started_shell = asyncio.Future()
+        self.kernel_manager = KernelManager(
+            client_class='jupyter_client.asyncio.client.AsyncioKernelClient',
+            kernel_name=self.notebook.metadata.kernelspec.name,
+            context=zmq.asyncio.Context.instance()
+            )
 
     async def start_test_kernel(self):
         from jupyter_client.asyncio.client import AsyncioKernelClient
@@ -45,30 +51,20 @@ class CellExecutorAsyncio(CellExecutor):
         # return r
 
     async def kernel_start(self):
+        kernel_id = None  # in case we don't have a multi_kernel_manager
         if self.multi_kernel_manager is not None:
-            def kernel_manager_factory(**kwargs):
-                from jupyter_client import KernelManager
-                return KernelManager(
-                    client_class='jupyter_client.asyncio.client.AsyncioKernelClient',
-                    context=zmq.asyncio.Context.instance(),
-                    **kwargs
-                    )
-
-            self.multi_kernel_manager.kernel_manager_factory = kernel_manager_factory
+            # We start the kernel using the multi_kernel_manager, this will give
+            # us a kernel_id that is used at the front-end to specificy which
+            # kernel we are using.
             kernel_id = await tornado.gen.maybe_future(self.multi_kernel_manager.start_kernel(kernel_name=self.notebook.metadata.kernelspec.name, path=self.cwd))
             kernel_manager = self.multi_kernel_manager.get_kernel(kernel_id)
-            self.kernel_started = True
-            self.client = kernel_manager.client()
+            self.kernel_manager.load_connection_info(kernel_manager.get_connection_info())
         else:
-            from jupyter_client import KernelManager
-            self.kernel_manager = KernelManager(
-                client_class='jupyter_client.asyncio.client.AsyncioKernelClient',
-                kernel_name=self.notebook.metadata.kernelspec.name,
-                context=zmq.asyncio.Context.instance()
-                )
-            kernel_id = None  # how do we get the client id?
+            # Otherwise we just start a kernel manager
             self.kernel_manager.start_kernel()
-            self.client = self.kernel_manager.client()
+        # TODO: we may want to connect and shutdown in the execute_cell generator instead
+        self.client = self.kernel_manager.client()
+        self.kernel_started = True
         self.log.debug('starting channels...')
         self.client.start_channels_async()
         self.log.debug('started channels!')
@@ -110,28 +106,28 @@ class CellExecutorAsyncio(CellExecutor):
                         self.idle_future[msg_id].set_result(msg_id)
                 self.log.debug('io msg: %r: %r', msg_id, msg)
                 # if msg_id == self.current_msg_id:
-                #     self.process_io(msg)
+                self.process_io(msg)
             except Exception:
                 self.log.exception('issue with handling the io channel')
 
-    # def process_io(self, msg):
-    #     msg_type = msg['msg_type']
-    #     msg_id = msg['parent_header'].get('msg_id', 'dummy')
-    #     content = msg['content']
-    #     if msg_type == 'status':
-    #         if content['execution_state'] == 'idle':
-    #             dsa
-    #             self.log.debug('idle for: %s', msg_id)
-    #             self.idle_future[msg_id].set_result(msg_id)
-    #             self.idle_future[msg_id].set_result(msg_id)
-    #     elif msg_type == 'clear_output':
-    #         self.clear_output(cell.outputs, msg, cell_index)
-    #     elif msg_type.startswith('comm'):
-    #         self.handle_comm_msg(msg)
-    #     # Check for remaining messages we don't process
-    #     elif msg_type not in ['execute_input', 'update_display_data']:
-    #         # Assign output as our processed "result"
-    #         return self.output(msg)
+    def process_io(self, msg):
+        msg_type = msg['msg_type']
+        msg_id = msg['parent_header'].get('msg_id', 'dummy')
+        content = msg['content']
+        if msg_type == 'status':
+            pass
+            # if content['execution_state'] == 'idle':
+            #     self.log.debug('idle for: %s', msg_id)
+            #     self.idle_future[msg_id].set_result(msg_id)
+            #     self.idle_future[msg_id].set_result(msg_id)
+        elif msg_type == 'clear_output':
+            self.clear_output(cell.outputs, msg, cell_index)
+        elif msg_type.startswith('comm'):
+            self.handle_comm_msg(msg)
+        # Check for remaining messages we don't process
+        elif msg_type not in ['execute_input', 'update_display_data']:
+            # Assign output as our processed "result"
+            return self.output(msg)
 
     def output(self, msg):
         cell = self.cells[self.cell_index]
@@ -162,7 +158,7 @@ class CellExecutorAsyncio(CellExecutor):
         msg_id = await self.client.execute_async(cell.source)
         self.log.debug('execute msg_id: %r', msg_id)
         await self.idle_future[msg_id]
-        self.log.info('execution of cell %r is done, with %r outputs', self.cell_index, 'no' if hasattr(cell, 'outputs') else len(cell.outputs))
+        self.log.info('execution of cell %r is done, with %r outputs: \n%r', self.cell_index, 'no' if not hasattr(cell, 'outputs') else len(cell.outputs), cell.outputs)
         return cell
 
 
