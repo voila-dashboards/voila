@@ -22,6 +22,8 @@ before_install:
   - source activate test-environment
 install:
   - pip install ".[test]"
+  - pip uninstall jupyter_client
+  - pip install git+https://github.com/maartenbreddels/jupyter_client/tree/feat_async
   - cd tests/test_template; pip install .; cd ../../;
 after_script:
   - flake8 voila tests setup.py
