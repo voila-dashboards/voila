@@ -4,7 +4,6 @@ os:
  - osx
 env:
  matrix:
-  - PYTHON_VERSION=2.7
   - PYTHON_VERSION=3.6
   - PYTHON_VERSION=3.7
 before_install:
