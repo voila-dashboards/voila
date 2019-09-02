@@ -3,6 +3,7 @@ import concurrent.futures
 import inspect
 
 import tornado.gen
+from jupyter_client import KernelManager
 
 from .execute import CellExecutor, executenb
 
@@ -66,7 +67,6 @@ class CellExecutorThreaded(CellExecutor):
 
         async def start_kernel_in_thread():
             # Launch kernel
-            self.kernel_id = await tornado.gen.maybe_future(self.multi_kernel_manager.start_kernel(kernel_name=self.notebook.metadata.kernelspec.name, path=self.cwd))
             self.kernel_started = True
             km = self.multi_kernel_manager.get_kernel(self.kernel_id)
             self.client = km.client()
@@ -75,6 +75,12 @@ class CellExecutorThreaded(CellExecutor):
             self.client.wait_for_ready(timeout=startup_timeout)
             self.kernel_started = True
             return self.kernel_id
+        # It seems we cannot start the kernel in the thread, it might because
+        # the control channel is already started, and the jupyter_server part
+        # will fail (we get a pending status of the websocket at the client). We
+        # can get an additional performance increase if we do this in the thread
+        # as well.
+        self.kernel_id = await tornado.gen.maybe_future(self.multi_kernel_manager.start_kernel(kernel_name=self.notebook.metadata.kernelspec.name, path=self.cwd))
         return await self.executor.submit_async(start_kernel_in_thread)
 
     async def cell_generator(self, nb, kernel_id):
