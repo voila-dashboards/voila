@@ -12,6 +12,10 @@ from jupyter_client import KernelManager
 
 from .execute import CellExecutor
 
+# As long as we support Python35, we use this library to get as async
+# generators: https://pypi.org/project/async_generator/
+from async_generator import async_generator, yield_
+
 
 class CellExecutorAsyncio(CellExecutor):
     def __init__(self, notebook, cwd, multi_kernel_manager=None):
@@ -112,8 +116,8 @@ class CellExecutorAsyncio(CellExecutor):
 
     def process_io(self, msg):
         msg_type = msg['msg_type']
-        msg_id = msg['parent_header'].get('msg_id', 'dummy')
-        content = msg['content']
+        # msg_id = msg['parent_header'].get('msg_id', 'dummy')
+        # content = msg['content']
         if msg_type == 'status':
             pass
             # if content['execution_state'] == 'idle':
@@ -121,7 +125,7 @@ class CellExecutorAsyncio(CellExecutor):
             #     self.idle_future[msg_id].set_result(msg_id)
             #     self.idle_future[msg_id].set_result(msg_id)
         elif msg_type == 'clear_output':
-            self.clear_output(cell.outputs, msg, cell_index)
+            pass  # self.clear_output(cell.outputs, msg, cell_index)
         elif msg_type.startswith('comm'):
             self.handle_comm_msg(msg)
         # Check for remaining messages we don't process
@@ -140,14 +144,16 @@ class CellExecutorAsyncio(CellExecutor):
     def handle_comm_msg(self, msg):
         pass
 
+    @async_generator
     async def execute(self):
         for i, cell in enumerate(self.cells):
             cell = await self.execute_cell(i)
-            yield cell
+            await yield_(cell)
 
+    @async_generator
     async def cell_generator(self, nb, kernel_id):
         async for cell in self.execute():
-            yield cell
+            await yield_(cell)
 
     async def execute_cell(self, index):
         self.cell_index = index

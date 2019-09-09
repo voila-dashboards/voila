@@ -1,5 +1,6 @@
 # test basics of voila running a notebook
 import pytest
+import sys
 
 
 @pytest.fixture
@@ -7,6 +8,7 @@ def voila_args_extra():
     return ['--VoilaExporter.cell_executor_class=voila.execute_threaded.CellExecutorThreaded']
 
 
+@pytest.mark.skipif(sys.version_info[:2] < (3, 6), reason='Jinja with Python35 has no async generator support')
 @pytest.mark.gen_test
 def test_hello_world(app, http_client, base_url):
     response = yield http_client.fetch(base_url)

@@ -4,6 +4,7 @@ os:
  - osx
 env:
  matrix:
+  - PYTHON_VERSION=3.5
   - PYTHON_VERSION=3.6
   - PYTHON_VERSION=3.7
 before_install:
@@ -17,12 +18,12 @@ before_install:
   - conda config --set always_yes yes --set changeps1 no
   - conda update -q conda
   - conda info -a
-  - conda create -q -n test-environment -c conda-forge python=$PYTHON_VERSION jupyter_server==0.1.0 jupyterlab_pygments==0.1.0 pytest==3.10.1 nbconvert=5.5 pytest-cov nodejs flake8 ipywidgets matplotlib xeus-cling
+  - conda create -q -n test-environment -c conda-forge python=$PYTHON_VERSION nodejs flake8 xeus-cling
   - source activate test-environment
 install:
   - pip install ".[test]"
-  - pip uninstall jupyter_client
-  - pip install git+https://github.com/maartenbreddels/jupyter_client/tree/feat_async
+  - pip uninstall jupyter_client -y
+  - pip install git+https://github.com/maartenbreddels/jupyter_client@feat_async
   - cd tests/test_template; pip install .; cd ../../;
 after_script:
   - flake8 voila tests setup.py

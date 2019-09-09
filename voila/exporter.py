@@ -6,17 +6,25 @@
 # The full license is in the file LICENSE, distributed with this software.  #
 #############################################################################
 
+import inspect
 import mimetypes
 
 import traitlets
 from traitlets.config import Config
 
 from jinja2 import contextfilter
+from jinja2.utils import have_async_gen
 
 from nbconvert.filters.markdown_mistune import IPythonRenderer, MarkdownWithMath
 from nbconvert.exporters.html import HTMLExporter
 from nbconvert.exporters.templateexporter import TemplateExporter
 from nbconvert.filters.highlight import Highlight2HTML
+
+from .threading import async_generator_to_thread
+
+# As long as we support Python35, we use this library to get as async
+# generators: https://pypi.org/project/async_generator/
+from async_generator import async_generator, yield_
 
 
 class VoilaMarkdownRenderer(IPythonRenderer):
@@ -79,13 +87,14 @@ class VoilaExporter(HTMLExporter):
     def default_template_file(self):
         return 'voila.tpl'
 
+    @async_generator
     async def generate_from_notebook_node(self, nb, cwd, multi_kernel_manager, resources=None, **kw):
         cell_executor = self.cell_executor_class(nb, cwd, multi_kernel_manager)
         # cell_executor = ThreadedNotebookCellExecutor(self.kernel_manager, self.traitlet_config, exporter)
         # cell_executor = AsyncioCellExecutor(self.kernel_manager, self.traitlet_config, exporter)
         # this replaces from_notebook_node, but calls template.generate_async instead of template.render
         extra_context = {
-            'kernel_start': cell_executor.kernel_start,  # pass the result (not the future) to the template
+            'kernel_start': cell_executor.kernel_start,
             'cell_generator': cell_executor.cell_generator,
             'notebook_execute': cell_executor.notebook_execute,
         }
@@ -110,13 +119,30 @@ class VoilaExporter(HTMLExporter):
                 }
 
         # Top level variables are passed to the template_exporter here.
-        async for output in self.template.generate_async(nb=nb_copy, resources=resources, **extra_context):
-            yield output, resources
+        if self.template.environment.is_async:
+            async for output in self.template.generate_async(nb=nb_copy, resources=resources, **extra_context):
+                await yield_((output, resources))
+        else:
+            # Jinja with Python3.5 does not support async (generators), which
+            # means that it's not async all the way down. Which means that we
+            # cannot use coroutines for the cell_generator, and that they will
+            # block the IO loop. In that case we will run the iterator in a
+            # thread instead.
+            assert inspect.iscoroutinefunction(cell_executor.kernel_start) is False, 'The cell executor\'s kernel_start should not be a coroutine for Python3.5'
+            assert inspect.iscoroutinefunction(cell_executor.cell_generator) is False, 'The cell executor\'s cell_generator should not not be a coroutine for Python3.5'
+
+            @async_generator
+            async def async_jinja_generator():
+                for output in self.template.generate(nb=nb_copy, resources=resources, **extra_context):
+                    await yield_((output, resources))
+            threaded_async_jinja_generator = async_generator_to_thread(async_jinja_generator)
+            async for output, resources in threaded_async_jinja_generator():
+                await yield_((output, resources))
 
     @property
     def environment(self):
         env = super(type(self), self).environment
         if 'jinja2.ext.do' not in env.extensions:
             env.add_extension('jinja2.ext.do')
-        env.is_async = True
+        env.is_async = have_async_gen
         return env

@@ -183,14 +183,20 @@ class CellExecutor(traitlets.config.LoggingConfigurable):
 
 
 class CellExecutorNbConvert(CellExecutor):
-    async def kernel_start(self):
+    """Synchronous version of a cell executor, used for Python3.5"""
+    def kernel_start(self):
         assert not self.kernel_started, "kernel was already started"
-        # Launch kernel
-        kernel_id = await tornado.gen.maybe_future(self.multi_kernel_manager.start_kernel(kernel_name=self.notebook.metadata.kernelspec.name, path=self.cwd))
+
+        @tornado.gen.coroutine
+        def wrapper():
+            # kernel_id = await tornado.gen.maybe_future(self.multi_kernel_manager.start_kernel(kernel_name=self.notebook.metadata.kernelspec.name, path=self.cwd))
+            kernel_id = yield tornado.gen.maybe_future(self.multi_kernel_manager.start_kernel(kernel_name=self.notebook.metadata.kernelspec.name, path=self.cwd))
+            return kernel_id
+        kernel_id = wrapper().result()
         self.kernel_started = True
         return kernel_id
 
-    async def cell_generator(self, nb, kernel_id):
+    def cell_generator(self, nb, kernel_id):
         """Generator that will execute a single notebook cell at a time"""
         assert self.kernel_started
         km = self.multi_kernel_manager.get_kernel(kernel_id)
@@ -207,7 +213,7 @@ class CellExecutorNbConvert(CellExecutor):
 
     def notebook_execute(self, nb, kernel_id):
         assert self.kernel_started
-        km = self.kernel_manager.get_kernel(kernel_id)
+        km = self.multi_kernel_manager.get_kernel(kernel_id)
         result = executenb(nb, km=km, cwd=self.cwd, parent=self.multi_kernel_manager)
         # result.cells = list(filter(lambda cell: filter_empty_code_cells(cell, self.exporter), result.cells))
         # we modify the notebook in place, since the nb variable cannot be reassigned it seems in jinja2
