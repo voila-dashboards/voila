@@ -2,19 +2,36 @@ import os
 
 import pytest
 
-import voila.app
+from traitlets.config import Config
+from voila.app import Voila
+from jupyter_server.serverapp import ServerApp
 
 BASE_DIR = os.path.dirname(__file__)
 
 
-class VoilaTest(voila.app.Voila):
-    def listen(self):
-        pass  # the ioloop is taken care of by the pytest-tornado framework
+class ServerAppForTesting(ServerApp):
+    # pytest-tornado handles ioloop.
+    default_url = 'voila'
+
+    def start(self):
+        pass
+
+
+@pytest.fixture
+def server_args():
+    return []
+
+
+@pytest.fixture
+def serverapp(server_args):
+    serverapp = ServerAppForTesting()
+    serverapp.initialize(argv=server_args, load_extensions=False)
+    return serverapp
 
 
 @pytest.fixture
 def voila_config():
-    return lambda app: None
+    return {}
 
 
 @pytest.fixture
@@ -25,22 +42,21 @@ def voila_args_extra():
 @pytest.fixture
 def voila_config_file_paths_arg():
     # we don't want the tests to use any configuration on the system
-    return '--VoilaTest.config_file_paths=[]'
+    return '--Voila.config_file_paths=[]'
 
 
 @pytest.fixture
 def voila_args(voila_notebook, voila_args_extra, voila_config_file_paths_arg):
-    debug_args = ['--VoilaTest.log_level=DEBUG'] if os.environ.get('VOILA_TEST_DEBUG', False) else []
+    debug_args = ['--Voila.log_level=DEBUG'] if os.environ.get('VOILA_TEST_DEBUG', False) else []
     return [voila_notebook, voila_config_file_paths_arg] + voila_args_extra + debug_args
 
+@pytest.fixture
+def voila_app(serverapp, voila_args, voila_config):
+    config = Config(voila_config)
+    voila_app = Voila(config=config)
+    voila_app.initialize(serverapp, argv=voila_args)
+    yield voila_app
 
 @pytest.fixture
-def voila_app(voila_args, voila_config):
-    server_app = VoilaTest.initialize_server(argv=['--ServerApp.open_browser=False'])
-    voila_app = VoilaTest._prepare_launch(server_app, argv=voila_args)
-    voila_config(voila_app)
-    voila_app.start_server()
-    yield voila_app
-    server_app.stop()
-    server_app.clear_instance()
-    voila_app.clear_instance()
+def app(voila_app):
+    return voila_app.serverapp.web_app

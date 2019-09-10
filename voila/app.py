@@ -69,8 +69,8 @@ class Voila(ExtensionApp):
     name = 'voila'
     version = __version__
     examples = 'jupyter voila example.ipynb'
-    extension_name = 'voila'
-
+    load_other_extensions = False
+    
     flags = {
         'debug': ({'Voila': {'log_level': logging.DEBUG}}, _("Set the log level to logging.DEBUG")),
         'no-browser': ({'Voila': {'open_browser': False}}, _('Don\'t open the notebook in a browser after startup.')),
@@ -134,7 +134,7 @@ class Voila(ExtensionApp):
         help="""
         extra resources used by templates;
         example use with --template=reveal
-        --VoilaConfiguration.resources="{'reveal': {'transition': 'fade', 'scroll': True}}"
+        --Volia.resources="{'reveal': {'transition': 'fade', 'scroll': True}}"
         """
     ).tag(config=True)
     theme = Unicode('light').tag(config=True)

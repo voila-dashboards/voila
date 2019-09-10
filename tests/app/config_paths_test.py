@@ -10,7 +10,7 @@ BASE_DIR = os.path.dirname(__file__)
 @pytest.fixture
 def voila_config_file_paths_arg():
     config_path = os.path.join(BASE_DIR, '..', 'configs', 'general')
-    return '--VoilaTest.config_file_paths=[%r]' % config_path
+    return '--Voila.config_file_paths=[%r]' % config_path
 
 def test_config_app(voila_app):
     assert voila_app.template == 'test_template'
