@@ -238,10 +238,22 @@ class Voila(ExtensionApp):
         else:
             return getcwd()
 
-
     default_url = Unicode("/voila", config=True)
+    
+    def parse_command_line(self, argv=None):
+        super(Voila, self).parse_command_line(argv)
+        # Catch first argument as notebook path.
+        if self.extra_args:
+            notebook_path = self.extra_args[0]
+            f = os.path.abspath(notebook_path)
+            self.argv.remove(notebook_path)
+            if not os.path.exists(f):
+                self.log.critical(_("No such file or directory: %s"), f)
+                self.exit(1)
+            self.notebook_path = notebook_path
 
     def initialize_settings(self):
+        self.serverapp.root_dir = self.root_dir
         self.settings.update({ 'notebook_path': self.notebook_path })
 
     def initialize_templates(self):
@@ -262,11 +274,14 @@ class Voila(ExtensionApp):
         self.settings.update(**template_settings)
 
     def initialize_handlers(self):
-        handlers = [
-            ('/voila/render' + path_regex, VoilaHandler),
-            ('/voila', VoilaTreeHandler),
-            ('/voila/tree' + path_regex, VoilaTreeHandler),
-        ]
-        self.handlers.extend(handlers)
+        if self.notebook_path:
+            self.handlers.append(('/voila', VoilaHandler))
+        else:
+            handlers = [
+                ('/voila/render' + path_regex, VoilaHandler),
+                ('/voila', VoilaTreeHandler),
+                ('/voila/tree' + path_regex, VoilaTreeHandler),
+            ]
+            self.handlers.extend(handlers)
 
 main = Voila.launch_instance

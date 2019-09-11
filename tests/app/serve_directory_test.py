@@ -7,7 +7,7 @@ TEST_XEUS_CLING = os.environ.get('VOILA_TEST_XEUS_CLING', '') == '1'
 
 @pytest.fixture
 def voila_args(notebook_directory, voila_args_extra):
-    return ['--VoilaTest.root_dir=%r' % notebook_directory, '--VoilaTest.log_level=DEBUG'] + voila_args_extra
+    return ['--Voila.root_dir=%r' % notebook_directory] + voila_args_extra
 
 
 @pytest.mark.gen_test
@@ -20,7 +20,7 @@ def test_print(http_client, print_notebook_url):
 
 @pytest.fixture
 def voila_args_extra():
-    return ['--VoilaConfiguration.extension_language_mapping={".py": "python"}']
+    return ['--Voila.extension_language_mapping={".py": "python"}']
 
 
 @pytest.mark.gen_test

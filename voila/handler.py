@@ -11,6 +11,7 @@ import os
 
 import tornado.web
 
+from jupyter_server.utils import url_path_join
 from jupyter_server.extension.handler import ExtensionHandler
 from jupyter_server.config_manager import recursive_update
 from nbconvert.preprocessors import ClearOutputPreprocessor
@@ -33,7 +34,11 @@ class VoilaHandler(ExtensionHandler):
 
     @property
     def notebook_path(self):
-        return self.settings['notebook_path']
+        path = self.settings.get('notebook_path', None)
+        # Get relative path to notebook.
+        if path is not None:
+            path = os.path.relpath(path, self.config['root_dir'])
+        return path
 
     @tornado.web.authenticated
     @tornado.gen.coroutine
@@ -41,7 +46,7 @@ class VoilaHandler(ExtensionHandler):
         # if the handler got a notebook_path argument, always serve that
         notebook_path = self.notebook_path or path
         if self.notebook_path and path:  # when we are in single notebook mode but have a path
-            self.redirect_to_file(path)
+            self.redirect_to_fiççle(path)
             return
 
         if self.config.enable_nbextensions:

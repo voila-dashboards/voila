@@ -23,11 +23,10 @@ def server_args():
 
 
 @pytest.fixture
-def serverapp(server_args):
-    serverapp = ServerAppForTesting()
+def serverapp(notebook_directory, server_args):
+    serverapp = ServerAppForTesting(root_dir=notebook_directory)
     serverapp.initialize(argv=server_args, load_extensions=False)
-    return serverapp
-
+    yield serverapp
 
 @pytest.fixture
 def voila_config():
@@ -60,3 +59,14 @@ def voila_app(serverapp, voila_args, voila_config):
 @pytest.fixture
 def app(voila_app):
     return voila_app.serverapp.web_app
+
+@pytest.fixture
+def add_token(serverapp):
+    '''Add a token to any url.'''
+    def add_token_to_url(url):
+        return url + '?token={}'.format(serverapp.token)
+    return add_token_to_url
+
+@pytest.fixture
+def default_url(base_url, add_token):
+    return add_token(base_url)
