@@ -47,7 +47,7 @@ class VoilaHandler(ExtensionHandler):
         # if the handler got a notebook_path argument, always serve that
         notebook_path = self.notebook_path or path
         if self.notebook_path and path:  # when we are in single notebook mode but have a path
-            self.redirect_to_fiççle(path)
+            self.redirect_to_file(path)
             return
 
         if self.config.enable_nbextensions:

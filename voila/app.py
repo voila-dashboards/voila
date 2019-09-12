@@ -67,6 +67,7 @@ def _(x):
 
 
 class Voila(ExtensionApp):
+
     name = 'voila'
     version = __version__
     examples = 'jupyter voila example.ipynb'
@@ -99,7 +100,9 @@ class Voila(ExtensionApp):
             'Will autoreload to server and the page when a template, js file or Python code changes'
         )
     )
+
     root_dir = Unicode(config=True, help=_('The directory to use for notebooks.'))
+    
     static_root = Unicode(
         STATIC_ROOT,
         config=True,
@@ -107,6 +110,7 @@ class Voila(ExtensionApp):
             'Directory holding static assets (HTML, JS and CSS files).'
         )
     )
+    
     aliases = {
         'port': 'ServerApp.port',
         'static': 'Voila.static_root',
@@ -116,6 +120,7 @@ class Voila(ExtensionApp):
         'theme': 'Voila.theme',
         'enable_nbextensions': 'Voila.enable_nbextensions',
     }
+    
     classes = [
         VoilaExecutePreprocessor,
         VoilaExporter,
@@ -153,7 +158,6 @@ class Voila(ExtensionApp):
         """
     ).tag(config=True)
 
-
     resources = Dict(
         allow_none=True,
         help="""
@@ -164,7 +168,9 @@ class Voila(ExtensionApp):
     ).tag(config=True)
 
     theme = Unicode('light').tag(config=True)
+    
     strip_sources = Bool(True, help='Strip sources from rendered html').tag(config=True)
+    
     enable_nbextensions = Bool(False, config=True, help=('Set to True for Voila to load notebook extensions'))
 
     connection_dir_root = Unicode(
@@ -279,7 +285,21 @@ class Voila(ExtensionApp):
             self.notebook_path = notebook_path
 
     def initialize_settings(self):
+        # Ensure the server finds both serverconfig and nbconfig.
+        paths = self.serverapp.config_manager.read_config_path
+        for p in jupyter_config_path():
+            paths.extend([
+                os.path.join(p, 'serverconfig'),
+                os.path.join(p, 'nbconfig')
+            ])
+        # Keep unique paths.
+        paths = list(set(paths))
+        self.serverapp.config_manager.read_config_path = paths
+
+        # Set the serverapp root_dir to be the same as voila.
         self.serverapp.root_dir = self.root_dir
+
+        # Pass notebook path to settings.
         self.settings.update({ 'notebook_path': self.notebook_path })
 
     def initialize_templates(self):
