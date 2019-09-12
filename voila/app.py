@@ -34,9 +34,11 @@ import jinja2
 import tornado.ioloop
 import tornado.web
 
+from traitlets.config import Config
 from traitlets.config.application import Application
 from traitlets import Unicode, Integer, Bool, Dict, List, default
 
+from jupyter_server.serverapp import ServerApp
 from jupyter_server.services.kernels.kernelmanager import MappingKernelManager
 from jupyter_server.services.kernels.handlers import KernelHandler, ZMQChannelsHandler
 from jupyter_server.services.contents.largefilemanager import LargeFileManager
@@ -74,7 +76,7 @@ class Voila(ExtensionApp):
     load_other_extensions = False
     
     flags = {
-        'debug': ({'Voila': {'log_level': logging.DEBUG}}, _("Set the log level to logging.DEBUG")),
+        'debug': ({'ServerApp': {'log_level': logging.DEBUG}}, _("Set the log level to logging.DEBUG")),
         'no-browser': ({'Voila': {'open_browser': False}}, _('Don\'t open the notebook in a browser after startup.')),
         'standalone': ({'ServerApp': {'standalone': True}}, _('Run the server without enabling extensions.'))
     }
@@ -156,6 +158,22 @@ class Voila(ExtensionApp):
         --VoilaConfiguration.file_whitelist="['.*']" # all files
         --VoilaConfiguration.file_blacklist="['private.*', '.*\.(ipynb)']" # except files in the private dir and notebook files
         """
+    ).tag(config=True)
+
+    language_kernel_mapping = Dict(
+        {},
+        help="""Mapping of language name to kernel name
+        Example mapping python to use xeus-python, and C++11 to use xeus-cling:
+        --VoilaConfiguration.extension_language_mapping='{"python": "xpython", "C++11": "xcpp11"}'
+        """,
+    ).tag(config=True)
+
+    extension_language_mapping = Dict(
+        {},
+        help='''Mapping of file extension to kernel language
+        Example mapping .py files to a python language kernel, and .cpp to a C++11 language kernel:
+        --VoilaConfiguration.extension_language_mapping='{".py": "python", ".cpp": "C++11"}'
+        ''',
     ).tag(config=True)
 
     resources = Dict(
@@ -284,6 +302,28 @@ class Voila(ExtensionApp):
                 self.exit(1)
             self.notebook_path = notebook_path
 
+    @staticmethod
+    def initialize_server(argv=[], load_other_extensions=False, **kwargs):
+        """Get an instance of the Jupyter Server."""
+        config = {
+            'ServerApp': {
+                'MappingKernelManager': {
+                    'allowed_message_types': [
+                        'comm_msg',
+                        'comm_info_request',
+                        'kernel_info_request',
+                        'shutdown_request'
+                    ]
+                }
+            }
+        }
+        return ExtensionApp.initialize_server(
+            argv=argv, 
+            load_other_extensions=load_other_extensions,
+            config=Config(config),
+            **kwargs
+        )
+
     def initialize_settings(self):
         # Ensure the server finds both serverconfig and nbconfig.
         paths = self.serverapp.config_manager.read_config_path
@@ -296,8 +336,8 @@ class Voila(ExtensionApp):
         paths = list(set(paths))
         self.serverapp.config_manager.read_config_path = paths
 
-        # Set the serverapp root_dir to be the same as voila.
-        self.serverapp.root_dir = self.root_dir
+        # # Set the serverapp root_dir to be the same as voila.
+        # self.serverapp.root_dir = self.root_dir
 
         # Pass notebook path to settings.
         self.settings.update({ 'notebook_path': self.notebook_path })
