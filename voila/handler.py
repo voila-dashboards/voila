@@ -33,6 +33,10 @@ def filter_empty_code_cells(cell, exporter):
 
 class VoilaHandler(ExtensionHandler):
 
+    def initialize(self, **kwargs):
+        self.kernel_started = False
+        super(VoilaHandler, self).initialize(**kwargs)
+
     @property
     def notebook_path(self):
         path = self.settings.get('notebook_path', None)
@@ -70,9 +74,9 @@ class VoilaHandler(ExtensionHandler):
         self.cwd = os.path.dirname(notebook_path)
 
         # Launch kernel and execute notebook
-        kernel_id = yield tornado.gen.maybe_future(self.kernel_manager.start_kernel(kernel_name=notebook.metadata.kernelspec.name, path=self.cwd))
+        kernel_id = yield tornado.gen.maybe_future(self.kernel_manager.start_kernel(kernel_name=self.notebook.metadata.kernelspec.name, path=self.cwd))
         km = self.kernel_manager.get_kernel(kernel_id)
-        result = executenb(notebook, km=km, cwd=self.cwd, config=self.server_config)
+        result = executenb(self.notebook, km=km, cwd=self.cwd, config=self.server_config)
 
         # render notebook to html
         resources = {
@@ -129,7 +133,7 @@ class VoilaHandler(ExtensionHandler):
 
     def _jinja_notebook_execute(self, nb, kernel_id):
         km = self.kernel_manager.get_kernel(kernel_id)
-        result = executenb(nb, km=km, cwd=self.cwd, config=self.traitlet_config)
+        result = executenb(nb, km=km, cwd=self.cwd, config=self.server_config)
         result.cells = list(filter(lambda cell: filter_empty_code_cells(cell, self.exporter), result.cells))
         # we modify the notebook in place, since the nb variable cannot be reassigned it seems in jinja2
         # e.g. if we do {% with nb = notebook_execute(nb, kernel_id) %}, the base template/blocks will not
@@ -141,7 +145,7 @@ class VoilaHandler(ExtensionHandler):
         km = self.kernel_manager.get_kernel(kernel_id)
 
         nb, resources = ClearOutputPreprocessor().preprocess(nb, {'metadata': {'path': self.cwd}})
-        ep = VoilaExecutePreprocessor(config=self.traitlet_config)
+        ep = VoilaExecutePreprocessor(config=self.server_config)
 
         with ep.setup_preprocessor(nb, resources, km=km):
             for cell_idx, cell in enumerate(nb.cells):
@@ -159,8 +163,8 @@ class VoilaHandler(ExtensionHandler):
             notebook = model['content']
             notebook = yield self.fix_notebook(notebook)
             raise tornado.gen.Return(notebook)  # TODO py2: replace by return
-        elif extension in self.voila_configuration.extension_language_mapping:
-            language = self.voila_configuration.extension_language_mapping[extension]
+        elif extension in self.config.extension_language_mapping:
+            language = self.config.extension_language_mapping[extension]
             notebook = yield self.create_notebook(model, language=language)
             raise tornado.gen.Return(notebook)  # TODO py2: replace by return
         else:
@@ -215,8 +219,8 @@ class VoilaHandler(ExtensionHandler):
 
         If multiple kernels matches are found, we try to return the same kernel name each time.
         """
-        if kernel_language in self.voila_configuration.language_kernel_mapping:
-            raise tornado.gen.Return(self.voila_configuration.language_kernel_mapping[kernel_language])  # TODO py2: replace by return
+        if kernel_language in self.config.language_kernel_mapping:
+            raise tornado.gen.Return(self.config.language_kernel_mapping[kernel_language])  # TODO py2: replace by return
         if kernel_specs is None:
             kernel_specs = yield tornado.gen.maybe_future(self.kernel_spec_manager.get_all_specs())
         matches = [

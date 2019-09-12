@@ -9,6 +9,9 @@ TEST_XEUS_CLING = os.environ.get('VOILA_TEST_XEUS_CLING', '') == '1'
 def voila_args(notebook_directory, voila_args_extra):
     return ['--Voila.root_dir=%r' % notebook_directory] + voila_args_extra
 
+@pytest.fixture
+def print_notebook_url(add_token, print_notebook_url):
+    return add_token(print_notebook_url)
 
 @pytest.mark.gen_test
 def test_print(http_client, print_notebook_url):
