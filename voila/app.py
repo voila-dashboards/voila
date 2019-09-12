@@ -52,6 +52,7 @@ from ipython_genutils.py3compat import getcwd
 from .paths import ROOT, STATIC_ROOT, collect_template_paths
 from .handler import VoilaHandler
 from .treehandler import VoilaTreeHandler
+from .static_file_handler import WhiteListFileHandler
 from ._version import __version__
 from .execute import VoilaExecutePreprocessor
 from .exporter import VoilaExporter
@@ -129,6 +130,30 @@ class Voila(ExtensionApp):
             'template name to be used by voila.'
         )
     )
+
+    file_whitelist = List(
+        Unicode(),
+        [r'.*\.(png|jpg|gif|svg)'],
+        help=r"""
+        List of regular expressions for controlling which static files are served.
+        All files that are served should at least match 1 whitelist rule, and no blacklist rule
+        Example: --VoilaConfiguration.file_whitelist="['.*\.(png|jpg|gif|svg)', 'public.*']"
+        """,
+    ).tag(config=True)
+
+    file_blacklist = List(
+        Unicode(),
+        [r'.*\.(ipynb|py)'],
+        help=r"""
+        List of regular expressions for controlling which static files are forbidden to be served.
+        All files that are served should at least match 1 whitelist rule, and no blacklist rule
+        Example:
+        --VoilaConfiguration.file_whitelist="['.*']" # all files
+        --VoilaConfiguration.file_blacklist="['private.*', '.*\.(ipynb)']" # except files in the private dir and notebook files
+        """
+    ).tag(config=True)
+
+
     resources = Dict(
         allow_none=True,
         help="""
@@ -137,6 +162,7 @@ class Voila(ExtensionApp):
         --Volia.resources="{'reveal': {'transition': 'fade', 'scroll': True}}"
         """
     ).tag(config=True)
+
     theme = Unicode('light').tag(config=True)
     strip_sources = Bool(True, help='Strip sources from rendered html').tag(config=True)
     enable_nbextensions = Bool(False, config=True, help=('Set to True for Voila to load notebook extensions'))
@@ -257,13 +283,20 @@ class Voila(ExtensionApp):
         self.settings.update({ 'notebook_path': self.notebook_path })
 
     def initialize_templates(self):
-        # common configuration options between the server extension and the application
-        collect_template_paths(
-            self.nbconvert_template_paths,
-            self.static_paths,
-            self.template_paths,
-            self.template
-        )
+        if self.template:
+            # common configuration options between the server extension and the application
+            collect_template_paths(
+                self.nbconvert_template_paths,
+                self.static_paths,
+                self.template_paths,
+                self.template
+            )
+
+        self.serverapp.log.debug('using template: %s', self.template)
+        self.serverapp.log.debug('nbconvert template paths:\n\t%s', '\n\t'.join(self.nbconvert_template_paths))
+        self.serverapp.log.debug('template paths:\n\t%s', '\n\t'.join(self.template_paths))
+        self.serverapp.log.debug('static paths:\n\t%s', '\n\t'.join(self.static_paths))
+
         jenv_opt = {"autoescape": True}
         env = jinja2.Environment(loader=jinja2.FileSystemLoader(self.template_paths), extensions=['jinja2.ext.i18n'], **jenv_opt)
 
@@ -274,6 +307,31 @@ class Voila(ExtensionApp):
         self.settings.update(**template_settings)
 
     def initialize_handlers(self):
+        # Serving notebook extensions
+        if self.enable_nbextensions:
+            self.handlers.append(
+                (
+                    '/voila/nbextensions/(.*)', 
+                    FileFindHandler,
+                    {
+                        'path': self.nbextensions_path,
+                        'no_cache_paths': ['/']
+                    }
+                )
+            )
+
+        self.handlers.append(
+            (
+                '/voila/files/(.*)', 
+                WhiteListFileHandler,
+                {
+                    'whitelist': self.file_whitelist,
+                    'blacklist': self.file_blacklist,
+                    'path': self.root_dir,
+                }
+            )
+        )
+        
         if self.notebook_path:
             self.handlers.append(('/voila', VoilaHandler))
         else:

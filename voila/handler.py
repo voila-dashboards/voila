@@ -11,6 +11,7 @@ import os
 
 import tornado.web
 
+import nbformat
 from jupyter_server.utils import url_path_join
 from jupyter_server.extension.handler import ExtensionHandler
 from jupyter_server.config_manager import recursive_update

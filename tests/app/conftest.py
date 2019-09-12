@@ -1,5 +1,5 @@
 import os
-
+import urllib
 import pytest
 
 from traitlets.config import Config
@@ -64,7 +64,16 @@ def app(voila_app):
 def add_token(serverapp):
     '''Add a token to any url.'''
     def add_token_to_url(url):
-        return url + '?token={}'.format(serverapp.token)
+        parts = list(urllib.parse.urlparse(url))
+        if parts[4] == '':
+            query = 'token={}'.format(serverapp.token)
+        else:
+            query = '{q}&token={token}'.format(
+                q=parts[4], 
+                token=serverapp.token)
+        parts[4] = query
+        new_url = urllib.parse.urlunparse(parts)
+        return new_url
     return add_token_to_url
 
 @pytest.fixture
