@@ -184,6 +184,10 @@ class Voila(ExtensionApp):
         help=_("path to notebook to serve with voila"),
     )
 
+    @default('notebook_path')
+    def _default_notebook_path(self):
+        return self.serverapp.file_to_run
+
     nbconvert_template_paths = List(
         [], config=True, help=_("path to nbconvert templates")
     )
@@ -255,18 +259,6 @@ class Voila(ExtensionApp):
             return getcwd()
 
     default_url = Unicode("/voila", config=True)
-
-    def parse_command_line(self, argv=None):
-        super(Voila, self).parse_command_line(argv)
-        # Catch first argument as notebook path.
-        if self.extra_args:
-            notebook_path = self.extra_args[0]
-            f = os.path.abspath(notebook_path)
-            self.argv.remove(notebook_path)
-            if not os.path.exists(f):
-                self.log.critical(_("No such file or directory: %s"), f)
-                self.exit(1)
-            self.notebook_path = notebook_path
 
     @staticmethod
     def initialize_server(argv=[], load_other_extensions=False, **kwargs):
