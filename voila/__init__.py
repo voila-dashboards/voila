@@ -12,6 +12,7 @@ from .app import Voila  # noqa
 
 load_jupyter_server_extension = Voila.load_jupyter_server_extension
 
+
 def _jupyter_nbextension_paths():
     return [dict(
         section="notebook",

@@ -10,41 +10,15 @@
 from zmq.eventloop import ioloop
 
 import gettext
-import io
 import logging
-import threading
-import tempfile
 import os
-import shutil
-import signal
-import socket
-import webbrowser
-import errno
-import random
-
-try:
-    from urllib.parse import urljoin
-    from urllib.request import pathname2url
-except ImportError:
-    from urllib import pathname2url
-    from urlparse import urljoin
 
 import jinja2
 
-import tornado.ioloop
-import tornado.web
-
 from traitlets.config import Config
-from traitlets.config.application import Application
 from traitlets import Unicode, Integer, Bool, Dict, List, default
 
-from jupyter_server.serverapp import ServerApp
-from jupyter_server.services.kernels.kernelmanager import MappingKernelManager
-from jupyter_server.services.kernels.handlers import KernelHandler, ZMQChannelsHandler
-from jupyter_server.services.contents.largefilemanager import LargeFileManager
 from jupyter_server.base.handlers import path_regex
-from jupyter_server.utils import url_path_join
-from jupyter_server.services.config import ConfigManager
 from jupyter_server.base.handlers import FileFindHandler
 from jupyter_server.extension.application import ExtensionApp
 from jupyter_core.paths import jupyter_config_path, jupyter_path
@@ -70,15 +44,24 @@ def _(x):
 
 class Voila(ExtensionApp):
 
-    name = 'voila'
+    name = "voila"
     version = __version__
-    examples = 'jupyter voila example.ipynb'
+    examples = "jupyter voila example.ipynb"
     load_other_extensions = False
-    
+
     flags = {
-        'debug': ({'ServerApp': {'log_level': logging.DEBUG}}, _("Set the log level to logging.DEBUG")),
-        'no-browser': ({'Voila': {'open_browser': False}}, _('Don\'t open the notebook in a browser after startup.')),
-        'standalone': ({'ServerApp': {'standalone': True}}, _('Run the server without enabling extensions.'))
+        "debug": (
+            {"ServerApp": {"log_level": logging.DEBUG}},
+            _("Set the log level to logging.DEBUG"),
+        ),
+        "no-browser": (
+            {"Voila": {"open_browser": False}},
+            _("Don't open the notebook in a browser after startup."),
+        ),
+        "standalone": (
+            {"ServerApp": {"standalone": True}},
+            _("Run the server without enabling extensions."),
+        ),
     }
 
     description = Unicode(
@@ -99,48 +82,40 @@ class Voila(ExtensionApp):
         False,
         config=True,
         help=_(
-            'Will autoreload to server and the page when a template, js file or Python code changes'
-        )
+            "Will autoreload to server and the page when a template, js file or Python code changes"
+        ),
     )
 
-    root_dir = Unicode(config=True, help=_('The directory to use for notebooks.'))
-    
+    root_dir = Unicode(config=True, help=_("The directory to use for notebooks."))
+
     static_root = Unicode(
         STATIC_ROOT,
         config=True,
-        help=_(
-            'Directory holding static assets (HTML, JS and CSS files).'
-        )
+        help=_("Directory holding static assets (HTML, JS and CSS files)."),
     )
-    
+
     aliases = {
-        'port': 'ServerApp.port',
-        'static': 'Voila.static_root',
-        'strip_sources': 'Voila.strip_sources',
-        'autoreload': 'Voila.autoreload',
-        'template': 'Voila.template',
-        'theme': 'Voila.theme',
-        'enable_nbextensions': 'Voila.enable_nbextensions',
+        "port": "ServerApp.port",
+        "static": "Voila.static_root",
+        "strip_sources": "Voila.strip_sources",
+        "autoreload": "Voila.autoreload",
+        "template": "Voila.template",
+        "theme": "Voila.theme",
+        "enable_nbextensions": "Voila.enable_nbextensions",
     }
-    
-    classes = [
-        VoilaExecutePreprocessor,
-        VoilaExporter,
-        VoilaCSSPreprocessor
-    ]
+
+    classes = [VoilaExecutePreprocessor, VoilaExporter, VoilaCSSPreprocessor]
 
     template = Unicode(
-        'default',
+        "default",
         config=True,
         allow_none=True,
-        help=(
-            'template name to be used by voila.'
-        )
+        help=("template name to be used by voila."),
     )
 
     file_whitelist = List(
         Unicode(),
-        [r'.*\.(png|jpg|gif|svg)'],
+        [r".*\.(png|jpg|gif|svg)"],
         help=r"""
         List of regular expressions for controlling which static files are served.
         All files that are served should at least match 1 whitelist rule, and no blacklist rule
@@ -150,14 +125,14 @@ class Voila(ExtensionApp):
 
     file_blacklist = List(
         Unicode(),
-        [r'.*\.(ipynb|py)'],
+        [r".*\.(ipynb|py)"],
         help=r"""
         List of regular expressions for controlling which static files are forbidden to be served.
         All files that are served should at least match 1 whitelist rule, and no blacklist rule
         Example:
         --VoilaConfiguration.file_whitelist="['.*']" # all files
         --VoilaConfiguration.file_blacklist="['private.*', '.*\.(ipynb)']" # except files in the private dir and notebook files
-        """
+        """,
     ).tag(config=True)
 
     language_kernel_mapping = Dict(
@@ -170,10 +145,10 @@ class Voila(ExtensionApp):
 
     extension_language_mapping = Dict(
         {},
-        help='''Mapping of file extension to kernel language
+        help="""Mapping of file extension to kernel language
         Example mapping .py files to a python language kernel, and .cpp to a C++11 language kernel:
         --VoilaConfiguration.extension_language_mapping='{".py": "python", ".cpp": "C++11"}'
-        ''',
+        """,
     ).tag(config=True)
 
     resources = Dict(
@@ -182,21 +157,23 @@ class Voila(ExtensionApp):
         extra resources used by templates;
         example use with --template=reveal
         --Volia.resources="{'reveal': {'transition': 'fade', 'scroll': True}}"
-        """
+        """,
     ).tag(config=True)
 
-    theme = Unicode('light').tag(config=True)
-    
-    strip_sources = Bool(True, help='Strip sources from rendered html').tag(config=True)
-    
-    enable_nbextensions = Bool(False, config=True, help=('Set to True for Voila to load notebook extensions'))
+    theme = Unicode("light").tag(config=True)
+
+    strip_sources = Bool(True, help="Strip sources from rendered html").tag(config=True)
+
+    enable_nbextensions = Bool(
+        False, config=True, help=("Set to True for Voila to load notebook extensions")
+    )
 
     connection_dir_root = Unicode(
         config=True,
         help=_(
-            'Location of temporry connection files. Defaults '
-            'to system `tempfile.gettempdir()` value.'
-        )
+            "Location of temporry connection files. Defaults "
+            "to system `tempfile.gettempdir()` value."
+        ),
     )
     connection_dir = Unicode()
 
@@ -204,38 +181,24 @@ class Voila(ExtensionApp):
         None,
         config=True,
         allow_none=True,
-        help=_(
-            'path to notebook to serve with voila'
-        )
+        help=_("path to notebook to serve with voila"),
     )
 
     nbconvert_template_paths = List(
-        [],
-        config=True,
-        help=_(
-            'path to nbconvert templates'
-        )
+        [], config=True, help=_("path to nbconvert templates")
     )
 
     template_paths = List(
-        [],
-        allow_none=True,
-        config=True,
-        help=_(
-            'path to nbconvert templates'
-        )
+        [], allow_none=True, config=True, help=_("path to nbconvert templates")
     )
 
-    static_paths = List(
-        [STATIC_ROOT],
+    static_paths = List([STATIC_ROOT], config=True, help=_("paths to static assets"))
+
+    webbrowser_open_new = Integer(
+        2,
         config=True,
         help=_(
-            'paths to static assets'
-        )
-    )
-
-    webbrowser_open_new = Integer(2, config=True,
-                                  help=_("""Specify Where to open the notebook on startup. This is the
+            """Specify Where to open the notebook on startup. This is the
                                   `new` argument passed to the standard library method `webbrowser.open`.
                                   The behaviour is not guaranteed, but depends on browser support. Valid
                                   values are:
@@ -243,27 +206,30 @@ class Voila(ExtensionApp):
                                   - 1 opens a new window,
                                   - 0 opens in an existing window.
                                   See the `webbrowser.open` documentation for details.
-                                  """))
+                                  """
+        ),
+    )
 
-    custom_display_url = Unicode(u'', config=True,
-                                 help=_("""Override URL shown to users.
+    custom_display_url = Unicode(
+        u"",
+        config=True,
+        help=_(
+            """Override URL shown to users.
                                  Replace actual URL, including protocol, address, port and base URL,
                                  with the given value when displaying URL to the users. Do not change
                                  the actual connection URL. If authentication token is enabled, the
                                  token is added to the custom URL automatically.
                                  This option is intended to be used when the URL to display to the user
                                  cannot be determined reliably by the Jupyter notebook server (proxified
-                                 or containerized setups for example)."""))
-
-    config_file_paths = List(
-        Unicode(),
-        config=True,
-        help=_(
-            'Paths to search for voila.(py|json)'
-        )
+                                 or containerized setups for example)."""
+        ),
     )
 
-    @default('config_file_paths')
+    config_file_paths = List(
+        Unicode(), config=True, help=_("Paths to search for voila.(py|json)")
+    )
+
+    @default("config_file_paths")
     def _config_file_paths_default(self):
         return [os.getcwd()] + jupyter_config_path()
 
@@ -271,17 +237,17 @@ class Voila(ExtensionApp):
     @property
     def nbextensions_path(self):
         """The path to look for Javascript notebook extensions"""
-        path = jupyter_path('nbextensions')
+        path = jupyter_path("nbextensions")
         # FIXME: remove IPython nbextensions path after a migration period
         try:
             from IPython.paths import get_ipython_dir
         except ImportError:
             pass
         else:
-            path.append(os.path.join(get_ipython_dir(), 'nbextensions'))
+            path.append(os.path.join(get_ipython_dir(), "nbextensions"))
         return path
 
-    @default('root_dir')
+    @default("root_dir")
     def _default_root_dir(self):
         if self.notebook_path:
             return os.path.dirname(os.path.abspath(self.notebook_path))
@@ -289,7 +255,7 @@ class Voila(ExtensionApp):
             return getcwd()
 
     default_url = Unicode("/voila", config=True)
-    
+
     def parse_command_line(self, argv=None):
         super(Voila, self).parse_command_line(argv)
         # Catch first argument as notebook path.
@@ -306,19 +272,19 @@ class Voila(ExtensionApp):
     def initialize_server(argv=[], load_other_extensions=False, **kwargs):
         """Get an instance of the Jupyter Server."""
         config = {
-            'ServerApp': {
-                'MappingKernelManager': {
-                    'allowed_message_types': [
-                        'comm_msg',
-                        'comm_info_request',
-                        'kernel_info_request',
-                        'shutdown_request'
+            "ServerApp": {
+                "MappingKernelManager": {
+                    "allowed_message_types": [
+                        "comm_msg",
+                        "comm_info_request",
+                        "kernel_info_request",
+                        "shutdown_request",
                     ]
                 }
             }
         }
         return ExtensionApp.initialize_server(
-            argv=argv, 
+            argv=argv,
             load_other_extensions=load_other_extensions,
             config=Config(config),
             **kwargs
@@ -328,10 +294,7 @@ class Voila(ExtensionApp):
         # Ensure the server finds both serverconfig and nbconfig.
         paths = self.serverapp.config_manager.read_config_path
         for p in jupyter_config_path():
-            paths.extend([
-                os.path.join(p, 'serverconfig'),
-                os.path.join(p, 'nbconfig')
-            ])
+            paths.extend([os.path.join(p, "serverconfig"), os.path.join(p, "nbconfig")])
         # Keep unique paths.
         paths = list(set(paths))
         self.serverapp.config_manager.read_config_path = paths
@@ -340,7 +303,7 @@ class Voila(ExtensionApp):
         # self.serverapp.root_dir = self.root_dir
 
         # Pass notebook path to settings.
-        self.settings.update({ 'notebook_path': self.notebook_path })
+        self.settings.update({"notebook_path": self.notebook_path})
 
     def initialize_templates(self):
         if self.template:
@@ -349,21 +312,32 @@ class Voila(ExtensionApp):
                 self.nbconvert_template_paths,
                 self.static_paths,
                 self.template_paths,
-                self.template
+                self.template,
             )
 
-        self.serverapp.log.debug('using template: %s', self.template)
-        self.serverapp.log.debug('nbconvert template paths:\n\t%s', '\n\t'.join(self.nbconvert_template_paths))
-        self.serverapp.log.debug('template paths:\n\t%s', '\n\t'.join(self.template_paths))
-        self.serverapp.log.debug('static paths:\n\t%s', '\n\t'.join(self.static_paths))
+        self.serverapp.log.debug("using template: %s", self.template)
+        self.serverapp.log.debug(
+            "nbconvert template paths:\n\t%s",
+            "\n\t".join(self.nbconvert_template_paths),
+        )
+        self.serverapp.log.debug(
+            "template paths:\n\t%s", "\n\t".join(self.template_paths)
+        )
+        self.serverapp.log.debug("static paths:\n\t%s", "\n\t".join(self.static_paths))
 
         jenv_opt = {"autoescape": True}
-        env = jinja2.Environment(loader=jinja2.FileSystemLoader(self.template_paths), extensions=['jinja2.ext.i18n'], **jenv_opt)
+        env = jinja2.Environment(
+            loader=jinja2.FileSystemLoader(self.template_paths),
+            extensions=["jinja2.ext.i18n"],
+            **jenv_opt
+        )
 
-        nbui = gettext.translation('nbui', localedir=os.path.join(ROOT, 'i18n'), fallback=True)
+        nbui = gettext.translation(
+            "nbui", localedir=os.path.join(ROOT, "i18n"), fallback=True
+        )
         env.install_gettext_translations(nbui, newstyle=False)
 
-        template_settings = {'voila_jinja2_env': env}
+        template_settings = {"voila_jinja2_env": env}
         self.settings.update(**template_settings)
 
     def initialize_handlers(self):
@@ -371,35 +345,33 @@ class Voila(ExtensionApp):
         if self.enable_nbextensions:
             self.handlers.append(
                 (
-                    '/voila/nbextensions/(.*)', 
+                    "/voila/nbextensions/(.*)",
                     FileFindHandler,
-                    {
-                        'path': self.nbextensions_path,
-                        'no_cache_paths': ['/']
-                    }
+                    {"path": self.nbextensions_path, "no_cache_paths": ["/"]},
                 )
             )
 
         self.handlers.append(
             (
-                '/voila/files/(.*)', 
+                "/voila/files/(.*)",
                 WhiteListFileHandler,
                 {
-                    'whitelist': self.file_whitelist,
-                    'blacklist': self.file_blacklist,
-                    'path': self.root_dir,
-                }
+                    "whitelist": self.file_whitelist,
+                    "blacklist": self.file_blacklist,
+                    "path": self.root_dir,
+                },
             )
         )
-        
+
         if self.notebook_path:
-            self.handlers.append(('/voila', VoilaHandler))
+            self.handlers.append(("/voila", VoilaHandler))
         else:
             handlers = [
-                ('/voila/render' + path_regex, VoilaHandler),
-                ('/voila', VoilaTreeHandler),
-                ('/voila/tree' + path_regex, VoilaTreeHandler),
+                ("/voila/render" + path_regex, VoilaHandler),
+                ("/voila", VoilaTreeHandler),
+                ("/voila/tree" + path_regex, VoilaTreeHandler),
             ]
             self.handlers.extend(handlers)
+
 
 main = Voila.launch_instance
