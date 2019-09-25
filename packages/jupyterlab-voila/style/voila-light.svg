@@ -1,9 +1,73 @@
-<svg width="16" height="16" version="1.1" viewBox="0 0 4.2333 4.2333" xmlns="http://www.w3.org/2000/svg">
- <g transform="translate(-80.642 -140.5)">
-  <g transform="matrix(.73024 0 0 .73024 21.745 39.052)" fill="#616161" stroke-width=".043931" aria-label="[v]">
-   <path d="m80.899 139.43c-0.14157 0-0.25741 0.11584-0.25741 0.25741l0.0051 4.2807c0 0.14157 0.11583 0.25741 0.25741 0.25741l1.1403 3e-3h0.0026c0.14157 0 0.25741-0.11583 0.25741-0.2574 0-0.14158-0.11583-0.25741-0.25741-0.25741h-0.0026l-0.88291-3e-3 -0.0051-3.7659h0.88805c0.14157 0 0.25741-0.11584 0.25741-0.25741s-0.11583-0.25741-0.25741-0.25741z"/>
-   <path d="m82.342 140.53c0 0.0206 0.0051 0.0566 0.01544 0.0772l1.0296 2.3321c0.02574 0.0592 0.10039 0.10811 0.16474 0.10811 0.06435 0 0.139-0.0489 0.16474-0.10811l1.0296-2.3244c0.0103-0.0206 0.01802-0.0541 0.01802-0.0746 0-0.10039-0.0798-0.18018-0.18018-0.18018-0.06693 0-0.14157 0.0515-0.16732 0.11068l-0.86231 1.9512-0.86746-1.9614c-0.02574-0.0618-0.09781-0.11069-0.16474-0.11069-0.10039 0-0.18018 0.0824-0.18018 0.18019z"/>
-   <path d="m86.205 139.42h-1.1455c-0.14157 0-0.25741 0.11583-0.25741 0.25741 0 0.14157 0.11583 0.2574 0.25741 0.2574h0.88806l-0.0051 3.7659-0.88291 3e-3h-0.0026c-0.14157 0-0.25741 0.11584-0.25741 0.25741s0.11583 0.25741 0.25741 0.25741h0.0026l1.1403-3e-3c0.14157 0 0.25741-0.11583 0.25741-0.2574l0.0051-4.2807c0-0.14158-0.11583-0.25741-0.25741-0.25741z"/>
-  </g>
- </g>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   id="Calque_1"
+   data-name="Calque 1"
+   viewBox="0 0 330.005 330.005"
+   version="1.1"
+   sodipodi:docname="voila-light.svg"
+   inkscape:version="0.92.3 (2405546, 2018-03-11)"
+   width="330.005"
+   height="330.005">
+  <metadata
+     id="metadata17">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title>BLEU-proposition-icone</dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <sodipodi:namedview
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1"
+     objecttolerance="10"
+     gridtolerance="10"
+     guidetolerance="10"
+     inkscape:pageopacity="0"
+     inkscape:pageshadow="2"
+     inkscape:window-width="2426"
+     inkscape:window-height="1329"
+     id="namedview15"
+     showgrid="false"
+     inkscape:zoom="1.888"
+     inkscape:cx="-252.89506"
+     inkscape:cy="180.98119"
+     inkscape:window-x="134"
+     inkscape:window-y="55"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="Calque_1"
+     fit-margin-top="10"
+     fit-margin-left="10"
+     fit-margin-right="10"
+     fit-margin-bottom="10" />
+  <defs
+     id="defs4">
+    <style
+       id="style2">.cls-1{fill:#5dbcaf;}.cls-2{fill:#268380;}.cls-3{fill:#f8e14b;}</style>
+  </defs>
+  <title
+     id="title6">BLEU-proposition-icone</title>
+  <path
+     class="cls-2"
+     d="m 165.005,320 c -85.47,0 -155,-69.53 -155,-155 0,-85.47 69.53,-155 155,-155 85.47,0 155,69.53 155,155 0,85.47 -69.53,155 -155,155 z m 0,-275.49 A 120.49,120.49 0 1 0 285.495,165 120.62,120.62 0 0 0 165.005,44.51 Z"
+     id="path10"
+     style="fill:#616161;fill-opacity:1"
+     inkscape:connector-curvature="0" />
+  <path
+     class="cls-3"
+     d="m 165.005,320 c -85.47,0 -155,-69.53 -155,-155 a 17.26,17.26 0 1 1 34.51,0 120.62,120.62 0 0 0 120.49,120.49 17.26,17.26 0 1 1 0,34.51 z"
+     id="path12"
+     inkscape:connector-curvature="0"
+     style="fill:#f8e14b" />
 </svg>

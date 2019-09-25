@@ -5,7 +5,7 @@
 
    The full license is in the file LICENSE, distributed with this software.
 
-.. image:: voila.svg
+.. image:: voila-logo.svg
    :alt: voila
 
 From notebooks to standalone web applications and dashboards.
