@@ -1,4 +1,5 @@
 #############################################################################
+# Copyright (c) 2018, QuantStack                                            #
 # Copyright (c) 2018, Voila Contributors                                    #
 #                                                                           #
 # Distributed under the terms of the BSD 3-Clause License.                  #
