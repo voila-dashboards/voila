@@ -79,15 +79,15 @@ class VoilaHandler(JupyterHandler):
         if extra_resources:
             recursive_update(resources, extra_resources)
 
-        exporter = VoilaExporter(
+        self.exporter = VoilaExporter(
             template_path=self.nbconvert_template_paths,
             config=self.traitlet_config,
             contents_manager=self.contents_manager  # for the image inlining
         )
         if self.voila_configuration.strip_sources:
-            exporter.exclude_input = True
-            exporter.exclude_output_prompt = True
-            exporter.exclude_input_prompt = True
+            self.exporter.exclude_input = True
+            self.exporter.exclude_output_prompt = True
+            self.exporter.exclude_input_prompt = True
 
         # These functions allow the start of a kernel and execution of the notebook after (parts of) the template
         # has been rendered and send to the client to allow progressive rendering.
@@ -103,7 +103,7 @@ class VoilaHandler(JupyterHandler):
         # Compose reply
         self.set_header('Content-Type', 'text/html')
         # render notebook in snippets, and flush them out to the browser can render progresssively
-        for html_snippet, resources in exporter.generate_from_notebook_node(self.notebook, resources=resources, extra_context=extra_context):
+        for html_snippet, resources in self.exporter.generate_from_notebook_node(self.notebook, resources=resources, extra_context=extra_context):
             self.write(html_snippet)
             self.flush()  # we may not want to consider not flusing after each snippet, but add an explicit flush function to the jinja context
             yield  # give control back to tornado's IO loop, so it can handle static files or other requests
