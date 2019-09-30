@@ -13,6 +13,8 @@ from tornado import web
 from jupyter_server.base.handlers import JupyterHandler
 from jupyter_server.utils import url_path_join, url_escape
 
+from .utils import get_server_root_dir
+
 
 class VoilaTreeHandler(JupyterHandler):
     def initialize(self, **kwargs):
@@ -69,7 +71,7 @@ class VoilaTreeHandler(JupyterHandler):
                        breadcrumbs=breadcrumbs,
                        contents=contents,
                        terminals_available=False,
-                       server_root=self.settings['server_root_dir']))
+                       server_root=get_server_root_dir(self.settings)))
         elif cm.file_exists(path):
             # it's not a directory, we have redirecting to do
             model = cm.get(path, content=False)
