@@ -68,6 +68,27 @@ being used for reproducible research, making it an excellent fit for deploying V
    the server will be able to start within a few seconds.
 
 
+Customizing Voila on Binder
+***************************
+
+To specify different options (such as the theme and template), create a
+``jupyter_config.json`` file at the root of the repository with the following content:
+
+
+   .. code:: json
+
+       {
+         "VoilaConfiguration": {
+           "theme": "dark",
+           "template": "gridstack"
+         }
+       }
+
+
+An example can be found in the
+`voila-demo <https://github.com/maartenbreddels/voila-demo>`__ repository.
+
+
 Deployment on Heroku
 --------------------
 
