@@ -7,6 +7,8 @@
 
 
 {%- block html_head_css -%}
+{{ super() }}
+
 <link rel="stylesheet" type="text/css" href="{{resources.base_url}}voila/static/index.css">
 
 {% if resources.theme == 'dark' %}

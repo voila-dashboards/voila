@@ -2,9 +2,12 @@
 
 {% block codecell %}
 {%- if not cell.outputs -%}
-{%- set extra_class="jp-mod-noOutputs" -%}
+{%- set no_output_class="jp-mod-noOutputs" -%}
 {%- endif -%}
-<div class="jp-Cell jp-CodeCell jp-Notebook-cell {{ extra_class }}">
+{%- if not resources.global_content_filter.include_input -%}
+{%- set no_input_class="jp-mod-noInput" -%}
+{%- endif -%}
+<div class="jp-Cell jp-CodeCell jp-Notebook-cell {{ no_output_class }} {{ no_input_class }}">
 {{ super() }}
 </div>
 {%- endblock codecell %}
