@@ -15,6 +15,18 @@
     <link rel="stylesheet" type="text/css" href="{{resources.base_url}}voila/static/theme-light.css">
 {% endif %}
 
+<style>
+  .spinner {
+    animation: rotation 2s infinite linear;
+      transform-origin: 50% 50%;
+  }
+
+  @keyframes rotation {
+      from {transform: rotate(0deg);}
+      to   {transform: rotate(359deg);}
+  }
+</style>
+
 {% for css in resources.inlining.css %}
     <style>
     {{ css }}
@@ -53,7 +65,7 @@ a.anchor-link {
 <body class="jp-Notebook theme-light" data-base-url="{{resources.base_url}}voila/">
 {% endif %}
   <div id="loading">
-    <h2><i class="fa fa-spinner fa-spin" style="font-size:36px;"></i><span id="loading_text">Running {{nb_title}}...</span></h2>
+    <h2><img class="spinner" src="{{resources.base_url}}voila/static/spinner.svg"></img><span id="loading_text">Running {{nb_title}}...</span></h2>
   </div>
 <script>
 var voila_process = function(cell_index, cell_count) {
