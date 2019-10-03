@@ -16,7 +16,9 @@ from jupyter_server.config_manager import recursive_update
 from jupyter_server.utils import url_path_join
 import nbformat
 
-from .execute import executenb
+from nbconvert.preprocessors import ClearOutputPreprocessor
+
+from .execute import executenb, VoilaExecutePreprocessor
 from .exporter import VoilaExporter
 
 
@@ -133,15 +135,14 @@ class VoilaHandler(JupyterHandler):
         """Generator that will execute a single notebook cell at a time"""
         km = self.kernel_manager.get_kernel(kernel_id)
 
-        all_cells = list(nb.cells)  # copy the cells, since we will modify in place
-        for cell in all_cells:
-            # we execute one cell at a time
-            nb.cells = [cell]  # reuse the same notebook
-            result = executenb(nb, km=km, cwd=self.cwd, config=self.traitlet_config)
-            cell = result.cells[0]  # keep a reference to the executed cell
-            nb.cells = all_cells  # restore notebook in case we access it from the template
-            # we don't filter empty cells, since we do not know how many empty code cells we will have
-            yield cell
+        nb, resources = ClearOutputPreprocessor().preprocess(nb, {'metadata': {'path': self.cwd}})
+        ep = VoilaExecutePreprocessor(config=self.traitlet_config)
+
+        with ep.setup_preprocessor(nb, resources, km=km):
+            for cell_idx, cell in enumerate(nb.cells):
+                res = ep.preprocess_cell(cell, resources, cell_idx, store_history=False)
+
+                yield res[0]
 
     @tornado.gen.coroutine
     def load_notebook(self, path):
