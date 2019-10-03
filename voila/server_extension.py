@@ -21,6 +21,7 @@ from .handler import VoilaHandler
 from .treehandler import VoilaTreeHandler
 from .static_file_handler import MultiStaticFileHandler, WhiteListFileHandler
 from .configuration import VoilaConfiguration
+from .utils import get_server_root_dir
 
 
 def load_jupyter_server_extension(server_app):
@@ -67,7 +68,7 @@ def load_jupyter_server_extension(server_app):
             {
                 'whitelist': voila_configuration.file_whitelist,
                 'blacklist': voila_configuration.file_blacklist,
-                'path': os.path.expanduser(web_app.settings['server_root_dir']),
+                'path': os.path.expanduser(get_server_root_dir(web_app.settings)),
             },
         ),
     ])
