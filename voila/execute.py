@@ -107,6 +107,14 @@ class VoilaExecutePreprocessor(ExecutePreprocessor):
             result = (nb, resources)
         return result
 
+    def preprocess_cell(self, cell, resources, cell_index, store_history=True):
+        try:
+            result = super(VoilaExecutePreprocessor, self).preprocess_cell(cell, resources, cell_index, store_history)
+        except CellExecutionError as e:
+            self.log.error(e)
+            result = [cell]
+        return result
+
     def register_output_hook(self, msg_id, hook):
         # mimics
         # https://jupyterlab.github.io/jupyterlab/services/interfaces/kernel.ikernelconnection.html#registermessagehook
