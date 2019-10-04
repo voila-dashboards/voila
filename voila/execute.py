@@ -7,11 +7,45 @@
 # The full license is in the file LICENSE, distributed with this software.  #
 #############################################################################
 import collections
+import logging
 
 from nbconvert.preprocessors import ClearOutputPreprocessor
 from nbconvert.preprocessors.execute import CellExecutionError, ExecutePreprocessor
 
 from ipykernel.jsonutil import json_clean
+
+
+def strip_code_cell_errors(cell):
+    """Strip any error outputs and traceback from a code cell."""
+    outputs = cell['outputs']
+
+    error_outputs = [output for output in outputs if output['output_type'] == 'error']
+
+    error_message = 'There was an error when executing cell [{}]. Please run Voila with --debug to see the error message.'.format(cell['execution_count'])
+
+    for output in error_outputs:
+        output['ename'] = 'ExecutionError'
+        output['evalue'] = 'Execution error'
+        output['traceback'] = [error_message]
+
+    return cell
+
+
+def strip_notebook_errors(nb):
+    """Strip error messages and traceback from a Notebook."""
+    cells = nb['cells']
+
+    code_cells = [cell for cell in cells if cell['cell_type'] == 'code']
+
+    for cell in code_cells:
+        strip_code_cell_errors(cell)
+
+    return nb
+
+
+def should_strip_error(config):
+    """Return True if errors should be stripped from the Notebook, False otherwise, depending on the current config."""
+    return 'Voila' not in config or 'log_level' not in config['Voila'] or config['Voila']['log_level'] != logging.DEBUG
 
 
 class OutputWidget:
@@ -105,6 +139,11 @@ class VoilaExecutePreprocessor(ExecutePreprocessor):
         except CellExecutionError as e:
             self.log.error(e)
             result = (nb, resources)
+
+        # Strip errors and traceback if not in debug mode
+        if should_strip_error(self.config):
+            strip_notebook_errors(nb)
+
         return result
 
     def preprocess_cell(self, cell, resources, cell_index, store_history=True):
@@ -113,6 +152,11 @@ class VoilaExecutePreprocessor(ExecutePreprocessor):
         except CellExecutionError as e:
             self.log.error(e)
             result = [cell]
+
+        # Strip errors and traceback if not in debug mode
+        if should_strip_error(self.config):
+            strip_code_cell_errors(cell)
+
         return result
 
     def register_output_hook(self, msg_id, hook):
