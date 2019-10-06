@@ -8,7 +8,7 @@ Rendering of live Jupyter notebooks with interactive widgets.
 
 ## Introduction
 
-Voila serves live Jupyter notebook including Jupyter interactive widgets.
+Voila serves live Jupyter notebooks including Jupyter interactive widgets.
 
 Unlike the usual HTML-converted notebooks, each user connecting to the Voila
 tornado application gets a dedicated Jupyter kernel which can execute the
@@ -16,7 +16,7 @@ callbacks to changes in Jupyter interactive widgets.
 
 - By default, voila disallows execute requests from the front-end, preventing
   execution of arbitrary code.
-- By defaults, voila runs with the `strip_source` option, which strips out the
+- By default, voila runs with the `strip_source` option, which strips out the
   input cells from the rendered notebook.
 
 ## Installation
