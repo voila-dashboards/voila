@@ -94,14 +94,25 @@ class OutputWidget:
 
 class VoilaExecutePreprocessor(ExecutePreprocessor):
     """Execute, but respect the output widget behaviour"""
-    def preprocess(self, nb, resources, km=None):
+    def __init__(self, **kwargs):
+        super(VoilaExecutePreprocessor, self).__init__(**kwargs)
         self.output_hook_stack = collections.defaultdict(list)  # maps to list of hooks, where the last is used
         self.output_objects = {}
+
+    def preprocess(self, nb, resources, km=None):
         try:
             result = super(VoilaExecutePreprocessor, self).preprocess(nb, resources=resources, km=km)
         except CellExecutionError as e:
             self.log.error(e)
             result = (nb, resources)
+        return result
+
+    def preprocess_cell(self, cell, resources, cell_index, store_history=True):
+        try:
+            result = super(VoilaExecutePreprocessor, self).preprocess_cell(cell, resources, cell_index, store_history)
+        except CellExecutionError as e:
+            self.log.error(e)
+            result = [cell]
         return result
 
     def register_output_hook(self, msg_id, hook):
