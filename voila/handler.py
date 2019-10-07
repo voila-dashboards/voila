@@ -33,8 +33,7 @@ class VoilaHandler(JupyterHandler):
         self.kernel_started = False
 
     @tornado.web.authenticated
-    @tornado.gen.coroutine
-    def get(self, path=None):
+    async def get(self, path=None):
         # if the handler got a notebook_path argument, always serve that
         notebook_path = self.notebook_path or path
         if self.notebook_path and path:  # when we are in single notebook mode but have a path
@@ -55,7 +54,7 @@ class VoilaHandler(JupyterHandler):
         else:
             nbextensions = []
 
-        self.notebook = yield self.load_notebook(notebook_path)
+        self.notebook = await self.load_notebook(notebook_path)
         if not self.notebook:
             return
         self.cwd = os.path.dirname(notebook_path)
@@ -97,13 +96,17 @@ class VoilaHandler(JupyterHandler):
             'notebook_execute': self._jinja_notebook_execute,
         }
 
+        # Currenly _jinja_kernel_start is executed from a different thread, which causes the websocket connection from
+        # the frontend to fail. Instead, we start it beforehand, and just return the kernel_id in _jinja_kernel_start
+        self.kernel_id = await tornado.gen.maybe_future(self.kernel_manager.start_kernel(kernel_name=self.notebook.metadata.kernelspec.name, path=self.cwd))
+
         # Compose reply
         self.set_header('Content-Type', 'text/html')
         # render notebook in snippets, and flush them out to the browser can render progresssively
-        for html_snippet, resources in self.exporter.generate_from_notebook_node(self.notebook, resources=resources, extra_context=extra_context):
+        async for html_snippet, resources in self.exporter.generate_from_notebook_node(self.notebook, resources=resources, extra_context=extra_context):
             self.write(html_snippet)
             self.flush()  # we may not want to consider not flusing after each snippet, but add an explicit flush function to the jinja context
-            yield  # give control back to tornado's IO loop, so it can handle static files or other requests
+            # yield  # give control back to tornado's IO loop, so it can handle static files or other requests
         self.flush()
 
     def redirect_to_file(self, path):
@@ -112,10 +115,9 @@ class VoilaHandler(JupyterHandler):
     @tornado.gen.coroutine
     def _jinja_kernel_start(self):
         assert not self.kernel_started, "kernel was already started"
-        # Launch kernel
-        kernel_id = yield tornado.gen.maybe_future(self.kernel_manager.start_kernel(kernel_name=self.notebook.metadata.kernelspec.name, path=self.cwd))
+        # See command above aboout not being able to start the kernel from a different thread
         self.kernel_started = True
-        raise tornado.gen.Return(kernel_id)
+        return self.kernel_id
 
     def _jinja_notebook_execute(self, nb, kernel_id):
         km = self.kernel_manager.get_kernel(kernel_id)
@@ -138,26 +140,25 @@ class VoilaHandler(JupyterHandler):
 
                 yield res[0]
 
-    @tornado.gen.coroutine
-    def load_notebook(self, path):
+    # @tornado.gen.coroutine
+    async def load_notebook(self, path):
         model = self.contents_manager.get(path=path)
         if 'content' not in model:
             raise tornado.web.HTTPError(404, 'file not found')
         __, extension = os.path.splitext(model.get('path', ''))
         if model.get('type') == 'notebook':
             notebook = model['content']
-            notebook = yield self.fix_notebook(notebook)
-            raise tornado.gen.Return(notebook)  # TODO py2: replace by return
+            notebook = await self.fix_notebook(notebook)
+            return notebook
         elif extension in self.voila_configuration.extension_language_mapping:
             language = self.voila_configuration.extension_language_mapping[extension]
-            notebook = yield self.create_notebook(model, language=language)
-            raise tornado.gen.Return(notebook)  # TODO py2: replace by return
+            notebook = await self.create_notebook(model, language=language)
+            return notebook
         else:
             self.redirect_to_file(path)
-            raise tornado.gen.Return(None)
+            return None
 
-    @tornado.gen.coroutine
-    def fix_notebook(self, notebook):
+    async def fix_notebook(self, notebook):
         """Returns a notebook object with a valid kernelspec.
 
         In case the kernel is not found, we search for a matching kernel based on the language.
@@ -169,22 +170,21 @@ class VoilaHandler(JupyterHandler):
         kernelspec = notebook.metadata.kernelspec
         kernel_name = kernelspec.get('name', self.kernel_manager.default_kernel_name)
         # We use `maybe_future` to support RemoteKernelSpecManager
-        all_kernel_specs = yield tornado.gen.maybe_future(self.kernel_spec_manager.get_all_specs())
+        all_kernel_specs = await tornado.gen.maybe_future(self.kernel_spec_manager.get_all_specs())
         # Find a spec matching the language if the kernel name does not exist in the kernelspecs
         if kernel_name not in all_kernel_specs:
             missing_kernel_name = kernel_name
-            kernel_name = yield self.find_kernel_name_for_language(kernelspec.language.lower(), kernel_specs=all_kernel_specs)
+            kernel_name = await self.find_kernel_name_for_language(kernelspec.language.lower(), kernel_specs=all_kernel_specs)
             self.log.warning('Could not find a kernel named %r, will use  %r', missing_kernel_name, kernel_name)
         # We make sure the notebook's kernelspec is correct
         notebook.metadata.kernelspec.name = kernel_name
         notebook.metadata.kernelspec.display_name = all_kernel_specs[kernel_name]['spec']['display_name']
         notebook.metadata.kernelspec.language = all_kernel_specs[kernel_name]['spec']['language']
-        raise tornado.gen.Return(notebook)  # TODO py2: replace by return
+        return notebook
 
-    @tornado.gen.coroutine
-    def create_notebook(self, model, language):
-        all_kernel_specs = yield tornado.gen.maybe_future(self.kernel_spec_manager.get_all_specs())
-        kernel_name = yield self.find_kernel_name_for_language(language, kernel_specs=all_kernel_specs)
+    async def create_notebook(self, model, language):
+        all_kernel_specs = await tornado.gen.maybe_future(self.kernel_spec_manager.get_all_specs())
+        kernel_name = await self.find_kernel_name_for_language(language, kernel_specs=all_kernel_specs)
         spec = all_kernel_specs[kernel_name]
         notebook = nbformat.v4.new_notebook(
             metadata={
@@ -196,18 +196,17 @@ class VoilaHandler(JupyterHandler):
             },
             cells=[nbformat.v4.new_code_cell(model['content'])],
         )
-        raise tornado.gen.Return(notebook)  # TODO py2: replace by return
+        return notebook
 
-    @tornado.gen.coroutine
-    def find_kernel_name_for_language(self, kernel_language, kernel_specs=None):
+    async def find_kernel_name_for_language(self, kernel_language, kernel_specs=None):
         """Finds a best matching kernel name given a kernel language.
 
         If multiple kernels matches are found, we try to return the same kernel name each time.
         """
         if kernel_language in self.voila_configuration.language_kernel_mapping:
-            raise tornado.gen.Return(self.voila_configuration.language_kernel_mapping[kernel_language])  # TODO py2: replace by return
+            return self.voila_configuration.language_kernel_mapping[kernel_language]
         if kernel_specs is None:
-            kernel_specs = yield tornado.gen.maybe_future(self.kernel_spec_manager.get_all_specs())
+            kernel_specs = await tornado.gen.maybe_future(self.kernel_spec_manager.get_all_specs())
         matches = [
             name for name, kernel in kernel_specs.items()
             if kernel["spec"]["language"].lower() == kernel_language.lower()
@@ -215,6 +214,6 @@ class VoilaHandler(JupyterHandler):
         if matches:
             # Sort by display name to get the same kernel each time.
             matches.sort(key=lambda name: kernel_specs[name]["spec"]["display_name"])
-            raise tornado.gen.Return(matches[0])  # TODO py2: replace by return
+            return matches[0]
         else:
             raise tornado.web.HTTPError(500, 'No Jupyter kernel for language %r found' % kernel_language)
