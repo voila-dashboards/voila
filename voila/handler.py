@@ -142,7 +142,10 @@ class VoilaHandler(JupyterHandler):
             for cell_idx, cell in enumerate(nb.cells):
                 res = ep.preprocess_cell(cell, resources, cell_idx, store_history=False)
 
-                yield res[0]
+                if filter_empty_code_cells(res[0], self.exporter):
+                    yield res[0]
+                else:
+                    yield None
 
     @tornado.gen.coroutine
     def load_notebook(self, path):

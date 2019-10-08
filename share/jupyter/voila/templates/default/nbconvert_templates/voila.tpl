@@ -110,10 +110,12 @@ var voila_process = function(cell_index, cell_count) {
   {%- for cell in cell_generator(nb, kernel_id) -%}
     {% set cellloop = loop %}
     {%- block any_cell scoped -%}
-    <script>
-      voila_process({{ cellloop.index }}, {{ cell_count }})
-    </script>
-      {{ super() }}
+      <script>
+        voila_process({{ cellloop.index }}, {{ cell_count }})
+      </script>
+      {% if cell is not none %}
+        {{ super() }}
+      {% endif %}
     {%- endblock any_cell -%}
   {%- endfor -%}
 {% endwith %}
