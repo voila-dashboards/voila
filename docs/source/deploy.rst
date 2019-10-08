@@ -13,7 +13,7 @@ The deployment docs are split up in two parts. First there is the
 general section, which should always be followed. Then there is a cloud
 service provider specific section of which one provider should be chosen.
 
-If you are not sure where to deploy your app, we suggest Heroku. You can test
+If you are not sure where to deploy your app, we suggest Binder or Heroku. You can test
 deploying and serving your app without having to enter any credit card details,
 and with very little prior experience of deployments.
 
@@ -45,6 +45,56 @@ Setup an example project
 
 Cloud Service Providers
 =======================
+
+Deployment on Binder
+--------------------
+
+Binder is one of the most accessible ways to deploy Voila applications.
+The service is available at `mybinder.org <https://mybinder.org>`__ and is increasingly
+being used for reproducible research, making it an excellent fit for deploying Voila applications.
+
+1. Make sure the repository is publicly available (on GitHub, Gitlab or as a `gist <https://gist.github.com>`__).
+
+2. Follow `this guide <https://mybinder.readthedocs.io/en/latest/introduction.html#preparing-a-repository-for-binder>`__
+   to prepare the repository. For simple deployments, steps listed in `Setup an example project`_ will be sufficient.
+
+
+.. note::
+
+       Binder also supports ``environment.yml`` files and ``conda`` environments.
+
+
+3. Go to `mybinder.org <https://mybinder.org>`__ and enter the URL of the repository.
+
+4. In ``Path to a notebook file``, select ``URL`` and use the Voila endpoint: ``/voila/render/path/to/notebook.ipynb``
+
+5. Click ``Launch``.
+
+6. Binder will trigger a new build if this is the first launch (or if there has been new changes since
+   the last build). This might take a few minutes to complete. If an image is already available,
+   the server will be able to start within a few seconds.
+
+
+Customizing Voila on Binder
+***************************
+
+To specify different options (such as the theme and template), create a
+``jupyter_config.json`` file at the root of the repository with the following content:
+
+
+   .. code:: json
+
+       {
+         "VoilaConfiguration": {
+           "theme": "dark",
+           "template": "gridstack"
+         }
+       }
+
+
+An example can be found in the
+`voila-demo <https://github.com/maartenbreddels/voila-demo>`__ repository.
+
 
 Deployment on Heroku
 --------------------
