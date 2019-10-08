@@ -376,7 +376,7 @@ setup_args = {
     },
     'install_requires': [
         'jupyter_server>=0.1.0,<0.2.0',
-        'nbconvert>=5.5.0,<6',
+        'nbconvert>=5.6.0,<6',
         'jupyterlab_pygments>=0.1.0,<0.2',
         'pygments>=2.4.1,<3'  # Explicitly requiring pygments which is a second-order dependency.
                               # An older versions is generally installed already and is otherwise not updated by pip.
