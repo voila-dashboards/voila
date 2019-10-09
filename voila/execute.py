@@ -17,6 +17,10 @@ from ipykernel.jsonutil import json_clean
 
 def strip_code_cell_errors(cell):
     """Strip any error outputs and traceback from a code cell."""
+    # There is no 'outputs' key for markdown cells
+    if 'outputs' not in cell:
+        return cell
+
     outputs = cell['outputs']
 
     error_outputs = [output for output in outputs if output['output_type'] == 'error']
