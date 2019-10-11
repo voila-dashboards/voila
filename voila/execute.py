@@ -35,6 +35,22 @@ def strip_code_cell_errors(cell):
     return cell
 
 
+def strip_code_cell_warnings(cell):
+    """Strip any warning outputs and traceback from a code cell."""
+    # There is no 'outputs' key for markdown cells
+    if 'outputs' not in cell:
+        return cell
+
+    outputs = cell['outputs']
+
+    cell['outputs'] = [
+        output for output in outputs
+        if output['output_type'] != 'stream' or output['name'] != 'stderr'
+    ]
+
+    return cell
+
+
 def strip_notebook_errors(nb):
     """Strip error messages and traceback from a Notebook."""
     cells = nb['cells']
@@ -42,6 +58,7 @@ def strip_notebook_errors(nb):
     code_cells = [cell for cell in cells if cell['cell_type'] == 'code']
 
     for cell in code_cells:
+        strip_code_cell_warnings(cell)
         strip_code_cell_errors(cell)
 
     return nb
@@ -159,6 +176,7 @@ class VoilaExecutePreprocessor(ExecutePreprocessor):
 
         # Strip errors and traceback if not in debug mode
         if should_strip_error(self.config):
+            strip_code_cell_warnings(cell)
             strip_code_cell_errors(cell)
 
         return result
