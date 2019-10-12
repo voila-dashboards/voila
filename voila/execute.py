@@ -59,7 +59,7 @@ class OutputWidget:
         self.state = state
         self.kernel_client = kernel_client
         self.executor = executor
-        self.topic = ('comm-%s' % self.comm_id).encode('ascii')
+        self.topic = (f'comm-{self.comm_id).encode('ascii')}')
         self.outputs = self.state['outputs']
         self.clear_before_next_output = False
 
@@ -184,7 +184,7 @@ class VoilaExecutePreprocessor(ExecutePreprocessor):
 
     def handle_comm_msg(self, outs, msg, cell_index):
         super(VoilaExecutePreprocessor, self).handle_comm_msg(outs, msg, cell_index)
-        self.log.debug('comm msg: %r', msg)
+        self.log.debug(f'comm msg: {msg!r}')
         if msg['msg_type'] == 'comm_open' and msg['content'].get('target_name') == 'jupyter.widget':
             content = msg['content']
             data = content['data']

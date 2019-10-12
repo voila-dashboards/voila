@@ -241,7 +241,7 @@ class Voila(Application):
                 url += '/'
         else:
             if self.ip in ('', '0.0.0.0'):
-                ip = "%s" % socket.gethostname()
+                ip = f"{socket.gethostname()}"
             else:
                 ip = self.ip
             url = self._url(ip)
@@ -263,7 +263,7 @@ class Voila(Application):
         # TODO: https / certfile
         # proto = 'https' if self.certfile else 'http'
         proto = 'http'
-        return "%s://%s:%i%s" % (proto, ip, self.port, self.base_url)
+        return f"{proto}://{ip}:{self.port}{self.base_url}"
 
     config_file_paths = List(
         Unicode(),
@@ -288,7 +288,7 @@ class Voila(Application):
     @default('connection_dir_root')
     def _default_connection_dir(self):
         connection_dir = tempfile.gettempdir()
-        self.log.info('Using %s to store connection files' % connection_dir)
+        self.log.info(f'Using {connection_dir} to store connection files')
         return connection_dir
 
     @default('log_level')
@@ -317,7 +317,7 @@ class Voila(Application):
             return getcwd()
 
     def initialize(self, argv=None):
-        self.log.debug("Searching path %s for config files", self.config_file_paths)
+        self.log.debug(f"Searching path {self.config_file_paths} for config files")
         # to make config_file_paths settable via cmd line, we first need to parse it
         super(Voila, self).initialize(argv)
         if len(self.extra_args) == 1:
@@ -329,9 +329,9 @@ class Voila(Application):
                 elif os.path.isfile(arg):
                     self.notebook_path = arg
                 else:
-                    raise ValueError('argument is neither a file nor a directory: %r' % arg)
+                    raise ValueError(f'argument is neither a file nor a directory: {arg!r}')
         elif len(self.extra_args) != 0:
-            raise ValueError('provided more than 1 argument: %r' % self.extra_args)
+            raise ValueError(f'provided more than 1 argument: {self.extra_args!r}')
 
         # then we load the config
         self.load_config_file('voila', path=self.config_file_paths)
@@ -349,15 +349,15 @@ class Voila(Application):
                 self.static_paths,
                 self.template_paths,
                 self.voila_configuration.template)
-        self.log.debug('using template: %s', self.voila_configuration.template)
-        self.log.debug('nbconvert template paths:\n\t%s', '\n\t'.join(self.nbconvert_template_paths))
-        self.log.debug('template paths:\n\t%s', '\n\t'.join(self.template_paths))
-        self.log.debug('static paths:\n\t%s', '\n\t'.join(self.static_paths))
+        self.log.debug(f'using template: {self.voila_configuration.template}')
+        self.log.debug(f'nbconvert template paths:\n\t{"\n\t".join(self.nbconvert_template_paths)}')
+        self.log.debug(f'template paths:\n\t{"\n\t".join(self.template_paths)}')
+        self.log.debug(f'static paths:\n\t{"\n\t".join(self.static_paths)}')
         if self.notebook_path and not os.path.exists(self.notebook_path):
-            raise ValueError('Notebook not found: %s' % self.notebook_path)
+            raise ValueError(f'Notebook not found: {self.notebook_path}')
 
     def _handle_signal_stop(self, sig, frame):
-        self.log.info('Handle signal %s.' % sig)
+        self.log.info(f'Handle signal {sig}.')
         self.ioloop.add_callback_from_signal(self.ioloop.stop)
 
     def start(self):
@@ -365,8 +365,8 @@ class Voila(Application):
             prefix='voila_',
             dir=self.connection_dir_root
         )
-        self.log.info('Storing connection files in %s.' % self.connection_dir)
-        self.log.info('Serving static files from %s.' % self.static_root)
+        self.log.info(f'Storing connection files in {self.connection_dir}.')
+        self.log.info(f'Serving static files from {self.static_root}.')
 
         self.kernel_spec_manager = KernelSpecManager(
             parent=self
@@ -418,8 +418,8 @@ class Voila(Application):
         handlers = []
 
         handlers.extend([
-            (url_path_join(self.server_url, r'/api/kernels/%s' % _kernel_id_regex), KernelHandler),
-            (url_path_join(self.server_url, r'/api/kernels/%s/channels' % _kernel_id_regex), ZMQChannelsHandler),
+            (url_path_join(self.server_url, fr'/api/kernels/{_kernel_id_regex}'), KernelHandler),
+            (url_path_join(self.server_url, fr'/api/kernels/{_kernel_id_regex}/channels'), ZMQChannelsHandler),
             (
                 url_path_join(self.server_url, r'/voila/static/(.*)'),
                 MultiStaticFileHandler,
@@ -469,7 +469,7 @@ class Voila(Application):
                 }
             ))
         else:
-            self.log.debug('serving directory: %r', self.root_dir)
+            self.log.debug(f'serving directory: {self.root_dir!r})
             handlers.extend([
                 (self.server_url, VoilaTreeHandler, tree_handler_conf),
                 (url_path_join(self.server_url, r'/voila/tree' + path_regex), VoilaTreeHandler, tree_handler_conf),
@@ -490,7 +490,7 @@ class Voila(Application):
 
     def listen(self):
         self.app.listen(self.port)
-        self.log.info('Voila is running at:\n%s' % self.display_url)
+        self.log.info(f'Voila is running at:\n{self.display_url}')
 
         if self.open_browser:
             self.launch_browser()
@@ -507,7 +507,7 @@ class Voila(Application):
         try:
             browser = webbrowser.get(self.browser or None)
         except webbrowser.Error as e:
-            self.log.warning(_('No web browser found: %s.') % e)
+            self.log.warning(_(f'No web browser found: {e}.')
             browser = None
 
         if not browser:

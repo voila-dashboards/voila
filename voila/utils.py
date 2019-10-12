@@ -13,5 +13,5 @@ def get_server_root_dir(settings):
     home = os.path.expanduser('~')
     if root_dir.startswith(home + os.path.sep):
         # collapse $HOME to ~
-        root_dir = '~' + root_dir[len(home):]
+        root_dir = f"~{root_dir[len(home):]}"
     return root_dir

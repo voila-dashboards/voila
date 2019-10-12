@@ -50,7 +50,7 @@ def js_first(command, strict=False):
                 if strict or missing:
                     log.warn('rebuilding js and css failed')
                     if missing:
-                        log.error('missing files: %s' % missing)
+                        log.error(f'missing files: {missing}')
                     raise e
                 else:
                     log.warn('rebuilding js and css failed (not a problem)')
@@ -166,9 +166,9 @@ def run(cmd, **kwargs):
         cmd = shlex.split(cmd)
     cmd_path = which(cmd[0])
     if not cmd_path:
-        sys.exit("Aborting. Could not find cmd (%s) in path. "
+        sys.exit(f"Aborting. Could not find cmd ({cmd[0]}) in path. "
                  "If command is not expected to be in user's path, "
-                 "use an absolute path." % cmd[0])
+                 "use an absolute path.")
     cmd[0] = cmd_path
     return check_call(cmd, **kwargs)
 
@@ -222,7 +222,7 @@ class NPM(Command):
 
         for t in self.targets:
             if not os.path.exists(t):
-                msg = 'Missing file: %s' % t
+                msg = f'Missing file: {t}'
                 if not has_npm:
                     msg += '\nnpm is required to build a development version'
                 raise ValueError(msg)
@@ -235,13 +235,13 @@ class NPM(Command):
 
 
 jupyterlab_css_version = '0.1.0'
-css_url = "https://unpkg.com/@jupyterlab/nbconvert-css@%s/style/index.css" % jupyterlab_css_version
+css_url = f"https://unpkg.com/@jupyterlab/nbconvert-css@{jupyterlab_css_version}/style/index.css"
 
 theme_light_version = '0.19.1'
-theme_light_url = "https://unpkg.com/@jupyterlab/theme-light-extension@%s/static/embed.css" % theme_light_version
+theme_light_url = f"https://unpkg.com/@jupyterlab/theme-light-extension@{theme_light_version}s/static/embed.css"
 
 theme_dark_version = '0.19.1'
-theme_dark_url = "https://unpkg.com/@jupyterlab/theme-dark-extension@%s/static/embed.css" % theme_dark_version
+theme_dark_url = f"https://unpkg.com/@jupyterlab/theme-dark-extension@{theme_dark_version}/static/embed.css"
 
 
 class FetchCSS(Command):

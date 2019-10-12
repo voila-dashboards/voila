@@ -5,12 +5,12 @@ import pytest
 
 @pytest.fixture
 def cwd_subdir_notebook_url(base_url):
-    return base_url + "/voila/render/subdir/cwd_subdir.ipynb"
+    return f"{base_url}/voila/render/subdir/cwd_subdir.ipynb"
 
 
 @pytest.fixture
 def voila_args(notebook_directory, voila_args_extra):
-    return ['--VoilaTest.root_dir=%r' % notebook_directory, '--VoilaTest.log_level=DEBUG'] + voila_args_extra
+    return [f'--VoilaTest.root_dir={notebook_directory!r}', '--VoilaTest.log_level=DEBUG'] + voila_args_extra
 
 
 @pytest.mark.gen_test

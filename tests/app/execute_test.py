@@ -32,9 +32,7 @@ def test_no_execute_allowed(voila_app, app, http_client, base_url):
     kernel_id = groups[0]
     print(kernel_id, base_url)
     session_id = '445edd75-c6f5-45d2-8b58-5fe8f84a7123'
-    url = '{base_url}/api/kernels/{kernel_id}/channels?session_id={session_id}'.format(
-        kernel_id=kernel_id, base_url=base_url, session_id=session_id
-    ).replace('http://', 'ws://')
+    url = f'{base_url}/api/kernels/{kernel_id}/channels?session_id={session_id}'.replace('http://', 'ws://')
     conn = yield tornado.websocket.websocket_connect(url)
 
     msg = {

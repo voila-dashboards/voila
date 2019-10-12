@@ -6,7 +6,7 @@ TEST_XEUS_CLING = os.environ.get('VOILA_TEST_XEUS_CLING', '') == '1'
 
 @pytest.fixture
 def cpp_file_url(base_url):
-    return base_url + "/voila/render/print.xcpp"
+    return f"{base_url}/voila/render/print.xcpp"
 
 
 @pytest.fixture

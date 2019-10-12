@@ -4,7 +4,7 @@ import pytest
 
 @pytest.fixture
 def voila_args(notebook_directory, voila_args_extra):
-    return ['--VoilaTest.root_dir=%r' % notebook_directory, '--VoilaTest.log_level=DEBUG'] + voila_args_extra
+    return [f'--VoilaTest.root_dir={notebook_directory!r}', '--VoilaTest.log_level=DEBUG'] + voila_args_extra
 
 
 @pytest.fixture
@@ -14,7 +14,7 @@ def jupyter_server_args_extra():
 
 @pytest.mark.gen_test
 def test_tree(http_client, base_url):
-    response = yield http_client.fetch(base_url+'/voila/tree')
+    response = yield http_client.fetch(f'{base_url}/voila/tree')
     assert response.code == 200
     text = response.body.decode('utf-8')
     assert 'print.ipynb' in text, 'tree handler should render ipynb files'
