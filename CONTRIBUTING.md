@@ -137,4 +137,5 @@ python -m pytest
 
 The default templates are located in the following folder: [share/jupyter/voila/templates/default](./share/jupyter/voila/templates/default). They are automatically picked up when running voila in development mode.
 
-After editing the templates, reload the browser tab to see the changes.
+Alternatively, there is a Voila template cookiecutter available to give you a running start. [Link](https://github.com/aartgoossens/voila-template-cookiecutter).
+This cookiecutter contains some docker configuration for live reloading of your template changes to make development easier.
