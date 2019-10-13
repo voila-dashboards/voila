@@ -20,6 +20,7 @@ __pycache__
 *.swp
 *.map
 .idea/
+.vscode/
 Read the Docs
 config.rst
 
