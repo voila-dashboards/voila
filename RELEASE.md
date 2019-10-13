@@ -48,3 +48,22 @@ git checkout stable
 git reset --hard master
 git push origin master stable x.y.z
 ```
+
+# Making a new release of @jupyter-voila/jupyterlab-preview
+
+## Releasing on npm
+
+1. Update [packages/jupyterlab-voila/package.json](./packages/jupyterlab-voila/package.json) with the new version number
+2. `cd ./packages/jupyterlab-voila`
+3. `npm login`
+4. `npm publish`
+
+## Committing
+
+Commit and push the changes, where `x.y.z` denotes the new version:
+
+```bash
+git add ./packages/jupyterlab-voila/package.json
+git commit -m "Release @jupyter-voila/jupyterlab-preview x.y.z"
+git push origin master
+```
