@@ -81,6 +81,18 @@ Node.js is required and can be installed with conda:
 conda install -c conda-forge nodejs
 ```
 
+The JupyterLab extension requires the server extension to be enabled. This can be done by running:
+
+```bash
+ jupyter serverextension enable voila --sys-prefix
+```
+
+You can verify if the server extension is enabled by running:
+
+```bash
+jupyter serverextension list
+```
+
 To install the JupyterLab extension locally:
 
 ```bash
