@@ -19,6 +19,8 @@ import shutil
 import signal
 import socket
 import webbrowser
+import errno
+import random
 
 try:
     from urllib.parse import urljoin
@@ -192,6 +194,10 @@ class Voila(Application):
             'paths to static assets'
         )
     )
+
+    port_retries = Integer(50, config=True,
+                           help=_("The number of additional ports to try if the specified port is not available.")
+                           )
 
     ip = Unicode('localhost', config=True,
                  help=_("The IP address the notebook server will listen on."))
@@ -488,9 +494,41 @@ class Voila(Application):
         shutil.rmtree(self.connection_dir)
         self.kernel_manager.shutdown_all()
 
+    def random_ports(self, port, n):
+        """Generate a list of n random ports near the given port.
+
+        The first 5 ports will be sequential, and the remaining n-5 will be
+        randomly selected in the range [port-2*n, port+2*n].
+        """
+        for i in range(min(5, n)):
+            yield port + i
+        for i in range(n-5):
+            yield max(1, port + random.randint(-2*n, 2*n))
+
     def listen(self):
-        self.app.listen(self.port)
-        self.log.info('Voila is running at:\n%s' % self.display_url)
+        for port in self.random_ports(self.port, self.port_retries+1):
+            try:
+                self.app.listen(port)
+                self.port = port
+                self.log.info('Voila is running at:\n%s' % self.display_url)
+            except socket.error as e:
+                if e.errno == errno.EADDRINUSE:
+                    self.log.info(_('The port %i is already in use, trying another port.') % port)
+                    continue
+                elif e.errno in (errno.EACCES, getattr(errno, 'WSAEACCES', errno.EACCES)):
+                    self.log.warning(_("Permission to listen on port %i denied") % port)
+                    continue
+                else:
+                    raise
+            else:
+                self.port = port
+                success = True
+                break
+
+        if not success:
+            self.log.critical(_('ERROR: the voila server could not be started because '
+                              'no available port could be found.'))
+            self.exit(1)
 
         if self.open_browser:
             self.launch_browser()
