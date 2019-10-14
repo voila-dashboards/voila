@@ -11,6 +11,7 @@ import logging
 
 from nbconvert.preprocessors import ClearOutputPreprocessor
 from nbconvert.preprocessors.execute import CellExecutionError, ExecutePreprocessor
+from nbformat.v4 import output_from_msg
 
 from ipykernel.jsonutil import json_clean
 
@@ -97,12 +98,8 @@ class OutputWidget:
             self.outputs = []
             self.clear_before_next_output = False
         self.parent_header = msg['parent_header']
-        content = msg['content']
-        if 'data' not in content:
-            output = {"output_type": "stream", "text": content['text'], "name": content['name']}
-        else:
-            data = content['data']
-            output = {"output_type": "display_data", "data": data, "metadata": {}}
+        output = output_from_msg(msg)
+
         if self.outputs:
             # try to coalesce/merge output text
             last_output = self.outputs[-1]
