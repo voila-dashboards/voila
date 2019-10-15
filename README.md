@@ -75,6 +75,12 @@ jupyter serverextension enable voila --sys-prefix
 When running the notebook server, the voila app is accessible from the base url
 suffixed with `voila`.
 
+## Documentation
+
+To get started with using Voila, check out the full documentation:
+
+https://voila.readthedocs.io/
+
 ## Examples
 
 The following two examples show how a standalone Jupyter notebook can be turned into a separate app, from the command-line integration.
