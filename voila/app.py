@@ -562,7 +562,7 @@ class Voila(Application):
 
             jinja2_env = self.app.settings['jinja2_env']
             template = jinja2_env.get_template('browser-open.html')
-            fh.write(template.render(open_url=url))
+            fh.write(template.render(open_url=url, base_url=url))
 
         def target():
             return browser.open(urljoin('file:', pathname2url(open_file)), new=self.webbrowser_open_new)
