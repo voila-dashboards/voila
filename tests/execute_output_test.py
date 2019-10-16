@@ -21,6 +21,9 @@ def normalize_output(output):
     output = dict(output)
     if 'metadata' in output:
         del output['metadata']
+    # tracebacks can be different per installation/python version
+    if 'traceback' in output:
+        del output['traceback']
     if 'application/vnd.jupyter.widget-view+json' in output.get('data', {}):
         output['data']['application/vnd.jupyter.widget-view+json']['model_id'] = '<MODEL_ID>'
 
@@ -46,7 +49,9 @@ def test_execute_output():
                 widget_id_voila = output_voila['data'][WIDGET_MIME_TYPE_VIEW]['model_id']
                 widget_state = widget_states[widget_id]
                 widget_state_voila = widget_states_voila[widget_id_voila]
-                assert widget_state.state.get('outputs', []) == widget_state_voila.state.get('outputs', [])
+                # if the widget is an output widget, it has the outputs, which we also check
+                assert normalize_outputs(widget_state.state.get('outputs', [])) ==\
+                    normalize_outputs(widget_state_voila.state.get('outputs', []))
             normalize_output(output_voila)
             normalize_output(output)
             assert output_voila == output
