@@ -146,6 +146,13 @@ a Jupyter notebook by using the name of the folder in the ``--template`` paramet
 The result should be a Voila dashboard with your custom modifications made!
 
 
+Voila template cookiecutter
+-----------------------------
+There is a Voila template cookiecutter available to give you a running start.
+This cookiecutter contains some docker configuration for live reloading of your template changes to make development easier.
+Please refer to the `cookiecutter repo <https://github.com/voila-dashboards/voila-template-cookiecutter>`_ for more information on how to use the Voila template cookiecutter.
+
+
 Adding your own static files
 ============================
 
