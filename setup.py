@@ -387,6 +387,7 @@ setup_args = {
             'pytest<4',
             'pytest-tornado',
             'matplotlib'
+            'ipywidgets'
         ]
     },
     'author': 'QuantStack',
