@@ -45,6 +45,7 @@ def voila_app(server_config, voila_config, voila_args):
     serverapp.start = lambda self: None
     voila_app.initialize(serverapp, argv=voila_args)
     yield voila_app
+    serverapp.cleanup_kernels()
     serverapp.clear_instance()
 
 
