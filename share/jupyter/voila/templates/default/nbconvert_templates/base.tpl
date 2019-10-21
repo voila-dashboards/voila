@@ -49,7 +49,7 @@
 {% block footer %}
 {% block footer_js %}
 <script>
-requirejs.config({
+requirejs.config({ 
     baseUrl: '{{resources.base_url}}static/voila/',
     waitSeconds: 30
 })
@@ -57,7 +57,7 @@ requirejs(
     [
         "main",
     {% for ext in resources.nbextensions -%}
-        "{{resources.base_url}}voila/nbextensions/{{ ext }}.js",
+        "{{resources.base_url}}static/voila/nbextensions/{{ ext }}.js",
     {% endfor %}
     ]
 )

@@ -335,12 +335,15 @@ class Voila(ExtensionApp):
     def initialize_handlers(self):
         # Serving notebook extensions
         if self.enable_nbextensions:
-            self.handlers.append(
+            # Note, this handler 'overlaps' with the "/static/voila" handler that our base
+            # class adds. Since this regex is more specific, and added first, we're all good.
+            self.handlers.insert(
+                0,
                 (
-                    "/voila/nbextensions/(.*)",
+                    "static/voila/nbextensions/(.*)",
                     FileFindHandler,
                     {"path": self.nbextensions_path, "no_cache_paths": ["/"]},
-                )
+                ),
             )
 
         self.handlers.append(
