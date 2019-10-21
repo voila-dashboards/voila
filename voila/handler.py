@@ -39,9 +39,9 @@ class VoilaHandler(ExtensionHandler):
 
     @property
     def notebook_path(self):
-        path = self.settings.get("notebook_path", None)
+        path = self.settings.get("notebook_path")
         # Get relative path to notebook.
-        if path is not None:
+        if path:  # path can be '', which is the default of ServerApp.file_to_run
             path = os.path.relpath(path, self.config["root_dir"])
         return path
 
