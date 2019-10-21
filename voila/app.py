@@ -21,6 +21,7 @@ from traitlets import Unicode, Integer, Bool, Dict, List, default
 from jupyter_server.base.handlers import path_regex
 from jupyter_server.base.handlers import FileFindHandler
 from jupyter_server.extension.application import ExtensionApp
+from jupyter_server.serverapp import ServerApp
 from jupyter_core.paths import jupyter_config_path, jupyter_path
 
 from ipython_genutils.py3compat import getcwd
@@ -104,7 +105,7 @@ class Voila(ExtensionApp):
         "enable_nbextensions": "Voila.enable_nbextensions",
     }
 
-    classes = [VoilaExecutePreprocessor, VoilaExporter, VoilaCSSPreprocessor]
+    classes = [VoilaExecutePreprocessor, VoilaExporter, VoilaCSSPreprocessor, ServerApp]
 
     template = Unicode(
         "default",
