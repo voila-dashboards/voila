@@ -383,6 +383,8 @@ class Voila(Application):
             connection_dir=self.connection_dir,
             kernel_spec_manager=self.kernel_spec_manager,
             allowed_message_types=[
+                'comm_open',
+                'comm_close',
                 'comm_msg',
                 'comm_info_request',
                 'kernel_info_request',
