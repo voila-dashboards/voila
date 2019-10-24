@@ -8,9 +8,9 @@ Rendering of live Jupyter notebooks with interactive widgets.
 
 ## Introduction
 
-Voila serves live Jupyter notebooks including Jupyter interactive widgets.
+Voilà turns Jupyter notebooks into standalone web applications.
 
-Unlike the usual HTML-converted notebooks, each user connecting to the Voila
+Unlike the usual HTML-converted notebooks, each user connecting to the Voilà
 tornado application gets a dedicated Jupyter kernel which can execute the
 callbacks to changes in Jupyter interactive widgets.
 
@@ -21,7 +21,7 @@ callbacks to changes in Jupyter interactive widgets.
 
 ## Installation
 
-Voila can be installed with the conda package manager
+Voilà can be installed with the conda package manager
 
 ```
 conda install -c conda-forge voila
@@ -35,7 +35,7 @@ pip install voila
 
 ### JupyterLab preview extension
 
-Voila provides a JupyterLab extension that displays a Voila preview of your Notebook in a side-pane:
+Voilà provides a JupyterLab extension that displays a Voilà preview of your Notebook in a side-pane:
 
 ```
 jupyter labextension install @jupyter-voila/jupyterlab-preview
@@ -62,7 +62,7 @@ run `voila --help`.
 
 ### As a server extension to `notebook` or `jupyter_server`
 
-Voila can also be used as a notebook server extension, both with the
+Voilà can also be used as a notebook server extension, both with the
 [notebook](https://github.com/jupyter/notebook) server or with
 [jupyter_server](https://github.com/jupyter/jupyter_server).
 
@@ -77,7 +77,7 @@ suffixed with `voila`.
 
 ## Documentation
 
-To get started with using Voila, check out the full documentation:
+To get started with using Voilà, check out the full documentation:
 
 https://voila.readthedocs.io/
 
@@ -98,15 +98,15 @@ The sources of the Jupyter notebook can be displayed in a voila app if option `s
 
 ![voila sources](voila-sources.gif)
 
-**Voila dashboards with other language kernels**
+**Voilà dashboards with other language kernels**
 
-Voila is built upon Jupyter standard formats and protocols, and is agnostic to the programming language of the notebook. In this example, we present an example of a voila application powered by the C++ Jupyter kernel [xeus-cling](https://github.com/QuantStack/xeus-cling), and the [xleaflet](https://github.com/QuantStack/xleaflet) project.
+Voilà is built upon Jupyter standard formats and protocols, and is agnostic to the programming language of the notebook. In this example, we present an example of a voila application powered by the C++ Jupyter kernel [xeus-cling](https://github.com/QuantStack/xeus-cling), and the [xleaflet](https://github.com/QuantStack/xleaflet) project.
 
 ![voila cling](voila-cling.gif)
 
-## Voila Gallery
+## The Voilà Gallery
 
-The [Voila Gallery](https://voila-gallery.org) is a collection of live dashboards and applications built with Voila and Jupyter widgets.
+The [Voilà Gallery](https://voila-gallery.org) is a collection of live dashboards and applications built with Voilà and Jupyter widgets.
 
 Most of the examples rely on widget libraries such as ipywidgets, ipyleaflet, ipyvolume, bqplot and ipympl, and showcase how to build complex web applications entirely based on notebooks.
 
@@ -114,11 +114,11 @@ New examples can be added to the gallery by following the steps listed in the [v
 
 ## Development
 
-See [CONTRIBUTING.md](./CONTRIBUTING.md) to know how to contribute and setup a development environment.
+See [CONTRIBUTING.md](./CONTRIBUTING.md) to know how to contribute and set up a development environment.
 
 ## Related projects
 
-Voila depends on [nbconvert](https://github.com/jupyter/nbconvert) and
+Voilà depends on [nbconvert](https://github.com/jupyter/nbconvert) and
 [jupyter_server](https://github.com/jupyter/jupyter_server/).
 
 ## License
