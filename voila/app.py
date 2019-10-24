@@ -357,21 +357,19 @@ class Voila(Application):
             template_conf_dir = [os.path.join(k, '..') for k in self.nbconvert_template_paths]
             conf_paths = [os.path.join(d, 'conf.json') for d in template_conf_dir]
             for p in conf_paths:
-                # see if config path corresponds to template in use
-                if os.path.basename(os.path.dirname(p)) == self.voila_configuration.template:
-                    # see if config file exists
-                    if os.path.exists(p):
-                        # load the template-related config
-                        loader = JSONFileConfigLoader('conf.json', template_conf_dir)
-                        conf = loader.load_config()
-                        # check that config file is meant for template in use
-                        assert conf.traitlet_configuration['base_template'] == self.voila_configuration.template
-                        # create sub-config as Config instance for merging (see next)
-                        conf.VoilaConfiguration = Config(conf.traitlet_configuration)
-                        # merge config from file with otherwise voila config, ensuring CLI config priority
-                        conf.merge(self.voila_configuration.config)
-                        # pass merged config to overall voila config
-                        self.voila_configuration.config.VoilaConfiguration = conf.VoilaConfiguration
+                # see if config file exists
+                if os.path.exists(p):
+                    # load the template-related config
+                    loader = JSONFileConfigLoader('conf.json', template_conf_dir)
+                    conf = loader.load_config()
+                    # check that config file is meant for template in use
+                    assert conf.traitlet_configuration['base_template'] == self.voila_configuration.template
+                    # create sub-config as Config instance for merging (see next)
+                    conf.VoilaConfiguration = Config(conf.traitlet_configuration)
+                    # merge config from file with otherwise voila config, ensuring CLI config priority
+                    conf.merge(self.voila_configuration.config)
+                    # pass merged config to overall voila config
+                    self.voila_configuration.config.VoilaConfiguration = conf.VoilaConfiguration
         self.log.debug('using template: %s', self.voila_configuration.template)
         self.log.debug('nbconvert template paths:\n\t%s', '\n\t'.join(self.nbconvert_template_paths))
         self.log.debug('template paths:\n\t%s', '\n\t'.join(self.template_paths))
