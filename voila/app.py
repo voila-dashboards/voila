@@ -354,7 +354,7 @@ class Voila(Application):
                 self.template_paths,
                 self.voila_configuration.template)
             # look for possible template-related config files
-            template_conf_dir = [os.path.dirname(k) for k in self.nbconvert_template_paths]
+            template_conf_dir = [os.path.join(k, '..') for k in self.nbconvert_template_paths]
             conf_paths = [os.path.join(d, 'conf.json') for d in template_conf_dir]
             for p in conf_paths:
                 # see if config path corresponds to template in use
