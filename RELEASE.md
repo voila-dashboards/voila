@@ -1,4 +1,4 @@
-# Making a new release of voila
+# Making a new release of Voilà
 
 ## Getting a clean environment
 

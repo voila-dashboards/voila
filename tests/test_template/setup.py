@@ -14,6 +14,6 @@ setup(
     description="Test template for voila",
     data_files=data_files,
     include_package_data=True,
-    author='QuantStack',
-    author_email='martin.renou@quantstack.net'
+    author='Voila Development team',
+    author_email='jupyter@googlegroups.com'
 )

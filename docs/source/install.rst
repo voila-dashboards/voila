@@ -8,7 +8,7 @@
 .. _install:
 
 ================
-Installing Voila
+Installing Voilà
 ================
 
 Voila can be installed with the ``conda`` package manager
@@ -23,5 +23,5 @@ or from ``PyPI``:
 
    pip install voila
 
-Once Voila is installed, it can be used either as a Command-Line Interface,
-or as a Jupyter Server extension. See :ref:`using` for information on how to use Voila.
+Once Voilà is installed, it can be used either as a Command-Line Interface,
+or as a Jupyter Server extension. See :ref:`using` for information on how to use Voilà.
