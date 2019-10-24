@@ -1,0 +1,10 @@
+{
+  "traitlet_configuration": {
+    "base_template": "test_template",
+    "resources": {
+      "test_template": {
+        "test_resource": "test resource from config file"
+      }
+    }
+  }
+}

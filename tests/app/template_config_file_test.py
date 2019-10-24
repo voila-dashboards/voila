@@ -19,4 +19,4 @@ def test_template_test(http_client, base_url):
     assert response.code == 200
     assert 'test_template.css' in response.body.decode('utf-8')
     assert 'Hi Voila' in response.body.decode('utf-8')
-    assert 'default value' in response.body.decode('utf-8')
+    assert 'test resource from config file' in response.body.decode('utf-8')
