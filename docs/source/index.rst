@@ -1,8 +1,8 @@
 .. Copyright (c) 2018, Voila Contributors
    Copyright (c) 2018, QuantStack
-
+   
    Distributed under the terms of the BSD 3-Clause License.
-
+   
    The full license is in the file LICENSE, distributed with this software.
 
 .. image:: voila-logo.svg
@@ -15,7 +15,7 @@ interactive dashboard that allows you to share your work with others. It
 is secure and customizable, giving you control over what your readers
 experience.
 
-For example, here's a dashboard created with Voila. (you can
+For example, here's a dashboard created with Voilà. (you can
 try it interactively at the following Binder link)
 
 .. image:: https://mybinder.org/badge_logo.svg
@@ -30,7 +30,7 @@ try it interactively at the following Binder link)
 Table of contents
 =================
 
-For more information  about Voila, see the sections below.
+For more information about Voilà, see the sections below.
 
 .. toctree::
    :maxdepth: 2
@@ -39,3 +39,4 @@ For more information  about Voila, see the sections below.
    using
    customize
    deploy
+   contribute

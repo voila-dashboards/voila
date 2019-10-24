@@ -20,7 +20,7 @@ def test_image_inlining(http_client, base_url, notebook_directory):
     assert 'data:image/png;base64,' in html_text
 
     # check if the external file is inline
-    with open(os.path.join(notebook_directory, notebook_directory, 'quantstack.svg'), 'rb') as f:
+    with open(os.path.join(notebook_directory, notebook_directory, 'jupyter.svg'), 'rb') as f:
         svg_data = f.read()
     svg_data_base64 = base64.b64encode(svg_data).decode('ascii')
     assert svg_data_base64 in html_text

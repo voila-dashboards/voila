@@ -1,7 +1,7 @@
 # ![voila](docs/source/voila-logo.svg)
 
 [![Documentation](http://readthedocs.org/projects/voila/badge/?version=latest)](https://voila.readthedocs.io/en/latest/?badge=latest)
-[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/QuantStack/voila/stable?urlpath=voila%2Ftree%2Fnotebooks)
+[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/voila-gridstack/voila/stable?urlpath=voila%2Ftree%2Fnotebooks)
 [![Join the Gitter Chat](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/QuantStack/Lobby?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 Rendering of live Jupyter notebooks with interactive widgets.
@@ -14,9 +14,9 @@ Unlike the usual HTML-converted notebooks, each user connecting to the Voilà
 tornado application gets a dedicated Jupyter kernel which can execute the
 callbacks to changes in Jupyter interactive widgets.
 
-- By default, voila disallows execute requests from the front-end, preventing
+- By default, Voilà disallows execute requests from the front-end, preventing
   execution of arbitrary code.
-- By default, voila runs with the `strip_source` option, which strips out the
+- By default, Voilà runs with the `strip_source` option, which strips out the
   input cells from the rendered notebook.
 
 ## Installation
@@ -49,7 +49,7 @@ To render the `bqplot` example notebook as a standalone app, run
 `voila bqplot.ipynb`.
 To serve a directory of jupyter notebooks, run `voila` with no argument.
 
-For example, to render the example notebook `bqplot.ipynb` from this repository with voila, you can first update your current environment with the requirements of this notebook (in this case in a [conda environment](https://docs.conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html) and render the notebook with
+For example, to render the example notebook `bqplot.ipynb` from this repository with Voilà, you can first update your current environment with the requirements of this notebook (in this case in a [conda environment](https://docs.conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html) and render the notebook with
 
 ```
 conda env update -f environment.yml
@@ -72,7 +72,7 @@ To install the notebook server extension, run
 jupyter serverextension enable voila --sys-prefix
 ```
 
-When running the notebook server, the voila app is accessible from the base url
+When running the notebook server, the Voilà app is accessible from the base url
 suffixed with `voila`.
 
 ## Documentation
@@ -86,23 +86,23 @@ https://voila.readthedocs.io/
 The following two examples show how a standalone Jupyter notebook can be turned into a separate app, from the command-line integration.
 
 **Rendering a notebook including interactive widgets and rich mime-type rendering**
-![voila basics](voila-basics.gif)
+![Voila basics](voila-basics.gif)
 
 **Rendering a notebook making use of a custom widget library ([bqplot](https://github.com/bloomberg/bqplot))**
 
-![voila bqplot](voila-bqplot.gif)
+![Voila bqplot](voila-bqplot.gif)
 
-**Showing the source code for a voila notebook**
+**Showing the source code for a Voilà notebook**
 
-The sources of the Jupyter notebook can be displayed in a voila app if option `strip_sources` is set to `False`.
+The sources of the Jupyter notebook can be displayed in a Voilà app if option `strip_sources` is set to `False`.
 
-![voila sources](voila-sources.gif)
+![Voila sources](voila-sources.gif)
 
 **Voilà dashboards with other language kernels**
 
-Voilà is built upon Jupyter standard formats and protocols, and is agnostic to the programming language of the notebook. In this example, we present an example of a voila application powered by the C++ Jupyter kernel [xeus-cling](https://github.com/QuantStack/xeus-cling), and the [xleaflet](https://github.com/QuantStack/xleaflet) project.
+Voilà is built upon Jupyter standard formats and protocols, and is agnostic to the programming language of the notebook. In this example, we present an example of a Voilà application powered by the C++ Jupyter kernel [xeus-cling](https://github.com/QuantStack/xeus-cling), and the [xleaflet](https://github.com/QuantStack/xleaflet) project.
 
-![voila cling](voila-cling.gif)
+![Voila cling](voila-cling.gif)
 
 ## The Voilà Gallery
 
