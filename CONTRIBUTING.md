@@ -1,5 +1,9 @@
 # Contributing to voila
 
+## General Guidelines
+
+For general documentation about contributing to Jupyter projects, see the [Project Jupyter Contributor Documentation](https://jupyter.readthedocs.io/en/latest/contributor/content-contributor.html).
+
 ## Setting up a development environment
 
 First, you need to fork the project. Then setup your environment:

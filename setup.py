@@ -69,7 +69,7 @@ def update_package_data(distribution):
 
 
 # TODO: remove this function once we drop Python2, see:
-#  https://github.com/QuantStack/voila/pull/322
+#  https://github.com/voila-dashboards/voila/pull/322
 # `shutils.which` function copied verbatim from the Python-3.3 source.
 def which(cmd, mode=os.F_OK | os.X_OK, path=None):
     """Given a command, mode, and a PATH string, return the path which
@@ -125,7 +125,7 @@ def which(cmd, mode=os.F_OK | os.X_OK, path=None):
 
 
 # TODO: remove this function once we can depend on jupyter_packing, see:
-#  https://github.com/QuantStack/voila/pull/322
+#  https://github.com/voila-dashboards/voila/pull/322
 # `run` function copied from jupyter_packaging under the following license:
 # -------------------------------------------------------------------------
 #
@@ -390,8 +390,8 @@ setup_args = {
             'ipywidgets'
         ]
     },
-    'author': 'QuantStack',
-    'author_email': 'info@quantstack.net',
+    'author': 'Voila Development team',
+    'author_email': 'jupyter@googlegroups.com',
     'keywords': [
         'ipython',
         'jupyter',
