@@ -41,11 +41,9 @@
     }
   </style>
 {%- endblock html_head_css -%}
-
 {%- endblock html_head -%}
 </head>
 {%- endblock header -%}
-
 
 {% block footer %}
 {% block footer_js %}
