@@ -22,15 +22,6 @@ from .execute import executenb, VoilaExecutePreprocessor
 from .exporter import VoilaExporter
 
 
-# Filter for empty cells.
-def filter_empty_code_cells(cell, exporter):
-    return (
-        cell.cell_type != 'code' or                     # keep non-code cells
-        (cell.outputs and not exporter.exclude_output)  # keep cell if output not excluded and not empty
-        or not exporter.exclude_input                   # keep cell if input not excluded
-    )
-
-
 class VoilaHandler(JupyterHandler):
 
     def initialize(self, **kwargs):
@@ -129,7 +120,6 @@ class VoilaHandler(JupyterHandler):
     def _jinja_notebook_execute(self, nb, kernel_id):
         km = self.kernel_manager.get_kernel(kernel_id)
         result = executenb(nb, km=km, cwd=self.cwd, config=self.traitlet_config)
-        result.cells = list(filter(lambda cell: filter_empty_code_cells(cell, self.exporter), result.cells))
         # we modify the notebook in place, since the nb variable cannot be reassigned it seems in jinja2
         # e.g. if we do {% with nb = notebook_execute(nb, kernel_id) %}, the base template/blocks will not
         # see the updated variable (it seems to be local to our block)
