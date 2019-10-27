@@ -62,17 +62,17 @@ run `voila --help`.
 
 ### As a server extension to `notebook` or `jupyter_server`
 
-Voilà can also be used as a notebook server extension, both with the
+Voilà can also be used as a Jupyter server extension, both with the
 [notebook](https://github.com/jupyter/notebook) server or with
 [jupyter_server](https://github.com/jupyter/jupyter_server).
 
-To install the notebook server extension, run
+To install the Jupyter server extension, run
 
 ```
 jupyter serverextension enable voila --sys-prefix
 ```
 
-When running the notebook server, the Voilà app is accessible from the base url
+When running the Jupyter server, the Voilà app is accessible from the base url
 suffixed with `voila`.
 
 ## Documentation
