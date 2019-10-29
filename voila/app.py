@@ -364,12 +364,11 @@ class Voila(Application):
                     # load the template-related config
                     with open(p) as json_file:
                         conf = json.load(json_file)
-                    # check that config file is meant for template in use
-                    assert conf['traitlet_configuration']['base_template'] == self.voila_configuration.template
                     # update the overall config with it, preserving CLI config priority
-                    recursive_update(conf['traitlet_configuration'], self.voila_configuration.config.VoilaConfiguration)
-                    # pass merged config to overall voila config
-                    self.voila_configuration.config.VoilaConfiguration = Config(conf['traitlet_configuration'])
+                    if 'traitlet_configuration' in conf:
+                        recursive_update(conf['traitlet_configuration'], self.voila_configuration.config.VoilaConfiguration)
+                        # pass merged config to overall voila config
+                        self.voila_configuration.config.VoilaConfiguration = Config(conf['traitlet_configuration'])
         self.log.debug('using template: %s', self.voila_configuration.template)
         self.log.debug('nbconvert template paths:\n\t%s', '\n\t'.join(self.nbconvert_template_paths))
         self.log.debug('template paths:\n\t%s', '\n\t'.join(self.template_paths))
