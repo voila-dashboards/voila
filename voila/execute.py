@@ -166,7 +166,9 @@ class VoilaExecutePreprocessor(ExecutePreprocessor):
 
     def preprocess_cell(self, cell, resources, cell_index, store_history=True):
         try:
-            result = super(VoilaExecutePreprocessor, self).preprocess_cell(cell, resources, cell_index, store_history)
+            # TODO: pass store_history as a 5th argument when we can require nbconver >=5.6.1
+            # result = super(VoilaExecutePreprocessor, self).preprocess_cell(cell, resources, cell_index, store_history)
+            result = super(VoilaExecutePreprocessor, self).preprocess_cell(cell, resources, cell_index)
         except CellExecutionError as e:
             self.log.error(e)
             result = [cell]
