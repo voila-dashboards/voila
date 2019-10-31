@@ -26,7 +26,7 @@ Setup an example project
 
    .. code:: bash
 
-       git clone git@github.com:QuantStack/voila.git
+       git clone git@github.com:voila-dashboards/voila.git
        cd voila/notebooks/
 
 2. Add a requirements.txt file to the project directory. This file should

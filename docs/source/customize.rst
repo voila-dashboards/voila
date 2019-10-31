@@ -33,7 +33,7 @@ and calling it from the command-line like so:
 For example, Voilà includes one other template that uses a Javascript library and
 an alternate ``<div>`` layout in order to let the user drag and drop cells.
 
-For example, to use the `gridstack <https://github.com/QuantStack/voila-gridstack/>`_ template, use the command:
+For example, to use the `gridstack <https://github.com/voila-dashboards/voila-gridstack/>`_ template, use the command:
 
 .. code-block:: bash
 

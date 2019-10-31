@@ -19,7 +19,7 @@ For example, here's a dashboard created with Voilà. (you can
 try it interactively at the following Binder link)
 
 .. image:: https://mybinder.org/badge_logo.svg
-   :target: https://mybinder.org/v2/gh/QuantStack/voila/master?urlpath=voila%2Ftree%2Fnotebooks
+   :target: https://mybinder.org/v2/gh/voila-dashboards/voila/stable?urlpath=voila%2Ftree%2Fnotebooks
 
 .. raw:: html
 
