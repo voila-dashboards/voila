@@ -89,3 +89,24 @@ When Voilà is run on a notebook, the following steps occur:
    Jupyter server.
 #. When users access the page, the widgets on the page have access to
    the underlying Jupyter kernel.
+
+The example notebooks
+=====================
+
+The `notebooks directory <https://github.com/voila-dashboards/voila/tree/master/notebooks>`__
+contains a collection of Jupyter notebooks that can be rendered using Voilà:
+
+* **basics.ipynb** - a notebook with interactions requiring a roundtrip to the kernel.
+* **bqplot.ipynb** - uses custom Jupyter widgets such as
+  `bqplot <https://github.com/bloomberg/bqplot>`__.
+* **dashboard.ipynb** - uses gridstack.js for the layout of each output.
+* **interactive.ipynb** - makes use of ipywidget's @interact.
+* **ipympl.ipynb** - contains custom interactive matplotlib figures using the
+  `ipympl <https://github.com/matplotlib/jupyter-matplotlib>`__ widget.
+* **ipyvolume.ipynb** - uses custom Jupyter widgets such as
+  `ipyvolume <https://github.com/maartenbreddels/ipyvolume>`__.
+* **xleaflet.ipynb** - a notebook that uses C++ kernel and interactive widgets
+
+These examples demonstrate different interactive HTML widgets and can be used as inspiration
+for getting started with Voilà. Checkout the `instructions <contribute.html#running-the-examples>`_
+in the contributor guide for how to run them.
