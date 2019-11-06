@@ -1,5 +1,5 @@
 {%- extends 'base.tpl' -%}
-{% from 'mathjax.tpl' import mathjax %}
+{% from 'mathjax3.tpl' import mathjax %}
 {% import "spinner.tpl" as spinner %}
 
 {# this overrides the default behaviour of directly starting the kernel and executing the notebook #}

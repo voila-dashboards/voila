@@ -10,4 +10,4 @@
 export { RenderMimeRegistry, standardRendererFactories } from '@jupyterlab/rendermime';
 
 export { WidgetManager } from './manager';
-export { connectKernel } from './kernel'
+export { connectKernel } from './kernel';
