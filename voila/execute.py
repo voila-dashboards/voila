@@ -171,7 +171,7 @@ class VoilaExecutePreprocessor(ExecutePreprocessor):
             result = super(VoilaExecutePreprocessor, self).preprocess_cell(cell, resources, cell_index)
         except CellExecutionError as e:
             self.log.error(e)
-            result = [cell]
+            result = (cell, resources)
 
         # Strip errors and traceback if not in debug mode
         if should_strip_error(self.config):
