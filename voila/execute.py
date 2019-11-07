@@ -16,7 +16,7 @@ from nbformat.v4 import output_from_msg
 from ipykernel.jsonutil import json_clean
 
 
-def strip_code_cell_errors(cell):
+def strip_code_cell_errors(cell, config):
     """Strip any error outputs and traceback from a code cell."""
     # There is no 'outputs' key for markdown cells
     if 'outputs' not in cell:
@@ -26,7 +26,11 @@ def strip_code_cell_errors(cell):
 
     error_outputs = [output for output in outputs if output['output_type'] == 'error']
 
-    error_message = 'There was an error when executing cell [{}]. Please run Voila with --debug to see the error message.'.format(cell['execution_count'])
+    instruction = ''
+    if 'VoilaConfiguration' in config and 'cell_error_instruction' in config['VoilaConfiguration']:
+        instruction = config['VoilaConfiguration']['cell_error_instruction']
+
+    error_message = 'There was an error when executing cell [{}]. {}'.format(cell['execution_count'], instruction)
 
     for output in error_outputs:
         output['ename'] = 'ExecutionError'
@@ -52,7 +56,7 @@ def strip_code_cell_warnings(cell):
     return cell
 
 
-def strip_notebook_errors(nb):
+def strip_notebook_errors(nb, config):
     """Strip error messages and traceback from a Notebook."""
     cells = nb['cells']
 
@@ -60,7 +64,7 @@ def strip_notebook_errors(nb):
 
     for cell in code_cells:
         strip_code_cell_warnings(cell)
-        strip_code_cell_errors(cell)
+        strip_code_cell_errors(cell, config)
 
     return nb
 
@@ -160,7 +164,7 @@ class VoilaExecutePreprocessor(ExecutePreprocessor):
 
         # Strip errors and traceback if not in debug mode
         if should_strip_error(self.config):
-            strip_notebook_errors(nb)
+            strip_notebook_errors(nb, self.config)
 
         return result
 
@@ -176,7 +180,7 @@ class VoilaExecutePreprocessor(ExecutePreprocessor):
         # Strip errors and traceback if not in debug mode
         if should_strip_error(self.config):
             strip_code_cell_warnings(cell)
-            strip_code_cell_errors(cell)
+            strip_code_cell_errors(cell, self.config)
 
         return result
 
