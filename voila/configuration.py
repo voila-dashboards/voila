@@ -35,7 +35,6 @@ class VoilaConfiguration(traitlets.config.Configurable):
     cell_error_instruction = Unicode(
         'Please run Voila with --debug to see the error message.',
         config=True,
-        allow_none=True,
         help=(
             'instruction given to user to debug cell errors'
         )
