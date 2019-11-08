@@ -7,11 +7,11 @@ var rules = [
         'css-loader'
     ]},
     // required to load font-awesome
-    { test: /\.woff2(\?v=\d+\.\d+\.\d+)?$/, use: 'url-loader?limit=10000&mimetype=application/font-woff&name=/voila/static/[hash].[ext]' },
-    { test: /\.woff(\?v=\d+\.\d+\.\d+)?$/, use: 'url-loader?limit=10000&mimetype=application/font-woff&name=/voila/static/[hash].[ext]' },
-    { test: /\.ttf(\?v=\d+\.\d+\.\d+)?$/, use: 'url-loader?limit=10000&mimetype=application/octet-stream&name=/voila/static/[hash].[ext]' },
-    { test: /\.eot(\?v=\d+\.\d+\.\d+)?$/, use: 'file-loader&name=/voila/static/[hash].[ext]' },
-    { test: /\.svg(\?v=\d+\.\d+\.\d+)?$/, use: 'url-loader?limit=10000&mimetype=image/svg+xml&name=/voila/static/[hash].[ext]' }
+    { test: /\.woff2(\?v=\d+\.\d+\.\d+)?$/, use: 'url-loader?limit=10000&mimetype=application/font-woff&publicPath=/voila/static/' },
+    { test: /\.woff(\?v=\d+\.\d+\.\d+)?$/, use: 'url-loader?limit=10000&mimetype=application/font-woff&publicPath=/voila/static/' },
+    { test: /\.ttf(\?v=\d+\.\d+\.\d+)?$/, use: 'url-loader?limit=10000&mimetype=application/octet-stream&publicPath=/voila/static/' },
+    { test: /\.eot(\?v=\d+\.\d+\.\d+)?$/, use: 'file-loader&publicPath=/voila/static/' },
+    { test: /\.svg(\?v=\d+\.\d+\.\d+)?$/, use: 'url-loader?limit=10000&mimetype=image/svg+xml&publicPath=/voila/static/' }
 ]
 
 var distRoot = path.resolve(__dirname, '..', 'share', 'jupyter', 'voila', 'templates', 'default', 'static')
