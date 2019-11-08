@@ -16,30 +16,6 @@ from nbformat.v4 import output_from_msg
 from ipykernel.jsonutil import json_clean
 
 
-def strip_code_cell_errors(cell, config):
-    """Strip any error outputs and traceback from a code cell."""
-    # There is no 'outputs' key for markdown cells
-    if 'outputs' not in cell:
-        return cell
-
-    outputs = cell['outputs']
-
-    error_outputs = [output for output in outputs if output['output_type'] == 'error']
-
-    instruction = ''
-    if 'VoilaConfiguration' in config and 'cell_error_instruction' in config['VoilaConfiguration']:
-        instruction = config['VoilaConfiguration']['cell_error_instruction']
-
-    error_message = 'There was an error when executing cell [{}]. {}'.format(cell['execution_count'], instruction)
-
-    for output in error_outputs:
-        output['ename'] = 'ExecutionError'
-        output['evalue'] = 'Execution error'
-        output['traceback'] = [error_message]
-
-    return cell
-
-
 def strip_code_cell_warnings(cell):
     """Strip any warning outputs and traceback from a code cell."""
     # There is no 'outputs' key for markdown cells
@@ -54,19 +30,6 @@ def strip_code_cell_warnings(cell):
     ]
 
     return cell
-
-
-def strip_notebook_errors(nb, config):
-    """Strip error messages and traceback from a Notebook."""
-    cells = nb['cells']
-
-    code_cells = [cell for cell in cells if cell['cell_type'] == 'code']
-
-    for cell in code_cells:
-        strip_code_cell_warnings(cell)
-        strip_code_cell_errors(cell, config)
-
-    return nb
 
 
 def should_strip_error(config):
@@ -164,7 +127,7 @@ class VoilaExecutePreprocessor(ExecutePreprocessor):
 
         # Strip errors and traceback if not in debug mode
         if should_strip_error(self.config):
-            strip_notebook_errors(nb, self.config)
+            self.strip_notebook_errors(nb)
 
         return result
 
@@ -180,7 +143,7 @@ class VoilaExecutePreprocessor(ExecutePreprocessor):
         # Strip errors and traceback if not in debug mode
         if should_strip_error(self.config):
             strip_code_cell_warnings(cell)
-            strip_code_cell_errors(cell, self.config)
+            self.strip_code_cell_errors(cell)
 
         return result
 
@@ -230,6 +193,40 @@ class VoilaExecutePreprocessor(ExecutePreprocessor):
             return
         super(VoilaExecutePreprocessor, self).clear_output(outs, msg, cell_index)
 
+    def strip_notebook_errors(self, nb):
+        """Strip error messages and traceback from a Notebook."""
+        cells = nb['cells']
+
+        code_cells = [cell for cell in cells if cell['cell_type'] == 'code']
+
+        for cell in code_cells:
+            strip_code_cell_warnings(cell)
+            self.strip_code_cell_errors(cell)
+
+        return nb
+    
+    def strip_code_cell_errors(self, cell):
+        """Strip any error outputs and traceback from a code cell."""
+        # There is no 'outputs' key for markdown cells
+        if 'outputs' not in cell:
+            return cell
+
+        outputs = cell['outputs']
+
+        error_outputs = [output for output in outputs if output['output_type'] == 'error']
+
+        instruction = ''
+        if 'VoilaConfiguration' in self.config and 'cell_error_instruction' in self.config['VoilaConfiguration']:
+            instruction = self.config['VoilaConfiguration']['cell_error_instruction']
+
+        error_message = 'There was an error when executing cell [{}]. {}'.format(cell['execution_count'], instruction)
+
+        for output in error_outputs:
+            output['ename'] = 'ExecutionError'
+            output['evalue'] = 'Execution error'
+            output['traceback'] = [error_message]
+
+        return cell
 
 def executenb(nb, cwd=None, km=None, **kwargs):
     resources = {}
