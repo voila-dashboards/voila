@@ -1,5 +1,4 @@
 {%- extends 'lab.tpl' -%}
-{% from 'mathjax.tpl' import mathjax %}
 
 {%- block header -%}
 <!DOCTYPE html>

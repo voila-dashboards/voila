@@ -43,6 +43,8 @@ require(['static/voila'], function(voila) {
             window.addEventListener('beforeunload', function (e) {
                 kernel.shutdown()
             });
+
+            voila.renderMathJax();
         }
 
         if (document.readyState === 'complete') {

@@ -1,5 +1,4 @@
 {%- extends 'base.tpl' -%}
-{% from 'mathjax.tpl' import mathjax %}
 {% import "spinner.tpl" as spinner %}
 
 {# this overrides the default behaviour of directly starting the kernel and executing the notebook #}
@@ -31,8 +30,6 @@ a.anchor-link {
   margin: 0.4em;
 }
 </style>
-
-{{ mathjax() }}
 
 {{ spinner.css() }}
 
