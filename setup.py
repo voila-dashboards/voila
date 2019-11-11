@@ -375,6 +375,7 @@ setup_args = {
         ]
     },
     'install_requires': [
+        'async_generator',
         'jupyter_server>=0.1.0,<0.2.0',
         'nbconvert>=5.6.0,<6',
         'jupyterlab_pygments>=0.1.0,<0.2',
