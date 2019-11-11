@@ -215,7 +215,7 @@ class VoilaExecutePreprocessor(ExecutePreprocessor):
 
         error_outputs = [output for output in outputs if output['output_type'] == 'error']
 
-        instruction = ''
+        instruction = 'Please run Voila with --debug to see the error message.'
         if 'VoilaConfiguration' in self.config and 'cell_error_instruction' in self.config['VoilaConfiguration']:
             instruction = self.config['VoilaConfiguration']['cell_error_instruction']
 
