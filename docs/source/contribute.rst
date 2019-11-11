@@ -71,6 +71,10 @@ When making changes to the frontend side of Voilà, open a new terminal window a
 
 Then reload the browser tab.
 
+**Note**: the notebooks directory contains some examples that can be run with Voilà.
+Checkout the `instructions <using.html#the-example-notebooks>`__ in the user guide
+for details on how to run them.
+
 Extensions
 ==========
 
@@ -131,22 +135,6 @@ To install the JupyterLab extension locally:
    
    # start in watch mode to pick up changes automatically
    jupyter lab --watch
-
-Running the examples
-====================
-
-A few additional libraries can be installed to run the example notebooks:
-
-.. code-block:: bash
-
-   conda install -c conda-forge ipywidgets ipyvolume bqplot scipy
-
-The examples can then be served with:
-
-.. code-block:: bash
-
-   cd notebooks/
-   voila
 
 Tests
 =====

@@ -108,5 +108,17 @@ contains a collection of Jupyter notebooks that can be rendered using Voilà:
 * **xleaflet.ipynb** - a notebook that uses C++ kernel and interactive widgets
 
 These examples demonstrate different interactive HTML widgets and can be used as inspiration
-for getting started with Voilà. Checkout the `instructions <contribute.html#running-the-examples>`_
-in the contributor guide for how to run them.
+for getting started with Voilà.
+
+To **run the example notebooks**, a few additional libraries can be installed :
+
+.. code-block:: bash
+
+   conda install -c conda-forge ipywidgets ipyvolume bqplot scipy
+
+The examples can then be served with:
+
+.. code-block:: bash
+
+   cd notebooks/
+   voila
