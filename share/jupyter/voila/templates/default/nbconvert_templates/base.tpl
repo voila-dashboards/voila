@@ -18,6 +18,18 @@
     crossorigin="anonymous">
 </script>
 
+<script>
+requirejs.config({ baseUrl: '{{resources.base_url}}voila/', waitSeconds: 30})
+requirejs(
+    [
+    {% for ext in resources.nbextensions -%}
+        "{{resources.base_url}}voila/nbextensions/{{ ext }}.js",
+    {% endfor %}
+    ]
+)
+</script>
+
+
 {% block notebook_execute %}
     {%- set kernel_id = kernel_start() -%}
     <script id="jupyter-config-data" type="application/json">
@@ -47,15 +59,7 @@
 {% block footer %}
 {% block footer_js %}
 <script>
-requirejs.config({ baseUrl: '{{resources.base_url}}voila/', waitSeconds: 30})
-requirejs(
-    [
-        "static/main",
-    {% for ext in resources.nbextensions -%}
-        "{{resources.base_url}}voila/nbextensions/{{ ext }}.js",
-    {% endfor %}
-    ]
-)
+requirejs(["static/main"])
 </script>
 
 {% endblock footer_js %}
