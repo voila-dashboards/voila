@@ -13,6 +13,8 @@ from nbconvert.preprocessors import ClearOutputPreprocessor
 from nbconvert.preprocessors.execute import CellExecutionError, ExecutePreprocessor
 from nbformat.v4 import output_from_msg
 
+from traitlets import Unicode
+
 from ipykernel.jsonutil import json_clean
 
 
@@ -113,6 +115,14 @@ class OutputWidget:
 
 class VoilaExecutePreprocessor(ExecutePreprocessor):
     """Execute, but respect the output widget behaviour"""
+    cell_error_instruction = Unicode(
+        'Please run Voila with --debug to see the error message.',
+        config=True,
+        help=(
+            'instruction given to user to debug cell errors'
+        )
+    )
+
     def __init__(self, **kwargs):
         super(VoilaExecutePreprocessor, self).__init__(**kwargs)
         self.output_hook_stack = collections.defaultdict(list)  # maps to list of hooks, where the last is used
@@ -215,11 +225,7 @@ class VoilaExecutePreprocessor(ExecutePreprocessor):
 
         error_outputs = [output for output in outputs if output['output_type'] == 'error']
 
-        instruction = 'Please run Voila with --debug to see the error message.'
-        if 'VoilaConfiguration' in self.config and 'cell_error_instruction' in self.config['VoilaConfiguration']:
-            instruction = self.config['VoilaConfiguration']['cell_error_instruction']
-
-        error_message = 'There was an error when executing cell [{}]. {}'.format(cell['execution_count'], instruction)
+        error_message = 'There was an error when executing cell [{}]. {}'.format(cell['execution_count'], self.cell_error_instruction)
 
         for output in error_outputs:
             output['ename'] = 'ExecutionError'
