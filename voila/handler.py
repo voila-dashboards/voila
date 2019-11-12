@@ -7,6 +7,7 @@
 # The full license is in the file LICENSE, distributed with this software.  #
 #############################################################################
 
+import asyncio
 import os
 
 import tornado.web
@@ -16,10 +17,13 @@ from jupyter_server.config_manager import recursive_update
 from jupyter_server.utils import url_path_join
 import nbformat
 
+from jinja2.utils import have_async_gen
+
 from nbconvert.preprocessors import ClearOutputPreprocessor
 
 from .execute import executenb, VoilaExecutePreprocessor
 from .exporter import VoilaExporter
+from .threading import async_execute_in_current_thread, busy_wait_execute_in_current_thread
 
 
 class VoilaHandler(JupyterHandler):
@@ -85,20 +89,22 @@ class VoilaHandler(JupyterHandler):
             self.exporter.exclude_output_prompt = True
             self.exporter.exclude_input_prompt = True
 
+        # Currenly _jinja_kernel_start is invoked from a different thread, which causes the websocket connection from
+        # the frontend to fail. Instead, we use these decorators to execute is async in the main (tornado) thread
+        if have_async_gen:  # >= Python3.6
+            _jinja_kernel_start_wrapper = async_execute_in_current_thread(self._jinja_kernel_start)
+        else:  # Python3.5 case
+            _jinja_kernel_start_wrapper = busy_wait_execute_in_current_thread(self._jinja_kernel_start)
+
         # These functions allow the start of a kernel and execution of the notebook after (parts of) the template
         # has been rendered and send to the client to allow progressive rendering.
         # Template should first call kernel_start, and then decide to use notebook_execute
         # or cell_generator to implement progressive cell rendering
         extra_context = {
-            # NOTE: we can remove the lambda is we use jinja's async feature, which will automatically await the future
-            'kernel_start': lambda: self._jinja_kernel_start().result(),  # pass the result (not the future) to the template
+            'kernel_start': _jinja_kernel_start_wrapper,
             'cell_generator': self._jinja_cell_generator,
             'notebook_execute': self._jinja_notebook_execute,
         }
-
-        # Currenly _jinja_kernel_start is executed from a different thread, which causes the websocket connection from
-        # the frontend to fail. Instead, we start it beforehand, and just return the kernel_id in _jinja_kernel_start
-        self.kernel_id = await tornado.gen.maybe_future(self.kernel_manager.start_kernel(kernel_name=self.notebook.metadata.kernelspec.name, path=self.cwd))
 
         # Compose reply
         self.set_header('Content-Type', 'text/html')
@@ -112,12 +118,12 @@ class VoilaHandler(JupyterHandler):
     def redirect_to_file(self, path):
         self.redirect(url_path_join(self.base_url, 'voila', 'files', path))
 
-    @tornado.gen.coroutine
-    def _jinja_kernel_start(self):
+    async def _jinja_kernel_start(self):
+        await asyncio.sleep(5)
         assert not self.kernel_started, "kernel was already started"
-        # See command above aboout not being able to start the kernel from a different thread
+        kernel_id = await tornado.gen.maybe_future(self.kernel_manager.start_kernel(kernel_name=self.notebook.metadata.kernelspec.name, path=self.cwd))
         self.kernel_started = True
-        return self.kernel_id
+        return kernel_id
 
     def _jinja_notebook_execute(self, nb, kernel_id):
         km = self.kernel_manager.get_kernel(kernel_id)

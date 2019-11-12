@@ -13,6 +13,7 @@ import traitlets
 from traitlets.config import Config
 
 from jinja2 import contextfilter
+from jinja2.utils import have_async_gen
 
 from nbconvert.filters.markdown_mistune import IPythonRenderer, MarkdownWithMath
 from nbconvert.exporters.html import HTMLExporter
@@ -116,8 +117,14 @@ class VoilaExporter(HTMLExporter):
         @async_generator
         async def async_jinja_generator():
             # Top level variables are passed to the template_exporter here.
-            for output in self.template.generate(nb=nb_copy, resources=resources, **extra_context):
-                await yield_((output, resources))
+            # If we have support for async, we can generate async and avoid busy waiting in
+            # threading.py (async_execute_in_current_thread vs busy_wait_execute_in_current_thread)
+            if have_async_gen:
+                async for output in self.template.generate_async(nb=nb_copy, resources=resources, **extra_context):
+                    await yield_((output, resources))
+            else:
+                for output in self.template.generate(nb=nb_copy, resources=resources, **extra_context):
+                    await yield_((output, resources))
 
         async for output, resources in async_jinja_generator():
             await yield_((output, resources))
@@ -127,4 +134,6 @@ class VoilaExporter(HTMLExporter):
         env = super(type(self), self).environment
         if 'jinja2.ext.do' not in env.extensions:
             env.add_extension('jinja2.ext.do')
+        env.enable_async = True
+        env.is_async = have_async_gen
         return env
