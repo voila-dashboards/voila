@@ -125,8 +125,7 @@ class Voila(Application):
         'theme': 'VoilaConfiguration.theme',
         'base_url': 'Voila.base_url',
         'server_url': 'Voila.server_url',
-        'enable_nbextensions': 'VoilaConfiguration.enable_nbextensions',
-        'cell_error_instruction': 'VoilaConfiguration.cell_error_instruction'
+        'enable_nbextensions': 'VoilaConfiguration.enable_nbextensions'
     }
     classes = [
         VoilaConfiguration,
