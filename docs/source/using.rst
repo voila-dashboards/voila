@@ -100,6 +100,9 @@ contains a collection of Jupyter notebooks that can be rendered using Voilà:
 * **bqplot.ipynb** - uses custom Jupyter widgets such as
   `bqplot <https://github.com/bloomberg/bqplot>`__.
 * **dashboard.ipynb** - uses gridstack.js for the layout of each output.
+* **gridspecLayout.ipynb** - uses
+  `GridspecLayout <https://ipywidgets.readthedocs.io/en/latest/examples/Layout%20Templates.html#Grid-layout>`__
+  for the layout of different widges.
 * **interactive.ipynb** - makes use of ipywidget's @interact.
 * **ipympl.ipynb** - contains custom interactive matplotlib figures using the
   `ipympl <https://github.com/matplotlib/jupyter-matplotlib>`__ widget.
@@ -110,11 +113,17 @@ contains a collection of Jupyter notebooks that can be rendered using Voilà:
 These examples demonstrate different interactive HTML widgets and can be used as inspiration
 for getting started with Voilà.
 
-To **run the example notebooks**, a few additional libraries can be installed :
+To **run the example notebooks**, a few additional libraries can be installed using:
 
 .. code-block:: bash
 
    conda install -c conda-forge ipywidgets ipyvolume bqplot scipy
+
+Or alternatively:
+
+.. code-block:: bash
+
+   conda env create
 
 The examples can then be served with:
 
