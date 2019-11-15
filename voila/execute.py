@@ -13,7 +13,6 @@ from nbconvert.preprocessors import ClearOutputPreprocessor
 from nbconvert.preprocessors.execute import CellExecutionError, ExecutePreprocessor
 from nbformat.v4 import output_from_msg
 
-
 from traitlets import Unicode
 
 from ipykernel.jsonutil import json_clean
