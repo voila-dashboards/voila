@@ -1,5 +1,6 @@
 #############################################################################
 # Copyright (c) 2018, Voila Contributors                                    #
+# Copyright (c) 2018, QuantStack                                            #
 #                                                                           #
 # Distributed under the terms of the BSD 3-Clause License.                  #
 #                                                                           #
@@ -8,6 +9,7 @@
 
 import os
 import json
+
 from jupyter_core.paths import jupyter_path
 
 ROOT = os.path.dirname(__file__)
@@ -17,10 +19,10 @@ DEV_MODE = os.path.exists(os.path.join(ROOT, '../setup.py')) and os.path.exists(
 
 
 def collect_template_paths(
-       nbconvert_template_paths,
-       static_paths,
-       tornado_template_paths,
-       template_name='default'):
+        nbconvert_template_paths,
+        static_paths,
+        tornado_template_paths,
+        template_name='default'):
     """
     Voila supports custom templates for rendering notebooks.
 

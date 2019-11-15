@@ -11,7 +11,31 @@ require(['static/voila'], function(voila) {
     // requirejs doesn't like to be passed an async function, so create one inside
     (async function() {
         var kernel = await voila.connectKernel()
-        var widgetManager = new voila.WidgetManager(kernel);
+
+        const context = { 
+            session: {
+                kernel,
+                kernelChanged: {
+                    connect: () => {}
+                },
+                statusChanged: {
+                    connect: () => {}
+                },
+            },
+            saveState: {
+                connect: () => {}
+            },
+        };
+
+        const settings = {
+            saveState: false
+        };
+
+        const rendermime = new voila.RenderMimeRegistry({
+            initialFactories: voila.standardRendererFactories
+        });
+
+        var widgetManager = new voila.WidgetManager(context, rendermime, settings);
 
         function init() {
             widgetManager.build_widgets();
@@ -19,6 +43,8 @@ require(['static/voila'], function(voila) {
             window.addEventListener('beforeunload', function (e) {
                 kernel.shutdown()
             });
+
+            voila.renderMathJax();
         }
 
         if (document.readyState === 'complete') {

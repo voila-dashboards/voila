@@ -5,33 +5,34 @@
   "main": "lib/index.js",
   "browserslist": ">0.8%, not ie 11, not op_mini all, not dead",
   "dependencies": {
-    "@jupyter-widgets/base": "^1.2.2",
-    "@jupyter-widgets/controls": "^1.4.2",
-    "@jupyter-widgets/html-manager": "^0.15.2",
-    "@jupyter-widgets/jupyterlab-manager": "^0.39.1",
-    "@jupyter-widgets/output": "^1.1.2",
-    "@jupyterlab/coreutils": "^2.2.1",
-    "@jupyterlab/outputarea": "^0.19.1",
-    "@jupyterlab/rendermime": "^0.19.1",
-    "@jupyterlab/services": "^3.2.1",
+    "@jupyter-widgets/base": "^2.0.1",
+    "@jupyter-widgets/controls": "^1.5.0",
+    "@jupyter-widgets/jupyterlab-manager": "^1.0.0",
+    "@jupyter-widgets/output": "^2.0.0",
+    "@jupyterlab/coreutils": "^3.0.0",
+    "@jupyterlab/outputarea": "^1.0.0",
+    "@jupyterlab/rendermime": "^1.0.0",
+    "@jupyterlab/services": "^4.0.0",
     "@phosphor/signaling": "^1.2.2",
     "@phosphor/widgets": "^1.5.0",
     "core-js": "^3.1.0",
-    "font-awesome": "^4.7.0"
+    "font-awesome": "^4.7.0",
+    "mathjax-full": "^3.0.0"
   },
   "devDependencies": {
     "@babel/cli": "^7.2.3",
     "@babel/core": "^7.2.2",
     "@babel/preset-env": "^7.3.1",
     "babel-loader": "^8.0.5",
-    "css-loader": "^0.28.7",
-    "file-loader": "^1.1.5",
+    "css-loader": "^3.0.0",
+    "file-loader": "^4.0.0",
     "npm-run-all": "^4.1.5",
-    "style-loader": "^0.18.2",
-    "url-loader": "^0.6.2",
+    "style-loader": "^0.23.1",
+    "url-loader": "^1.0.0",
     "webpack": "^4.29.3",
     "webpack-cli": "^3.2.3"
   },
+  "style": "style/index.css",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "prepare": "npm run build:lib && webpack",
@@ -40,6 +41,6 @@
     "watch:lib": "babel src --out-dir lib --watch",
     "watch:bundle": "webpack --watch --mode=development"
   },
-  "author": "",
-  "license": "ISC"
+  "author": "Voila contributors",
+  "license": "BSD-3-Clause"
 }

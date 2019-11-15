@@ -1,8 +1,8 @@
 import os
 
 import pytest
-import voila.app
 
+import voila.app
 
 BASE_DIR = os.path.dirname(__file__)
 
@@ -41,10 +41,10 @@ def voila_app(voila_args, voila_config):
     voila_config(voila_app)
     voila_app.start()
     yield voila_app
+    voila_app.stop()
     voila_app.clear_instance()
+
 
 @pytest.fixture
 def app(voila_app):
     return voila_app.app
-
-

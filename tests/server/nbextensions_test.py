@@ -1,8 +1,10 @@
 # tests programmatic config of template sytem
 import pytest
+
 import os
 
 BASE_DIR = os.path.dirname(__file__)
+
 
 @pytest.fixture
 def jupyter_server_config():

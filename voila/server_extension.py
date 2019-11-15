@@ -1,5 +1,6 @@
 #############################################################################
 # Copyright (c) 2018, Voila Contributors                                    #
+# Copyright (c) 2018, QuantStack                                            #
 #                                                                           #
 # Distributed under the terms of the BSD 3-Clause License.                  #
 #                                                                           #
@@ -18,8 +19,9 @@ from jupyter_server.base.handlers import FileFindHandler
 from .paths import ROOT, STATIC_ROOT, collect_template_paths, jupyter_path
 from .handler import VoilaHandler
 from .treehandler import VoilaTreeHandler
-from .static_file_handler import MultiStaticFileHandler
+from .static_file_handler import MultiStaticFileHandler, WhiteListFileHandler
 from .configuration import VoilaConfiguration
+from .utils import get_server_root_dir
 
 
 def load_jupyter_server_extension(server_app):
@@ -48,15 +50,27 @@ def load_jupyter_server_extension(server_app):
     host_pattern = '.*$'
     base_url = url_path_join(web_app.settings['base_url'])
 
+    tree_handler_conf = {
+        'voila_configuration': voila_configuration
+    }
     web_app.add_handlers(host_pattern, [
-        (url_path_join(base_url, '/voila/render' + path_regex), VoilaHandler, {
+        (url_path_join(base_url, '/voila/render/(.*)'), VoilaHandler, {
             'config': server_app.config,
             'nbconvert_template_paths': nbconvert_template_paths,
             'voila_configuration': voila_configuration
         }),
-        (url_path_join(base_url, '/voila'), VoilaTreeHandler),
-        (url_path_join(base_url, '/voila/tree' + path_regex), VoilaTreeHandler),
-        (url_path_join(base_url, '/voila/static/(.*)'),  MultiStaticFileHandler, {'paths': static_paths}),
+        (url_path_join(base_url, '/voila'), VoilaTreeHandler, tree_handler_conf),
+        (url_path_join(base_url, '/voila/tree' + path_regex), VoilaTreeHandler, tree_handler_conf),
+        (url_path_join(base_url, '/voila/static/(.*)'), MultiStaticFileHandler, {'paths': static_paths}),
+        (
+            url_path_join(base_url, r'/voila/files/(.*)'),
+            WhiteListFileHandler,
+            {
+                'whitelist': voila_configuration.file_whitelist,
+                'blacklist': voila_configuration.file_blacklist,
+                'path': os.path.expanduser(get_server_root_dir(web_app.settings)),
+            },
+        ),
     ])
 
     # Serving notebook extensions

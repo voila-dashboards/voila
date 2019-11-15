@@ -1,5 +1,6 @@
 #############################################################################
 # Copyright (c) 2018, Voila Contributors                                    #
+# Copyright (c) 2018, QuantStack                                            #
 #                                                                           #
 # Distributed under the terms of the BSD 3-Clause License.                  #
 #                                                                           #
@@ -9,7 +10,9 @@
 import hashlib
 
 from traitlets import Unicode, Union, Type
+
 from pygments.style import Style
+
 from jupyterlab_pygments import JupyterStyle
 
 from nbconvert.preprocessors.base import Preprocessor

@@ -1,5 +1,4 @@
 {%- extends 'lab.tpl' -%}
-{% from 'mathjax.tpl' import mathjax %}
 
 {%- block header -%}
 <!DOCTYPE html>
@@ -13,31 +12,40 @@
 <link rel="stylesheet" href="https://unpkg.com/font-awesome@4.5.0/css/font-awesome.min.css" type="text/css" />
 
 {%- block html_head_js -%}
-
-<script src="{{resources.base_url}}voila/static/jquery.min.js"></script>
-
-<script id="jupyter-config-data" type="application/json">
-{
-    "baseUrl": "{{resources.base_url}}",
-    "kernelId": "{{resources.kernel_id}}"
-}
-</script>
-{%- endblock html_head_js -%}
-
-{%- block html_head_css -%}
-{%- endblock html_head_css -%}
-{%- endblock html_head -%}
-</head>
-{%- endblock header -%}
-
-
-{% block footer %}
-{% block footer_js %}
 <script
     src="{{resources.base_url}}voila/static/require.min.js"
     integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA="
     crossorigin="anonymous">
 </script>
+
+{% block notebook_execute %}
+    {%- set kernel_id = kernel_start() -%}
+    <script id="jupyter-config-data" type="application/json">
+    {
+        "baseUrl": "{{resources.base_url}}",
+        "kernelId": "{{kernel_id}}"
+    }
+    </script>
+    {# from this point on, nb.cells contains output of the executed cells #}
+    {% do notebook_execute(nb, kernel_id) %}
+{%- endblock notebook_execute -%}
+
+{%- endblock html_head_js -%}
+
+{%- block html_head_css -%}
+  <style>
+    /*Hide empty cells*/
+    .jp-mod-noOutputs.jp-mod-noInput {
+      display: none;
+    }
+  </style>
+{%- endblock html_head_css -%}
+{%- endblock html_head -%}
+</head>
+{%- endblock header -%}
+
+{% block footer %}
+{% block footer_js %}
 <script>
 requirejs.config({ baseUrl: '{{resources.base_url}}voila/', waitSeconds: 30})
 requirejs(

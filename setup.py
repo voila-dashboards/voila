@@ -7,9 +7,11 @@ from setuptools.command.develop import develop
 from setuptools.command.egg_info import egg_info
 from setuptools.command.bdist_egg import bdist_egg
 
-from subprocess import check_call
+from io import BytesIO
+from subprocess import check_call, CalledProcessError
 
 import os
+import shlex
 import sys
 
 try:
@@ -25,13 +27,10 @@ here = os.path.dirname(os.path.abspath(__file__))
 node_root = os.path.join(here, 'js')
 is_repo = os.path.exists(os.path.join(here, '.git'))
 
-npm_path = os.pathsep.join([
-    os.path.join(node_root, 'node_modules', '.bin'),
-                os.environ.get('PATH', os.defpath),
-])
 
 def in_read_the_docs():
     return os.environ.get('READTHEDOCS') == 'True'
+
 
 def js_first(command, strict=False):
     """decorator for building minified js/css prior to another command"""
@@ -60,12 +59,118 @@ def js_first(command, strict=False):
             update_package_data(self.distribution)
     return DecoratedCommand
 
+
 def update_package_data(distribution):
     """update package_data to catch changes during setup"""
     build_py = distribution.get_command_obj('build_py')
     # distribution.package_data = find_package_data()
     # re-init build_py options which load package_data
     build_py.finalize_options()
+
+
+# TODO: remove this function once we drop Python2, see:
+#  https://github.com/voila-dashboards/voila/pull/322
+# `shutils.which` function copied verbatim from the Python-3.3 source.
+def which(cmd, mode=os.F_OK | os.X_OK, path=None):
+    """Given a command, mode, and a PATH string, return the path which
+    conforms to the given mode on the PATH, or None if there is no such
+    file.
+    `mode` defaults to os.F_OK | os.X_OK. `path` defaults to the result
+    of os.environ.get("PATH"), or can be overridden with a custom search
+    path.
+    """
+
+    # Check that a given file can be accessed with the correct mode.
+    # Additionally check that `file` is not a directory, as on Windows
+    # directories pass the os.access check.
+    def _access_check(fn, mode):
+        return (os.path.exists(fn) and os.access(fn, mode) and
+                not os.path.isdir(fn))
+
+    # Short circuit. If we're given a full path which matches the mode
+    # and it exists, we're done here.
+    if _access_check(cmd, mode):
+        return cmd
+
+    path = (path or os.environ.get("PATH", os.defpath)).split(os.pathsep)
+
+    if sys.platform == "win32":
+        # The current directory takes precedence on Windows.
+        if os.curdir not in path:
+            path.insert(0, os.curdir)
+
+        # PATHEXT is necessary to check on Windows.
+        pathext = os.environ.get("PATHEXT", "").split(os.pathsep)
+        # See if the given file matches any of the expected path extensions.
+        # This will allow us to short circuit when given "python.exe".
+        matches = [cmd for ext in pathext if cmd.lower().endswith(ext.lower())]
+        # If it does match, only test that one, otherwise we have to try
+        # others.
+        files = [cmd] if matches else [cmd + ext.lower() for ext in pathext]
+    else:
+        # On other platforms you don't have things like PATHEXT to tell you
+        # what file suffixes are executable, so just pass on cmd as-is.
+        files = [cmd]
+
+    seen = set()
+    for dir in path:
+        dir = os.path.normcase(dir)
+        if dir not in seen:
+            seen.add(dir)
+            for thefile in files:
+                name = os.path.join(dir, thefile)
+                if _access_check(name, mode):
+                    return name
+    return None
+
+
+# TODO: remove this function once we can depend on jupyter_packing, see:
+#  https://github.com/voila-dashboards/voila/pull/322
+# `run` function copied from jupyter_packaging under the following license:
+# -------------------------------------------------------------------------
+#
+# BSD 3-Clause License
+#
+# Copyright (c) 2017, Project Jupyter
+# All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions are met:
+#
+# * Redistributions of source code must retain the above copyright notice, this
+#   list of conditions and the following disclaimer.
+#
+# * Redistributions in binary form must reproduce the above copyright notice,
+#   this list of conditions and the following disclaimer in the documentation
+#   and/or other materials provided with the distribution.
+#
+# * Neither the name of the copyright holder nor the names of its
+#   contributors may be used to endorse or promote products derived from
+#   this software without specific prior written permission.
+#
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+# IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+# DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
+# FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+# DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+# SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+# CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+# OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+def run(cmd, **kwargs):
+    """Defaults to repo as cwd"""
+    kwargs.setdefault('cwd', here)
+    kwargs.setdefault('shell', os.name == 'nt')
+    if not isinstance(cmd, (list, tuple)):
+        cmd = shlex.split(cmd)
+    cmd_path = which(cmd[0])
+    if not cmd_path:
+        sys.exit("Aborting. Could not find cmd (%s) in path. "
+                 "If command is not expected to be in user's path, "
+                 "use an absolute path." % cmd[0])
+    cmd[0] = cmd_path
+    return check_call(cmd, **kwargs)
 
 
 class NPM(Command):
@@ -88,14 +193,12 @@ class NPM(Command):
 
     def has_npm(self):
         try:
-            check_call(['npm', '--version'])
+            run(['npm', '--version'])
             return True
-        except:
+        except CalledProcessError:
             return False
 
     def should_run_npm_install(self):
-        package_json = os.path.join(node_root, 'package.json')
-        node_modules_exists = os.path.exists(self.node_modules)
         return self.has_npm()
 
     def run(self):
@@ -107,12 +210,9 @@ class NPM(Command):
         if not has_npm:
             log.error("`npm` unavailable.  If you're running this command using sudo, make sure `npm` is available to sudo")
 
-        env = os.environ.copy()
-        env['PATH'] = npm_path
-
         if self.should_run_npm_install():
             log.info('Installing build dependencies with npm.  This may take a while...')
-            check_call(
+            run(
                 ['npm', 'install'],
                 cwd=node_root,
                 stdout=sys.stdout,
@@ -160,7 +260,7 @@ class FetchCSS(Command):
         except Exception as e:
             if 'ssl' in str(e).lower():
                 try:
-                    import pycurl
+                    import pycurl  # noqa
                 except ImportError:
                     print("Failed, try again after installing PycURL with `pip install pycurl` to avoid outdated SSL.", file=sys.stderr)
                     raise e
@@ -180,16 +280,15 @@ class FetchCSS(Command):
         return buf.getvalue()
 
     def run(self):
-        css_dest          = os.path.join('share', 'jupyter', 'voila', 'templates', 'default', 'static', 'index.css')
-        theme_light_dest  = os.path.join('share', 'jupyter', 'voila', 'templates', 'default', 'static', 'theme-light.css')
-        theme_dark_dest   = os.path.join('share', 'jupyter', 'voila', 'templates', 'default', 'static', 'theme-dark.css')
+        css_dest = os.path.join('share', 'jupyter', 'voila', 'templates', 'default', 'static', 'index.css')
+        theme_light_dest = os.path.join('share', 'jupyter', 'voila', 'templates', 'default', 'static', 'theme-light.css')
+        theme_dark_dest = os.path.join('share', 'jupyter', 'voila', 'templates', 'default', 'static', 'theme-dark.css')
 
         try:
             css = self._download(css_url)
             theme_light = self._download(theme_light_url)
             theme_dark = self._download(theme_dark_url)
-        except Exception as e:
-            msg = "Failed to download CSS: %s" % e
+        except Exception:
             if os.path.exists(css_dest) and os.path.exists(theme_light_dest) and os.path.exists(theme_dark_dest):
                 print("Already have CSS, moving on.")
             else:
@@ -207,6 +306,7 @@ class FetchCSS(Command):
         with open(theme_dark_dest, 'wb+') as f:
             f.write(theme_dark)
 
+
 def css_first(command):
     class CSSFirst(command):
         def run(self):
@@ -215,7 +315,7 @@ def css_first(command):
     return CSSFirst
 
 
-class bdist_egg_disabled(bdist_egg):
+class BdistEggDisabled(bdist_egg):
     """Disabled version of bdist_egg
 
     Prevents setup.py install performing setuptools' default easy_install,
@@ -224,19 +324,21 @@ class bdist_egg_disabled(bdist_egg):
     def run(self):
         sys.exit("Aborting implicit building of eggs. Use `pip install .` to install from source.")
 
+
 cmdclass = {
     'css': FetchCSS,
     'jsdeps': NPM,
     'build_py': css_first(js_first(build_py)),
     'egg_info': css_first(js_first(egg_info)),
     'sdist': css_first(js_first(sdist, strict=True)),
-    'develop' : css_first(develop),
-    'bdist_egg': bdist_egg if 'bdist_egg' in sys.argv else bdist_egg_disabled
+    'develop': css_first(develop),
+    'bdist_egg': bdist_egg if 'bdist_egg' in sys.argv else BdistEggDisabled
 }
 
 version_ns = {}
 with open(os.path.join(here, 'voila', '_version.py')) as f:
     exec(f.read(), {}, version_ns)
+
 
 def get_data_files():
     """Get the data files for the package.
@@ -252,6 +354,7 @@ def get_data_files():
         if filenames:
             data_files.append((dirpath, [os.path.join(dirpath, filename) for filename in filenames]))
     return data_files
+
 
 setup_args = {
     'name': 'voila',
@@ -272,20 +375,24 @@ setup_args = {
         ]
     },
     'install_requires': [
-        'jupyter_server>=0.0.5,<0.0.6',
+        'async_generator',
+        'jupyter_server>=0.1.0,<0.2.0',
         'nbconvert>=5.5.0,<6',
-        'jupyterlab_pygments>=0.1.0,<0.2'
+        'jupyterlab_pygments>=0.1.0,<0.2',
+        'pygments>=2.4.1,<3'  # Explicitly requiring pygments which is a second-order dependency.
+                              # An older versions is generally installed already and is otherwise not updated by pip.
     ],
     'extras_require': {
         'test': [
             'mock',
             'pytest<4',
-            'pytest-tornado5',
-            'voila-gridstack'
+            'pytest-tornado',
+            'matplotlib',
+            'ipywidgets'
         ]
     },
-    'author': 'QuantStack',
-    'author_email': 'info@quantstack.net',
+    'author': 'Voila Development team',
+    'author_email': 'jupyter@googlegroups.com',
     'keywords': [
         'ipython',
         'jupyter',

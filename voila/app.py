@@ -1,5 +1,6 @@
 #############################################################################
 # Copyright (c) 2018, Voila Contributors                                    #
+# Copyright (c) 2018, QuantStack                                            #
 #                                                                           #
 # Distributed under the terms of the BSD 3-Clause License.                  #
 #                                                                           #
@@ -7,7 +8,10 @@
 #############################################################################
 
 from zmq.eventloop import ioloop
+
 import gettext
+import io
+import json
 import logging
 import threading
 import tempfile
@@ -16,6 +20,8 @@ import shutil
 import signal
 import socket
 import webbrowser
+import errno
+import random
 
 try:
     from urllib.parse import urljoin
@@ -30,31 +36,39 @@ import tornado.ioloop
 import tornado.web
 
 from traitlets.config.application import Application
+from traitlets.config.loader import Config
 from traitlets import Unicode, Integer, Bool, Dict, List, Any, default
 
 from jupyter_server.services.kernels.kernelmanager import MappingKernelManager
 from jupyter_server.services.kernels.handlers import KernelHandler, ZMQChannelsHandler
-from jupyter_server.base.handlers import path_regex
 from jupyter_server.services.contents.largefilemanager import LargeFileManager
+from jupyter_server.base.handlers import FileFindHandler, path_regex
+from jupyter_server.config_manager import recursive_update
 from jupyter_server.utils import url_path_join
 from jupyter_server.services.config import ConfigManager
-from jupyter_server.base.handlers import FileFindHandler
+
+from jupyter_client.kernelspec import KernelSpecManager
+
 from jupyter_core.paths import jupyter_config_path, jupyter_path
+
 from ipython_genutils.py3compat import getcwd
 
 from .paths import ROOT, STATIC_ROOT, collect_template_paths
 from .handler import VoilaHandler
 from .treehandler import VoilaTreeHandler
 from ._version import __version__
-from .static_file_handler import MultiStaticFileHandler
+from .static_file_handler import MultiStaticFileHandler, WhiteListFileHandler
 from .configuration import VoilaConfiguration
+from .execute import VoilaExecutePreprocessor
+from .exporter import VoilaExporter
+from .csspreprocessor import VoilaCSSPreprocessor
 
 ioloop.install()
 _kernel_id_regex = r"(?P<kernel_id>\w+-\w+-\w+-\w+-\w+)"
 
 
-# placeholder for i18
-def _(x): return x
+def _(x):
+    return x
 
 
 class Voila(Application):
@@ -63,6 +77,7 @@ class Voila(Application):
     examples = 'voila example.ipynb --port 8888'
 
     flags = {
+        'debug': ({'Voila': {'log_level': logging.DEBUG}}, _("Set the log level to logging.DEBUG")),
         'no-browser': ({'Voila': {'open_browser': False}}, _('Don\'t open the notebook in a browser after startup.'))
     }
 
@@ -113,7 +128,10 @@ class Voila(Application):
         'enable_nbextensions': 'VoilaConfiguration.enable_nbextensions'
     }
     classes = [
-        VoilaConfiguration
+        VoilaConfiguration,
+        VoilaExecutePreprocessor,
+        VoilaExporter,
+        VoilaCSSPreprocessor
     ]
     connection_dir_root = Unicode(
         config=True,
@@ -178,6 +196,10 @@ class Voila(Application):
             'paths to static assets'
         )
     )
+
+    port_retries = Integer(50, config=True,
+                           help=_("The number of additional ports to try if the specified port is not available.")
+                           )
 
     ip = Unicode('localhost', config=True,
                  help=_("The IP address the notebook server will listen on."))
@@ -326,8 +348,6 @@ class Voila(Application):
 
         # then we load the config
         self.load_config_file('voila', path=self.config_file_paths)
-        # but that cli config has preference, so we overwrite with that
-        self.update_config(self.cli_config)
         # common configuration options between the server extension and the application
         self.voila_configuration = VoilaConfiguration(parent=self)
         self.setup_template_dirs()
@@ -340,6 +360,20 @@ class Voila(Application):
                 self.static_paths,
                 self.template_paths,
                 self.voila_configuration.template)
+            # look for possible template-related config files
+            template_conf_dir = [os.path.join(k, '..') for k in self.nbconvert_template_paths]
+            conf_paths = [os.path.join(d, 'conf.json') for d in template_conf_dir]
+            for p in conf_paths:
+                # see if config file exists
+                if os.path.exists(p):
+                    # load the template-related config
+                    with open(p) as json_file:
+                        conf = json.load(json_file)
+                    # update the overall config with it, preserving CLI config priority
+                    if 'traitlet_configuration' in conf:
+                        recursive_update(conf['traitlet_configuration'], self.voila_configuration.config.VoilaConfiguration)
+                        # pass merged config to overall voila config
+                        self.voila_configuration.config.VoilaConfiguration = Config(conf['traitlet_configuration'])
         self.log.debug('using template: %s', self.voila_configuration.template)
         self.log.debug('nbconvert template paths:\n\t%s', '\n\t'.join(self.nbconvert_template_paths))
         self.log.debug('template paths:\n\t%s', '\n\t'.join(self.template_paths))
@@ -359,10 +393,17 @@ class Voila(Application):
         self.log.info('Storing connection files in %s.' % self.connection_dir)
         self.log.info('Serving static files from %s.' % self.static_root)
 
+        self.kernel_spec_manager = KernelSpecManager(
+            parent=self
+        )
+
         self.kernel_manager = MappingKernelManager(
             parent=self,
             connection_dir=self.connection_dir,
+            kernel_spec_manager=self.kernel_spec_manager,
             allowed_message_types=[
+                'comm_open',
+                'comm_close',
                 'comm_msg',
                 'comm_info_request',
                 'kernel_info_request',
@@ -388,6 +429,7 @@ class Voila(Application):
             base_url=self.base_url,
             server_url=self.server_url or self.base_url,
             kernel_manager=self.kernel_manager,
+            kernel_spec_manager=self.kernel_spec_manager,
             allow_remote_access=True,
             autoreload=self.autoreload,
             voila_jinja2_env=env,
@@ -427,10 +469,24 @@ class Voila(Application):
                     },
                 )
             )
+        handlers.append(
+            (
+                url_path_join(self.server_url, r'/voila/files/(.*)'),
+                WhiteListFileHandler,
+                {
+                    'whitelist': self.voila_configuration.file_whitelist,
+                    'blacklist': self.voila_configuration.file_blacklist,
+                    'path': self.root_dir,
+                },
+            )
+        )
 
+        tree_handler_conf = {
+            'voila_configuration': self.voila_configuration
+        }
         if self.notebook_path:
             handlers.append((
-                url_path_join(self.server_url, r'/'),
+                url_path_join(self.server_url, r'/(.*)'),
                 VoilaHandler,
                 {
                     'notebook_path': os.path.relpath(self.notebook_path, self.root_dir),
@@ -443,24 +499,63 @@ class Voila(Application):
         else:
             self.log.debug('serving directory: %r', self.root_dir)
             handlers.extend([
-                (self.server_url, VoilaTreeHandler),
-                (url_path_join(self.server_url, r'/voila/tree' + path_regex), VoilaTreeHandler),
-                (url_path_join(self.server_url, r'/voila/render' + path_regex), VoilaHandler,
-                    {
-                        'nbconvert_template_paths': self.nbconvert_template_paths,
-                        'config': self.config,
-                        'voila_configuration': self.voila_configuration
-                    }),
+                (self.server_url, VoilaTreeHandler, tree_handler_conf),
+                (url_path_join(self.server_url, r'/voila/tree' + path_regex),
+                 VoilaTreeHandler, tree_handler_conf),
+                (url_path_join(self.server_url, r'/voila/render/(.*)'),
+                 VoilaHandler,
+                 {
+                     'nbconvert_template_paths': self.nbconvert_template_paths,
+                     'config': self.config,
+                     'voila_configuration': self.voila_configuration
+                 }),
             ])
 
         self.app.add_handlers('.*$', handlers)
-        if self.open_browser:
-            self.launch_browser()
         self.listen()
 
+    def stop(self):
+        shutil.rmtree(self.connection_dir)
+        self.kernel_manager.shutdown_all()
+
+    def random_ports(self, port, n):
+        """Generate a list of n random ports near the given port.
+
+        The first 5 ports will be sequential, and the remaining n-5 will be
+        randomly selected in the range [port-2*n, port+2*n].
+        """
+        for i in range(min(5, n)):
+            yield port + i
+        for i in range(n-5):
+            yield max(1, port + random.randint(-2*n, 2*n))
+
     def listen(self):
-        self.app.listen(self.port)
-        self.log.info('Voila is running at:\n%s' % self.display_url)
+        for port in self.random_ports(self.port, self.port_retries+1):
+            try:
+                self.app.listen(port)
+                self.port = port
+                self.log.info('Voila is running at:\n%s' % self.display_url)
+            except socket.error as e:
+                if e.errno == errno.EADDRINUSE:
+                    self.log.info(_('The port %i is already in use, trying another port.') % port)
+                    continue
+                elif e.errno in (errno.EACCES, getattr(errno, 'WSAEACCES', errno.EACCES)):
+                    self.log.warning(_("Permission to listen on port %i denied") % port)
+                    continue
+                else:
+                    raise
+            else:
+                self.port = port
+                success = True
+                break
+
+        if not success:
+            self.log.critical(_('ERROR: the voila server could not be started because '
+                              'no available port could be found.'))
+            self.exit(1)
+
+        if self.open_browser:
+            self.launch_browser()
 
         self.ioloop = tornado.ioloop.IOLoop.current()
         try:
@@ -468,8 +563,7 @@ class Voila(Application):
         except KeyboardInterrupt:
             self.log.info('Stopping...')
         finally:
-            shutil.rmtree(self.connection_dir)
-            self.kernel_manager.shutdown_all()
+            self.stop()
 
     def launch_browser(self):
         try:
@@ -484,7 +578,7 @@ class Voila(Application):
         uri = self.base_url
         fd, open_file = tempfile.mkstemp(suffix='.html')
         # Write a temporary file to open in the browser
-        with open(fd, 'w', encoding='utf-8') as fh:
+        with io.open(fd, 'w', encoding='utf-8') as fh:
             # TODO: do we want to have the token?
             # if self.token:
             #     url = url_concat(url, {'token': self.token})
@@ -492,7 +586,7 @@ class Voila(Application):
 
             jinja2_env = self.app.settings['jinja2_env']
             template = jinja2_env.get_template('browser-open.html')
-            fh.write(template.render(open_url=url))
+            fh.write(template.render(open_url=url, base_url=url))
 
         def target():
             return browser.open(urljoin('file:', pathname2url(open_file)), new=self.webbrowser_open_new)

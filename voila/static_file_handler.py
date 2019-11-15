@@ -1,5 +1,6 @@
 #############################################################################
 # Copyright (c) 2018, Voila Contributors                                    #
+# Copyright (c) 2018, QuantStack                                            #
 #                                                                           #
 # Distributed under the terms of the BSD 3-Clause License.                  #
 #                                                                           #
@@ -7,6 +8,7 @@
 #############################################################################
 
 import os
+import re
 
 import tornado.web
 
@@ -37,3 +39,21 @@ class MultiStaticFileHandler(tornado.web.StaticFileHandler):
                 self.root = root  # make sure all the other methods in the base class know how to find the file
                 break
         return abspath
+
+
+class WhiteListFileHandler(tornado.web.StaticFileHandler):
+    def initialize(self, whitelist=[], blacklist=[], **kwargs):
+        self.whitelist = whitelist
+        self.blacklist = blacklist
+        super(WhiteListFileHandler, self).initialize(**kwargs)
+
+    def get_absolute_path(self, root, path):
+        # StaticFileHandler.get always calls this method first, so we use this as the
+        # place to check the path. Note that now the path seperator is os dependent (\\ on windows)
+        whitelisted = any(re.fullmatch(pattern, path) for pattern in self.whitelist)
+        blacklisted = any(re.fullmatch(pattern, path) for pattern in self.blacklist)
+        if not whitelisted:
+            raise tornado.web.HTTPError(403, 'File not whitelisted')
+        if blacklisted:
+            raise tornado.web.HTTPError(403, 'File blacklisted')
+        return super(WhiteListFileHandler, self).get_absolute_path(root, path)

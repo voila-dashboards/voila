@@ -1,6 +1,6 @@
 {
     "VoilaConfiguration": {
-        "template": "gridstack",
+        "template": "test_template",
         "enable_nbextensions": true
     },
     "MappingKernelManager": {

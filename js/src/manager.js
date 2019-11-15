@@ -1,35 +1,40 @@
 /***************************************************************************
 * Copyright (c) 2018, Voila contributors                                   *
+* Copyright (c) 2018, QuantStack                                           *
 *                                                                          *
 * Distributed under the terms of the BSD 3-Clause License.                 *
 *                                                                          *
 * The full license is in the file LICENSE, distributed with this software. *
 ****************************************************************************/
 
-import { RenderMimeRegistry, standardRendererFactories } from '@jupyterlab/rendermime';
-import { requireLoader } from '@jupyter-widgets/html-manager';
 import { WidgetManager as JupyterLabManager } from '@jupyter-widgets/jupyterlab-manager';
 import { WidgetRenderer } from '@jupyter-widgets/jupyterlab-manager';
 import { output } from '@jupyter-widgets/jupyterlab-manager';
+
 import * as base from '@jupyter-widgets/base';
 import * as controls from '@jupyter-widgets/controls';
 import * as PhosphorWidget from '@phosphor/widgets';
+
+import { requireLoader } from './loader';
 
 if (typeof window !== "undefined" && typeof window.define !== "undefined") {
     window.define("@jupyter-widgets/base", base);
     window.define("@jupyter-widgets/controls", controls);
     window.define("@jupyter-widgets/output", output);
     window.define("@phosphor/widgets", PhosphorWidget);
-  }
+}
 
 const WIDGET_MIMETYPE = 'application/vnd.jupyter.widget-view+json';
 
 export class WidgetManager extends JupyterLabManager {
 
-    constructor(kernel) {
-        const context = createContext(kernel);
-        const rendermime = createRenderMimeRegistry();
-        super(context, rendermime);
+    constructor(context, rendermime, settings) {
+        super(context, rendermime, settings);
+        rendermime.addFactory({
+            safe: false,
+            mimeTypes: [WIDGET_MIMETYPE],
+            createRenderer: options => new WidgetRenderer(options, this)
+        }, 1);
         this._registerWidgets();
         this.loader = requireLoader;
     }
@@ -43,10 +48,9 @@ export class WidgetManager extends JupyterLabManager {
                 const widgetViewObject = JSON.parse(viewtag.innerHTML);
                 const { model_id } = widgetViewObject;
                 const model = models[model_id];
-                const widgetTag = document.createElement('div');
-                widgetTag.className = 'widget-subarea';
-                viewtag.parentElement.insertBefore(widgetTag, viewtag);
-                const view = await this.display_model(undefined, model, { el : widgetTag });
+                const widgetel = document.createElement('div');
+                viewtag.parentElement.insertBefore(widgetel, viewtag);
+                const view = await this.display_model(undefined, model, { el : widgetel });
             } catch (error) {
                // Each widget view tag rendering is wrapped with a try-catch statement.
                //
@@ -62,7 +66,10 @@ export class WidgetManager extends JupyterLabManager {
     }
 
     display_view(msg, view, options) {
-        PhosphorWidget.Widget.attach(view.pWidget, options.el);
+        if (options.el) {
+            PhosphorWidget.Widget.attach(view.pWidget, options.el);
+        }
+        return view.pWidget;
     }
 
     async loadClass(className, moduleName, moduleVersion) {
@@ -84,6 +91,9 @@ export class WidgetManager extends JupyterLabManager {
                 }
             })
         }
+    }
+
+    restoreWidgets(notebook) {
     }
 
     _registerWidgets() {
@@ -114,8 +124,7 @@ export class WidgetManager extends JupyterLabManager {
 
         await Promise.all(widgets_info.map(async (widget_info) => {
             const state = widget_info.msg.content.data.state;
-            const modelPromise = this.new_model(
-                {
+            const modelPromise = this.new_model({
                     model_name: state._model_name,
                     model_module: state._model_module,
                     model_module_version: state._model_module_version,
@@ -141,28 +150,4 @@ export class WidgetManager extends JupyterLabManager {
             comm.send({method: 'request_state'}, {});
         });
     }
-
-}
-
-function createContext(kernel) {
-    return {
-        session: {
-            kernel,
-            kernelChanged: {
-                connect: () => {}
-            }
-        }
-    };
-}
-
-function createRenderMimeRegistry() {
-    const rendermime = new RenderMimeRegistry({
-        initialFactories: standardRendererFactories
-    });
-    rendermime.addFactory({
-        safe: false,
-        mimeTypes: [WIDGET_MIMETYPE],
-        createRenderer: options => new WidgetRenderer(options, manager)
-    }, 1);
-    return rendermime;
 }

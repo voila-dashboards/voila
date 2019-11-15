@@ -1,7 +1,9 @@
 import os
 
 import pytest
+
 from jupyter_server.serverapp import ServerApp
+
 from tornado import httpserver
 
 
@@ -28,7 +30,7 @@ def jupyter_server_args(notebook_directory, jupyter_server_args_extra):
 @pytest.fixture
 def jupyter_server_app(jupyter_server_args, jupyter_server_config):
     jupyter_server_app = ServerApp.instance()
-    # we monkey patch 
+    # we monkey patch
     old_listen = httpserver.HTTPServer.listen
     httpserver.HTTPServer.listen = lambda *x, **y: None
     # NOTE: in voila's conftest.py we call config after initialize
@@ -39,10 +41,6 @@ def jupyter_server_app(jupyter_server_args, jupyter_server_config):
     ServerApp.clear_instance()
 
 
-
-
 @pytest.fixture
 def app(jupyter_server_app):
     return jupyter_server_app.web_app
-
-

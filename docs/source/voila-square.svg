@@ -10,11 +10,11 @@
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    width="35.057289mm"
-   height="28.912964mm"
-   viewBox="0 0 35.057289 28.912964"
+   height="35.057289mm"
+   viewBox="0 0 35.057289 35.057289"
    version="1.1"
    id="svg8"
-   inkscape:version="0.92.3 (2405546, 2018-03-11)"
+   inkscape:version="0.92.4 (5da689c313, 2019-01-14)"
    sodipodi:docname="voila-square.svg">
   <defs
      id="defs2" />
@@ -26,20 +26,20 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="3.959798"
-     inkscape:cx="121.00361"
-     inkscape:cy="50.440871"
+     inkscape:cx="73.65271"
+     inkscape:cy="49.430718"
      inkscape:document-units="mm"
-     inkscape:current-layer="text817"
+     inkscape:current-layer="layer1"
      showgrid="false"
      fit-margin-top="0"
      fit-margin-left="0"
      fit-margin-right="0"
      fit-margin-bottom="0"
      inkscape:lockguides="true"
-     inkscape:window-width="2426"
-     inkscape:window-height="1329"
-     inkscape:window-x="134"
-     inkscape:window-y="55"
+     inkscape:window-width="2048"
+     inkscape:window-height="1115"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
      inkscape:window-maximized="1" />
   <metadata
      id="metadata5">
@@ -57,27 +57,31 @@
      inkscape:label="Layer 1"
      inkscape:groupmode="layer"
      id="layer1"
-     transform="translate(-66.023285,-127.87779)">
+     transform="translate(-66.023285,-121.73346)">
     <g
        aria-label="[voilà]"
        style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:10.58333302px;line-height:1.25;font-family:Manjari;-inkscape-font-specification:Manjari;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332"
        id="text817" />
-    <text
-       xml:space="preserve"
+    <g
+       aria-label="[v]"
        style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:10.58333302px;line-height:1.25;font-family:Manjari;-inkscape-font-specification:Manjari;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332"
-       x="64.472992"
-       y="149.33385"
-       id="text817-7"><tspan
-         sodipodi:role="line"
-         id="tspan815-5"
-         x="64.472992"
-         y="149.33385"
-         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:31.75px;font-family:Manjari;-inkscape-font-specification:Manjari;letter-spacing:-1.32291663px;stroke-width:0.26458332"><tspan
-           style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-family:Manjari;-inkscape-font-specification:'Manjari Bold';fill:#f37726;fill-opacity:1;stroke-width:0.26458332"
-           id="tspan839-3">[</tspan><tspan
-           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Manjari;-inkscape-font-specification:Manjari;fill:#4e4e4e;fill-opacity:1;stroke-width:0.26458332"
-           id="tspan4770-5">v</tspan><tspan
-           style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-family:Manjari;-inkscape-font-specification:'Manjari Bold';fill:#f37726;fill-opacity:1;stroke-width:0.26458332"
-           id="tspan837-6">]</tspan></tspan></text>
+       id="text817-7"
+       transform="translate(0,-3.0721604)">
+      <path
+         d="m 67.573578,127.8933 c -0.852661,0 -1.550293,0.69763 -1.550293,1.55029 l 0.03101,25.78137 c 0,0.85266 0.697632,1.55029 1.550293,1.55029 l 6.867798,0.0155 h 0.0155 c 0.852661,0 1.550292,-0.69764 1.550292,-1.5503 0,-0.85266 -0.697631,-1.55029 -1.550292,-1.55029 h -0.0155 l -5.317505,-0.0155 -0.03101,-22.68079 h 5.348511 c 0.852661,0 1.550293,-0.69763 1.550293,-1.55029 0,-0.85266 -0.697632,-1.55029 -1.550293,-1.55029 z"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-family:Manjari;-inkscape-font-specification:'Manjari Bold';fill:#f37726;fill-opacity:1;stroke-width:0.26458332"
+         id="path13"
+         inkscape:connector-curvature="0" />
+      <path
+         d="m 76.265553,134.52855 c 0,0.12402 0.03101,0.34106 0.09302,0.46509 l 6.201172,14.04565 c 0.155029,0.35657 0.604614,0.65112 0.992187,0.65112 0.387574,0 0.837159,-0.29455 0.992188,-0.65112 l 6.201172,-13.99914 c 0.06201,-0.12403 0.10852,-0.32557 0.10852,-0.44959 0,-0.60461 -0.480591,-1.0852 -1.085205,-1.0852 -0.403076,0 -0.852661,0.31005 -1.00769,0.66662 l -5.193482,11.75122 -5.224487,-11.81323 c -0.155029,-0.37207 -0.589111,-0.66663 -0.992187,-0.66663 -0.604615,0 -1.085206,0.4961 -1.085206,1.08521 z"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Manjari;-inkscape-font-specification:Manjari;fill:#4e4e4e;fill-opacity:1;stroke-width:0.26458332"
+         id="path15"
+         inkscape:connector-curvature="0" />
+      <path
+         d="m 99.530283,127.87779 h -6.898804 c -0.852661,0 -1.550293,0.69763 -1.550293,1.5503 0,0.85266 0.697632,1.55029 1.550293,1.55029 h 5.348511 l -0.03101,22.68078 -5.317505,0.0155 h -0.0155 c -0.852661,0 -1.550293,0.69763 -1.550293,1.55029 0,0.85266 0.697632,1.55029 1.550293,1.55029 h 0.0155 l 6.867798,-0.0155 c 0.852667,0 1.550297,-0.69763 1.550297,-1.55029 l 0.031,-25.78137 c 0,-0.85267 -0.69764,-1.5503 -1.550301,-1.5503 z"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-family:Manjari;-inkscape-font-specification:'Manjari Bold';fill:#f37726;fill-opacity:1;stroke-width:0.26458332"
+         id="path17"
+         inkscape:connector-curvature="0" />
+    </g>
   </g>
 </svg>

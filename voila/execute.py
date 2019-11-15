@@ -1,13 +1,42 @@
 #############################################################################
 # Copyright (c) 2018, Voila Contributors                                    #
+# Copyright (c) 2018, QuantStack                                            #
 #                                                                           #
 # Distributed under the terms of the BSD 3-Clause License.                  #
 #                                                                           #
 # The full license is in the file LICENSE, distributed with this software.  #
 #############################################################################
+import collections
+import logging
 
+from nbconvert.preprocessors import ClearOutputPreprocessor
 from nbconvert.preprocessors.execute import CellExecutionError, ExecutePreprocessor
+from nbformat.v4 import output_from_msg
+
+from traitlets import Unicode
+
 from ipykernel.jsonutil import json_clean
+
+
+def strip_code_cell_warnings(cell):
+    """Strip any warning outputs and traceback from a code cell."""
+    # There is no 'outputs' key for markdown cells
+    if 'outputs' not in cell:
+        return cell
+
+    outputs = cell['outputs']
+
+    cell['outputs'] = [
+        output for output in outputs
+        if output['output_type'] != 'stream' or output['name'] != 'stderr'
+    ]
+
+    return cell
+
+
+def should_strip_error(config):
+    """Return True if errors should be stripped from the Notebook, False otherwise, depending on the current config."""
+    return 'Voila' not in config or 'log_level' not in config['Voila'] or config['Voila']['log_level'] != logging.DEBUG
 
 
 class OutputWidget:
@@ -55,13 +84,19 @@ class OutputWidget:
             self.outputs = []
             self.clear_before_next_output = False
         self.parent_header = msg['parent_header']
-        content = msg['content']
-        if 'data' not in content:
-            output = {"output_type": "stream", "text": content['text'], "name": content['name']}
+        output = output_from_msg(msg)
+
+        if self.outputs:
+            # try to coalesce/merge output text
+            last_output = self.outputs[-1]
+            if (last_output['output_type'] == 'stream' and
+                    output['output_type'] == 'stream' and
+                    last_output['name'] == output['name']):
+                last_output['text'] += output['text']
+            else:
+                self.outputs.append(output)
         else:
-            data = content['data']
-            output = {"output_type": "display_data", "data": data, "metadata": {}}
-        self.outputs.append(output)
+            self.outputs.append(output)
         self.sync_state()
         if hasattr(self.executor, 'widget_state'):
             # sync the state to the nbconvert state as well, since that is used for testing
@@ -71,36 +106,80 @@ class OutputWidget:
         if 'msg_id' in state:
             msg_id = state.get('msg_id')
             if msg_id:
-                self.executor.output_hook[msg_id] = self
+                self.executor.register_output_hook(msg_id, self)
                 self.msg_id = msg_id
             else:
-                del self.executor.output_hook[self.msg_id]
+                self.executor.remove_output_hook(self.msg_id, self)
                 self.msg_id = msg_id
 
 
-class ExecutePreprocessorWithOutputWidget(ExecutePreprocessor):
+class VoilaExecutePreprocessor(ExecutePreprocessor):
     """Execute, but respect the output widget behaviour"""
-    def preprocess(self, nb, resources, km=None):
-        self.output_hook = {}
+    cell_error_instruction = Unicode(
+        'Please run Voila with --debug to see the error message.',
+        config=True,
+        help=(
+            'instruction given to user to debug cell errors'
+        )
+    )
+
+    def __init__(self, **kwargs):
+        super(VoilaExecutePreprocessor, self).__init__(**kwargs)
+        self.output_hook_stack = collections.defaultdict(list)  # maps to list of hooks, where the last is used
         self.output_objects = {}
+
+    def preprocess(self, nb, resources, km=None):
         try:
-            result = super(ExecutePreprocessorWithOutputWidget, self).preprocess(nb, resources=resources, km=km)
+            result = super(VoilaExecutePreprocessor, self).preprocess(nb, resources=resources, km=km)
         except CellExecutionError as e:
             self.log.error(e)
             result = (nb, resources)
+
+        # Strip errors and traceback if not in debug mode
+        if should_strip_error(self.config):
+            self.strip_notebook_errors(nb)
+
         return result
+
+    def preprocess_cell(self, cell, resources, cell_index, store_history=True):
+        try:
+            # TODO: pass store_history as a 5th argument when we can require nbconver >=5.6.1
+            # result = super(VoilaExecutePreprocessor, self).preprocess_cell(cell, resources, cell_index, store_history)
+            result = super(VoilaExecutePreprocessor, self).preprocess_cell(cell, resources, cell_index)
+        except CellExecutionError as e:
+            self.log.error(e)
+            result = (cell, resources)
+
+        # Strip errors and traceback if not in debug mode
+        if should_strip_error(self.config):
+            strip_code_cell_warnings(cell)
+            self.strip_code_cell_errors(cell)
+
+        return result
+
+    def register_output_hook(self, msg_id, hook):
+        # mimics
+        # https://jupyterlab.github.io/jupyterlab/services/interfaces/kernel.ikernelconnection.html#registermessagehook
+        self.output_hook_stack[msg_id].append(hook)
+
+    def remove_output_hook(self, msg_id, hook):
+        # mimics
+        # https://jupyterlab.github.io/jupyterlab/services/interfaces/kernel.ikernelconnection.html#removemessagehook
+        removed_hook = self.output_hook_stack[msg_id].pop()
+        assert removed_hook == hook
 
     def output(self, outs, msg, display_id, cell_index):
         parent_msg_id = msg['parent_header'].get('msg_id')
-        if parent_msg_id in self.output_hook:
-            self.output_hook[parent_msg_id].output(outs, msg, display_id, cell_index)
+        if self.output_hook_stack[parent_msg_id]:
+            hook = self.output_hook_stack[parent_msg_id][-1]
+            hook.output(outs, msg, display_id, cell_index)
             return
-        super(ExecutePreprocessorWithOutputWidget, self).output(outs, msg, display_id, cell_index)
+        super(VoilaExecutePreprocessor, self).output(outs, msg, display_id, cell_index)
 
     def handle_comm_msg(self, outs, msg, cell_index):
-        super(ExecutePreprocessorWithOutputWidget, self).handle_comm_msg(outs, msg, cell_index)
+        super(VoilaExecutePreprocessor, self).handle_comm_msg(outs, msg, cell_index)
         self.log.debug('comm msg: %r', msg)
-        if msg['msg_type'] == 'comm_open':
+        if msg['msg_type'] == 'comm_open' and msg['content'].get('target_name') == 'jupyter.widget':
             content = msg['content']
             data = content['data']
             state = data['state']
@@ -118,15 +197,48 @@ class ExecutePreprocessorWithOutputWidget(ExecutePreprocessor):
 
     def clear_output(self, outs, msg, cell_index):
         parent_msg_id = msg['parent_header'].get('msg_id')
-        if parent_msg_id in self.output_hook:
-            self.output_hook[parent_msg_id].clear_output(outs, msg, cell_index)
+        if self.output_hook_stack[parent_msg_id]:
+            hook = self.output_hook_stack[parent_msg_id][-1]
+            hook.clear_output(outs, msg, cell_index)
             return
-        super(ExecutePreprocessorWithOutputWidget, self).clear_output(outs, msg, cell_index)
+        super(VoilaExecutePreprocessor, self).clear_output(outs, msg, cell_index)
 
+    def strip_notebook_errors(self, nb):
+        """Strip error messages and traceback from a Notebook."""
+        cells = nb['cells']
+
+        code_cells = [cell for cell in cells if cell['cell_type'] == 'code']
+
+        for cell in code_cells:
+            strip_code_cell_warnings(cell)
+            self.strip_code_cell_errors(cell)
+
+        return nb
+    
+    def strip_code_cell_errors(self, cell):
+        """Strip any error outputs and traceback from a code cell."""
+        # There is no 'outputs' key for markdown cells
+        if 'outputs' not in cell:
+            return cell
+
+        outputs = cell['outputs']
+
+        error_outputs = [output for output in outputs if output['output_type'] == 'error']
+
+        error_message = 'There was an error when executing cell [{}]. {}'.format(cell['execution_count'], self.cell_error_instruction)
+
+        for output in error_outputs:
+            output['ename'] = 'ExecutionError'
+            output['evalue'] = 'Execution error'
+            output['traceback'] = [error_message]
+
+        return cell
 
 def executenb(nb, cwd=None, km=None, **kwargs):
     resources = {}
     if cwd is not None:
         resources['metadata'] = {'path': cwd}  # pragma: no cover
-    ep = ExecutePreprocessorWithOutputWidget(**kwargs)
+    # Clear any stale output, in case of exception
+    nb, resources = ClearOutputPreprocessor().preprocess(nb, resources)
+    ep = VoilaExecutePreprocessor(**kwargs)
     return ep.preprocess(nb, resources, km=km)[0]

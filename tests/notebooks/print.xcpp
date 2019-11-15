@@ -1,0 +1,23 @@
+// ---
+// jupyter:
+//   jupytext:
+//     text_representation:
+//       extension: .cpp
+//       format_name: light
+//       format_version: '1.4'
+//       jupytext_version: 1.2.1
+//   kernelspec:
+//     display_name: C++11
+//     language: C++11
+//     name: xcpp11
+// ---
+
+
+// this is not a valid .cpp file, since it does not have a main()
+// however, we can ask voila to execute this by using the xeus-cling kernel
+// or relying on jupytext
+
+#include <iostream>
+using namespace std;
+
+cout << "Hello voila, from c++";

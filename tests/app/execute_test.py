@@ -1,13 +1,15 @@
 # test basics of voila running a notebook
 import pytest
+
 import tornado.web
 import tornado.gen
+
 import re
 import json
 
 try:
     from unittest import mock
-except:
+except ImportError:
     import mock
 
 
@@ -18,7 +20,7 @@ def test_hello_world(http_client, base_url):
     html_text = response.body.decode('utf-8')
     assert 'Hi Voila' in html_text
     assert 'print' not in html_text, 'by default the source code should be stripped'
-    assert 'gridstack.css' not in html_text, "gridstack should not be the default"
+    assert 'test_template.css' not in html_text, "test_template should not be the default"
 
 
 @pytest.mark.gen_test

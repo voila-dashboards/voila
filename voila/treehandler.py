@@ -1,18 +1,26 @@
 #############################################################################
 # Copyright (c) 2018, Voila Contributors                                    #
+# Copyright (c) 2018, QuantStack                                            #
 #                                                                           #
 # Distributed under the terms of the BSD 3-Clause License.                  #
 #                                                                           #
 # The full license is in the file LICENSE, distributed with this software.  #
 #############################################################################
+import os
 
 from tornado import web
 
 from jupyter_server.base.handlers import JupyterHandler
 from jupyter_server.utils import url_path_join, url_escape
 
+from .utils import get_server_root_dir
+
 
 class VoilaTreeHandler(JupyterHandler):
+    def initialize(self, **kwargs):
+        self.voila_configuration = kwargs['voila_configuration']
+        self.allowed_extensions = list(self.voila_configuration.extension_language_mapping.keys()) + ['.ipynb']
+
     def get_template(self, name):
         """Return the jinja template object for a given name"""
         return self.settings['voila_jinja2_env'].get_template(name)
@@ -49,13 +57,21 @@ class VoilaTreeHandler(JupyterHandler):
             breadcrumbs = self.generate_breadcrumbs(path)
             page_title = self.generate_page_title(path)
             contents = cm.get(path)
+
+            def allowed_content(content):
+                if content['type'] in ['directory', 'notebook']:
+                    return True
+                __, ext = os.path.splitext(content.get('path'))
+                return ext in self.allowed_extensions
+
+            contents['content'] = filter(allowed_content, contents['content'])
             self.write(self.render_template('tree.html',
                        page_title=page_title,
                        notebook_path=path,
                        breadcrumbs=breadcrumbs,
                        contents=contents,
                        terminals_available=False,
-                       server_root=self.settings['server_root_dir']))
+                       server_root=get_server_root_dir(self.settings)))
         elif cm.file_exists(path):
             # it's not a directory, we have redirecting to do
             model = cm.get(path, content=False)
