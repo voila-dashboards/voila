@@ -14,6 +14,11 @@ import { output } from '@jupyter-widgets/jupyterlab-manager';
 import * as base from '@jupyter-widgets/base';
 import * as controls from '@jupyter-widgets/controls';
 import * as PhosphorWidget from '@phosphor/widgets';
+import * as PhosphorSignaling from '@phosphor/signaling';
+import * as PhosphorVirtualdom from '@phosphor/virtualdom';
+import * as PhosphorAlgorithm from '@phosphor/algorithm';
+import * as PhosphorCommands from '@phosphor/commands';
+import * as PhosphorDomutils from '@phosphor/domutils';
 
 import { requireLoader } from './loader';
 
@@ -22,6 +27,11 @@ if (typeof window !== "undefined" && typeof window.define !== "undefined") {
     window.define("@jupyter-widgets/controls", controls);
     window.define("@jupyter-widgets/output", output);
     window.define("@phosphor/widgets", PhosphorWidget);
+    window.define("@phosphor/signaling", PhosphorSignaling);
+    window.define("@phosphor/virtualdom", PhosphorVirtualdom);
+    window.define("@phosphor/algorithm", PhosphorAlgorithm);
+    window.define("@phosphor/commands", PhosphorCommands);
+    window.define("@phosphor/domutils", PhosphorDomutils);
 }
 
 const WIDGET_MIMETYPE = 'application/vnd.jupyter.widget-view+json';
