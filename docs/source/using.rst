@@ -102,7 +102,7 @@ contains a collection of Jupyter notebooks that can be rendered using Voilà:
 * **dashboard.ipynb** - uses gridstack.js for the layout of each output.
 * **gridspecLayout.ipynb** - uses
   `GridspecLayout <https://ipywidgets.readthedocs.io/en/latest/examples/Layout%20Templates.html#Grid-layout>`__
-  for the layout of different widges.
+  for the layout of different widgets.
 * **interactive.ipynb** - makes use of ipywidget's @interact.
 * **ipympl.ipynb** - contains custom interactive matplotlib figures using the
   `ipympl <https://github.com/matplotlib/jupyter-matplotlib>`__ widget.
