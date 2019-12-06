@@ -20,8 +20,7 @@ from ipykernel.jsonutil import json_clean
 
 def strip_code_cell_warnings(cell):
     """Strip any warning outputs and traceback from a code cell."""
-    # There is no 'outputs' key for markdown cells
-    if 'outputs' not in cell:
+    if cell['cell_type'] != 'code':
         return cell
 
     outputs = cell['outputs']
@@ -218,7 +217,7 @@ class VoilaExecutePreprocessor(ExecutePreprocessor):
     def strip_code_cell_errors(self, cell):
         """Strip any error outputs and traceback from a code cell."""
         # There is no 'outputs' key for markdown cells
-        if 'outputs' not in cell:
+        if cell['cell_type'] != 'code':
             return cell
 
         outputs = cell['outputs']
