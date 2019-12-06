@@ -214,7 +214,7 @@ class VoilaExecutePreprocessor(ExecutePreprocessor):
             self.strip_code_cell_errors(cell)
 
         return nb
-    
+
     def strip_code_cell_errors(self, cell):
         """Strip any error outputs and traceback from a code cell."""
         # There is no 'outputs' key for markdown cells
@@ -233,6 +233,7 @@ class VoilaExecutePreprocessor(ExecutePreprocessor):
             output['traceback'] = [error_message]
 
         return cell
+
 
 def executenb(nb, cwd=None, km=None, **kwargs):
     resources = {}

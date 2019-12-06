@@ -1,6 +1,4 @@
 import asyncio
-import concurrent.futures
-import inspect
 import threading
 import tornado.queues
 
