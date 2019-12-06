@@ -47,6 +47,13 @@ jobs:
       env:
         PYTHON_VERSION: ${{ matrix.python-version }}
 
+    - name: Install dev/master versions
+      run: |
+       source "$CONDA/etc/profile.d/conda.sh"
+       conda activate voila-tests
+       pip uninstall jupyter_server -y
+       pip install git+https://github.com/jupyter/jupyter_server@master
+
     - name: Install dependencies 
       run: |
         source "$CONDA/etc/profile.d/conda.sh"

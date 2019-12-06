@@ -20,6 +20,8 @@ before_install:
   - conda info -a
   - conda create -q -n test-environment -c conda-forge python=$PYTHON_VERSION nodejs flake8 xeus-cling
   - source activate test-environment
+  - pip uninstall jupyter_server -y
+  - pip install git+https://github.com/jupyter/jupyter_server@master
 install:
   - pip install ".[test]"
   - cd tests/test_template; pip install .; cd ../../;
