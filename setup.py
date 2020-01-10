@@ -391,6 +391,7 @@ setup_args = {
             'ipywidgets'
         ]
     },
+    'url': 'https://github.com/voila-dashboards/voila',
     'author': 'Voila Development team',
     'author_email': 'jupyter@googlegroups.com',
     'keywords': [
