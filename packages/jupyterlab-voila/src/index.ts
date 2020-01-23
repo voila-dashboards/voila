@@ -21,6 +21,8 @@ import { ToolbarButton } from "@jupyterlab/apputils";
 
 import { DocumentRegistry } from "@jupyterlab/docregistry";
 
+import { CommandRegistry } from "@phosphor/commands";
+
 import { IDisposable } from "@phosphor/disposable";
 
 import { VOILA_ICON_CLASS, VoilaPreview } from "./preview";
@@ -35,21 +37,15 @@ export namespace CommandIDs {
 
 class VoilaRenderButton
   implements DocumentRegistry.IWidgetExtension<NotebookPanel, INotebookModel> {
-  constructor(app: JupyterFrontEnd) {
-    this.app = app;
+  constructor(commands: CommandRegistry) {
+    this._commands = commands;
   }
 
-  readonly app: JupyterFrontEnd;
-
-  createNew(
-    panel: NotebookPanel,
-    context: DocumentRegistry.IContext<INotebookModel>
-  ): IDisposable {
-    let renderVoila = () => {
-      this.app.commands.execute("notebook:render-with-voila");
+  createNew(panel: NotebookPanel): IDisposable {
+    const renderVoila = () => {
+      this._commands.execute("notebook:render-with-voila");
     };
-
-    let button = new ToolbarButton({
+    const button = new ToolbarButton({
       className: "voilaRender",
       iconClassName: VOILA_ICON_CLASS,
       onClick: renderVoila,
@@ -57,9 +53,10 @@ class VoilaRenderButton
     });
 
     panel.toolbar.insertAfter("cellType", "voilaRender", button);
-
     return button;
   }
+
+  private _commands: CommandRegistry;
 }
 
 /**
@@ -75,7 +72,7 @@ const extension: JupyterFrontEndPlugin<void> = {
     notebooks: INotebookTracker,
     palette: ICommandPalette,
     menu: IMainMenu | null,
-    settingRegistry: ISettingRegistry
+    settingRegistry: ISettingRegistry | null
   ) => {
     function getCurrent(args: ReadonlyJSONObject): NotebookPanel | null {
       const widget = notebooks.currentWidget;
@@ -106,14 +103,16 @@ const extension: JupyterFrontEndPlugin<void> = {
       renderOnSave = settings.get("renderOnSave").composite as boolean;
     };
 
-    Promise.all([settingRegistry.load(extension.id), app.restored])
-      .then(([settings]) => {
-        updateSettings(settings);
-        settings.changed.connect(updateSettings);
-      })
-      .catch((reason: Error) => {
-        console.error(reason.message);
-      });
+    if (settingRegistry) {
+      Promise.all([settingRegistry.load(extension.id), app.restored])
+        .then(([settings]) => {
+          updateSettings(settings);
+          settings.changed.connect(updateSettings);
+        })
+        .catch((reason: Error) => {
+          console.error(reason.message);
+        });
+    }
 
     app.commands.addCommand(CommandIDs.voilaRender, {
       label: "Render Notebook with Voila",
@@ -122,17 +121,13 @@ const extension: JupyterFrontEndPlugin<void> = {
         if (!current) {
           return;
         }
-        await current.context.save();
-        const voilaPath = current.context.path;
-        const url = getVoilaUrl(voilaPath);
-        const name = PathExt.basename(voilaPath);
-        let widget = new VoilaPreview({
-          url,
-          label: name,
-          context: current.context,
-          renderOnSave
-        });
+        const { context } = current;
+        await context.save();
 
+        const voilaPath = context.path;
+        const url = getVoilaUrl(voilaPath);
+        const label = PathExt.basename(voilaPath);
+        const widget = new VoilaPreview({ context, label, url, renderOnSave });
         app.shell.add(widget, "main", { mode: "split-right" });
         return widget;
       },
@@ -174,7 +169,7 @@ const extension: JupyterFrontEndPlugin<void> = {
       );
     }
 
-    let voilaButton = new VoilaRenderButton(app);
+    const voilaButton = new VoilaRenderButton(app.commands);
     app.docRegistry.addWidgetExtension("Notebook", voilaButton);
   }
 };

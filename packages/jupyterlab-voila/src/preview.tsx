@@ -1,24 +1,16 @@
+import { IFrame, ToolbarButton, ReactWidget, MainAreaWidget } from "@jupyterlab/apputils";
+
 import {
-  MainAreaWidget,
-  IFrame,
-  ToolbarButton,
-  ReactWidget
-} from "@jupyterlab/apputils";
-import { DocumentRegistry } from "@jupyterlab/docregistry";
+  DocumentRegistry
+} from "@jupyterlab/docregistry";
+
 import { INotebookModel } from "@jupyterlab/notebook";
+
+import { Signal } from '@phosphor/signaling';
 
 import * as React from "react";
 
 export const VOILA_ICON_CLASS = "jp-MaterialIcon jp-VoilaIcon";
-
-export namespace VoilaPreview {
-  export interface IOptions extends MainAreaWidget.IOptionsOptionalContent {
-    url: string;
-    label: string;
-    context: DocumentRegistry.IContext<INotebookModel>;
-    renderOnSave: boolean;
-  }
-}
 
 export class VoilaPreview extends MainAreaWidget<IFrame> {
   constructor(options: VoilaPreview.IOptions) {
@@ -27,26 +19,28 @@ export class VoilaPreview extends MainAreaWidget<IFrame> {
       content: new IFrame({ sandbox: ["allow-same-origin", "allow-scripts"] })
     });
 
-    let { url, label, context, renderOnSave } = options;
+    const { url, label, context, renderOnSave } = options;
 
     this.content.url = url;
     this.content.title.label = label;
     this.content.title.icon = VOILA_ICON_CLASS;
-    this.content.id = `voila-${++Private.count}`;
+    this.content.id = `voila-preview-${++Private.count}`;
+
+    this.renderOnSave = renderOnSave;
 
     const reloadButton = new ToolbarButton({
       iconClassName: "jp-RefreshIcon",
-      onClick: this.reload,
-      tooltip: "Reload Preview"
+      tooltip: "Reload Preview",
+      onClick: () => { this.reload(); }
     });
 
     const renderOnSaveCheckbox = ReactWidget.create(
-      <label>
+      <label className="jp-VoilaPreview-renderOnSave">
         <input
           style={{ verticalAlign: "middle" }}
           name="renderOnSave"
           type="checkbox"
-          defaultChecked={renderOnSave}
+          defaultChecked={this.renderOnSave}
           onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
             this.renderOnSave = event.target.checked;
           }}
@@ -54,33 +48,32 @@ export class VoilaPreview extends MainAreaWidget<IFrame> {
         Render on Save
       </label>
     );
-    renderOnSaveCheckbox.addClass("jp-VoilaPreview-renderOnSave");
 
     this.toolbar.addItem("reload", reloadButton);
     this.toolbar.addItem("renderOnSave", renderOnSaveCheckbox);
 
-    this.renderOnSave = renderOnSave;
-
-    this._context = context;
-    this._context.ready.then(() => {
-      if (this.isDisposed) {
-        return;
-      }
-      this._context.fileChanged.connect(this.onFileChanged, this);
+    void context.ready.then(() => {
+      context.fileChanged.connect(() => {
+        if (this.renderOnSave) {
+          this.reload();
+        }
+      });
     });
   }
 
   dispose() {
-    this._context.fileChanged.disconnect(this.onFileChanged, this);
-    super.dispose();
+    if (this.isDisposed) {
+      return;
+    }
+    Signal.clearData(this);
   }
 
-  reload = () => {
+  reload() {
     const iframe = this.content.node.querySelector("iframe")!;
     if (iframe.contentWindow) {
       iframe.contentWindow.location.reload();
     }
-  };
+  }
 
   get renderOnSave(): boolean {
     return this._renderOnSave;
@@ -90,15 +83,16 @@ export class VoilaPreview extends MainAreaWidget<IFrame> {
     this._renderOnSave = renderOnSave;
   }
 
-  private onFileChanged(): void {
-    if (!this.renderOnSave) {
-      return;
-    }
-    this.reload();
-  }
-
-  private _context: DocumentRegistry.IContext<INotebookModel>;
   private _renderOnSave: boolean;
+}
+
+export namespace VoilaPreview {
+  export interface IOptions extends MainAreaWidget.IOptionsOptionalContent {
+    url: string;
+    label: string;
+    context: DocumentRegistry.IContext<INotebookModel>;
+    renderOnSave: boolean;
+  }
 }
 
 namespace Private {
