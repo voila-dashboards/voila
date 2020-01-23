@@ -19,7 +19,7 @@ import * as React from "react";
 /**
  * A class that tracks Voila Preview widgets.
  */
-export interface IVoilaPreviewTracker extends IWidgetTracker<VoilaPreview> {}
+export interface IVoilaPreviewTracker extends IWidgetTracker<VoilaPreview> { }
 
 /**
  * The Voila Preview tracker token.
@@ -52,7 +52,6 @@ export class VoilaPreview extends MainAreaWidget<IFrame> {
     this.content.url = url;
     this.content.title.label = label;
     this.content.title.icon = VOILA_ICON_CLASS;
-    this.content.id = `voila-preview-${++Private.count}`;
 
     this.renderOnSave = renderOnSave;
 
@@ -80,15 +79,17 @@ export class VoilaPreview extends MainAreaWidget<IFrame> {
     );
 
     this.toolbar.addItem("reload", reloadButton);
-    this.toolbar.addItem("renderOnSave", renderOnSaveCheckbox);
 
-    void context.ready.then(() => {
-      context.fileChanged.connect(() => {
-        if (this.renderOnSave) {
-          this.reload();
-        }
+    if (context) {
+      this.toolbar.addItem("renderOnSave", renderOnSaveCheckbox);
+      void context.ready.then(() => {
+        context.fileChanged.connect(() => {
+          if (this.renderOnSave) {
+            this.reload();
+          }
+        });
       });
-    });
+    }
   }
 
   /**
@@ -98,8 +99,8 @@ export class VoilaPreview extends MainAreaWidget<IFrame> {
     if (this.isDisposed) {
       return;
     }
-    Signal.clearData(this);
     super.dispose();
+    Signal.clearData(this);
   }
 
   /**
@@ -148,23 +149,13 @@ export namespace VoilaPreview {
     label: string;
 
     /**
-     * The notebook document context.
+     * An optional notebook document context.
      */
-    context: DocumentRegistry.IContext<INotebookModel>;
+    context?: DocumentRegistry.IContext<INotebookModel>;
 
     /**
      * Whether to reload the preview on context saved.
      */
-    renderOnSave: boolean;
+    renderOnSave?: boolean;
   }
-}
-
-/**
- * A namespace for module private data.
- */
-namespace Private {
-  /**
-   * Counter used as a voila preview widget id.
-   */
-  export let count = 0;
 }
