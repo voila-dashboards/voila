@@ -1,6 +1,6 @@
 import {
   JupyterFrontEnd,
-  JupyterFrontEndPlugin
+  JupyterFrontEndPlugin,
 } from "@jupyterlab/application";
 
 import {
@@ -11,7 +11,7 @@ import {
 
 import { ReadonlyJSONObject } from "@phosphor/coreutils";
 
-import { ICommandPalette } from "@jupyterlab/apputils";
+import { ICommandPalette, WidgetTracker } from "@jupyterlab/apputils";
 
 import { IMainMenu } from "@jupyterlab/mainmenu";
 
@@ -25,7 +25,11 @@ import { CommandRegistry } from "@phosphor/commands";
 
 import { IDisposable } from "@phosphor/disposable";
 
-import { VOILA_ICON_CLASS, VoilaPreview } from "./preview";
+import {
+  VOILA_ICON_CLASS,
+  VoilaPreview,
+  IVoilaPreviewTracker
+} from "./preview";
 
 import "../style/index.css";
 
@@ -62,18 +66,24 @@ class VoilaRenderButton
 /**
  * Initialization data for the jupyterlab-voila extension.
  */
-const extension: JupyterFrontEndPlugin<void> = {
+const extension: JupyterFrontEndPlugin<IVoilaPreviewTracker> = {
   id: "@jupyter-voila/jupyterlab-preview:plugin",
   autoStart: true,
   requires: [INotebookTracker],
   optional: [ICommandPalette, IMainMenu, ISettingRegistry],
+  provides: IVoilaPreviewTracker,
   activate: (
     app: JupyterFrontEnd,
     notebooks: INotebookTracker,
-    palette: ICommandPalette,
+    palette: ICommandPalette | null,
     menu: IMainMenu | null,
     settingRegistry: ISettingRegistry | null
   ) => {
+    // Create a widget tracker for Voila Previews.
+    const tracker = new WidgetTracker<VoilaPreview>({
+      namespace: "voila-preview"
+    });
+
     function getCurrent(args: ReadonlyJSONObject): NotebookPanel | null {
       const widget = notebooks.currentWidget;
       const activate = args["activate"] !== false;
@@ -128,6 +138,7 @@ const extension: JupyterFrontEndPlugin<void> = {
         const url = getVoilaUrl(voilaPath);
         const label = PathExt.basename(voilaPath);
         const widget = new VoilaPreview({ context, label, url, renderOnSave });
+        tracker.add(widget);
         app.shell.add(widget, "main", { mode: "split-right" });
         return widget;
       },
@@ -171,6 +182,8 @@ const extension: JupyterFrontEndPlugin<void> = {
 
     const voilaButton = new VoilaRenderButton(app.commands);
     app.docRegistry.addWidgetExtension("Notebook", voilaButton);
+
+    return tracker;
   }
 };
 

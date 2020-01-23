@@ -1,4 +1,10 @@
-import { IFrame, ToolbarButton, ReactWidget, MainAreaWidget } from "@jupyterlab/apputils";
+import {
+  IFrame,
+  MainAreaWidget,
+  ToolbarButton,
+  ReactWidget,
+  IWidgetTracker
+} from "@jupyterlab/apputils";
 
 import {
   DocumentRegistry
@@ -6,9 +12,23 @@ import {
 
 import { INotebookModel } from "@jupyterlab/notebook";
 
+import { Token } from "@phosphor/coreutils";
+
 import { Signal } from '@phosphor/signaling';
 
 import * as React from "react";
+
+/**
+ * A class that tracks Voila Preview widgets.
+ */
+export interface IVoilaPreviewTracker extends IWidgetTracker<VoilaPreview> {}
+
+/**
+ * The Voila Preview tracker token.
+ */
+export const IVoilaPreviewTracker = new Token<IVoilaPreviewTracker>(
+  "@jupyter-voila/jupyterlab-preview:IVoilaPreviewTracker"
+);
 
 export const VOILA_ICON_CLASS = "jp-MaterialIcon jp-VoilaIcon";
 
@@ -40,9 +60,9 @@ export class VoilaPreview extends MainAreaWidget<IFrame> {
           style={{ verticalAlign: "middle" }}
           name="renderOnSave"
           type="checkbox"
-          defaultChecked={this.renderOnSave}
+          defaultChecked={renderOnSave}
           onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-            this.renderOnSave = event.target.checked;
+            this._renderOnSave = event.target.checked;
           }}
         />
         Render on Save
@@ -66,6 +86,7 @@ export class VoilaPreview extends MainAreaWidget<IFrame> {
       return;
     }
     Signal.clearData(this);
+    super.dispose();
   }
 
   reload() {
@@ -73,7 +94,7 @@ export class VoilaPreview extends MainAreaWidget<IFrame> {
     if (iframe.contentWindow) {
       iframe.contentWindow.location.reload();
     }
-  }
+  };
 
   get renderOnSave(): boolean {
     return this._renderOnSave;
