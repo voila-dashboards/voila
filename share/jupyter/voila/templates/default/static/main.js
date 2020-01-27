@@ -12,7 +12,7 @@ require(['static/voila'], function(voila) {
     (async function() {
         var kernel = await voila.connectKernel()
 
-        const context = { 
+        const context = {
             session: {
                 kernel,
                 kernelChanged: {
@@ -41,7 +41,8 @@ require(['static/voila'], function(voila) {
             widgetManager.build_widgets();
             // it seems if we attach this to early, it will not be called
             window.addEventListener('beforeunload', function (e) {
-                kernel.shutdown()
+                kernel.shutdown();
+                kernel.dispose();
             });
 
             voila.renderMathJax();
