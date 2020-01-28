@@ -31,12 +31,12 @@ jobs:
       run: |
         # sudo required?
         sudo conda update -y -n base conda setuptools
-        
+
     - name: Update conda on Linux
       if: matrix.os == 'ubuntu-latest'
       run: |
         conda update -y -n base conda setuptools
-    
+
     - name: Init conda
       run: |
         conda init bash
@@ -47,20 +47,13 @@ jobs:
       env:
         PYTHON_VERSION: ${{ matrix.python-version }}
 
-    - name: Install dev/master versions
-      run: |
-       source "$CONDA/etc/profile.d/conda.sh"
-       conda activate voila-tests
-       pip uninstall jupyter_server -y
-       pip install git+https://github.com/jupyter/jupyter_server@master
-
-    - name: Install dependencies 
+    - name: Install dependencies
       run: |
         source "$CONDA/etc/profile.d/conda.sh"
         conda activate voila-tests
         whereis python
         python --version
-        
+
         python -m pip install ".[test]"
         cd tests/test_template; pip install .; cd ../../;
 
