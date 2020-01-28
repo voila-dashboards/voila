@@ -48,4 +48,16 @@ export function renderMathJax() {
     .typeset()
     .updateDocument()
     .reset();
+  window.MathJax = {
+    Hub: {
+      Queue: ([_ignore, _ignore2, node]) => {
+        html.findMath({ elements: [node] })
+            .compile()
+            .getMetrics()
+            .typeset()
+            .updateDocument()
+            .reset()
+      }
+    }
+  }
 };
