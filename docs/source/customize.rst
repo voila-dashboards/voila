@@ -1,8 +1,8 @@
 .. Copyright (c) 2018, Voila Contributors
    Copyright (c) 2018, QuantStack
-   
+
    Distributed under the terms of the BSD 3-Clause License.
-   
+
    The full license is in the file LICENSE, distributed with this software.
 
 .. _customize:
@@ -238,3 +238,26 @@ Python this would be a call to `IPython.display.display`.
 Using `Jupytext <https://github.com/mwouts/jupytext>`_ is another way to support
 script files. After installing jupytext, Voilà will see script files as if they
 are notebooks, and requires no extra configuration.
+
+Cull idle kernels
+=================
+
+Voilà starts a new Jupyter kernel every time a notebook is rendered to the user. In some situations, this can lead to a higher memory consumption.
+
+The Jupyter Server exposes several options that can be used to terminate kernels that are not active anymore. They can be configured using the Voilà standalone app:
+
+.. code-block:: bash
+
+   voila --MappingKernelManager.cull_interval=60 --MappingKernelManager.cull_idle_timeout=120
+
+The server will periodically check for idle kernels, in this example every 60 seconds, and cull them if they have been idle for more than 120 seconds.
+
+The same parameters apply when using Voilà as a server extension:
+
+.. code-block:: bash
+
+    jupyter notebook --MappingKernelManager.cull_interval=60 --MappingKernelManager.cull_idle_timeout=120
+
+There is also the ``MappingKernelManager.cull_busy`` and ``MappingKernelManager.cull_connected`` options to cull busy kernels and kernels with an active connection.
+
+For more information about these options, check out the `Jupyter Server <https://jupyter-server.readthedocs.io/en/latest/config.html#options>`_ documentation.
