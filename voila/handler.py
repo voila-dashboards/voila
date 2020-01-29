@@ -17,6 +17,7 @@ from jupyter_server.utils import url_path_join
 import nbformat
 
 from nbconvert.preprocessors import ClearOutputPreprocessor
+from nbconvert.preprocessors.execute import CellExecutionError
 
 from .execute import executenb, VoilaExecutePreprocessor
 from .exporter import VoilaExporter
@@ -121,7 +122,11 @@ class VoilaHandler(JupyterHandler):
 
     def _jinja_notebook_execute(self, nb, kernel_id):
         km = self.kernel_manager.get_kernel(kernel_id)
-        result = executenb(nb, km=km, cwd=self.cwd, config=self.traitlet_config)
+        try:
+            result = executenb(nb, km=km, cwd=self.cwd, config=self.traitlet_config)
+        except CellExecutionError as e:
+            self.log.error(e)
+            raise tornado.web.HTTPError(500, 'There was an error executing the Notebook')
         # we modify the notebook in place, since the nb variable cannot be reassigned it seems in jinja2
         # e.g. if we do {% with nb = notebook_execute(nb, kernel_id) %}, the base template/blocks will not
         # see the updated variable (it seems to be local to our block)
@@ -136,9 +141,15 @@ class VoilaHandler(JupyterHandler):
 
         with ep.setup_preprocessor(nb, resources, km=km):
             for cell_idx, cell in enumerate(nb.cells):
-                res = ep.preprocess_cell(cell, resources, cell_idx, store_history=False)
+                try:
+                    ep.preprocess_cell(cell, resources, cell_idx, store_history=False)
 
-                yield res[0]
+                    yield cell
+                except CellExecutionError as e:
+                    # Still return the last cell, log the error, and stop the execution.
+                    yield cell
+                    self.log.error(e)
+                    break
 
     # @tornado.gen.coroutine
     async def load_notebook(self, path):

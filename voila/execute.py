@@ -18,26 +18,6 @@ from traitlets import Unicode
 from ipykernel.jsonutil import json_clean
 
 
-def strip_code_cell_warnings(cell):
-    """Strip any warning outputs and traceback from a code cell."""
-    if cell['cell_type'] != 'code':
-        return cell
-
-    outputs = cell['outputs']
-
-    cell['outputs'] = [
-        output for output in outputs
-        if output['output_type'] != 'stream' or output['name'] != 'stderr'
-    ]
-
-    return cell
-
-
-def should_strip_error(config):
-    """Return True if errors should be stripped from the Notebook, False otherwise, depending on the current config."""
-    return 'Voila' not in config or 'log_level' not in config['Voila'] or config['Voila']['log_level'] != logging.DEBUG
-
-
 class OutputWidget:
     """This class mimics a front end output widget"""
     def __init__(self, comm_id, state, kernel_client, executor):
@@ -128,31 +108,25 @@ class VoilaExecutePreprocessor(ExecutePreprocessor):
         self.output_objects = {}
 
     def preprocess(self, nb, resources, km=None):
-        try:
-            result = super(VoilaExecutePreprocessor, self).preprocess(nb, resources=resources, km=km)
-        except CellExecutionError as e:
-            self.log.error(e)
-            result = (nb, resources)
+        result = super(VoilaExecutePreprocessor, self).preprocess(nb, resources=resources, km=km)
 
-        # Strip errors and traceback if not in debug mode
-        if should_strip_error(self.config):
-            self.strip_notebook_errors(nb)
+        # Strip errors if not in debug mode
+        self.strip_notebook_errors(nb)
 
         return result
 
     def preprocess_cell(self, cell, resources, cell_index, store_history=True):
+        # TODO: pass store_history as a 5th argument when we can require nbconver >=5.6.1
+        # result = super(VoilaExecutePreprocessor, self).preprocess_cell(cell, resources, cell_index, store_history)
         try:
-            # TODO: pass store_history as a 5th argument when we can require nbconver >=5.6.1
-            # result = super(VoilaExecutePreprocessor, self).preprocess_cell(cell, resources, cell_index, store_history)
             result = super(VoilaExecutePreprocessor, self).preprocess_cell(cell, resources, cell_index)
         except CellExecutionError as e:
-            self.log.error(e)
-            result = (cell, resources)
-
-        # Strip errors and traceback if not in debug mode
-        if should_strip_error(self.config):
-            strip_code_cell_warnings(cell)
+            # Strip errors if not in debug mode
             self.strip_code_cell_errors(cell)
+            raise e
+
+        # Strip errors if not in debug mode
+        self.strip_code_cell_errors(cell)
 
         return result
 
@@ -202,14 +176,21 @@ class VoilaExecutePreprocessor(ExecutePreprocessor):
             return
         super(VoilaExecutePreprocessor, self).clear_output(outs, msg, cell_index)
 
+    @property
+    def should_strip_error(self):
+        """Return True if errors should be stripped from the Notebook, False otherwise, depending on the current config."""
+        return 'Voila' not in self.config or 'log_level' not in self.config['Voila'] or self.config['Voila']['log_level'] != logging.DEBUG
+
     def strip_notebook_errors(self, nb):
         """Strip error messages and traceback from a Notebook."""
+        if not self.should_strip_error:
+            return nb
+
         cells = nb['cells']
 
         code_cells = [cell for cell in cells if cell['cell_type'] == 'code']
 
         for cell in code_cells:
-            strip_code_cell_warnings(cell)
             self.strip_code_cell_errors(cell)
 
         return nb
@@ -217,12 +198,17 @@ class VoilaExecutePreprocessor(ExecutePreprocessor):
     def strip_code_cell_errors(self, cell):
         """Strip any error outputs and traceback from a code cell."""
         # There is no 'outputs' key for markdown cells
-        if cell['cell_type'] != 'code':
+        if not self.should_strip_error or cell['cell_type'] != 'code':
             return cell
 
-        outputs = cell['outputs']
+        # Strip warnings
+        cell['outputs'] = [
+            output for output in cell['outputs']
+            if output['output_type'] != 'stream' or output['name'] != 'stderr'
+        ]
 
-        error_outputs = [output for output in outputs if output['output_type'] == 'error']
+        # Strip errors
+        error_outputs = [output for output in cell['outputs'] if output['output_type'] == 'error']
 
         error_message = 'There was an error when executing cell [{}]. {}'.format(cell['execution_count'], self.cell_error_instruction)
 
