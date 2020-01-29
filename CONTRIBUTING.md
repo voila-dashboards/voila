@@ -106,8 +106,11 @@ jupyter serverextension list
 To install the JupyterLab extension locally:
 
 ```bash
-jupyter labextension install @jupyter-widgets/jupyterlab-manager
-jupyter labextension install ./packages/jupyterlab-voila
+cd ./packages/jupyterlab-voila
+
+jlpm
+jlpm run build
+jupyter labextension install @jupyter-widgets/jupyterlab-manager . --debug
 
 # start in watch mode to pick up changes automatically
 jupyter lab --watch
