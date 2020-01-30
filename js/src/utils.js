@@ -1,4 +1,4 @@
-import PSemaphore from 'promise-semaphore';
+import pLimit from 'p-limit';
 
 const delay = (sec) => new Promise((resolve) => setTimeout(resolve, sec*1000));
 
@@ -9,10 +9,10 @@ const delay = (sec) => new Promise((resolve) => setTimeout(resolve, sec*1000));
  */
 export
 const batchRateMap = (list, fn, {room, rate}) => {
-    var queue = new PSemaphore({rooms: room})
+    var limit = pLimit(room);
     return list.map(async (value) => {
         return new Promise((valueResolve, reject) => {
-            queue.add(() => {
+            limit(() => {
                 // We may not want to start the next job directly, we want to respect the
                 // throttling/rate, e.g.:
                 // If we have room for 10 parallel jobs, at a max rate of 100/second, each job
