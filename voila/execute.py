@@ -19,8 +19,12 @@ from nbformat.v4 import output_from_msg
 import zmq
 
 from traitlets import Unicode
-
 from ipykernel.jsonutil import json_clean
+
+try:
+    TimeoutError  # Py 3
+except NameError:
+    TimeoutError = RuntimeError  # Py 2
 
 
 def strip_code_cell_warnings(cell):
@@ -237,6 +241,29 @@ class VoilaExecutePreprocessor(ExecutePreprocessor):
             output['traceback'] = [error_message]
 
         return cell
+
+    # make it nbconvert 5.5 compatible
+    def _get_timeout(self, cell):
+        if self.timeout_func is not None and cell is not None:
+            timeout = self.timeout_func(cell)
+        else:
+            timeout = self.timeout
+
+        if not timeout or timeout < 0:
+            timeout = None
+
+        return timeout
+
+    # make it nbconvert 5.5 compatible
+    def _handle_timeout(self, timeout):
+        self.log.error(
+            "Timeout waiting for execute reply (%is)." % timeout)
+        if self.interrupt_on_timeout:
+            self.log.error("Interrupting kernel")
+            self.km.interrupt_kernel()
+        else:
+            raise TimeoutError("Cell execution timed out")
+
     def run_cell(self, cell, cell_index=0, store_history=False):
         parent_msg_id = self.kc.execute(cell.source, store_history=store_history, stop_on_error=not self.allow_errors)
         self.log.debug("Executing cell:\n%s", cell.source)
@@ -266,7 +293,7 @@ class VoilaExecutePreprocessor(ExecutePreprocessor):
                 if not rlist and not wlist and not xlist:
                     self._check_alive()
                     if monotonic() > deadline:
-                        self._handle_timeout(exec_timeout, cell)
+                        self._handle_timeout(exec_timeout)
                 if xlist:
                     raise RuntimeError("Oops, unexpected rror")
                 if self.kc.shell_channel.socket in rlist:
@@ -283,7 +310,7 @@ class VoilaExecutePreprocessor(ExecutePreprocessor):
                     else:
                         self.log.debug("Received message for which we were not the parent: %s", msg)
             else:
-                self._handle_timeout(exec_timeout, cell)
+                self._handle_timeout(exec_timeout)
                 break
 
         return execute_reply, cell.outputs
