@@ -3,6 +3,11 @@ import pytest
 
 
 @pytest.fixture
+def voila_args_extra():
+    return ['--ExecutePreprocessor.timeout=180']
+
+
+@pytest.fixture
 def voila_notebook(notebook_directory):
     return os.path.join(notebook_directory, 'many_iopub_messages.ipynb')
 
