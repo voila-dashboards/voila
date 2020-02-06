@@ -289,14 +289,11 @@ class VoilaExecutePreprocessor(ExecutePreprocessor):
             # to make sure we get the interrupt message
             if timeout >= (-1 if self.interrupt_on_timeout else 0):
                 # we include 0, which simply is a poll to see if we have messages left
-                rlist, wlist, xlist = zmq.select([self.kc.iopub_channel.socket, self.kc.shell_channel.socket], [], [], min(0, timeout))
-                # print("lists", rlist, wlist, xlist)
-                if not rlist and not wlist and not xlist:
+                rlist = zmq.select([self.kc.iopub_channel.socket, self.kc.shell_channel.socket], [], [], timeout)[0]
+                if not rlist:
                     self._check_alive()
                     if monotonic() > deadline:
                         self._handle_timeout(exec_timeout)
-                if xlist:
-                    raise RuntimeError("Oops, unexpected rror")
                 if self.kc.shell_channel.socket in rlist:
                     msg = self.kc.shell_channel.get_msg(block=False)
                     if msg['parent_header'].get('msg_id') == parent_msg_id:
