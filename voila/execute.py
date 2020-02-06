@@ -278,6 +278,9 @@ class VoilaExecutePreprocessor(ExecutePreprocessor):
         # we need to have a reply, and return to idle before we can consider the cell executed
         idle = False
         execute_reply = None
+
+        deadline_passed = 0
+        deadline_passed_max = 5
         while not idle or execute_reply is None:
             # we want to timeout regularly, to see if the kernel is still alive
             # this is tested in preprocessors/test/test_execute.py#test_kernel_death
@@ -286,16 +289,19 @@ class VoilaExecutePreprocessor(ExecutePreprocessor):
             timeout = min(1, deadline - monotonic())
             # if we interrupt on timeout, we allow 1 seconds to pass till deadline
             # to make sure we get the interrupt message
-            if timeout >= (-1 if self.interrupt_on_timeout else 0):
+            if timeout >= 0.0:
                 # we include 0, which simply is a poll to see if we have messages left
-                rlist, wlist, xlist = zmq.select([self.kc.iopub_channel.socket, self.kc.shell_channel.socket], [], [], min(0, timeout))
-                # print("lists", rlist, wlist, xlist)
-                if not rlist and not wlist and not xlist:
+                rlist = zmq.select([self.kc.iopub_channel.socket, self.kc.shell_channel.socket], [], [], timeout)[0]
+                if not rlist:
                     self._check_alive()
                     if monotonic() > deadline:
                         self._handle_timeout(exec_timeout)
-                if xlist:
-                    raise RuntimeError("Oops, unexpected rror")
+                        deadline_passed += 1
+                        assert self.interrupt_on_timeout
+                        if deadline_passed <= deadline_passed_max:
+                            # when we interrupt, we want to do this multiple times, so we give some
+                            # extra time to handle the interrupt message
+                            deadline += self.iopub_timeout
                 if self.kc.shell_channel.socket in rlist:
                     msg = self.kc.shell_channel.get_msg(block=False)
                     if msg['parent_header'].get('msg_id') == parent_msg_id:
@@ -314,7 +320,6 @@ class VoilaExecutePreprocessor(ExecutePreprocessor):
                 break
 
         return execute_reply, cell.outputs
-
 
 
 def executenb(nb, cwd=None, km=None, **kwargs):
