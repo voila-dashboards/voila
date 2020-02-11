@@ -11,7 +11,8 @@ import logging
 from time import monotonic
 
 from nbconvert.preprocessors import ClearOutputPreprocessor
-from nbconvert.preprocessors.execute import CellExecutionError, ExecutePreprocessor
+from nbclient.exceptions import CellExecutionError
+from nbclient import NotebookClient
 from nbformat.v4 import output_from_msg
 import zmq
 
@@ -113,7 +114,7 @@ class OutputWidget:
                 self.msg_id = msg_id
 
 
-class VoilaExecutePreprocessor(ExecutePreprocessor):
+class VoilaExecutor(NotebookClient):
     """Execute, but respect the output widget behaviour"""
     cell_error_instruction = Unicode(
         'Please run Voila with --debug to see the error message.',
@@ -124,21 +125,21 @@ class VoilaExecutePreprocessor(ExecutePreprocessor):
     )
 
     cell_timeout_instruction = Unicode(
-        'Please run Voila with --VoilaExecutePreprocessor.interrupt_on_timeout=True to continue executing the rest of the notebook.',
+        'Please run Voila with --VoilaExecutor.interrupt_on_timeout=True to continue executing the rest of the notebook.',
         config=True,
         help=(
             'instruction given to user to continue execution on timeout'
         )
     )
 
-    def __init__(self, **kwargs):
-        super(VoilaExecutePreprocessor, self).__init__(**kwargs)
+    def __init__(self, nb, km=None, **kwargs):
+        super(VoilaExecutor, self).__init__(nb, km=km, **kwargs)
         self.output_hook_stack = collections.defaultdict(list)  # maps to list of hooks, where the last is used
         self.output_objects = {}
 
-    def preprocess(self, nb, resources, km=None):
+    def execute(self, nb, resources, km=None):
         try:
-            result = super(VoilaExecutePreprocessor, self).preprocess(nb, resources=resources, km=km)
+            result = super(VoilaExecutor, self).execute()
         except CellExecutionError as e:
             self.log.error(e)
             result = (nb, resources)
@@ -149,11 +150,11 @@ class VoilaExecutePreprocessor(ExecutePreprocessor):
 
         return result
 
-    def preprocess_cell(self, cell, resources, cell_index, store_history=True):
+    async def execute_cell(self, cell, resources, cell_index, store_history=True):
         try:
             # TODO: pass store_history as a 5th argument when we can require nbconver >=5.6.1
-            # result = super(VoilaExecutePreprocessor, self).preprocess_cell(cell, resources, cell_index, store_history)
-            result = super(VoilaExecutePreprocessor, self).preprocess_cell(cell, resources, cell_index)
+            # result = super(VoilaExecutor, self).execute_cell(cell, resources, cell_index, store_history)
+            result = await super(VoilaExecutor, self).async_execute_cell(cell, cell_index)
         except TimeoutError as e:
             self.log.error(e)
             self.show_code_cell_timeout(cell)
@@ -186,10 +187,10 @@ class VoilaExecutePreprocessor(ExecutePreprocessor):
             hook = self.output_hook_stack[parent_msg_id][-1]
             hook.output(outs, msg, display_id, cell_index)
             return
-        super(VoilaExecutePreprocessor, self).output(outs, msg, display_id, cell_index)
+        super(VoilaExecutor, self).output(outs, msg, display_id, cell_index)
 
     def handle_comm_msg(self, outs, msg, cell_index):
-        super(VoilaExecutePreprocessor, self).handle_comm_msg(outs, msg, cell_index)
+        super(VoilaExecutor, self).handle_comm_msg(outs, msg, cell_index)
         self.log.debug('comm msg: %r', msg)
         if msg['msg_type'] == 'comm_open' and msg['content'].get('target_name') == 'jupyter.widget':
             content = msg['content']
@@ -213,7 +214,7 @@ class VoilaExecutePreprocessor(ExecutePreprocessor):
             hook = self.output_hook_stack[parent_msg_id][-1]
             hook.clear_output(outs, msg, cell_index)
             return
-        super(VoilaExecutePreprocessor, self).clear_output(outs, msg, cell_index)
+        super(VoilaExecutor, self).clear_output(outs, msg, cell_index)
 
     def strip_notebook_errors(self, nb):
         """Strip error messages and traceback from a Notebook."""
@@ -344,5 +345,5 @@ def executenb(nb, cwd=None, km=None, **kwargs):
         resources['metadata'] = {'path': cwd}  # pragma: no cover
     # Clear any stale output, in case of exception
     nb, resources = ClearOutputPreprocessor().preprocess(nb, resources)
-    ep = VoilaExecutePreprocessor(**kwargs)
-    return ep.preprocess(nb, resources, km=km)[0]
+    executor = VoilaExecutor(nb, km=km, **kwargs)
+    return executor.execute(nb, resources, km=km)

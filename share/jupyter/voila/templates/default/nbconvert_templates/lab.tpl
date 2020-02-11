@@ -1,4 +1,4 @@
-{%- extends 'display_priority.tpl' -%}
+{%- extends 'display_priority.j2' -%}
 
 {% block codecell %}
 {%- if not cell.outputs -%}

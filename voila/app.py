@@ -59,7 +59,7 @@ from .treehandler import VoilaTreeHandler
 from ._version import __version__
 from .static_file_handler import MultiStaticFileHandler, WhiteListFileHandler
 from .configuration import VoilaConfiguration
-from .execute import VoilaExecutePreprocessor
+from .execute import VoilaExecutor
 from .exporter import VoilaExporter
 from .csspreprocessor import VoilaCSSPreprocessor
 
@@ -129,7 +129,7 @@ class Voila(Application):
     }
     classes = [
         VoilaConfiguration,
-        VoilaExecutePreprocessor,
+        VoilaExecutor,
         VoilaExporter,
         VoilaCSSPreprocessor
     ]

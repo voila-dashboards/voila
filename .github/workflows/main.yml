@@ -18,7 +18,7 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-latest, macos-latest]
-        python-version: [3.5, 3.6, 3.7]
+        python-version: [3.6, 3.7, 3.8]
 
     steps:
     - uses: actions/checkout@v1
@@ -34,25 +34,25 @@ jobs:
     - name: Update conda
       run: |
         conda update -y -n base conda setuptools
-    
+
     - name: Init conda
       run: |
         conda init bash
         conda info -a
 
     - name: Create the conda environment
-      run: conda create -q -y -n voila-tests -c conda-forge python=$PYTHON_VERSION pip jupyterlab_pygments==0.1.0 nbconvert=5.5 pytest-cov nodejs flake8 ipywidgets matplotlib xeus-cling
+      run: conda create -q -y -n voila-tests -c conda-forge python=$PYTHON_VERSION pip jupyterlab_pygments==0.1.0 pytest-cov nodejs flake8 ipywidgets matplotlib xeus-cling
       env:
         PYTHON_VERSION: ${{ matrix.python-version }}
 
-    - name: Install dependencies 
+    - name: Install dependencies
       run: |
         source "$CONDA/etc/profile.d/conda.sh"
         conda activate voila-tests
         whereis python
         python --version
-        
-        python -m pip install ".[test]"
+
+        python -m pip install --ignore-installed ".[test]"
         cd tests/test_template; pip install .; cd ../../;
 
     - name: Flake8

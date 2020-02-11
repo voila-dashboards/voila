@@ -19,12 +19,6 @@ from nbconvert.exporters.html import HTMLExporter
 from nbconvert.exporters.templateexporter import TemplateExporter
 from nbconvert.filters.highlight import Highlight2HTML
 
-from .threading import async_generator_to_thread
-
-# As long as we support Python35, we use this library to get as async
-# generators: https://pypi.org/project/async_generator/
-from async_generator import async_generator, yield_
-
 
 class VoilaMarkdownRenderer(IPythonRenderer):
     """Custom markdown renderer that inlines images"""
@@ -83,7 +77,6 @@ class VoilaExporter(HTMLExporter):
     def default_template_file(self):
         return 'voila.tpl'
 
-    @async_generator
     async def generate_from_notebook_node(self, nb, resources=None, extra_context={}, **kw):
         # this replaces from_notebook_node, but calls template.generate instead of template.render
         langinfo = nb.metadata.get('language_info', {})
@@ -106,24 +99,12 @@ class VoilaExporter(HTMLExporter):
                 'no_prompt': self.exclude_input_prompt and self.exclude_output_prompt,
                 }
 
-        # Jinja with Python3.5 does not support async (generators), which
-        # means that it's not async all the way down. Which means that we
-        # cannot use coroutines for the cell_generator, and that they will
-        # block the IO loop. In that case we will run the iterator in a
-        # thread instead.
-
-        @async_generator_to_thread
-        @async_generator
-        async def async_jinja_generator():
-            # Top level variables are passed to the template_exporter here.
-            for output in self.template.generate(nb=nb_copy, resources=resources, **extra_context):
-                await yield_((output, resources))
-
-        async for output, resources in async_jinja_generator():
-            await yield_((output, resources))
+        async for output in self.template.generate_async(nb=nb_copy, resources=resources, **extra_context):
+            yield (output, resources)
 
     @property
     def environment(self):
+        self.enable_async = True
         env = super(type(self), self).environment
         if 'jinja2.ext.do' not in env.extensions:
             env.add_extension('jinja2.ext.do')
