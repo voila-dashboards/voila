@@ -61,8 +61,8 @@ def test_performance(sleep_per_cell=0.1, cell_nb=100, kernel_nb=10, exceed_pct=2
     requesting them at the same time. Ideally, the time needed to serve a cell should be close to the cell
     sleeping time. When all clients receive the entire notebook, we kill them as well as the Voila server
     (there is a timeout to check that the clients don't wait too long). Then we compute the cell execution
-    mean time. It is an error it is much greater than the ideal value (sleep_per_cell), and we allow for some
-    lag time (given by exceed_pct).
+    mean time. It is an error if it is much greater than the ideal value (sleep_per_cell), and we allow for
+    some lag time (given by exceed_pct).
 
     Keyword arguments:
     sleep_per_cell -- number of seconds a cell waits for (default 0.1)
@@ -99,7 +99,7 @@ def test_performance(sleep_per_cell=0.1, cell_nb=100, kernel_nb=10, exceed_pct=2
             break
 
     # launch clients
-    clients = [subprocess.Popen('curl http://127.0.0.1:8866 --output /dev`/null --silent'.split()) for i in range(kernel_nb)]
+    clients = [subprocess.Popen('curl http://127.0.0.1:8866 --output /dev/null --silent'.split()) for i in range(kernel_nb)]
 
     # wait for all notebooks to execute
     t0 = time.time()
