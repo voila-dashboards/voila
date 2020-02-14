@@ -105,7 +105,6 @@ def test_performance(sleep_per_cell=0.1, cell_nb=100, kernel_nb=10, exceed_pct=2
     t0 = time.time()
     done = False
     timeout = False
-    exec_time = cell_nb * sleep_per_cell  # notebook theoretical execution time
     launch_time = kernel_nb * 0.5  # kernel takes about 0.5s to launch
     maxtime_per_cell = sleep_per_cell * (exceed_pct / 100 + 1)
     timeout_time = launch_time + maxtime_per_cell * cell_nb  # timeout allows for some lag in cell execution
