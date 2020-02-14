@@ -55,22 +55,19 @@ def test_performance():
     time.sleep(5)
 
     # launch clients
-    clients = [subprocess.Popen('curl http://localhost:8866 --output /dev/null --silent'.split()) for i in range(client_nb)]
+    clients = [subprocess.Popen('curl http://localhost:8866 --output /dev/null'.split()) for i in range(client_nb)]
 
     # wait for all notebooks to execute
     t0 = time.time()
     done = False
     timeout = False
-    i = 0
     exec_time = cell_nb * sleep_per_cell  # notebook execution time
     launch_time = client_nb * 0.5  # kernel takes about 0.5s to launch
     # min_time = launch_time + exec_time  # theoretical time for all notebooks to execute
-    timeout_time = launch_time + 2 * exec_time  # timeout allows slow machines to finish
+    timeout_time = launch_time + 4 * exec_time  # timeout allows slow machines to finish
     while not done:
         time.sleep(1)
         done = True
-        i += 1
-        # print(i, '/', min_time)
         for client in clients:
             if client.poll() is None:
                 done = False
