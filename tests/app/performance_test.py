@@ -51,7 +51,7 @@ def get_ipynb(cell_nb, sleep_per_cell, result_dir):
     return ipynb
 
 
-def test_performance(sleep_per_cell=0.1, cell_nb=100, kernel_nb=10, exceed_pct=200, ipynb_path='tests/notebooks/sleep.ipynb'):
+def test_performance(sleep_per_cell=0.1, cell_nb=100, kernel_nb=10, max_meantime_per_cell=0.5, ipynb_path='tests/notebooks/sleep.ipynb'):
     '''Test for Voila serving several clients concurrently.
     Several clients connect to the Voila server URL at the same time, and each one gets a dedicated kernel.
     The served notebook consists of a number of cells that just wait for some time and log their execution
@@ -62,13 +62,13 @@ def test_performance(sleep_per_cell=0.1, cell_nb=100, kernel_nb=10, exceed_pct=2
     sleeping time. When all clients receive the entire notebook, we kill them as well as the Voila server
     (there is a timeout to check that the clients don't wait too long). Then we compute the cell execution
     mean time. It is an error if it is much greater than the ideal value (sleep_per_cell), and we allow for
-    some lag time (given by exceed_pct).
+    it to be <= max_meantime_per_cell.
 
     Keyword arguments:
     sleep_per_cell -- number of seconds a cell waits for (default 0.1)
     cell_nb -- number of waiting cells in the notebook (default 100)
     kernel_nb -- number of kernels to launch in parallel (default 10)
-    exceed_pct -- time budget exceedance, in percentage of sleep_per_cell (default 200)
+    max_meantime_per_cell -- maximum tolerated mean execution time per cell (default 0.5)
     ipynb_path -- path to the saved notebook (default 'tests/notebooks/sleep.ipynb')
     '''
 
@@ -115,8 +115,7 @@ def test_performance(sleep_per_cell=0.1, cell_nb=100, kernel_nb=10, exceed_pct=2
     t0 = time.time()
     done = False
     timeout = False
-    maxtime_per_cell = sleep_per_cell * (exceed_pct / 100 + 1)
-    timeout_time = maxtime_per_cell * cell_nb  # timeout allows for some lag in cell execution
+    timeout_time = 2 * max_meantime_per_cell * cell_nb
     while not done:
         time.sleep(1)
         done = True
@@ -144,8 +143,8 @@ def test_performance(sleep_per_cell=0.1, cell_nb=100, kernel_nb=10, exceed_pct=2
 
     meantime_per_cell = sum(data) / len(data)
     print('Mean time per cell', meantime_per_cell, end='')
-    if meantime_per_cell > maxtime_per_cell:
-        print(' >', sleep_per_cell, '(with', exceed_pct, '% margin)')
+    if meantime_per_cell > max_meantime_per_cell:
+        print(' >', sleep_per_cell, '(maximum tolerated is', max_meantime_per_cell, ')')
         sys.exit(1)
     else:
         print(", should ideally be", sleep_per_cell, "but it's close enough!")
