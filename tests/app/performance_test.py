@@ -55,7 +55,7 @@ def test_performance():
     time.sleep(5)
 
     # launch clients
-    clients = [subprocess.Popen('curl http://localhost:8866 --output /dev/null'.split()) for i in range(client_nb)]
+    clients = [subprocess.Popen('curl http://127.0.0.1:8866 --output /dev/null'.split()) for i in range(client_nb)]
 
     # wait for all notebooks to execute
     t0 = time.time()
