@@ -52,10 +52,10 @@ def test_performance():
 
     # launch voila
     voila = subprocess.Popen(('voila --no-browser ' + ipynb_fname).split())
-    time.sleep(1)
+    time.sleep(5)
 
     # launch clients
-    clients = [subprocess.Popen('curl http://localhost:8866 -o /dev/null'.split()) for i in range(client_nb)]
+    clients = [subprocess.Popen('curl http://localhost:8866 --output /dev/null --silent'.split()) for i in range(client_nb)]
 
     # wait for all notebooks to execute
     t0 = time.time()
