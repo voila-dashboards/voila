@@ -91,7 +91,7 @@ def test_performance():
             data += [float(d) for d in f.read().split()]
 
     meantime_per_cell = sum(data) / len(data)
-    exceed_pct = 100  # allowing for time budget exceedance (%)
+    exceed_pct = 200  # allowing for time budget exceedance (%)
     maxtime_per_cell = sleep_per_cell * (exceed_pct / 100 + 1)
     if meantime_per_cell > maxtime_per_cell:
         print('Mean time per cell', meantime_per_cell, '>', sleep_per_cell, '(with', exceed_pct, '% margin)')
