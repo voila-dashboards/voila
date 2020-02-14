@@ -107,7 +107,8 @@ def test_performance(sleep_per_cell=0.1, cell_nb=100, kernel_nb=10, exceed_pct=2
     timeout = False
     exec_time = cell_nb * sleep_per_cell  # notebook theoretical execution time
     launch_time = kernel_nb * 0.5  # kernel takes about 0.5s to launch
-    timeout_time = launch_time + 4 * exec_time  # timeout allows slow machines to finish
+    maxtime_per_cell = sleep_per_cell * (exceed_pct / 100 + 1)
+    timeout_time = launch_time + maxtime_per_cell * cell_nb  # timeout allows for some lag in cell execution
     while not done:
         time.sleep(1)
         done = True
@@ -134,7 +135,6 @@ def test_performance(sleep_per_cell=0.1, cell_nb=100, kernel_nb=10, exceed_pct=2
             data += [float(d) for d in f.read().split()]
 
     meantime_per_cell = sum(data) / len(data)
-    maxtime_per_cell = sleep_per_cell * (exceed_pct / 100 + 1)
     print('Mean time per cell', meantime_per_cell, end='')
     if meantime_per_cell > maxtime_per_cell:
         print(' >', sleep_per_cell, '(with', exceed_pct, '% margin)')
