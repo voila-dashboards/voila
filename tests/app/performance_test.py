@@ -85,29 +85,38 @@ def test_performance(sleep_per_cell=0.1, cell_nb=100, kernel_nb=10, exceed_pct=2
     with open(ipynb_fname, 'w') as f:
         nbformat.write(ipynb, f)
 
-    # launch voila
+    # launch Voila
     voila = subprocess.Popen(('voila --no-browser ' + ipynb_fname).split(), stderr=subprocess.PIPE, universal_newlines=True)
-    # block until server is ready
+
+    # wait until server is ready
     for line in get_lines(voila.stderr):
         print(line, end='')
         if line.startswith('http://'):
-            # continue printing Voila's stderr in the background
-            def target():
-                for line in get_lines(voila.stderr):
-                    print(line, end='')
-            threading.Thread(target=target).start()
             break
 
     # launch clients
     clients = [subprocess.Popen('curl http://127.0.0.1:8866 --output /dev/null --silent'.split()) for i in range(kernel_nb)]
 
+    # wait until all kernels have started
+    kernel_i = 0
+    for line in get_lines(voila.stderr):
+        print(line, end='')
+        if 'Kernel started' in line:
+            kernel_i += 1
+            if kernel_i == kernel_nb:
+                # continue printing Voila's stderr in the background
+                def target():
+                    for line in get_lines(voila.stderr):
+                        print(line, end='')
+                threading.Thread(target=target).start()
+                break
+
     # wait for all notebooks to execute
     t0 = time.time()
     done = False
     timeout = False
-    launch_time = kernel_nb * 0.5  # kernel takes about 0.5s to launch
     maxtime_per_cell = sleep_per_cell * (exceed_pct / 100 + 1)
-    timeout_time = launch_time + maxtime_per_cell * cell_nb  # timeout allows for some lag in cell execution
+    timeout_time = maxtime_per_cell * cell_nb  # timeout allows for some lag in cell execution
     while not done:
         time.sleep(1)
         done = True
@@ -119,7 +128,7 @@ def test_performance(sleep_per_cell=0.1, cell_nb=100, kernel_nb=10, exceed_pct=2
                 done = True
                 timeout = True
 
-    # stop voila and all clients
+    # stop Voila and all clients
     voila.kill()
     [client.kill() for client in clients]
 
