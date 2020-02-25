@@ -131,6 +131,14 @@ class VoilaExecutePreprocessor(ExecutePreprocessor):
         )
     )
 
+    cell_timeout_instruction = Unicode(
+        'Please run Voila with --VoilaExecutePreprocessor.interrupt_on_timeout=True to continue executing the rest of the notebook.',
+        config=True,
+        help=(
+            'instruction given to user to continue execution on timeout'
+        )
+    )
+
     def __init__(self, **kwargs):
         super(VoilaExecutePreprocessor, self).__init__(**kwargs)
         self.output_hook_stack = collections.defaultdict(list)  # maps to list of hooks, where the last is used
@@ -154,6 +162,10 @@ class VoilaExecutePreprocessor(ExecutePreprocessor):
             # TODO: pass store_history as a 5th argument when we can require nbconver >=5.6.1
             # result = super(VoilaExecutePreprocessor, self).preprocess_cell(cell, resources, cell_index, store_history)
             result = super(VoilaExecutePreprocessor, self).preprocess_cell(cell, resources, cell_index)
+        except TimeoutError as e:
+            self.log.error(e)
+            self.show_code_cell_timeout(cell)
+            raise e
         except CellExecutionError as e:
             self.log.error(e)
             result = (cell, resources)
@@ -320,6 +332,18 @@ class VoilaExecutePreprocessor(ExecutePreprocessor):
                 break
 
         return execute_reply, cell.outputs
+
+    def show_code_cell_timeout(self, cell):
+        """Show a timeout error output in a code cell."""
+
+        timeout_message = 'Cell execution timed out, aborting notebook execution. {}'.format(self.cell_timeout_instruction)
+
+        output = {'output_type': 'error',
+                  'ename': 'TimeoutError',
+                  'evalue': 'Timeout error',
+                  'traceback': [timeout_message]}
+
+        cell['outputs'] = [output]
 
 
 def executenb(nb, cwd=None, km=None, **kwargs):
