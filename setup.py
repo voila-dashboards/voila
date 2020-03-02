@@ -387,7 +387,7 @@ setup_args = {
         'test': [
             'mock',
             'pytest<4',
-            'pytest-tornado',
+            'pytest-tornasync',
             'matplotlib',
             'ipywidgets'
         ]

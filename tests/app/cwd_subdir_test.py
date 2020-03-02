@@ -12,8 +12,8 @@ def voila_args(notebook_directory, voila_args_extra):
     return ['--ServerApp.root_dir=%r' % notebook_directory, '--Voila.log_level=DEBUG'] + voila_args_extra
 
 
-@pytest.mark.gen_test
-def test_hello_world(http_client, add_token, cwd_subdir_notebook_url):
+#@pytest.mark.gen_test
+async def test_hello_world(http_client, add_token, cwd_subdir_notebook_url):
     url = add_token(cwd_subdir_notebook_url)
     response = yield http_client.fetch(url)
     html_text = response.body.decode('utf-8')

@@ -12,8 +12,8 @@ def voila_args_extra():
     return ['--Voila.extension_language_mapping={".xcpp": "C++11"}']
 
 
-@pytest.mark.gen_test
-def test_tree(http_client, default_url):
+#@pytest.mark.gen_test
+async def test_tree(http_client, default_url):
     response = yield http_client.fetch(default_url)
     assert response.code == 200
     text = response.body.decode('utf-8')

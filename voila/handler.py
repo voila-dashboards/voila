@@ -13,7 +13,7 @@ import tornado.web
 
 import nbformat
 from jupyter_server.utils import url_path_join
-from jupyter_server.extension import ExtensionHandlerMixin
+from jupyter_server.extension.handler import ExtensionHandlerMixin
 from jupyter_server.config_manager import recursive_update
 from nbconvert.preprocessors import ClearOutputPreprocessor
 
@@ -21,7 +21,7 @@ from .execute import executenb, VoilaExecutePreprocessor
 from .exporter import VoilaExporter
 
 
-class VoilaHandler(ExtensionHandler):
+class VoilaHandler(ExtensionHandlerMixin):
 
     def initialize(self, **kwargs):
         self.kernel_started = False

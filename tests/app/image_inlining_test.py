@@ -9,8 +9,8 @@ def voila_notebook(notebook_directory):
     return os.path.join(notebook_directory, 'images.ipynb')
 
 
-@pytest.mark.gen_test
-def test_image_inlining(http_client, default_url, notebook_directory):
+#@pytest.mark.gen_test
+async def test_image_inlining(http_client, default_url, notebook_directory):
     response = yield http_client.fetch(default_url)
     html_text = response.body.decode('utf-8')
 

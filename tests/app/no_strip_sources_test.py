@@ -11,8 +11,8 @@ def voila_args_extra():
     return ['--Voila.strip_sources=False']
 
 
-@pytest.mark.gen_test
-def test_no_strip_sources(http_client, default_url):
+#@pytest.mark.gen_test
+async def test_no_strip_sources(http_client, default_url):
     response = yield http_client.fetch(default_url)
     assert response.code == 200
     html_text = response.body.decode('utf-8')

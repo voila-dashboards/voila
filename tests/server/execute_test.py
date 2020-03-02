@@ -2,8 +2,8 @@
 import pytest
 
 
-@pytest.mark.gen_test
-def test_hello_world(http_client, print_notebook_url):
+#@pytest.mark.gen_test
+async def test_hello_world(http_client, print_notebook_url):
     response = yield http_client.fetch(print_notebook_url)
     assert response.code == 200
     html_text = response.body.decode('utf-8')
