@@ -26,7 +26,6 @@ def http_client(request, http_server):
     return client
 
 
-#@pytest.mark.gen_test
 async def test_template_cwd(http_client, base_url, notebook_directory):
     response = yield http_client.fetch(base_url)
     html_text = response.body.decode('utf-8')

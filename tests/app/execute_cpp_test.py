@@ -20,7 +20,6 @@ def voila_args(notebook_directory, voila_args_extra):
 
 
 @pytest.mark.skipif(not TEST_XEUS_CLING, reason='opt in to avoid having to install xeus-cling')
-#@pytest.mark.gen_test
 async def test_non_existing_kernel(http_client, cpp_file_url):
     response = yield http_client.fetch(cpp_file_url)
     assert response.code == 200

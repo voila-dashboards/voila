@@ -1,6 +1,4 @@
 # test basics of voila running a notebook
-import pytest
-
 import tornado.web
 import tornado.gen
 
@@ -13,7 +11,6 @@ except ImportError:
     import mock
 
 
-#@pytest.mark.gen_test
 async def test_hello_world(http_client, default_url):
     response = yield http_client.fetch(default_url)
     assert response.code == 200
@@ -23,7 +20,6 @@ async def test_hello_world(http_client, default_url):
     assert 'test_template.css' not in html_text, "test_template should not be the default"
 
 
-#@pytest.mark.gen_test
 async def test_no_execute_allowed(voila_app, app, http_client, add_token, base_url):
     url_to_request = add_token(base_url)
     response = (yield http_client.fetch(url_to_request)).body.decode('utf-8')

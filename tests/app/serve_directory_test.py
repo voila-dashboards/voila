@@ -15,7 +15,6 @@ def print_notebook_url(add_token, print_notebook_url):
     return add_token(print_notebook_url)
 
 
-#@pytest.mark.gen_test
 async def test_print(http_client, print_notebook_url):
     print(print_notebook_url)
     response = yield http_client.fetch(print_notebook_url)
@@ -28,7 +27,6 @@ def voila_args_extra():
     return ['--Voila.extension_language_mapping={".py": "python"}']
 
 
-#@pytest.mark.gen_test
 async def test_print_py(http_client, print_notebook_url):
     print(print_notebook_url)
     response = yield http_client.fetch(print_notebook_url.replace('ipynb', 'py'))
@@ -37,7 +35,6 @@ async def test_print_py(http_client, print_notebook_url):
 
 
 @pytest.mark.skipif(not TEST_XEUS_CLING, reason='opt in to avoid having to install xeus-cling')
-#@pytest.mark.gen_test
 async def test_print_julia_notebook(http_client, print_notebook_url):
     print(print_notebook_url)
     response = yield http_client.fetch(print_notebook_url.replace('.ipynb', '_cpp.ipynb'))

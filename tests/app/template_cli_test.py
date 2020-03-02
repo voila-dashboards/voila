@@ -13,7 +13,6 @@ def voila_args_extra():
     return ['--template=None', '--Voila.nbconvert_template_paths=[%r, %r]' % (path_test_template, path_default)]
 
 
-#@pytest.mark.gen_test
 async def test_template_test(http_client, default_url):
     response = yield http_client.fetch(default_url)
     assert response.code == 200

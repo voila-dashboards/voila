@@ -23,7 +23,6 @@ def voila_config():
     return config
 
 
-#@pytest.mark.gen_test
 async def test_template(http_client, default_url):
     response = yield http_client.fetch(default_url)
     assert response.code == 200

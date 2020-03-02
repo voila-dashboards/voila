@@ -19,7 +19,6 @@ def voila_config_file_paths_arg():
     return '--Voila.config_file_paths=[%r]' % path
 
 
-#@pytest.mark.gen_test
 async def test_lists_extension(http_client, default_url):
     response = yield http_client.fetch(default_url)
     assert response.code == 200
