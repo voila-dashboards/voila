@@ -4,9 +4,9 @@ os:
  - osx
 env:
  matrix:
-  - PYTHON_VERSION=3.5
   - PYTHON_VERSION=3.6
   - PYTHON_VERSION=3.7
+  - PYTHON_VERSION=3.8
 before_install:
   - if [[ $TRAVIS_OS_NAME == osx ]]; then ulimit -n 2048; fi
   - if [[ $TRAVIS_OS_NAME == linux ]]; then sudo apt-get update; fi
@@ -26,6 +26,6 @@ install:
   - pip install git+https://github.com/jupyter/jupyter_server@master
   - cd tests/test_template; pip install .; cd ../../;
 script:
-  - VOILA_TEST_DEBUG=1 VOILA_TEST_XEUS_CLING=1 py.test tests/ --async-test-timeout=240
+  - VOILA_TEST_DEBUG=1 py.test tests/ --async-test-timeout=240
   - voila --help  # Making sure we can run `voila --help`
   - flake8 voila tests setup.py
