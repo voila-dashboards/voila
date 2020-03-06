@@ -11,8 +11,8 @@ def voila_args_extra():
     return ['--Voila.strip_sources=False']
 
 
-async def test_no_strip_sources(http_client, default_url):
-    response = yield http_client.fetch(default_url)
+async def test_no_strip_sources(fetch, token):
+    response = await fetch('voila', params={'token': token}, method='GET')
     assert response.code == 200
     html_text = response.body.decode('utf-8')
     assert 'Hi Voila' in html_text

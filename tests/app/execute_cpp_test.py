@@ -20,7 +20,7 @@ def voila_args(notebook_directory, voila_args_extra):
 
 
 @pytest.mark.skipif(not TEST_XEUS_CLING, reason='opt in to avoid having to install xeus-cling')
-async def test_non_existing_kernel(http_client, cpp_file_url):
-    response = yield http_client.fetch(cpp_file_url)
+async def test_non_existing_kernel(fetch, token):
+    response = await fetch('voila', 'render', 'print.xcpp', params={'token': token}, method='GET')
     assert response.code == 200
     assert 'Hello voila, from c++' in response.body.decode('utf-8')

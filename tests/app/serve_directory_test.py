@@ -15,9 +15,8 @@ def print_notebook_url(add_token, print_notebook_url):
     return add_token(print_notebook_url)
 
 
-async def test_print(http_client, print_notebook_url):
-    print(print_notebook_url)
-    response = yield http_client.fetch(print_notebook_url)
+async def test_print(fetch, token):
+    response = await fetch('voila', 'render', 'print.ipynb', params={'token': token}, method='GET')
     assert response.code == 200
     assert 'Hi Voila' in response.body.decode('utf-8')
 
@@ -27,16 +26,14 @@ def voila_args_extra():
     return ['--Voila.extension_language_mapping={".py": "python"}']
 
 
-async def test_print_py(http_client, print_notebook_url):
-    print(print_notebook_url)
-    response = yield http_client.fetch(print_notebook_url.replace('ipynb', 'py'))
+async def test_print_py(fetch, token):
+    response = await fetch('voila', 'render', 'print.py', params={'token': token}, method='GET')
     assert response.code == 200
     assert 'Hi Voila' in response.body.decode('utf-8')
 
 
 @pytest.mark.skipif(not TEST_XEUS_CLING, reason='opt in to avoid having to install xeus-cling')
-async def test_print_julia_notebook(http_client, print_notebook_url):
-    print(print_notebook_url)
-    response = yield http_client.fetch(print_notebook_url.replace('.ipynb', '_cpp.ipynb'))
+async def test_print_julia_notebook(fetch, token):
+    response = await fetch('voila', 'render', 'print_cpp.ipynb', params={'token': token}, method='GET')
     assert response.code == 200
     assert 'Hi Voila, from c++' in response.body.decode('utf-8')

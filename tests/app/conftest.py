@@ -50,6 +50,11 @@ def voila_app(server_config, voila_config, voila_args):
 
 
 @pytest.fixture
+def token(voila_app):
+    return voila_app.serverapp.token
+
+
+@pytest.fixture
 def app(voila_app):
     return voila_app.serverapp.web_app
 

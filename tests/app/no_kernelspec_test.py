@@ -11,7 +11,7 @@ def voila_args(notebook_directory, voila_args_extra):
     return ['--Voila.root_dir=%r' % notebook_directory] + voila_args_extra
 
 
-async def test_non_existing_kernel(http_client, add_token, non_existing_kernel_notebook):
-    response = yield http_client.fetch(add_token(non_existing_kernel_notebook))
+async def test_no_kernelspec(fetch, token):
+    response = await fetch('voila', 'render', 'no_kernelspec.ipynb', params={'token': token}, method='GET')
     assert response.code == 200
     assert 'Executing without a kernelspec' in response.body.decode('utf-8')

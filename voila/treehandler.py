@@ -10,13 +10,14 @@ import os
 
 from tornado import web
 
+from jupyter_server.base.handlers import JupyterHandler
 from jupyter_server.extension.handler import ExtensionHandlerMixin
 from jupyter_server.utils import url_path_join, url_escape
 
 from .utils import get_server_root_dir
 
 
-class VoilaTreeHandler(ExtensionHandlerMixin):
+class VoilaTreeHandler(ExtensionHandlerMixin, JupyterHandler):
 
     def initialize(self, **kwargs):
         super(VoilaTreeHandler, self).initialize(**kwargs)

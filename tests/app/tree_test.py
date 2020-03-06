@@ -12,8 +12,8 @@ def voila_args_extra():
     return ['--Voila.extension_language_mapping={".xcpp": "C++11"}']
 
 
-async def test_tree(http_client, default_url):
-    response = yield http_client.fetch(default_url)
+async def test_tree(fetch, token):
+    response = await fetch('voila', params={'token': token}, method='GET')
     assert response.code == 200
     text = response.body.decode('utf-8')
     assert 'print.ipynb' in text, 'tree handler should render ipynb files'
