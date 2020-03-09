@@ -74,5 +74,5 @@ jobs:
       run: |
         source "$CONDA/etc/profile.d/conda.sh"
         conda activate voila-tests
-        VOILA_TEST_DEBUG=1 VOILA_TEST_XEUS_CLING=1 py.test tests/ --async-test-timeout=240
+        VOILA_TEST_DEBUG=1 py.test tests/ --async-test-timeout=240
         voila --help  # Making sure we can run `voila --help`

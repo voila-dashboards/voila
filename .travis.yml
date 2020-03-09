@@ -26,6 +26,6 @@ install:
   - pip install git+https://github.com/davidbrochart/jupyter_server@no_browser
   - cd tests/test_template; pip install .; cd ../../;
 script:
-  - VOILA_TEST_DEBUG=1 VOILA_TEST_XEUS_CLING=1 py.test tests/ --async-test-timeout=240
+  - VOILA_TEST_DEBUG=1 py.test tests/ --async-test-timeout=240
   - voila --help  # Making sure we can run `voila --help`
   - flake8 voila tests setup.py
