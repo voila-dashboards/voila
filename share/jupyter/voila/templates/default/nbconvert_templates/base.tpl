@@ -17,6 +17,7 @@
     integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA="
     crossorigin="anonymous">
 </script>
+
 {% block notebook_execute %}
     {%- set kernel_id = kernel_start() -%}
     <script id="jupyter-config-data" type="application/json">

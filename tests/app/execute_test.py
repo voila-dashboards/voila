@@ -30,8 +30,8 @@ async def test_no_execute_allowed(fetch, token, voila_app, add_token, base_url):
         kernel_id=kernel_id, base_url=voila_app.serverapp.connection_url[:-6], session_id=session_id
     ).replace('http://', 'ws://')
     url = add_token(url)
-    print(url)
     conn = await tornado.websocket.websocket_connect(url)
+
     msg = {
         "header": {
             "msg_id": "8573fb401ac848aab63c3bf0081e9b65",

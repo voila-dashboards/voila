@@ -10,11 +10,6 @@ def voila_args(notebook_directory, voila_args_extra):
     return ['--Voila.root_dir=%r' % notebook_directory] + voila_args_extra
 
 
-@pytest.fixture
-def print_notebook_url(add_token, print_notebook_url):
-    return add_token(print_notebook_url)
-
-
 async def test_print(fetch, token):
     response = await fetch('voila', 'render', 'print.ipynb', params={'token': token}, method='GET')
     assert response.code == 200

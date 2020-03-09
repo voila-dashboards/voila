@@ -2,5 +2,11 @@
     "Voila": {
         "template": "test_template",
         "enable_nbextensions": true
+    },
+    "MappingKernelManager": {
+        "cull_interval": 10
+    },
+    "LargeFileManager": {
+        "use_atomic_writing": false
     }
 }

@@ -31,7 +31,8 @@ def voila_config_file_paths_arg():
 
 @pytest.fixture
 def voila_args(voila_notebook, voila_args_extra, voila_config_file_paths_arg):
-    return [voila_notebook, voila_config_file_paths_arg] + voila_args_extra
+    debug_args = ['--VoilaTest.log_level=DEBUG'] if os.environ.get('VOILA_TEST_DEBUG', False) else []
+    return [voila_notebook, voila_config_file_paths_arg] + voila_args_extra + debug_args
 
 
 @pytest.fixture
@@ -40,7 +41,7 @@ def voila_app(server_config, voila_config, voila_args):
     voila_app = Voila(**voila_config)
     # Get an instance of the underlying server. This is
     # configured automatically when launched by command line.
-    serverapp = voila_app.initialize_server(voila_args, **server_config)
+    serverapp = voila_app.initialize_server(voila_args + ['--no-browser'], **server_config)
     # silence the start method for pytests.
     serverapp.start = lambda self: None
     voila_app.initialize(serverapp, argv=voila_args)
@@ -76,8 +77,3 @@ def add_token(voila_app):
         return new_url
 
     return add_token_to_url
-
-
-@pytest.fixture
-def default_url(base_url, add_token):
-    return add_token(base_url)
