@@ -62,7 +62,7 @@ jobs:
        source "$CONDA/etc/profile.d/conda.sh"
        conda activate voila-tests
        pip uninstall jupyter_server -y
-       pip install git+https://github.com/jupyter/jupyter_server@master
+       pip install git+https://github.com/davidbrochart/jupyter_server@no_browser
 
     - name: Flake8
       run: |

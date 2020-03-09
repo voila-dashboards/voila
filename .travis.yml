@@ -23,7 +23,7 @@ before_install:
 install:
   - pip install ".[test]"
   - pip uninstall jupyter_server -y
-  - pip install git+https://github.com/jupyter/jupyter_server@master
+  - pip install git+https://github.com/davidbrochart/jupyter_server@no_browser
   - cd tests/test_template; pip install .; cd ../../;
 script:
   - VOILA_TEST_DEBUG=1 py.test tests/ --async-test-timeout=240
