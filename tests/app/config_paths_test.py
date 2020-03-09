@@ -17,14 +17,6 @@ def test_config_app(voila_app):
     assert voila_app.enable_nbextensions is True
 
 
-#def test_config_kernel_manager(voila_app):
-#    assert voila_app.kernel_manager.cull_interval == 10
-#
-#
-#def test_config_contents_manager(voila_app):
-#    assert voila_app.contents_manager.use_atomic_writing is False
-
-
 async def test_template(fetch, token):
     response = await fetch('voila', params={'token': token}, method='GET')
     assert response.code == 200
