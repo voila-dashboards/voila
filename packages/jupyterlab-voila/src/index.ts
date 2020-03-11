@@ -11,7 +11,9 @@ import {
   DOMUtils
 } from "@jupyterlab/apputils";
 
-import { PageConfig, PathExt, ISettingRegistry } from "@jupyterlab/coreutils";
+import { ISettingRegistry } from "@jupyterlab/settingregistry";
+
+import { PageConfig, PathExt } from "@jupyterlab/coreutils";
 
 import { DocumentRegistry } from "@jupyterlab/docregistry";
 
@@ -23,11 +25,11 @@ import {
   INotebookModel
 } from "@jupyterlab/notebook";
 
-import { CommandRegistry } from "@phosphor/commands";
+import { CommandRegistry } from "@lumino/commands";
 
-import { ReadonlyJSONObject } from "@phosphor/coreutils";
+import { ReadonlyJSONObject } from "@lumino/coreutils";
 
-import { IDisposable } from "@phosphor/disposable";
+import { IDisposable } from "@lumino/disposable";
 
 import {
   VOILA_ICON_CLASS,
@@ -66,7 +68,7 @@ class VoilaRenderButton
     const button = new ToolbarButton({
       className: "voilaRender",
       tooltip: "Render with Voila",
-      iconClassName: VOILA_ICON_CLASS,
+      iconClass: VOILA_ICON_CLASS,
       onClick: () => {
         this._commands.execute(CommandIDs.voilaRender);
       }
