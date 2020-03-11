@@ -8,10 +8,7 @@
 #############################################################################
 import collections
 import logging
-try:
-    from time import monotonic  # Py 3
-except ImportError:
-    from time import time as monotonic  # Py 2
+from time import monotonic
 
 from nbconvert.preprocessors import ClearOutputPreprocessor
 from nbconvert.preprocessors.execute import CellExecutionError, ExecutePreprocessor
@@ -20,11 +17,6 @@ import zmq
 
 from traitlets import Unicode
 from ipykernel.jsonutil import json_clean
-
-try:
-    TimeoutError  # Py 3
-except NameError:
-    TimeoutError = RuntimeError  # Py 2
 
 
 def strip_code_cell_warnings(cell):

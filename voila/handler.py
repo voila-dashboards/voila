@@ -21,11 +21,6 @@ from nbconvert.preprocessors import ClearOutputPreprocessor
 from .execute import executenb, VoilaExecutePreprocessor
 from .exporter import VoilaExporter
 
-try:
-    TimeoutError  # Py 3
-except NameError:
-    TimeoutError = RuntimeError  # Py 2
-
 
 class VoilaHandler(JupyterHandler):
 
