@@ -1,6 +1,6 @@
 {
   "name": "@jupyter-voila/jupyterlab-preview",
-  "version": "0.1.3",
+  "version": "1.0.0",
   "description": "A JupyterLab preview extension for Voila",
   "keywords": [
     "jupyter",
