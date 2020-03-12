@@ -10,16 +10,16 @@ import { DocumentRegistry } from "@jupyterlab/docregistry";
 
 import { INotebookModel } from "@jupyterlab/notebook";
 
-import { Token } from "@phosphor/coreutils";
+import { Token } from "@lumino/coreutils";
 
-import { Signal } from "@phosphor/signaling";
+import { Signal } from "@lumino/signaling";
 
 import * as React from "react";
 
 /**
  * A class that tracks Voila Preview widgets.
  */
-export interface IVoilaPreviewTracker extends IWidgetTracker<VoilaPreview> { }
+export interface IVoilaPreviewTracker extends IWidgetTracker<VoilaPreview> {}
 
 /**
  * The Voila Preview tracker token.
@@ -56,7 +56,7 @@ export class VoilaPreview extends MainAreaWidget<IFrame> {
     this.renderOnSave = renderOnSave;
 
     const reloadButton = new ToolbarButton({
-      iconClassName: "jp-RefreshIcon",
+      iconClass: "jp-RefreshIcon",
       tooltip: "Reload Preview",
       onClick: () => {
         this.reload();
