@@ -19,7 +19,7 @@ git clean -fdx
 
 Make sure the `dist/` folder is empty.
 
-1. Update [voila/_version.py](./voila/_version.py) and [environment.yml](./environment.yml) with the new version number (see and [example diff](https://github.com/QuantStack/voila/commit/5c6fd8dd3ea71412ae9c20c25248453d22a3b60a))
+1. Update [voila/_version.py](./voila/_version.py) and [environment.yml](./environment.yml) with the new version number (see and [example diff](https://github.com/voila-dashboards/voila/commit/5c6fd8dd3ea71412ae9c20c25248453d22a3b60a))
 2. `python setup.py sdist bdist_wheel`
 3. Double check the size of the bundles in the `dist/` folder
 4. Run the tests

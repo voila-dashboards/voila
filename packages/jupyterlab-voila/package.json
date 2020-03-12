@@ -7,9 +7,9 @@
     "jupyterlab",
     "jupyterlab-extension"
   ],
-  "homepage": "https://github.com/QuantStack/voila",
+  "homepage": "https://github.com/voila-dashboards/voila",
   "bugs": {
-    "url": "https://github.com/QuantStack/voila/issues"
+    "url": "https://github.com/voila-dashboards/voila/issues"
   },
   "license": "BSD-3-Clause",
   "author": "Voila contributors",
@@ -22,7 +22,7 @@
   "types": "lib/index.d.ts",
   "repository": {
     "type": "git",
-    "url": "https://github.com/QuantStack/voila.git"
+    "url": "https://github.com/voila-dashboards/voila.git"
   },
   "scripts": {
     "build": "tsc",
