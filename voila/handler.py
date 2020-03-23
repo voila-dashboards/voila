@@ -140,9 +140,16 @@ class VoilaHandler(JupyterHandler):
         nb, resources = ClearOutputPreprocessor().preprocess(nb, {'metadata': {'path': self.cwd}})
         ep = VoilaExecutePreprocessor(config=self.traitlet_config)
 
+        stop_execution = False
         with ep.setup_preprocessor(nb, resources, km=km):
             for cell_idx, cell in enumerate(nb.cells):
-                res = ep.preprocess_cell(cell, resources, cell_idx, store_history=False)
+                if stop_execution:
+                    break
+                try:
+                    res = ep.preprocess_cell(cell, resources, cell_idx, store_history=False)
+                except TimeoutError:
+                    res = (cell, resources)
+                    stop_execution = True
 
                 yield res[0]
 
