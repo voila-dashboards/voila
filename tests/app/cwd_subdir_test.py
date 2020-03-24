@@ -2,11 +2,6 @@
 import pytest
 
 
-#@pytest.fixture
-#def cwd_subdir_notebook_url(base_url):
-#    return base_url + "/voila/render/subdir/cwd_subdir.ipynb"
-
-
 @pytest.fixture
 def voila_args(notebook_directory, voila_args_extra):
     return [

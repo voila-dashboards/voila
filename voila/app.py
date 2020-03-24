@@ -10,7 +10,6 @@
 from zmq.eventloop import ioloop
 
 import gettext
-import json
 import logging
 import os
 
@@ -22,7 +21,6 @@ from traitlets import Unicode, Integer, Bool, Dict, List, default
 from jupyter_server.extension.application import ExtensionApp
 from jupyter_server.serverapp import ServerApp
 from jupyter_server.base.handlers import FileFindHandler, path_regex
-from jupyter_server.config_manager import recursive_update
 
 from jupyter_core.paths import jupyter_config_path, jupyter_path
 
