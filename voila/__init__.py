@@ -8,7 +8,9 @@
 #############################################################################
 
 from ._version import __version__  # noqa
-from .server_extension import load_jupyter_server_extension  # noqa
+from .app import Voila  # noqa
+
+load_jupyter_server_extension = Voila.load_jupyter_server_extension
 
 
 def _jupyter_nbextension_paths():

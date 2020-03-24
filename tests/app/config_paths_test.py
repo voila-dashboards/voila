@@ -9,26 +9,17 @@ BASE_DIR = os.path.dirname(__file__)
 
 @pytest.fixture
 def voila_config_file_paths_arg():
-    path = os.path.join(BASE_DIR, '..', 'configs', 'general')
-    return '--VoilaTest.config_file_paths=[%r]' % path
+    config_path = os.path.join(BASE_DIR, '..', 'configs', 'general')
+    return '--Voila.config_file_paths=[%r]' % config_path
 
 
 def test_config_app(voila_app):
-    assert voila_app.voila_configuration.template == 'test_template'
-    assert voila_app.voila_configuration.enable_nbextensions is True
+    assert voila_app.template == 'test_template'
+    assert voila_app.enable_nbextensions is True
 
 
-def test_config_kernel_manager(voila_app):
-    assert voila_app.kernel_manager.cull_interval == 10
-
-
-def test_config_contents_manager(voila_app):
-    assert voila_app.contents_manager.use_atomic_writing is False
-
-
-@pytest.mark.gen_test
-def test_template(http_client, base_url):
-    response = yield http_client.fetch(base_url)
+async def test_template(fetch, token):
+    response = await fetch('voila', params={'token': token}, method='GET')
     assert response.code == 200
     assert 'test_template.css' in response.body.decode('utf-8')
     assert 'Hi Voila' in response.body.decode('utf-8')

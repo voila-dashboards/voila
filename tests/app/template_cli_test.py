@@ -13,8 +13,7 @@ def voila_args_extra():
     return ['--template=None', '--Voila.nbconvert_template_paths=[%r, %r]' % (path_test_template, path_default)]
 
 
-@pytest.mark.gen_test
-def test_template_test(http_client, base_url):
-    response = yield http_client.fetch(base_url)
+async def test_template_test(fetch, token):
+    response = await fetch('voila', params={'token': token}, method='GET')
     assert response.code == 200
     assert 'test_template.css' in response.body.decode('utf-8')

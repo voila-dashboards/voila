@@ -10,11 +10,10 @@ def voila_notebook(notebook_directory):
 
 @pytest.fixture
 def voila_args_extra():
-    return ['--VoilaExecutePreprocessor.timeout=1', '--KernelManager.shutdown_wait_time=0.1']
+    return ['--VoilaExecutePreprocessor.timeout=1', '--VoilaExecutePreprocessor.interrupt_on_timeout=True']#'--KernelManager.shutdown_wait_time=0.1']
 
 
-@pytest.mark.gen_test
-def test_timeout(http_client, base_url):
-    response = yield http_client.fetch(base_url)
+async def test_timeout(fetch, token):
+    response = await fetch('voila', params={'token': token}, method='GET')
     html_text = response.body.decode('utf-8')
     assert 'Cell execution timed out' in html_text

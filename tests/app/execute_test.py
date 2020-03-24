@@ -1,11 +1,9 @@
 # test basics of voila running a notebook
-import pytest
-
 import tornado.web
-import tornado.gen
 
 import re
 import json
+import asyncio
 
 try:
     from unittest import mock
@@ -13,9 +11,8 @@ except ImportError:
     import mock
 
 
-@pytest.mark.gen_test
-def test_hello_world(http_client, base_url):
-    response = yield http_client.fetch(base_url)
+async def test_hello_world(fetch, token):
+    response = await fetch('voila', params={'token': token}, method='GET')
     assert response.code == 200
     html_text = response.body.decode('utf-8')
     assert 'Hi Voila' in html_text
@@ -23,19 +20,17 @@ def test_hello_world(http_client, base_url):
     assert 'test_template.css' not in html_text, "test_template should not be the default"
 
 
-@pytest.mark.gen_test
-def test_no_execute_allowed(voila_app, app, http_client, base_url):
-    assert voila_app.app is app
-    response = (yield http_client.fetch(base_url)).body.decode('utf-8')
+async def test_no_execute_allowed(fetch, token, voila_app, add_token, base_url):
+    response = (await fetch('voila', params={'token': token}, method='GET')).body.decode('utf-8')
     pattern = r"""kernelId": ["']([0-9a-zA-Z-]+)["']"""
     groups = re.findall(pattern, response)
     kernel_id = groups[0]
-    print(kernel_id, base_url)
     session_id = '445edd75-c6f5-45d2-8b58-5fe8f84a7123'
     url = '{base_url}/api/kernels/{kernel_id}/channels?session_id={session_id}'.format(
-        kernel_id=kernel_id, base_url=base_url, session_id=session_id
+        kernel_id=kernel_id, base_url=voila_app.serverapp.connection_url[:-6], session_id=session_id
     ).replace('http://', 'ws://')
-    conn = yield tornado.websocket.websocket_connect(url)
+    url = add_token(url)
+    conn = await tornado.websocket.websocket_connect(url)
 
     msg = {
         "header": {
@@ -58,9 +53,9 @@ def test_no_execute_allowed(voila_app, app, http_client, base_url):
         "parent_header": {},
         "channel": "shell",
     }
-    with mock.patch.object(voila_app.log, 'warning') as mock_warning:
-        yield conn.write_message(json.dumps(msg))
+    with mock.patch.object(voila_app.serverapp.log, 'warning') as mock_warning:
+        await conn.write_message(json.dumps(msg))
         # make sure the warning method is called
         while not mock_warning.called:
-            yield tornado.gen.sleep(0.1)
+            await asyncio.sleep(0.1)
     mock_warning.assert_called_with('Received message of type "execute_request", which is not allowed. Ignoring.')
