@@ -63,15 +63,6 @@ class VoilaHandler(ExtensionHandlerMixin, JupyterHandler):
             return
         self.cwd = os.path.dirname(notebook_path)
 
-        # Launch kernel and execute notebook
-        kernel_id = await self.kernel_manager.start_kernel(
-                kernel_name=self.notebook.metadata.kernelspec.name, path=self.cwd
-        )
-        km = self.kernel_manager.get_kernel(kernel_id)
-        executenb(
-            self.notebook, km=km, cwd=self.cwd, config=self.server_config
-        )
-
         path, basename = os.path.split(notebook_path)
         notebook_name = os.path.splitext(basename)[0]
 
