@@ -142,21 +142,16 @@ class VoilaHandler(JupyterHandler):
     async def _jinja_cell_generator(self, nb, kernel_id):
         """Generator that will execute a single notebook cell at a time"""
         nb, resources = ClearOutputPreprocessor().preprocess(nb, {'metadata': {'path': self.cwd}})
-        ep = VoilaExecutor(config=self.traitlet_config)
 
         stop_execution = False
-        with ep.setup_preprocessor(nb, resources, km=km):
-            for cell_idx, cell in enumerate(nb.cells):
-                if stop_execution:
-                    break
-                try:
-                    res = ep.preprocess_cell(cell, resources, cell_idx, store_history=False)
-                except TimeoutError:
-                    res = (cell, resources)
-                    stop_execution = True
-
         for cell_idx, cell in enumerate(nb.cells):
-            res = await self.executor.execute_cell(cell, None, cell_idx, store_history=False)
+            if stop_execution:
+                break
+            try:
+                res = await self.executor.execute_cell(cell, None, cell_idx, store_history=False)
+            except TimeoutError:
+                res = cell
+                stop_execution = True
             yield res
 
     # @tornado.gen.coroutine

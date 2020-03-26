@@ -10,7 +10,7 @@ def voila_notebook(notebook_directory):
 
 @pytest.fixture
 def voila_args_extra():
-    return ['--VoilaExecutePreprocessor.timeout=1', '--KernelManager.shutdown_wait_time=0.1']
+    return ['--VoilaExecutor.timeout=1', '--KernelManager.shutdown_wait_time=0.1']
 
 
 @pytest.mark.gen_test

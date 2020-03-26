@@ -377,8 +377,8 @@ setup_args = {
     'install_requires': [
         'async_generator',
         'jupyter_server>=0.1.0,<0.2.0',
-        'jupyter_client>=6.0.0',
-        'nbclient @ git+https://github.com/davidbrochart/nbclient@nest_asyncio',
+        'jupyter_client>=6.1.1',
+        'nbclient @ git+https://github.com/jupyter/nbclient',
         'nbconvert @ git+https://github.com/jupyter/nbconvert',
         'jupyterlab_pygments>=0.1.0,<0.2',
         'pygments>=2.4.1,<3'  # Explicitly requiring pygments which is a second-order dependency.

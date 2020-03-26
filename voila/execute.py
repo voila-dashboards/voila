@@ -8,13 +8,11 @@
 #############################################################################
 import collections
 import logging
-from time import monotonic
 
 from nbconvert.preprocessors import ClearOutputPreprocessor
 from nbclient.exceptions import CellExecutionError
 from nbclient import NotebookClient
 from nbformat.v4 import output_from_msg
-import zmq
 
 from traitlets import Unicode
 from ipykernel.jsonutil import json_clean
@@ -246,85 +244,6 @@ class VoilaExecutor(NotebookClient):
             output['traceback'] = [error_message]
 
         return cell
-
-    # make it nbconvert 5.5 compatible
-    def _get_timeout(self, cell):
-        if self.timeout_func is not None and cell is not None:
-            timeout = self.timeout_func(cell)
-        else:
-            timeout = self.timeout
-
-        if not timeout or timeout < 0:
-            timeout = None
-
-        return timeout
-
-    # make it nbconvert 5.5 compatible
-    def _handle_timeout(self, timeout):
-        self.log.error(
-            "Timeout waiting for execute reply (%is)." % timeout)
-        if self.interrupt_on_timeout:
-            self.log.error("Interrupting kernel")
-            self.km.interrupt_kernel()
-        else:
-            raise TimeoutError("Cell execution timed out")
-
-    def run_cell(self, cell, cell_index=0, store_history=False):
-        parent_msg_id = self.kc.execute(cell.source, store_history=store_history, stop_on_error=not self.allow_errors)
-        self.log.debug("Executing cell:\n%s", cell.source)
-        exec_timeout = self._get_timeout(cell)
-        deadline = None
-        if exec_timeout is not None:
-            deadline = monotonic() + exec_timeout
-
-        cell.outputs = []
-        self.clear_before_next_output = False
-
-        # we need to have a reply, and return to idle before we can consider the cell executed
-        idle = False
-        execute_reply = None
-
-        deadline_passed = 0
-        deadline_passed_max = 5
-        while not idle or execute_reply is None:
-            # we want to timeout regularly, to see if the kernel is still alive
-            # this is tested in preprocessors/test/test_execute.py#test_kernel_death
-            # this actually fakes the kernel death, and we might be able to use the xlist
-            # to detect a disconnected kernel
-            timeout = min(1, deadline - monotonic())
-            # if we interrupt on timeout, we allow 1 seconds to pass till deadline
-            # to make sure we get the interrupt message
-            if timeout >= 0.0:
-                # we include 0, which simply is a poll to see if we have messages left
-                rlist = zmq.select([self.kc.iopub_channel.socket, self.kc.shell_channel.socket], [], [], timeout)[0]
-                if not rlist:
-                    self._check_alive()
-                    if monotonic() > deadline:
-                        self._handle_timeout(exec_timeout)
-                        deadline_passed += 1
-                        assert self.interrupt_on_timeout
-                        if deadline_passed <= deadline_passed_max:
-                            # when we interrupt, we want to do this multiple times, so we give some
-                            # extra time to handle the interrupt message
-                            deadline += self.iopub_timeout
-                if self.kc.shell_channel.socket in rlist:
-                    msg = self.kc.shell_channel.get_msg(block=False)
-                    if msg['parent_header'].get('msg_id') == parent_msg_id:
-                        execute_reply = msg
-                if self.kc.iopub_channel.socket in rlist:
-                    msg = self.kc.iopub_channel.get_msg(block=False)
-                    if msg['parent_header'].get('msg_id') == parent_msg_id:
-                        if msg['msg_type'] == 'status' and msg['content']['execution_state'] == 'idle':
-                            idle = True
-                        else:
-                            self.process_message(msg, cell, cell_index)
-                    else:
-                        self.log.debug("Received message for which we were not the parent: %s", msg)
-            else:
-                self._handle_timeout(exec_timeout)
-                break
-
-        return execute_reply, cell.outputs
 
     def show_code_cell_timeout(self, cell):
         """Show a timeout error output in a code cell."""
