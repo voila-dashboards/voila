@@ -77,11 +77,12 @@ class VoilaHandler(ExtensionHandlerMixin, JupyterHandler):
         }
 
         # include potential extra resources
-        extra_resources = self.config.resources
+        extra_resources = self.server_config.traitlet_configuration
         # if no resources get configured from neither the CLI nor a config file,
         # extra_resources is a traitlets.config.loader.LazyConfigValue object
         if not isinstance(extra_resources, dict):
             extra_resources = extra_resources.to_dict()
+        extra_resources = extra_resources.get('resources')
         if extra_resources:
             recursive_update(resources, extra_resources)
 
