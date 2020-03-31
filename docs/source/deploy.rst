@@ -120,13 +120,13 @@ High level instructions, specific to voila can be found below:
 
    ::
 
-       web: voila —-port=$PORT --no-browser
+       web: voila --port=$PORT --no-browser
 
    Or the following if you only want to show one notebook:
 
    ::
 
-       web: voila —-port=$PORT —-no-browser your_notebook.ipynb
+       web: voila --port=$PORT --no-browser your_notebook.ipynb
 
 4. Initialize your git repo and commit your code. At minimum you need to commit
    your notebooks, requirements.txt, runtime.txt, and the Procfile.
