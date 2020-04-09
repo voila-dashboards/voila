@@ -388,7 +388,9 @@ setup_args = {
             'pytest<4',
             'pytest-tornado',
             'matplotlib',
-            'ipywidgets'
+            'ipywidgets',
+            'pyppeteer2',  # pyppeteer is not maintained
+            'pillow'
         ]
     },
     'url': 'https://github.com/voila-dashboards/voila',
