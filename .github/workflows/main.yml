@@ -71,7 +71,7 @@ jobs:
         voila --help  # Making sure we can run `voila --help`
     - name: Upload artifacts (from test failures)
         uses: actions/upload-artifact@v1
-        if: failed()
+        if: succeeded() || failed()
         with:
           name: artifacts
           path: artifacts
