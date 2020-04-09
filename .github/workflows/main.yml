@@ -73,6 +73,6 @@ jobs:
     - name: Upload artifacts (from test failures)
       uses: actions/upload-artifact@v1
       if: succeeded() || failed()
-        with:
-          name: artifacts
-          path: artifacts
+      with:
+        name: artifacts
+        path: artifacts
