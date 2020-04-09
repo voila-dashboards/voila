@@ -17,11 +17,10 @@ async def compare(element, name):
     base_dir.mkdir(exist_ok=True)
     test_path = base_dir / f'{name}_testrun.png'
     truth_path = base_dir / f'{name}_truth.png'
-    # if not truth_path.exists():
-    #     # on initial run, we just save it
-    #     await element.screenshot({'path': str(truth_path)})
-    # else:
-    if True:
+    if not truth_path.exists():
+        # on initial run, we just save it
+        await element.screenshot({'path': str(truth_path)})
+    else:
         await element.screenshot({'path': str(test_path)})
         truth = Image.open(truth_path)
         test = Image.open(test_path)
@@ -57,5 +56,6 @@ async def test_render(http_client, base_url, voila_app):
             # may want to add --async-test-timeout=60 to pytest arguments
             print("Waiting for 60 second for visual inspection (hit ctrl-c to break)")
             await asyncio.sleep(60)
+        raise
     finally:
         await browser.close()
