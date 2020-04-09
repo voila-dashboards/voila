@@ -17,10 +17,11 @@ async def compare(element, name):
     base_dir.mkdir(exist_ok=True)
     test_path = base_dir / f'{name}_testrun.png'
     truth_path = base_dir / f'{name}_truth.png'
-    if not truth_path.exists():
-        # on initial run, we just save it
-        await element.screenshot({'path': str(truth_path)})
-    else:
+    # if not truth_path.exists():
+    #     # on initial run, we just save it
+    #     await element.screenshot({'path': str(truth_path)})
+    # else:
+    if True:
         await element.screenshot({'path': str(test_path)})
         truth = Image.open(truth_path)
         test = Image.open(test_path)
