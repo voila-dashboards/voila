@@ -35,7 +35,7 @@ async def compare(element, name, tolerance=0.01):
             assert truth.size == test.size
             delta = np.array(truth)/255. - np.array(test)/255.
             delta_abs = abs(delta)
-            delta_rel = delta_abs#/truth
+            delta_rel = delta_abs
             significant_difference = delta_rel.max() > tolerance
             diff_float = delta_rel > tolerance
             diff_bytes = (diff_float*255).astype(np.uint8)
@@ -68,7 +68,7 @@ async def test_render(http_client, base_url, voila_app):
     browser = await pyppeteer.launch(options=options, args=['--font-render-hinting=none', '--disable-gpu'])
     page = await browser.newPage()
     await page.goto(base_url, waitUntil='networkidle2')
-    result = await page.evaluate('async () => await widgetManagerPromise')
+    await page.evaluate('async () => await widgetManagerPromise')
     # take the slider without the text to avoid font issues
     el = await page.querySelector('.slider-container')
     assert el is not None
