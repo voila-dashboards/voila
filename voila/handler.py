@@ -117,7 +117,6 @@ class VoilaHandler(JupyterHandler):
         assert not self.kernel_started, "kernel was already started"
         kernel_id = await self.kernel_manager.start_kernel(kernel_name=self.notebook.metadata.kernelspec.name, path=self.cwd)
         km = self.kernel_manager.get_kernel(kernel_id)
-        km.client_class = 'jupyter_client.asynchronous.AsyncKernelClient'
         self.executor = VoilaExecutor(nb, km=km, config=self.traitlet_config)
         self.executor.kc = km.client()
         self.executor.kc.start_channels()
@@ -154,7 +153,6 @@ class VoilaHandler(JupyterHandler):
                 stop_execution = True
             yield res
 
-    # @tornado.gen.coroutine
     async def load_notebook(self, path):
         model = self.contents_manager.get(path=path)
         if 'content' not in model:

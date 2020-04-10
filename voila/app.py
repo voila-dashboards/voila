@@ -39,12 +39,12 @@ from traitlets.config.application import Application
 from traitlets.config.loader import Config
 from traitlets import Unicode, Integer, Bool, Dict, List, default
 
-from jupyter_server.services.kernels.kernelmanager import MappingKernelManager
+from jupyter_server.services.kernels.kernelmanager import AsyncMappingKernelManager
 from jupyter_server.services.kernels.handlers import KernelHandler, ZMQChannelsHandler
 from jupyter_server.services.contents.largefilemanager import LargeFileManager
 from jupyter_server.base.handlers import FileFindHandler, path_regex
 from jupyter_server.config_manager import recursive_update
-from jupyter_server.utils import url_path_join
+from jupyter_server.utils import url_path_join, run_sync
 from jupyter_server.services.config import ConfigManager
 
 from jupyter_client.kernelspec import KernelSpecManager
@@ -392,7 +392,7 @@ class Voila(Application):
             parent=self
         )
 
-        self.kernel_manager = MappingKernelManager(
+        self.kernel_manager = AsyncMappingKernelManager(
             parent=self,
             connection_dir=self.connection_dir,
             kernel_spec_manager=self.kernel_spec_manager,
@@ -510,7 +510,7 @@ class Voila(Application):
 
     def stop(self):
         shutil.rmtree(self.connection_dir)
-        self.kernel_manager.shutdown_all()
+        run_sync(self.kernel_manager.shutdown_all())
 
     def random_ports(self, port, n):
         """Generate a list of n random ports near the given port.
