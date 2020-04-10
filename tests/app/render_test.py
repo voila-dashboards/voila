@@ -26,13 +26,14 @@ async def compare(element, name):
         await element.screenshot({'path': str(test_path)})
         truth = Image.open(truth_path)
         test = Image.open(test_path)
-        diff = ImageChops.difference(truth, test)
+        # if we do not convert to rgb, the bbox is empty (on some versions of pillow!)
+        diff = ImageChops.difference(truth, test).convert('RGB')
         try:
             assert truth.size == test.size
             assert not diff.getbbox(), 'Visual difference'
         except:  # noqa
             diff_path = artifact_path / f'{name}_diff.png'
-            diff.convert('RGB').save(diff_path)
+            diff.save(diff_path)
             shutil.copy(test_path, artifact_path)
             shutil.copy(truth_path, artifact_path)
             if diff.getbbox():
