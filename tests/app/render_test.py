@@ -6,7 +6,7 @@ import shutil
 import os
 import numpy as np
 
-from PIL import Image, ImageDraw, ImageChops
+from PIL import Image, ImageDraw
 import pyppeteer
 
 artifact_path = Path('artifacts')
@@ -26,11 +26,9 @@ async def compare(element, name, tolerance=0.1):
         truth = Image.open(truth_path)
         test = Image.open(test_path)
         try:
-            # if the alpha channel is empty, the bbox is empty and we will fail to detect a change
-            # diff = ImageChops.difference(truth, test).convert('RGB')
             delta = np.array(truth)/255. - np.array(test)/255.
             delta_abs = abs(delta)
-            delta_rel = abs(delta/truth)
+            delta_rel = abs(delta_abs/truth)
             significant_difference = delta_rel.max() > tolerance
             diff_float = delta_rel > tolerance
             diff_bytes = (diff_float*255).astype(np.uint8)
