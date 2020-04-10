@@ -17,17 +17,15 @@ async def compare(element, name):
     base_dir.mkdir(exist_ok=True)
     test_path = base_dir / f'{name}_testrun.png'
     truth_path = base_dir / f'{name}_truth.png'
-    # if not truth_path.exists():
-    #     # on initial run, we just save it
-    #     await element.screenshot({'path': str(truth_path)})
-    # else:
-    if True:
-        print(test_path, truth_path, truth_path.exists())
+    if not truth_path.exists():
+        # on initial run, we just save it
+        await element.screenshot({'path': str(truth_path)})
+    else:
         await element.screenshot({'path': str(test_path)})
         truth = Image.open(truth_path)
         test = Image.open(test_path)
-        # if we do not convert to rgb, the bbox is empty (on some versions of pillow!)
-        diff = ImageChops.difference(truth.convert('1'), test.convert('1'))
+        # if the alpha channel is empty, the bbox is empty and we will fail to detect a change
+        diff = ImageChops.difference(truth, test).convert('RGB')
         try:
             assert truth.size == test.size
             assert not diff.getbbox(), 'Visual difference'
@@ -48,17 +46,22 @@ async def compare(element, name):
 @pytest.mark.gen_test
 async def test_render(http_client, base_url, voila_app):
     options = dict(headless=False, devtools=True) if os.environ.get('VOILA_TEST_DEBUG_VISUAL', False) else {}
-    browser = await pyppeteer.launch(options=options)
+    # with headless and gpu enabled, we get slightly different results
+    # we could also allow a tolerance for the image comparison
+    browser = await pyppeteer.launch(options=options, args=['--font-render-hinting=none', '--disable-gpu'])
     page = await browser.newPage()
     await page.goto(base_url)
     el = await page.querySelector('.jp-OutputArea-output')
     try:
         await compare(el, 'print')
-    except:  # noqa
+    except Exception as e:  # noqa
         if os.environ.get('VOILA_TEST_DEBUG_VISUAL', False):
             # may want to add --async-test-timeout=60 to pytest arguments
             print("Waiting for 60 second for visual inspection (hit ctrl-c to break)")
-            await asyncio.sleep(60)
-        raise
+            try:
+                await asyncio.sleep(60)
+            except:  # noqa ignore ctrl-c
+                pass
+        raise e
     finally:
         await browser.close()
