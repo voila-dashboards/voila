@@ -27,7 +27,7 @@ async def compare(element, name):
         truth = Image.open(truth_path)
         test = Image.open(test_path)
         # if we do not convert to rgb, the bbox is empty (on some versions of pillow!)
-        diff = ImageChops.difference(truth, test).convert('RGB')
+        diff = ImageChops.difference(truth.convert('1'), test.convert('1'))
         try:
             assert truth.size == test.size
             assert not diff.getbbox(), 'Visual difference'
