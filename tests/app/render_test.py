@@ -4,6 +4,7 @@ import pytest
 from pathlib import Path
 import shutil
 import os
+import numpy as np
 
 from PIL import Image, ImageDraw, ImageChops
 import pyppeteer
@@ -12,7 +13,7 @@ artifact_path = Path('artifacts')
 artifact_path.mkdir(exist_ok=True)
 
 
-async def compare(element, name):
+async def compare(element, name, tolerance=0.1):
     base_dir = Path('tests/notebooks/screenshots/')
     base_dir.mkdir(exist_ok=True)
     test_path = base_dir / f'{name}_testrun.png'
@@ -24,36 +25,47 @@ async def compare(element, name):
         await element.screenshot({'path': str(test_path)})
         truth = Image.open(truth_path)
         test = Image.open(test_path)
-        # if the alpha channel is empty, the bbox is empty and we will fail to detect a change
-        diff = ImageChops.difference(truth, test).convert('RGB')
         try:
+            # if the alpha channel is empty, the bbox is empty and we will fail to detect a change
+            # diff = ImageChops.difference(truth, test).convert('RGB')
+            delta = np.array(truth)/255. - np.array(test)/255.
+            delta_abs = abs(delta)
+            delta_rel = abs(delta/truth)
+            significant_difference = delta_rel.max() > tolerance
+            diff_float = delta_rel > tolerance
+            diff_bytes = (diff_float*255).astype(np.uint8)
+            diff = Image.frombuffer(truth.mode, truth.size, diff_bytes)
+
             assert truth.size == test.size
-            assert not diff.getbbox(), 'Visual difference'
+            assert not significant_difference, f'Relative pixel difference > {tolerance}'
         except:  # noqa
-            diff_path = artifact_path / f'{name}_diff.png'
-            diff.save(diff_path)
+            # in case of a failure, we store as much as possible to analyse the failure
+            diff.save(artifact_path / f'{name}_diff.png')
+            # with alpha, it is difficult to see the difference
+            diff.convert('RGB').save(artifact_path / f'{name}_diff_non_alpha.png')
             shutil.copy(test_path, artifact_path)
             shutil.copy(truth_path, artifact_path)
             if diff.getbbox():
+                # a visual guide where the difference is
                 marked_path = artifact_path / f'{name}_marked.png'
                 marked = truth.copy()
                 draw = ImageDraw.Draw(marked)
                 draw.rectangle(diff.getbbox(), outline='red')
                 marked.convert('RGB').save(marked_path)
-            raise
+            raise  # reraises the AssertionError
 
 
 @pytest.mark.gen_test
 async def test_render(http_client, base_url, voila_app):
     options = dict(headless=False, devtools=True) if os.environ.get('VOILA_TEST_DEBUG_VISUAL', False) else {}
-    # with headless and gpu enabled, we get slightly different results
-    # we could also allow a tolerance for the image comparison
+    # with headless and gpu enabled, we get slightly different results on the same OS
+    # we can enable it if we need to, since we allow for a tolerance
     browser = await pyppeteer.launch(options=options, args=['--font-render-hinting=none', '--disable-gpu'])
     page = await browser.newPage()
     await page.goto(base_url)
     el = await page.querySelector('.jp-OutputArea-output')
     try:
-        await compare(el, 'print')
+        await compare(el, 'print', tolerance=0.1)
     except Exception as e:  # noqa
         if os.environ.get('VOILA_TEST_DEBUG_VISUAL', False):
             # may want to add --async-test-timeout=60 to pytest arguments
