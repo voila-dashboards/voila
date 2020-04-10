@@ -7,9 +7,18 @@
 ****************************************************************************/
 
 // NOTE: this file is not transpiled, async/await is the only modern feature we use here
+
+window.jupyterWidgetTesting = {
+    async waitForView(modelId) {
+        const wm = await widgetManagerPromise;
+        const model = await wm._models[modelId];
+        await Promise.all(Object.values(model.views))
+    }
+}
+
 require(['static/voila'], function(voila) {
     // requirejs doesn't like to be passed an async function, so create one inside
-    window.widgetManagerPromise = (async function() {
+    (async function() {
         var kernel = await voila.connectKernel()
 
         const context = {
@@ -37,23 +46,22 @@ require(['static/voila'], function(voila) {
 
         var widgetManager = new voila.WidgetManager(context, rendermime, settings);
 
-        return new Promise((resolve) => {
-            async function init() {
-                // it seems if we attach this to early, it will not be called
-                window.addEventListener('beforeunload', function (e) {
-                    kernel.shutdown();
-                    kernel.dispose();
-                });
-                await widgetManager.build_widgets();
-                voila.renderMathJax();
-                resolve(widgetManager);
-            }
-            if (document.readyState === 'complete') {
-                init()
-            } else {
-                window.addEventListener('load', init);
-            }
-        })
+        async function init() {
+            // it seems if we attach this to early, it will not be called
+            window.addEventListener('beforeunload', function (e) {
+                kernel.shutdown();
+                kernel.dispose();
+            });
+            await widgetManager.build_widgets();
+            voila.renderMathJax();
+            widgetManagerPromiseResolve(widgetManager);
+        }
+
+        if (document.readyState === 'complete') {
+            init()
+        } else {
+            window.addEventListener('load', init);
+        }
     })()
 });
 

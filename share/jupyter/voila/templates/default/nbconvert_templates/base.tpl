@@ -29,7 +29,9 @@
     {# from this point on, nb.cells contains output of the executed cells #}
     {% do notebook_execute(nb, kernel_id) %}
 {%- endblock notebook_execute -%}
-
+<script>
+  window.widgetManagerPromise = new Promise((resolve) => window.widgetManagerPromiseResolve = resolve)
+</script>
 {%- endblock html_head_js -%}
 
 {%- block html_head_css -%}
