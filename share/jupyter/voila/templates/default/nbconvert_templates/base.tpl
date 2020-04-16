@@ -6,6 +6,7 @@
 <head>
 {%- block html_head -%}
 <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 {% set nb_title = nb.metadata.get('title', '') or resources['metadata']['name'] %}
 <title>Voila: {{nb_title}}</title>
 
