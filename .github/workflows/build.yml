@@ -16,6 +16,10 @@ jobs:
     steps:
     - name: Checkout
       uses: actions/checkout@v1
+    - name: install dependencies
+      run: |
+        sudo apt update
+        sudo apt-get install -y --no-install-recommends libgbm-dev
     - name: Install node
       uses: actions/setup-node@v1
       with:
