@@ -1,6 +1,4 @@
 # test basics of voila running a notebook
-import pytest
-
 import tornado.web
 
 import re

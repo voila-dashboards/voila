@@ -1,5 +1,4 @@
 # test basics of voila running a notebook
-import pytest
 
 
 async def test_hello_world(http_server_client, print_notebook_url):
