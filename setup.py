@@ -376,7 +376,7 @@ setup_args = {
     },
     'install_requires': [
         'async_generator',
-        'jupyter_server @ git+https://github.com/jupyter/jupyter_server',
+        'jupyter_server>=0.3.0',
         'jupyter_client>=6.1.3',
         'nbclient>=0.2.0',
         'nbconvert==6.0.0a1',
