@@ -20,7 +20,7 @@ async def test_hello_world(http_server_client, base_url):
     assert 'test_template.css' not in html_text, "test_template should not be the default"
 
 
-async def test_no_execute_allowed(voila_app, app, http_server_client, base_url):
+async def test_no_execute_allowed(voila_app, app, http_server_client, base_url, http_server_port):
     assert voila_app.app is app
     response = (await http_server_client.fetch(base_url)).body.decode('utf-8')
     pattern = r"""kernelId": ["']([0-9a-zA-Z-]+)["']"""
@@ -28,9 +28,7 @@ async def test_no_execute_allowed(voila_app, app, http_server_client, base_url):
     kernel_id = groups[0]
     print(kernel_id, base_url)
     session_id = '445edd75-c6f5-45d2-8b58-5fe8f84a7123'
-    url = '{base_url}api/kernels/{kernel_id}/channels?session_id={session_id}'.format(
-        kernel_id=kernel_id, base_url=base_url, session_id=session_id
-    ).replace('http://', 'ws://')
+    url = f'ws://localhost:{http_server_port[1]}{base_url}api/kernels/{kernel_id}/channels?session_id={session_id}'
     conn = await tornado.websocket.websocket_connect(url)
 
     msg = {
