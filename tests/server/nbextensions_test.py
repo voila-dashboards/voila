@@ -16,9 +16,8 @@ def jupyter_server_config():
 
 
 @pytest.mark.xfail(reason='needs to be fixed')
-@pytest.mark.gen_test
-def test_lists_extension(http_client, print_notebook_url):
-    response = yield http_client.fetch(print_notebook_url)
+async def test_lists_extension(http_server_client, print_notebook_url):
+    response = await http_server_client.fetch(print_notebook_url)
     assert response.code == 200
     html_text = response.body.decode('utf-8')
     assert 'Hi Voila' in html_text
