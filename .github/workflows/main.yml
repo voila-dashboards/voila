@@ -21,7 +21,7 @@ jobs:
         python-version: [3.6, 3.7, 3.8]
 
     steps:
-    - uses: actions/checkout@v1
+    - uses: actions/checkout@v2
 
     - name: Add conda to $PATH
       run: echo ::add-path::$CONDA/condabin
