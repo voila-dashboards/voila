@@ -13,8 +13,7 @@ import gettext
 from jinja2 import Environment, FileSystemLoader
 
 from jupyter_server.utils import url_path_join
-from jupyter_server.base.handlers import path_regex
-from jupyter_server.base.handlers import FileFindHandler
+from jupyter_server.base.handlers import path_regex, FileFindHandler
 
 from .paths import ROOT, STATIC_ROOT, collect_template_paths, jupyter_path
 from .handler import VoilaHandler
@@ -24,7 +23,19 @@ from .configuration import VoilaConfiguration
 from .utils import get_server_root_dir
 
 
-def load_jupyter_server_extension(server_app):
+def _jupyter_server_extension_paths():
+    """
+    Returns a list of dictionaries with metadata describing
+    where to find the `_load_jupyter_server_extension` function.
+    """
+    return [
+        {
+            "module": "voila.server_extension"
+        }
+    ]
+
+
+def _load_jupyter_server_extension(server_app):
     web_app = server_app.web_app
 
     nbconvert_template_paths = []
