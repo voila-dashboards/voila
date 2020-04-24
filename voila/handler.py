@@ -117,6 +117,13 @@ class VoilaHandler(JupyterHandler):
         assert not self.kernel_started, "kernel was already started"
         kernel_id = await self.kernel_manager.start_kernel(kernel_name=self.notebook.metadata.kernelspec.name, path=self.cwd)
         km = self.kernel_manager.get_kernel(kernel_id)
+        # When Voila is launched as an app, its kernel manager's type is AsyncMappingKernelManager, and thus
+        # its kernel client's type is AsyncKernelClient.
+        # But this has to be explicitly configured when launched as a server extension, with e.g.:
+        # --ServerApp.kernel_manager_class=jupyter_server.services.kernels.kernelmanager.AsyncMappingKernelManager
+        # If it's not done, the kernel manager might not be async, which is not a big deal, but we want the kernel
+        # client to be async, so we explicitly configure it for this particular case:
+        km.client_class = 'jupyter_client.asynchronous.AsyncKernelClient'
         self.executor = VoilaExecutor(nb, km=km, config=self.traitlet_config)
         self.executor.kc = km.client()
         self.executor.kc.start_channels()

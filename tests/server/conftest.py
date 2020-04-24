@@ -23,7 +23,7 @@ def jupyter_server_args_extra():
 @pytest.fixture
 def jupyter_server_args(notebook_directory, jupyter_server_args_extra):
     debug_args = ['--ServerApp.log_level=DEBUG'] if os.environ.get('VOILA_TEST_DEBUG', False) else []
-    default_args = ['--ServerApp.token=""', '--ServerApp.kernel_manager_class=jupyter_server.services.kernels.kernelmanager.AsyncMappingKernelManager']
+    default_args = ['--ServerApp.token=""']
     return [notebook_directory] + jupyter_server_args_extra + debug_args + default_args
 
 
