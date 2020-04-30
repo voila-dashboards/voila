@@ -32,7 +32,7 @@ For example, to render the ``bqplot`` example notebook as a standalone app, run
 
 .. code-block:: bash
 
-   git clone https://github.com/QuantStack/voila
+   git clone https://github.com/voila-dashboards/voila.git
    cd voila
    voila notebooks/bqplot.ipynb
 
