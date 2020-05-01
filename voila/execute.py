@@ -272,9 +272,9 @@ class VoilaExecutePreprocessor(ExecutePreprocessor):
         parent_msg_id = self.kc.execute(cell.source, store_history=store_history, stop_on_error=not self.allow_errors)
         self.log.debug("Executing cell:\n%s", cell.source)
         exec_timeout = self._get_timeout(cell)
-        deadline = None
-        if exec_timeout is not None:
-            deadline = monotonic() + exec_timeout
+        if exec_timeout is None:
+            exec_timeout = float('inf')
+        deadline = monotonic() + exec_timeout
 
         cell.outputs = []
         self.clear_before_next_output = False
