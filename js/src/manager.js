@@ -14,6 +14,7 @@ import { output } from '@jupyter-widgets/jupyterlab-manager';
 import * as base from '@jupyter-widgets/base';
 import * as controls from '@jupyter-widgets/controls';
 import * as PhosphorWidget from '@phosphor/widgets';
+import { MessageLoop } from '@phosphor/messaging';
 
 import { requireLoader } from './loader';
 import { batchRateMap } from './utils';
@@ -69,6 +70,12 @@ export class WidgetManager extends JupyterLabManager {
     display_view(msg, view, options) {
         if (options.el) {
             PhosphorWidget.Widget.attach(view.pWidget, options.el);
+        }
+        if (view.el) {
+            view.el.setAttribute('data-voila-jupyter-widget', '');
+            view.el.addEventListener('jupyterWidgetResize', function(e) {
+                MessageLoop.postMessage(view.pWidget, PhosphorWidget.Widget.ResizeMessage.UnknownSize);
+            });
         }
         return view.pWidget;
     }
