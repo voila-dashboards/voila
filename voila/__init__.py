@@ -9,6 +9,7 @@
 
 from ._version import __version__  # noqa
 from .server_extension import _load_jupyter_server_extension  # noqa
+load_jupyter_server_extension = _load_jupyter_server_extension  # for backward compatibility
 
 
 def _jupyter_nbextension_paths():

@@ -19,7 +19,7 @@ jobs:
     - name: install dependencies
       run: |
         sudo apt update
-        sudo apt-get install -y --no-install-recommends libgbm-dev
+        sudo apt-get install -y --no-install-recommends libgbm-dev  # see https://github.com/puppeteer/puppeteer/issues/5661
     - name: Install node
       uses: actions/setup-node@v1
       with:

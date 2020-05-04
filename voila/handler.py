@@ -113,7 +113,7 @@ class VoilaHandler(JupyterHandler):
     def redirect_to_file(self, path):
         self.redirect(url_path_join(self.base_url, 'voila', 'files', path))
 
-    async def _jinja_kernel_start(self, nb):
+    async def _jinja_kernel_start(self):
         assert not self.kernel_started, "kernel was already started"
         kernel_id = await self.kernel_manager.start_kernel(kernel_name=self.notebook.metadata.kernelspec.name, path=self.cwd)
         km = self.kernel_manager.get_kernel(kernel_id)
@@ -124,7 +124,7 @@ class VoilaHandler(JupyterHandler):
         # If it's not done, the kernel manager might not be async, which is not a big deal, but we want the kernel
         # client to be async, so we explicitly configure it for this particular case:
         km.client_class = 'jupyter_client.asynchronous.AsyncKernelClient'
-        self.executor = VoilaExecutor(nb, km=km, config=self.traitlet_config)
+        self.executor = VoilaExecutor(self.notebook, km=km, config=self.traitlet_config)
         self.executor.kc = km.client()
         self.executor.kc.start_channels()
         try:

@@ -62,7 +62,7 @@ a.anchor-link {
 
 {%- block body_loop -%}
   {# from this point on, the kernel is started #}
-  {%- with kernel_id = kernel_start(nb) -%}
+  {%- with kernel_id = kernel_start() -%}
     <script id="jupyter-config-data" type="application/json">
     {
         "baseUrl": "{{resources.base_url}}",
