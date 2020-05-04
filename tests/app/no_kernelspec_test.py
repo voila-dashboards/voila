@@ -8,10 +8,10 @@ def non_existing_kernel_notebook(base_url):
 
 @pytest.fixture
 def voila_args(notebook_directory, voila_args_extra):
-    return ['--VoilaTest.root_dir=%r' % notebook_directory] + voila_args_extra
+    return ['--Voila.root_dir=%r' % notebook_directory] + voila_args_extra + ['--no-browser']
 
 
-async def test_non_existing_kernel(http_server_client, non_existing_kernel_notebook):
-    response = await http_server_client.fetch(non_existing_kernel_notebook)
+async def test_no_kernelspec(fetch):
+    response = await fetch('voila', 'render', 'no_kernelspec.ipynb', method='GET')
     assert response.code == 200
     assert 'Executing without a kernelspec' in response.body.decode('utf-8')

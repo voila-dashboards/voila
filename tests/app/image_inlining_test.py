@@ -11,8 +11,8 @@ def voila_notebook(notebook_directory):
     return os.path.join(notebook_directory, 'images.ipynb')
 
 
-async def test_image_inlining(http_server_client, base_url, notebook_directory):
-    response = await http_server_client.fetch(base_url)
+async def test_image_inlining(fetch, notebook_directory):
+    response = await fetch('voila', method='GET')
     html_text = response.body.decode('utf-8')
 
     assert 'data:image/svg+xml;base64,' in html_text

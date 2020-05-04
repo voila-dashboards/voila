@@ -1,7 +1,8 @@
 # fixtures common for app and server
 import os
-
 import pytest
+import shutil
+import sys
 
 
 BASE_DIR = os.path.dirname(__file__)
@@ -20,3 +21,40 @@ def print_notebook_url(base_url):
 @pytest.fixture
 def voila_notebook(notebook_directory):
     return os.path.join(notebook_directory, 'print.ipynb')
+
+
+@pytest.fixture
+def get_jupyter_kernels(env_jupyter_path):
+    src = sys.prefix + '/share/jupyter/kernels'
+    dst = str(env_jupyter_path) + '/kernels'
+    shutil.copytree(src, dst)
+
+
+@pytest.fixture
+def get_nbconvert_template(env_jupyter_path):
+    src = sys.prefix + '/share/jupyter/nbconvert'
+    dst = str(env_jupyter_path) + '/nbconvert'
+    shutil.copytree(src, dst)
+
+
+@pytest.fixture
+def get_jupyter_config(environ):
+    dir_path = os.path.dirname(os.path.realpath(__file__))
+    src = f'{dir_path}/../etc/jupyter/jupyter_server_config.d/voila.json'
+    dst = os.environ['JUPYTER_CONFIG_DIR']
+    shutil.copyfile(src, dst)
+
+
+@pytest.fixture
+def get_test_template(env_jupyter_path):
+    dir_path = os.path.dirname(os.path.realpath(__file__))
+    src = f'{dir_path}/test_template/share/jupyter/voila'
+    dst = str(env_jupyter_path) + '/voila'
+    shutil.copytree(src, dst)
+
+
+@pytest.fixture
+def get_nbextensions(env_jupyter_path):
+    src = sys.prefix + '/share/jupyter/nbextensions'
+    dst = str(env_jupyter_path) + '/nbextensions'
+    shutil.copytree(src, dst)

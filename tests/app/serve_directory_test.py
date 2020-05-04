@@ -7,31 +7,28 @@ TEST_XEUS_CLING = os.environ.get('VOILA_TEST_XEUS_CLING', '') == '1'
 
 @pytest.fixture
 def voila_args(notebook_directory, voila_args_extra):
-    return ['--VoilaTest.root_dir=%r' % notebook_directory, '--VoilaTest.log_level=DEBUG'] + voila_args_extra
+    return ['--Voila.root_dir=%r' % notebook_directory, '--Voila.log_level=DEBUG'] + voila_args_extra + ['--no-browser']
 
 
-async def test_print(http_server_client, print_notebook_url):
-    print(print_notebook_url)
-    response = await http_server_client.fetch(print_notebook_url)
+async def test_print(fetch):
+    response = await fetch('voila', 'render', 'print.ipynb', method='GET')
     assert response.code == 200
     assert 'Hi Voila' in response.body.decode('utf-8')
 
 
 @pytest.fixture
 def voila_args_extra():
-    return ['--VoilaConfiguration.extension_language_mapping={".py": "python"}']
+    return ['--Voila.extension_language_mapping={".py": "python"}']
 
 
-async def test_print_py(http_server_client, print_notebook_url):
-    print(print_notebook_url)
-    response = await http_server_client.fetch(print_notebook_url.replace('ipynb', 'py'))
+async def test_print_py(fetch):
+    response = await fetch('voila', 'render', 'print.py', method='GET')
     assert response.code == 200
     assert 'Hi Voila' in response.body.decode('utf-8')
 
 
 @pytest.mark.skipif(not TEST_XEUS_CLING, reason='opt in to avoid having to install xeus-cling')
-async def test_print_julia_notebook(http_server_client, print_notebook_url):
-    print(print_notebook_url)
-    response = await http_server_client.fetch(print_notebook_url.replace('.ipynb', '_cpp.ipynb'))
+async def test_print_cpp_notebook(fetch, get_jupyter_kernels):
+    response = await fetch('voila', 'render', 'print_cpp.ipynb', method='GET')
     assert response.code == 200
     assert 'Hi Voila, from c++' in response.body.decode('utf-8')

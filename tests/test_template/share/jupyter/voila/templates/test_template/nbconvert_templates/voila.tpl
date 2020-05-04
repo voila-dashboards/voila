@@ -8,5 +8,5 @@ Print value of extra resource for test template:
 
 List extensions:
 {% for ext in resources.nbextensions -%}
-    "{{resources.base_url}}voila/nbextensions/{{ ext }}.js",
+    "{{resources.base_url}}static/voila/nbextensions/{{ ext }}.js",
 {% endfor %}

@@ -2,4 +2,4 @@
     "load_extensions": {
       "ipytest/extension": true
     }
-  }
+}

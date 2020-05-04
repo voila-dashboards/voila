@@ -8,7 +8,8 @@
 #############################################################################
 
 from ._version import __version__  # noqa
-from .server_extension import _load_jupyter_server_extension, load_jupyter_server_extension  # noqa
+from .app import Voila  # noqa
+from .server_extension import _jupyter_server_extension_paths  # noqa
 
 
 def _jupyter_nbextension_paths():
