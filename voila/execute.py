@@ -150,9 +150,7 @@ class VoilaExecutor(NotebookClient):
 
     async def execute_cell(self, cell, resources, cell_index, store_history=True):
         try:
-            # TODO: pass store_history as a 5th argument when we can require nbconver >=5.6.1
-            # result = super(VoilaExecutor, self).execute_cell(cell, resources, cell_index, store_history)
-            result = await super(VoilaExecutor, self).async_execute_cell(cell, cell_index)
+            result = await super(VoilaExecutor, self).async_execute_cell(cell, cell_index, store_history)
         except TimeoutError as e:
             self.log.error(e)
             self.show_code_cell_timeout(cell)
