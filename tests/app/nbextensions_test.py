@@ -20,7 +20,7 @@ def voila_config_file_paths_arg():
     return '--Voila.config_file_paths=[%r]' % path
 
 
-async def test_lists_extension(get_test_template, get_nbextensions, fetch):
+async def test_lists_extension(fetch):
     response = await fetch('voila', method='GET')
     assert response.code == 200
     html_text = response.body.decode('utf-8')

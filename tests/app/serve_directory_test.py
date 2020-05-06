@@ -28,7 +28,7 @@ async def test_print_py(fetch):
 
 
 @pytest.mark.skipif(not TEST_XEUS_CLING, reason='opt in to avoid having to install xeus-cling')
-async def test_print_cpp_notebook(fetch, get_jupyter_kernels):
+async def test_print_cpp_notebook(fetch):
     response = await fetch('voila', 'render', 'print_cpp.ipynb', method='GET')
     assert response.code == 200
     assert 'Hi Voila, from c++' in response.body.decode('utf-8')

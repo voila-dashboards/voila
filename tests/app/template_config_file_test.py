@@ -14,7 +14,7 @@ def voila_args_extra():
     return ['--Voila.template=test_template', '--Voila.nbconvert_template_paths=[%r, %r]' % (path_test_template, path_default), '--ServerApp.config_file=%r' % path_config]
 
 
-async def test_template_test(get_test_template, fetch):
+async def test_template_test(fetch):
     response = await fetch('voila', method='GET')
     assert response.code == 200
     assert 'test_template.css' in response.body.decode('utf-8')

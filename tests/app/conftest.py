@@ -35,7 +35,7 @@ def voila_args(voila_notebook, voila_args_extra, voila_config_file_paths_arg):
 
 
 @pytest.fixture(autouse=True)
-def voila_app(server_config, voila_config, voila_args, get_nbconvert_template):
+def voila_app(server_config, voila_config, voila_args):
     # Get an instance of Voila
     voila_app = Voila(**voila_config)
     # Get an instance of the underlying server. This is
