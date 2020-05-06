@@ -8,12 +8,11 @@
 #############################################################################
 import collections
 import logging
-from time import monotonic
 
 from nbconvert.preprocessors import ClearOutputPreprocessor
-from nbconvert.preprocessors.execute import CellExecutionError, ExecutePreprocessor
+from nbclient.exceptions import CellExecutionError
+from nbclient import NotebookClient
 from nbformat.v4 import output_from_msg
-import zmq
 
 from traitlets import Unicode
 from ipykernel.jsonutil import json_clean
@@ -113,7 +112,7 @@ class OutputWidget:
                 self.msg_id = msg_id
 
 
-class VoilaExecutePreprocessor(ExecutePreprocessor):
+class VoilaExecutor(NotebookClient):
     """Execute, but respect the output widget behaviour"""
     cell_error_instruction = Unicode(
         'Please run Voila with --debug to see the error message.',
@@ -124,21 +123,21 @@ class VoilaExecutePreprocessor(ExecutePreprocessor):
     )
 
     cell_timeout_instruction = Unicode(
-        'Please run Voila with --VoilaExecutePreprocessor.interrupt_on_timeout=True to continue executing the rest of the notebook.',
+        'Please run Voila with --VoilaExecutor.interrupt_on_timeout=True to continue executing the rest of the notebook.',
         config=True,
         help=(
             'instruction given to user to continue execution on timeout'
         )
     )
 
-    def __init__(self, **kwargs):
-        super(VoilaExecutePreprocessor, self).__init__(**kwargs)
+    def __init__(self, nb, km=None, **kwargs):
+        super(VoilaExecutor, self).__init__(nb, km=km, **kwargs)
         self.output_hook_stack = collections.defaultdict(list)  # maps to list of hooks, where the last is used
         self.output_objects = {}
 
-    def preprocess(self, nb, resources, km=None):
+    def execute(self, nb, resources, km=None):
         try:
-            result = super(VoilaExecutePreprocessor, self).preprocess(nb, resources=resources, km=km)
+            result = super(VoilaExecutor, self).execute()
         except CellExecutionError as e:
             self.log.error(e)
             result = (nb, resources)
@@ -149,11 +148,9 @@ class VoilaExecutePreprocessor(ExecutePreprocessor):
 
         return result
 
-    def preprocess_cell(self, cell, resources, cell_index, store_history=True):
+    async def execute_cell(self, cell, resources, cell_index, store_history=True):
         try:
-            # TODO: pass store_history as a 5th argument when we can require nbconver >=5.6.1
-            # result = super(VoilaExecutePreprocessor, self).preprocess_cell(cell, resources, cell_index, store_history)
-            result = super(VoilaExecutePreprocessor, self).preprocess_cell(cell, resources, cell_index)
+            result = await super(VoilaExecutor, self).async_execute_cell(cell, cell_index, store_history)
         except TimeoutError as e:
             self.log.error(e)
             self.show_code_cell_timeout(cell)
@@ -186,10 +183,10 @@ class VoilaExecutePreprocessor(ExecutePreprocessor):
             hook = self.output_hook_stack[parent_msg_id][-1]
             hook.output(outs, msg, display_id, cell_index)
             return
-        super(VoilaExecutePreprocessor, self).output(outs, msg, display_id, cell_index)
+        super(VoilaExecutor, self).output(outs, msg, display_id, cell_index)
 
     def handle_comm_msg(self, outs, msg, cell_index):
-        super(VoilaExecutePreprocessor, self).handle_comm_msg(outs, msg, cell_index)
+        super(VoilaExecutor, self).handle_comm_msg(outs, msg, cell_index)
         self.log.debug('comm msg: %r', msg)
         if msg['msg_type'] == 'comm_open' and msg['content'].get('target_name') == 'jupyter.widget':
             content = msg['content']
@@ -213,7 +210,7 @@ class VoilaExecutePreprocessor(ExecutePreprocessor):
             hook = self.output_hook_stack[parent_msg_id][-1]
             hook.clear_output(outs, msg, cell_index)
             return
-        super(VoilaExecutePreprocessor, self).clear_output(outs, msg, cell_index)
+        super(VoilaExecutor, self).clear_output(outs, msg, cell_index)
 
     def strip_notebook_errors(self, nb):
         """Strip error messages and traceback from a Notebook."""
@@ -246,85 +243,6 @@ class VoilaExecutePreprocessor(ExecutePreprocessor):
 
         return cell
 
-    # make it nbconvert 5.5 compatible
-    def _get_timeout(self, cell):
-        if self.timeout_func is not None and cell is not None:
-            timeout = self.timeout_func(cell)
-        else:
-            timeout = self.timeout
-
-        if not timeout or timeout < 0:
-            timeout = None
-
-        return timeout
-
-    # make it nbconvert 5.5 compatible
-    def _handle_timeout(self, timeout):
-        self.log.error(
-            "Timeout waiting for execute reply (%is)." % timeout)
-        if self.interrupt_on_timeout:
-            self.log.error("Interrupting kernel")
-            self.km.interrupt_kernel()
-        else:
-            raise TimeoutError("Cell execution timed out")
-
-    def run_cell(self, cell, cell_index=0, store_history=False):
-        parent_msg_id = self.kc.execute(cell.source, store_history=store_history, stop_on_error=not self.allow_errors)
-        self.log.debug("Executing cell:\n%s", cell.source)
-        exec_timeout = self._get_timeout(cell)
-        deadline = None
-        if exec_timeout is not None:
-            deadline = monotonic() + exec_timeout
-
-        cell.outputs = []
-        self.clear_before_next_output = False
-
-        # we need to have a reply, and return to idle before we can consider the cell executed
-        idle = False
-        execute_reply = None
-
-        deadline_passed = 0
-        deadline_passed_max = 5
-        while not idle or execute_reply is None:
-            # we want to timeout regularly, to see if the kernel is still alive
-            # this is tested in preprocessors/test/test_execute.py#test_kernel_death
-            # this actually fakes the kernel death, and we might be able to use the xlist
-            # to detect a disconnected kernel
-            timeout = min(1, deadline - monotonic())
-            # if we interrupt on timeout, we allow 1 seconds to pass till deadline
-            # to make sure we get the interrupt message
-            if timeout >= 0.0:
-                # we include 0, which simply is a poll to see if we have messages left
-                rlist = zmq.select([self.kc.iopub_channel.socket, self.kc.shell_channel.socket], [], [], timeout)[0]
-                if not rlist:
-                    self._check_alive()
-                    if monotonic() > deadline:
-                        self._handle_timeout(exec_timeout)
-                        deadline_passed += 1
-                        assert self.interrupt_on_timeout
-                        if deadline_passed <= deadline_passed_max:
-                            # when we interrupt, we want to do this multiple times, so we give some
-                            # extra time to handle the interrupt message
-                            deadline += self.iopub_timeout
-                if self.kc.shell_channel.socket in rlist:
-                    msg = self.kc.shell_channel.get_msg(block=False)
-                    if msg['parent_header'].get('msg_id') == parent_msg_id:
-                        execute_reply = msg
-                if self.kc.iopub_channel.socket in rlist:
-                    msg = self.kc.iopub_channel.get_msg(block=False)
-                    if msg['parent_header'].get('msg_id') == parent_msg_id:
-                        if msg['msg_type'] == 'status' and msg['content']['execution_state'] == 'idle':
-                            idle = True
-                        else:
-                            self.process_message(msg, cell, cell_index)
-                    else:
-                        self.log.debug("Received message for which we were not the parent: %s", msg)
-            else:
-                self._handle_timeout(exec_timeout)
-                break
-
-        return execute_reply, cell.outputs
-
     def show_code_cell_timeout(self, cell):
         """Show a timeout error output in a code cell."""
 
@@ -344,5 +262,5 @@ def executenb(nb, cwd=None, km=None, **kwargs):
         resources['metadata'] = {'path': cwd}  # pragma: no cover
     # Clear any stale output, in case of exception
     nb, resources = ClearOutputPreprocessor().preprocess(nb, resources)
-    ep = VoilaExecutePreprocessor(**kwargs)
-    return ep.preprocess(nb, resources, km=km)[0]
+    executor = VoilaExecutor(nb, km=km, **kwargs)
+    return executor.execute(nb, resources, km=km)
