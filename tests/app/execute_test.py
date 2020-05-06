@@ -1,9 +1,6 @@
 # test basics of voila running a notebook
-import tornado.web
-
 import re
 import json
-import asyncio
 
 try:
     from unittest import mock
@@ -26,19 +23,19 @@ async def test_no_execute_allowed(voila_app, fetch, http_port, ws_fetch):
     groups = re.findall(pattern, response)
     kid = groups[0]
 
-    #session_id = '445edd75-c6f5-45d2-8b58-5fe8f84a7123'
-    #url = f'ws://localhost:{http_port}/api/kernels/{kernel_id}/channels?session_id={session_id}'
-    #conn = await tornado.websocket.websocket_connect(url)
+    # session_id = '445edd75-c6f5-45d2-8b58-5fe8f84a7123'
+    # url = f'ws://localhost:{http_port}/api/kernels/{kernel_id}/channels?session_id={session_id}'
+    # conn = await tornado.websocket.websocket_connect(url)
 
-    ## create kernel
-    #r = await fetch(
-    #    'api', 'kernels',
-    #    method='POST',
-    #    body=json.dumps({
-    #    'name': 'python'
-    #    })
-    #)
-    #kid = json.loads(r.body.decode())['id']
+    # create kernel
+    # r = await fetch(
+    #     'api', 'kernels',
+    #     method='POST',
+    #     body=json.dumps({
+    #     'name': 'python'
+    #     })
+    # )
+    # kid = json.loads(r.body.decode())['id']
 
     # Get kernel info
     r = await fetch(
@@ -83,6 +80,6 @@ async def test_no_execute_allowed(voila_app, fetch, http_port, ws_fetch):
     with mock.patch.object(voila_app.serverapp.log, 'warning') as mock_warning:
         await ws.write_message(json.dumps(msg))
         # make sure the warning method is called
-        #while not mock_warning.called:
-        #    await asyncio.sleep(0.1)
-    #mock_warning.assert_called_with('Received message of type "execute_request", which is not allowed. Ignoring.')
+        # while not mock_warning.called:
+        #     await asyncio.sleep(0.1)
+    mock_warning.assert_called_with('Received message of type "execute_request", which is not allowed. Ignoring.')

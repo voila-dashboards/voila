@@ -7,24 +7,18 @@
 # The full license is in the file LICENSE, distributed with this software.  #
 #############################################################################
 
-from zmq.eventloop import ioloop
-
 import gettext
 import logging
 import os
 
 import jinja2
 
-from traitlets.config import Config
-from traitlets import Unicode, Integer, Bool, Dict, List, default, observe
+from traitlets import Unicode, Integer, Bool, Dict, List
 
 from jupyter_server.extension.application import ExtensionApp
 from jupyter_server.serverapp import ServerApp
 from jupyter_server.base.handlers import FileFindHandler, path_regex
 from jupyter_core.paths import jupyter_config_path, jupyter_path
-from jupyter_core.application import JupyterApp
-
-from ipython_genutils.py3compat import getcwd
 
 from .paths import ROOT, STATIC_ROOT, collect_template_paths
 from .handler import VoilaHandler
@@ -230,7 +224,6 @@ class Voila(ExtensionApp):
             path.append(os.path.join(get_ipython_dir(), 'nbextensions'))
         return path
 
-
     default_url = Unicode("/voila", config=True)
 
     def link_to_serverapp(self, serverapp):
@@ -247,7 +240,7 @@ class Voila(ExtensionApp):
         self.serverapp.config_manager.read_config_path = paths
 
         # Pass notebook path to settings.
-        self.settings.update({"notebook_path": self.serverapp.file_to_run})#self.notebook_path})
+        self.settings.update({"notebook_path": self.serverapp.file_to_run})
 
     def initialize_templates(self):
         if self.template:
@@ -320,5 +313,6 @@ class Voila(ExtensionApp):
                 ("/voila/tree" + path_regex, VoilaTreeHandler),
             ]
             self.handlers.extend(handlers)
+
 
 main = Voila.launch_instance

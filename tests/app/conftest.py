@@ -14,7 +14,7 @@ def voila_config(notebook_directory):
 
 @pytest.fixture
 def server_config(notebook_directory):
-        return dict(root_dir=notebook_directory, default_url="voila", log_level="DEBUG")
+    return dict(root_dir=notebook_directory, default_url="voila", log_level="DEBUG")
 
 
 @pytest.fixture
