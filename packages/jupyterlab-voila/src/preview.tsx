@@ -1,12 +1,15 @@
 import {
   IFrame,
-  MainAreaWidget,
   ToolbarButton,
   ReactWidget,
   IWidgetTracker
 } from "@jupyterlab/apputils";
 
-import { DocumentRegistry } from "@jupyterlab/docregistry";
+import {
+  ABCWidgetFactory,
+  DocumentRegistry,
+  DocumentWidget
+} from "@jupyterlab/docregistry";
 
 import { INotebookModel } from "@jupyterlab/notebook";
 
@@ -34,9 +37,9 @@ export const IVoilaPreviewTracker = new Token<IVoilaPreviewTracker>(
 export const VOILA_ICON_CLASS = "jp-MaterialIcon jp-VoilaIcon";
 
 /**
- * A MainAreaWidget that shows a Voila preview in an IFrame.
+ * A DocumentWidget that shows a Voila preview in an IFrame.
  */
-export class VoilaPreview extends MainAreaWidget<IFrame> {
+export class VoilaPreview extends DocumentWidget<IFrame, INotebookModel> {
   /**
    * Instantiate a new VoilaPreview.
    * @param options The VoilaPreview instantiation options.
@@ -47,13 +50,16 @@ export class VoilaPreview extends MainAreaWidget<IFrame> {
       content: new IFrame({ sandbox: ["allow-same-origin", "allow-scripts"] })
     });
 
-    const { url, label, context, renderOnSave } = options;
+    const { getVoilaUrl, context, renderOnSave } = options;
 
-    this.content.url = url;
-    this.content.title.label = label;
+    this.content.url = getVoilaUrl(context.path);
     this.content.title.icon = VOILA_ICON_CLASS;
 
     this.renderOnSave = renderOnSave;
+
+    context.pathChanged.connect(() => {
+      this.content.url = getVoilaUrl(context.path);
+    });
 
     const reloadButton = new ToolbarButton({
       iconClass: "jp-RefreshIcon",
@@ -137,25 +143,40 @@ export namespace VoilaPreview {
   /**
    * Instantiation options for `VoilaPreview`.
    */
-  export interface IOptions extends MainAreaWidget.IOptionsOptionalContent {
+  export interface IOptions
+    extends DocumentWidget.IOptionsOptionalContent<IFrame, INotebookModel> {
     /**
-     * The Voila URL.
+     * The Voila URL function.
      */
-    url: string;
-
-    /**
-     * The preview label.
-     */
-    label: string;
-
-    /**
-     * An optional notebook document context.
-     */
-    context?: DocumentRegistry.IContext<INotebookModel>;
+    getVoilaUrl: (path: string) => string;
 
     /**
      * Whether to reload the preview on context saved.
      */
     renderOnSave?: boolean;
+  }
+}
+
+export class VoilaPreviewFactory extends ABCWidgetFactory<
+  VoilaPreview,
+  INotebookModel
+> {
+  defaultRenderOnSave: boolean = false;
+
+  constructor(
+    private getVoilaUrl: (path: string) => string,
+    options: DocumentRegistry.IWidgetFactoryOptions<VoilaPreview>
+  ) {
+    super(options);
+  }
+
+  protected createNewWidget(
+    context: DocumentRegistry.IContext<INotebookModel>
+  ): VoilaPreview {
+    return new VoilaPreview({
+      context,
+      getVoilaUrl: this.getVoilaUrl,
+      renderOnSave: this.defaultRenderOnSave
+    });
   }
 }
