@@ -241,6 +241,7 @@ Steps
         server {
             listen 80;
             server_name yourdomain.com;
+            proxy_buffering off;
             location / {
                     proxy_pass http://localhost:8866;
                     proxy_set_header Host $host;
