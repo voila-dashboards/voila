@@ -4,7 +4,7 @@ A JupyterLab preview extension for Voila.
 
 ## Prerequisites
 
-- JupyterLab 1.0
+- JupyterLab 1.0+
 
 ## Install
 

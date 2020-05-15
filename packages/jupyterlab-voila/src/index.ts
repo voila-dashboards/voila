@@ -1,7 +1,23 @@
 import {
   JupyterFrontEnd,
-  JupyterFrontEndPlugin
+  JupyterFrontEndPlugin,
+  ILayoutRestorer
 } from "@jupyterlab/application";
+
+import {
+  ICommandPalette,
+  WidgetTracker,
+  ToolbarButton,
+  DOMUtils
+} from "@jupyterlab/apputils";
+
+import { ISettingRegistry } from "@jupyterlab/settingregistry";
+
+import { PageConfig, PathExt } from "@jupyterlab/coreutils";
+
+import { DocumentRegistry } from "@jupyterlab/docregistry";
+
+import { IMainMenu } from "@jupyterlab/mainmenu";
 
 import {
   INotebookTracker,
@@ -9,74 +25,95 @@ import {
   INotebookModel
 } from "@jupyterlab/notebook";
 
-import { ReadonlyJSONObject } from "@phosphor/coreutils";
+import { CommandRegistry } from "@lumino/commands";
 
-import { ICommandPalette } from "@jupyterlab/apputils";
+import { ReadonlyJSONObject } from "@lumino/coreutils";
 
-import { IMainMenu } from "@jupyterlab/mainmenu";
+import { IDisposable } from "@lumino/disposable";
 
-import { PageConfig, PathExt, ISettingRegistry } from "@jupyterlab/coreutils";
-
-import { ToolbarButton } from "@jupyterlab/apputils";
-
-import { DocumentRegistry } from "@jupyterlab/docregistry";
-
-import { IDisposable } from "@phosphor/disposable";
-
-import { VOILA_ICON_CLASS, VoilaPreview } from "./preview";
+import {
+  VOILA_ICON_CLASS,
+  VoilaPreview,
+  IVoilaPreviewTracker
+} from "./preview";
 
 import "../style/index.css";
 
+/**
+ * The command IDs used by the plugin.
+ */
 export namespace CommandIDs {
   export const voilaRender = "notebook:render-with-voila";
 
   export const voilaOpen = "notebook:open-with-voila";
 }
 
+/**
+ * A notebook widget extension that adds a voila preview button to the toolbar.
+ */
 class VoilaRenderButton
   implements DocumentRegistry.IWidgetExtension<NotebookPanel, INotebookModel> {
-  constructor(app: JupyterFrontEnd) {
-    this.app = app;
+  /**
+   * Instantiate a new VoilaRenderButton.
+   * @param commands The command registry.
+   */
+  constructor(commands: CommandRegistry) {
+    this._commands = commands;
   }
 
-  readonly app: JupyterFrontEnd;
-
-  createNew(
-    panel: NotebookPanel,
-    context: DocumentRegistry.IContext<INotebookModel>
-  ): IDisposable {
-    let renderVoila = () => {
-      this.app.commands.execute("notebook:render-with-voila");
-    };
-
-    let button = new ToolbarButton({
+  /**
+   * Create a new extension object.
+   */
+  createNew(panel: NotebookPanel): IDisposable {
+    const button = new ToolbarButton({
       className: "voilaRender",
-      iconClassName: VOILA_ICON_CLASS,
-      onClick: renderVoila,
-      tooltip: "Render with Voila"
+      tooltip: "Render with Voila",
+      iconClass: VOILA_ICON_CLASS,
+      onClick: () => {
+        this._commands.execute(CommandIDs.voilaRender);
+      }
     });
-
     panel.toolbar.insertAfter("cellType", "voilaRender", button);
-
     return button;
   }
+
+  private _commands: CommandRegistry;
 }
 
 /**
  * Initialization data for the jupyterlab-voila extension.
  */
-const extension: JupyterFrontEndPlugin<void> = {
+const extension: JupyterFrontEndPlugin<IVoilaPreviewTracker> = {
   id: "@jupyter-voila/jupyterlab-preview:plugin",
   autoStart: true,
   requires: [INotebookTracker],
-  optional: [ICommandPalette, IMainMenu, ISettingRegistry],
+  optional: [ICommandPalette, ILayoutRestorer, IMainMenu, ISettingRegistry],
+  provides: IVoilaPreviewTracker,
   activate: (
     app: JupyterFrontEnd,
     notebooks: INotebookTracker,
-    palette: ICommandPalette,
+    palette: ICommandPalette | null,
+    restorer: ILayoutRestorer | null,
     menu: IMainMenu | null,
-    settingRegistry: ISettingRegistry
+    settingRegistry: ISettingRegistry | null
   ) => {
+    // Create a widget tracker for Voila Previews.
+    const tracker = new WidgetTracker<VoilaPreview>({
+      namespace: "voila-preview"
+    });
+
+    if (restorer) {
+      restorer.restore(tracker, {
+        command: CommandIDs.voilaRender,
+        args: widget => ({
+          id: widget.id,
+          url: widget.content.url,
+          label: widget.content.title.label
+        }),
+        name: widget => widget.id
+      });
+    }
+
     function getCurrent(args: ReadonlyJSONObject): NotebookPanel | null {
       const widget = notebooks.currentWidget;
       const activate = args["activate"] !== false;
@@ -106,40 +143,45 @@ const extension: JupyterFrontEndPlugin<void> = {
       renderOnSave = settings.get("renderOnSave").composite as boolean;
     };
 
-    Promise.all([settingRegistry.load(extension.id), app.restored])
-      .then(([settings]) => {
-        updateSettings(settings);
-        settings.changed.connect(updateSettings);
-      })
-      .catch((reason: Error) => {
-        console.error(reason.message);
-      });
+    if (settingRegistry) {
+      Promise.all([settingRegistry.load(extension.id), app.restored])
+        .then(([settings]) => {
+          updateSettings(settings);
+          settings.changed.connect(updateSettings);
+        })
+        .catch((reason: Error) => {
+          console.error(reason.message);
+        });
+    }
 
-    app.commands.addCommand(CommandIDs.voilaRender, {
+    const { commands, docRegistry } = app;
+
+    commands.addCommand(CommandIDs.voilaRender, {
       label: "Render Notebook with Voila",
       execute: async args => {
-        const current = getCurrent(args);
-        if (!current) {
-          return;
-        }
-        await current.context.save();
-        const voilaPath = current.context.path;
-        const url = getVoilaUrl(voilaPath);
-        const name = PathExt.basename(voilaPath);
-        let widget = new VoilaPreview({
-          url,
-          label: name,
-          context: current.context,
-          renderOnSave
-        });
+        const id = (args["id"] as string) || DOMUtils.createDomID();
+        let url = args["url"] as string;
+        let label = args["label"] as string;
 
+        const current = getCurrent(args);
+        let context: DocumentRegistry.IContext<INotebookModel>;
+        if (current) {
+          context = current.context;
+          await context.save();
+          const voilaPath = context.path;
+          url = getVoilaUrl(voilaPath);
+          label = PathExt.basename(voilaPath);
+        }
+        const widget = new VoilaPreview({ context, label, renderOnSave, url });
+        widget.id = id;
         app.shell.add(widget, "main", { mode: "split-right" });
+        void tracker.add(widget);
         return widget;
       },
       isEnabled
     });
 
-    app.commands.addCommand(CommandIDs.voilaOpen, {
+    commands.addCommand(CommandIDs.voilaOpen, {
       label: "Open with Voila in New Browser Tab",
       execute: async args => {
         const current = getCurrent(args);
@@ -174,8 +216,10 @@ const extension: JupyterFrontEndPlugin<void> = {
       );
     }
 
-    let voilaButton = new VoilaRenderButton(app);
-    app.docRegistry.addWidgetExtension("Notebook", voilaButton);
+    const voilaButton = new VoilaRenderButton(commands);
+    docRegistry.addWidgetExtension("Notebook", voilaButton);
+
+    return tracker;
   }
 };
 

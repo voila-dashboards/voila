@@ -18,7 +18,7 @@ import nbformat
 
 from nbconvert.preprocessors import ClearOutputPreprocessor
 
-from .execute import executenb, VoilaExecutePreprocessor
+from .execute import executenb, VoilaExecutor
 from .exporter import VoilaExporter
 
 
@@ -68,11 +68,17 @@ class VoilaHandler(JupyterHandler):
                                 notebook=self.notebook,
                                 cwd=self.cwd)
 
+        path, basename = os.path.split(notebook_path)
+        notebook_name = os.path.splitext(basename)[0]
+
         # render notebook to html
         resources = {
             'base_url': self.base_url,
             'nbextensions': nbextensions,
-            'theme': self.voila_configuration.theme
+            'theme': self.voila_configuration.theme,
+            'metadata': {
+                'name': notebook_name
+            }
         }
 
         # include potential extra resources
@@ -99,15 +105,10 @@ class VoilaHandler(JupyterHandler):
         # Template should first call kernel_start, and then decide to use notebook_execute
         # or cell_generator to implement progressive cell rendering
         extra_context = {
-            # NOTE: we can remove the lambda is we use jinja's async feature, which will automatically await the future
-            'kernel_start': lambda: self._jinja_kernel_start().result(),  # pass the result (not the future) to the template
+            'kernel_start': self._jinja_kernel_start,
             'cell_generator': self._jinja_cell_generator,
             'notebook_execute': self._jinja_notebook_execute,
         }
-
-        # Currenly _jinja_kernel_start is executed from a different thread, which causes the websocket connection from
-        # the frontend to fail. Instead, we start it beforehand, and just return the kernel_id in _jinja_kernel_start
-        self.kernel_id = await tornado.gen.maybe_future(self.kernel_manager.start_kernel(kernel_name=self.notebook.metadata.kernelspec.name, path=self.cwd))
 
         # Compose reply
         self.set_header('Content-Type', 'text/html')
@@ -121,12 +122,29 @@ class VoilaHandler(JupyterHandler):
     def redirect_to_file(self, path):
         self.redirect(url_path_join(self.base_url, 'voila', 'files', path))
 
-    @tornado.gen.coroutine
-    def _jinja_kernel_start(self):
+    async def _jinja_kernel_start(self):
         assert not self.kernel_started, "kernel was already started"
-        # See command above aboout not being able to start the kernel from a different thread
+        kernel_id = await self.kernel_manager.start_kernel(kernel_name=self.notebook.metadata.kernelspec.name, path=self.cwd)
+        km = self.kernel_manager.get_kernel(kernel_id)
+        # When Voila is launched as an app, its kernel manager's type is AsyncMappingKernelManager, and thus
+        # its kernel client's type is AsyncKernelClient.
+        # But this has to be explicitly configured when launched as a server extension, with e.g.:
+        # --ServerApp.kernel_manager_class=jupyter_server.services.kernels.kernelmanager.AsyncMappingKernelManager
+        # If it's not done, the kernel manager might not be async, which is not a big deal, but we want the kernel
+        # client to be async, so we explicitly configure it for this particular case:
+        km.client_class = 'jupyter_client.asynchronous.AsyncKernelClient'
+        self.executor = VoilaExecutor(self.notebook, km=km, config=self.traitlet_config)
+        self.executor.kc = km.client()
+        self.executor.kc.start_channels()
+        try:
+            await self.executor.kc.wait_for_ready(timeout=self.executor.startup_timeout)
+        except RuntimeError:
+            self.executor.kc.stop_channels()
+            self.executor.km.shutdown_kernel()
+            raise
+        self.executor.kc.allow_stdin = False
         self.kernel_started = True
-        return self.kernel_id
+        return kernel_id
 
     def _jinja_notebook_execute(self, nb, kernel_id):
         km = self.kernel_manager.get_kernel(kernel_id)
@@ -136,20 +154,21 @@ class VoilaHandler(JupyterHandler):
         # see the updated variable (it seems to be local to our block)
         nb.cells = result.cells
 
-    def _jinja_cell_generator(self, nb, kernel_id):
+    async def _jinja_cell_generator(self, nb, kernel_id):
         """Generator that will execute a single notebook cell at a time"""
-        km = self.kernel_manager.get_kernel(kernel_id)
-
         nb, resources = ClearOutputPreprocessor().preprocess(nb, {'metadata': {'path': self.cwd}})
-        ep = VoilaExecutePreprocessor(config=self.traitlet_config)
 
-        with ep.setup_preprocessor(nb, resources, km=km):
-            for cell_idx, cell in enumerate(nb.cells):
-                res = ep.preprocess_cell(cell, resources, cell_idx, store_history=False)
+        stop_execution = False
+        for cell_idx, cell in enumerate(nb.cells):
+            if stop_execution:
+                break
+            try:
+                res = await self.executor.execute_cell(cell, None, cell_idx, store_history=False)
+            except TimeoutError:
+                res = cell
+                stop_execution = True
+            yield res
 
-                yield res[0]
-
-    # @tornado.gen.coroutine
     async def load_notebook(self, path):
         model = self.contents_manager.get(path=path)
         if 'content' not in model:
