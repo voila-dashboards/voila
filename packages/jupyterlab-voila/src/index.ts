@@ -7,13 +7,12 @@ import {
 import {
   ICommandPalette,
   WidgetTracker,
-  ToolbarButton,
-  DOMUtils
+  ToolbarButton
 } from "@jupyterlab/apputils";
 
 import { ISettingRegistry } from "@jupyterlab/settingregistry";
 
-import { PageConfig, PathExt } from "@jupyterlab/coreutils";
+import { PageConfig } from "@jupyterlab/coreutils";
 
 import { DocumentRegistry } from "@jupyterlab/docregistry";
 
@@ -34,7 +33,8 @@ import { IDisposable } from "@lumino/disposable";
 import {
   VOILA_ICON_CLASS,
   VoilaPreview,
-  IVoilaPreviewTracker
+  IVoilaPreviewTracker,
+  VoilaPreviewFactory
 } from "./preview";
 
 import "../style/index.css";
@@ -104,13 +104,13 @@ const extension: JupyterFrontEndPlugin<IVoilaPreviewTracker> = {
 
     if (restorer) {
       restorer.restore(tracker, {
-        command: CommandIDs.voilaRender,
-        args: widget => ({
-          id: widget.id,
-          url: widget.content.url,
-          label: widget.content.title.label
+        command: "docmanager:open",
+        args: panel => ({
+          path: panel.context.path,
+          factory: factory.name
         }),
-        name: widget => widget.id
+        name: panel => panel.context.path,
+        when: app.serviceManager.ready
       });
     }
 
@@ -137,10 +137,24 @@ const extension: JupyterFrontEndPlugin<IVoilaPreviewTracker> = {
       return `${baseUrl}voila/render/${path}`;
     }
 
-    let renderOnSave = false;
+    const factory = new VoilaPreviewFactory(getVoilaUrl, {
+      name: "Voila-preview",
+      fileTypes: ["notebook"],
+      modelName: "notebook"
+    });
+
+    factory.widgetCreated.connect((sender, widget) => {
+      // Notify the widget tracker if restore data needs to update.
+      widget.context.pathChanged.connect(() => {
+        void tracker.save(widget);
+      });
+      // Add the notebook panel to the tracker.
+      void tracker.add(widget);
+    });
 
     const updateSettings = (settings: ISettingRegistry.ISettings): void => {
-      renderOnSave = settings.get("renderOnSave").composite as boolean;
+      factory.defaultRenderOnSave = settings.get("renderOnSave")
+        .composite as boolean;
     };
 
     if (settingRegistry) {
@@ -154,29 +168,27 @@ const extension: JupyterFrontEndPlugin<IVoilaPreviewTracker> = {
         });
     }
 
+    app.docRegistry.addWidgetFactory(factory);
+
     const { commands, docRegistry } = app;
 
     commands.addCommand(CommandIDs.voilaRender, {
       label: "Render Notebook with Voila",
       execute: async args => {
-        const id = (args["id"] as string) || DOMUtils.createDomID();
-        let url = args["url"] as string;
-        let label = args["label"] as string;
-
         const current = getCurrent(args);
         let context: DocumentRegistry.IContext<INotebookModel>;
         if (current) {
           context = current.context;
           await context.save();
-          const voilaPath = context.path;
-          url = getVoilaUrl(voilaPath);
-          label = PathExt.basename(voilaPath);
+
+          commands.execute("docmanager:open", {
+            path: context.path,
+            factory: "Voila-preview",
+            options: {
+              mode: "split-right"
+            }
+          });
         }
-        const widget = new VoilaPreview({ context, label, renderOnSave, url });
-        widget.id = id;
-        app.shell.add(widget, "main", { mode: "split-right" });
-        void tracker.add(widget);
-        return widget;
       },
       isEnabled
     });
