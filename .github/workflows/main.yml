@@ -1,0 +1,69 @@
+name: Tests
+
+on:
+  push:
+    branches:
+    - master
+  pull_request:
+    branches:
+    - master
+  schedule:
+  - cron: "0 2 * * 1-5"  # run on weekdays at 2:00am UTC
+
+jobs:
+  run:
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+        python-version: [3.6, 3.7, 3.8]
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Add conda to $PATH
+      run: echo ::add-path::$CONDA/condabin
+
+    - name: Fix permissions on Mac
+      if: matrix.os == 'macos-latest'
+      run: |
+        sudo chmod -R a+rw /usr/local/miniconda
+
+    - name: Update conda
+      run: |
+        conda update -y -n base conda setuptools
+
+    - name: Init conda
+      run: |
+        conda init bash
+        conda info -a
+
+    - name: Create the conda environment
+      run: conda create -q -y -n voila-tests -c conda-forge python=$PYTHON_VERSION pip jupyterlab_pygments==0.1.0 pytest-cov nodejs flake8 ipywidgets matplotlib xeus-cling
+      env:
+        PYTHON_VERSION: ${{ matrix.python-version }}
+
+    - name: Install dependencies
+      run: |
+        source "$CONDA/etc/profile.d/conda.sh"
+        conda activate voila-tests
+        whereis python
+        python --version
+
+        python -m pip install --ignore-installed ".[test]"
+        cd tests/test_template; pip install .; cd ../../;
+
+    - name: Flake8
+      run: |
+        source "$CONDA/etc/profile.d/conda.sh"
+        conda activate voila-tests
+        python -m flake8 voila tests setup.py
+
+    - name: Run tests
+      run: |
+        source "$CONDA/etc/profile.d/conda.sh"
+        conda activate voila-tests
+        VOILA_TEST_DEBUG=1 VOILA_TEST_XEUS_CLING=1 py.test tests/ --async-test-timeout=240
+        voila --help  # Making sure we can run `voila --help`

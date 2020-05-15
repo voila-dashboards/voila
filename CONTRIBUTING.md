@@ -106,8 +106,11 @@ jupyter serverextension list
 To install the JupyterLab extension locally:
 
 ```bash
-jupyter labextension install @jupyter-widgets/jupyterlab-manager
-jupyter labextension install ./packages/jupyterlab-voila
+cd ./packages/jupyterlab-voila
+
+jlpm
+jlpm run build
+jupyter labextension install @jupyter-widgets/jupyterlab-manager . --debug
 
 # start in watch mode to pick up changes automatically
 jupyter lab --watch
@@ -158,4 +161,5 @@ python -m pytest
 
 The default template files are located in the folder `share/jupyter/voila/templates/default`. They are automatically picked up when running Voilà in development mode.
 
-After editing the templates, reload the browser tab to see the changes.
+Alternatively, there is a Voila template cookiecutter available to give you a running start. [Link](https://github.com/voila-dashboards/voila-template-cookiecutter).
+This cookiecutter contains some docker configuration for live reloading of your template changes to make development easier.

@@ -1,8 +1,8 @@
 .. Copyright (c) 2018, Voila Contributors
    Copyright (c) 2018, QuantStack
-   
+
    Distributed under the terms of the BSD 3-Clause License.
-   
+
    The full license is in the file LICENSE, distributed with this software.
 
 ===============
@@ -202,6 +202,167 @@ High level instructions specific to Voilà can be found below:
 
        gcloud app browse
 
+Running voila on a private server
+=================================
+
+Prerequisites
+-------------
+
+- A server running Ubuntu 18.04 (or later) with root access.
+- Ability to SSH into the server and run commands from the prompt.
+- The public IP address of the server.
+- A domain name pointing to the IP address of the server.
+
+Steps
+-----
+
+1. SSH into the server:
+
+    .. code:: text
+
+        ssh ubuntu@<ip-address>
+
+2. Install nginx:
+
+    .. code:: text
+
+        sudo apt install nginx
+
+3. To check that ``nginx`` is correctly installed:
+
+    .. code:: text
+
+        sudo systemctl status nginx
+
+4. Create the file ``/etc/nginx/sites-enabled/yourdomain.com`` with the following content:
+
+    .. code:: text
+
+        server {
+            listen 80;
+            server_name yourdomain.com;
+            proxy_buffering off;
+            location / {
+                    proxy_pass http://localhost:8866;
+                    proxy_set_header Host $host;
+                    proxy_set_header X-Real-IP $remote_addr;
+                    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+
+                    proxy_http_version 1.1;
+                    proxy_set_header Upgrade $http_upgrade;
+                    proxy_set_header Connection "upgrade";
+                    proxy_read_timeout 86400;
+            }
+
+            client_max_body_size 100M;
+            error_log /var/log/nginx/error.log;
+        }
+
+5. Enable and start the ``nginx`` service:
+
+    .. code:: text
+
+        sudo systemctl enable nginx.service
+        sudo systemctl start nginx.service
+
+6. Install pip:
+
+    .. code:: text
+
+        sudo apt update && sudo apt install python3-pip
+
+7. Follow the instructions in `Setup an example project`_, and install the dependencies:
+
+    .. code:: text
+
+        sudo python3 -m pip install -r requirements.txt
+
+8. Create a new systemd service for running voila in ``/usr/lib/systemd/system/voila.service``.
+The service will ensure voila is automatically restarted on startup:
+
+    .. code:: text
+
+        [Unit]
+        Description=Voila
+
+        [Service]
+        Type=simple
+        PIDFile=/run/voila.pid
+        ExecStart=voila --no-browser voila/notebooks/basics.ipynb
+        User=ubuntu
+        WorkingDirectory=/home/ubuntu/
+        Restart=always
+        RestartSec=10
+
+        [Install]
+        WantedBy=multi-user.target
+
+In this example voila is started with ``voila --no-browser voila/notebooks/basics.ipynb`` to serve a single notebook.
+You can edit the command to change this behavior and the notebooks voila is serving.
+
+9. Enable and start the ``voila`` service:
+
+    .. code:: text
+
+        sudo systemctl enable voila.service
+        sudo systemctl start voila.service
+
+.. note::
+    To check the logs for voila:
+
+    .. code:: text
+
+        journalctl -u voila.service
+
+
+10. Now go to ``yourdomain.com`` to access the voila application.
+
+Enable HTTPS with Let's Encrypt
+-------------------------------
+
+1. Install ``certbot``:
+
+    .. code:: text
+
+        sudo add-apt-repository ppa:certbot/certbot
+        sudo apt update
+        sudo apt install python-certbot-nginx
+
+2. Obtain the certificates from Let's Encrypt. The ``--nginx`` flag will edit the nginx configuration automatically:
+
+    .. code:: text
+
+        sudo certbot --nginx -d yourdomain.com
+
+3. ``/etc/nginx/sites-enabled/yourdomain.com`` should now contain a few more entries:
+
+    .. code :: text
+
+        $ cat /etc/nginx/sites-enabled/yourdomain.com
+
+        ...
+        listen 443 ssl; # managed by Certbot
+        ssl_certificate /etc/letsencrypt/live/yourdomain.com/fullchain.pem; # managed by Certbot
+        ssl_certificate_key /etc/letsencrypt/live/yourdomain.com/privkey.pem; # managed by Certbot
+        include /etc/letsencrypt/options-ssl-nginx.conf; # managed by Certbot
+        ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem; # managed by Certbot
+        ...
+
+4. Visit https://yourdomain.com to access the voila applications over HTTPS.
+
+5. To automatically renew the certificates (they expire after 90 days), open the ``crontab`` file:
+
+    .. code :: text
+
+        crontab -e
+
+And add the following line:
+
+    .. code :: text
+
+        0 12 * * * /usr/bin/certbot renew --quiet
+
+For more information, you can also follow `the guide on the nginx blog <https://www.nginx.com/blog/using-free-ssltls-certificates-from-lets-encrypt-with-nginx/>`__.
 
 Sharing Voilà applications with ngrok
 =====================================

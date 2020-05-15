@@ -376,8 +376,10 @@ setup_args = {
     },
     'install_requires': [
         'async_generator',
-        'jupyter_server>=0.1.0,<0.2.0',
-        'nbconvert>=5.5.0,<6',
+        'jupyter_server>=0.3.0',
+        'jupyter_client>=6.1.3',
+        'nbclient>=0.2.0',
+        'nbconvert==6.0.0a1',
         'jupyterlab_pygments>=0.1.0,<0.2',
         'pygments>=2.4.1,<3'  # Explicitly requiring pygments which is a second-order dependency.
                               # An older versions is generally installed already and is otherwise not updated by pip.
@@ -385,12 +387,13 @@ setup_args = {
     'extras_require': {
         'test': [
             'mock',
-            'pytest<4',
-            'pytest-tornado',
+            'pytest',
+            'pytest-tornasync',
             'matplotlib',
             'ipywidgets'
         ]
     },
+    'url': 'https://github.com/voila-dashboards/voila',
     'author': 'Voila Development team',
     'author_email': 'jupyter@googlegroups.com',
     'keywords': [

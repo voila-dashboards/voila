@@ -46,5 +46,6 @@ export function renderMathJax() {
     .compile()
     .getMetrics()
     .typeset()
-    .updateDocument();
+    .updateDocument()
+    .reset();
 };

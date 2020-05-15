@@ -10,18 +10,17 @@ import collections
 import logging
 
 from nbconvert.preprocessors import ClearOutputPreprocessor
-from nbconvert.preprocessors.execute import CellExecutionError, ExecutePreprocessor
+from nbclient.exceptions import CellExecutionError
+from nbclient import NotebookClient
 from nbformat.v4 import output_from_msg
 
 from traitlets import Unicode
-
 from ipykernel.jsonutil import json_clean
 
 
 def strip_code_cell_warnings(cell):
     """Strip any warning outputs and traceback from a code cell."""
-    # There is no 'outputs' key for markdown cells
-    if 'outputs' not in cell:
+    if cell['cell_type'] != 'code':
         return cell
 
     outputs = cell['outputs']
@@ -113,7 +112,7 @@ class OutputWidget:
                 self.msg_id = msg_id
 
 
-class VoilaExecutePreprocessor(ExecutePreprocessor):
+class VoilaExecutor(NotebookClient):
     """Execute, but respect the output widget behaviour"""
     cell_error_instruction = Unicode(
         'Please run Voila with --debug to see the error message.',
@@ -123,14 +122,22 @@ class VoilaExecutePreprocessor(ExecutePreprocessor):
         )
     )
 
-    def __init__(self, **kwargs):
-        super(VoilaExecutePreprocessor, self).__init__(**kwargs)
+    cell_timeout_instruction = Unicode(
+        'Please run Voila with --VoilaExecutor.interrupt_on_timeout=True to continue executing the rest of the notebook.',
+        config=True,
+        help=(
+            'instruction given to user to continue execution on timeout'
+        )
+    )
+
+    def __init__(self, nb, km=None, **kwargs):
+        super(VoilaExecutor, self).__init__(nb, km=km, **kwargs)
         self.output_hook_stack = collections.defaultdict(list)  # maps to list of hooks, where the last is used
         self.output_objects = {}
 
-    def preprocess(self, nb, resources, km=None):
+    def execute(self, nb, resources, km=None):
         try:
-            result = super(VoilaExecutePreprocessor, self).preprocess(nb, resources=resources, km=km)
+            result = super(VoilaExecutor, self).execute()
         except CellExecutionError as e:
             self.log.error(e)
             result = (nb, resources)
@@ -141,11 +148,13 @@ class VoilaExecutePreprocessor(ExecutePreprocessor):
 
         return result
 
-    def preprocess_cell(self, cell, resources, cell_index, store_history=True):
+    async def execute_cell(self, cell, resources, cell_index, store_history=True):
         try:
-            # TODO: pass store_history as a 5th argument when we can require nbconver >=5.6.1
-            # result = super(VoilaExecutePreprocessor, self).preprocess_cell(cell, resources, cell_index, store_history)
-            result = super(VoilaExecutePreprocessor, self).preprocess_cell(cell, resources, cell_index)
+            result = await super(VoilaExecutor, self).async_execute_cell(cell, cell_index, store_history)
+        except TimeoutError as e:
+            self.log.error(e)
+            self.show_code_cell_timeout(cell)
+            raise e
         except CellExecutionError as e:
             self.log.error(e)
             result = (cell, resources)
@@ -174,10 +183,10 @@ class VoilaExecutePreprocessor(ExecutePreprocessor):
             hook = self.output_hook_stack[parent_msg_id][-1]
             hook.output(outs, msg, display_id, cell_index)
             return
-        super(VoilaExecutePreprocessor, self).output(outs, msg, display_id, cell_index)
+        super(VoilaExecutor, self).output(outs, msg, display_id, cell_index)
 
     def handle_comm_msg(self, outs, msg, cell_index):
-        super(VoilaExecutePreprocessor, self).handle_comm_msg(outs, msg, cell_index)
+        super(VoilaExecutor, self).handle_comm_msg(outs, msg, cell_index)
         self.log.debug('comm msg: %r', msg)
         if msg['msg_type'] == 'comm_open' and msg['content'].get('target_name') == 'jupyter.widget':
             content = msg['content']
@@ -201,7 +210,7 @@ class VoilaExecutePreprocessor(ExecutePreprocessor):
             hook = self.output_hook_stack[parent_msg_id][-1]
             hook.clear_output(outs, msg, cell_index)
             return
-        super(VoilaExecutePreprocessor, self).clear_output(outs, msg, cell_index)
+        super(VoilaExecutor, self).clear_output(outs, msg, cell_index)
 
     def strip_notebook_errors(self, nb):
         """Strip error messages and traceback from a Notebook."""
@@ -214,11 +223,11 @@ class VoilaExecutePreprocessor(ExecutePreprocessor):
             self.strip_code_cell_errors(cell)
 
         return nb
-    
+
     def strip_code_cell_errors(self, cell):
         """Strip any error outputs and traceback from a code cell."""
         # There is no 'outputs' key for markdown cells
-        if 'outputs' not in cell:
+        if cell['cell_type'] != 'code':
             return cell
 
         outputs = cell['outputs']
@@ -234,11 +243,24 @@ class VoilaExecutePreprocessor(ExecutePreprocessor):
 
         return cell
 
+    def show_code_cell_timeout(self, cell):
+        """Show a timeout error output in a code cell."""
+
+        timeout_message = 'Cell execution timed out, aborting notebook execution. {}'.format(self.cell_timeout_instruction)
+
+        output = {'output_type': 'error',
+                  'ename': 'TimeoutError',
+                  'evalue': 'Timeout error',
+                  'traceback': [timeout_message]}
+
+        cell['outputs'] = [output]
+
+
 def executenb(nb, cwd=None, km=None, **kwargs):
     resources = {}
     if cwd is not None:
         resources['metadata'] = {'path': cwd}  # pragma: no cover
     # Clear any stale output, in case of exception
     nb, resources = ClearOutputPreprocessor().preprocess(nb, resources)
-    ep = VoilaExecutePreprocessor(**kwargs)
-    return ep.preprocess(nb, resources, km=km)[0]
+    executor = VoilaExecutor(nb, km=km, **kwargs)
+    return executor.execute(nb, resources, km=km)

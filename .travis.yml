@@ -4,9 +4,9 @@ os:
  - osx
 env:
  matrix:
-  - PYTHON_VERSION=3.5
   - PYTHON_VERSION=3.6
   - PYTHON_VERSION=3.7
+  - PYTHON_VERSION=3.8
 before_install:
   - if [[ $TRAVIS_OS_NAME == osx ]]; then ulimit -n 2048; fi
   - if [[ $TRAVIS_OS_NAME == linux ]]; then sudo apt-get update; fi
@@ -18,13 +18,12 @@ before_install:
   - conda config --set always_yes yes --set changeps1 no
   - conda update -q conda
   - conda info -a
-  - conda create -q -n test-environment -c conda-forge python=$PYTHON_VERSION jupyterlab_pygments==0.1.0 nbconvert=5.5 pytest-cov nodejs flake8 ipywidgets matplotlib xeus-cling
+  - conda create -q -n test-environment -c conda-forge python=$PYTHON_VERSION jupyterlab_pygments==0.1.0 pytest-cov nodejs flake8 ipywidgets matplotlib xeus-cling
   - source activate test-environment
 install:
-  - pip install ".[test]"
+  - pip install --ignore-installed ".[test]"
   - cd tests/test_template; pip install .; cd ../../;
-after_script:
-  - flake8 voila tests setup.py
 script:
   - VOILA_TEST_DEBUG=1 VOILA_TEST_XEUS_CLING=1 py.test tests/ --async-test-timeout=240
   - voila --help  # Making sure we can run `voila --help`
+  - flake8 voila tests setup.py

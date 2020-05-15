@@ -27,7 +27,10 @@ import * as PhosphorAlgorithm from '@phosphor/algorithm';
 import * as PhosphorCommands from '@phosphor/commands';
 import * as PhosphorDomutils from '@phosphor/domutils';
 
+import { MessageLoop } from '@phosphor/messaging';
+
 import { requireLoader } from './loader';
+import { batchRateMap } from './utils';
 
 if (typeof window !== "undefined" && typeof window.define !== "undefined") {
     window.define("@jupyter-widgets/base", base);
@@ -93,6 +96,12 @@ export class WidgetManager extends JupyterLabManager {
         if (options.el) {
             PhosphorWidget.Widget.attach(view.pWidget, options.el);
         }
+        if (view.el) {
+            view.el.setAttribute('data-voila-jupyter-widget', '');
+            view.el.addEventListener('jupyterWidgetResize', function(e) {
+                MessageLoop.postMessage(view.pWidget, PhosphorWidget.Widget.ResizeMessage.UnknownSize);
+            });
+        }
         return view.pWidget;
     }
 
@@ -141,10 +150,17 @@ export class WidgetManager extends JupyterLabManager {
     async _build_models() {
         const comm_ids = await this._get_comm_info();
         const models = {};
-        const widgets_info = await Promise.all(Object.keys(comm_ids).map(async (comm_id) => {
+        /**
+         * For the classical notebook, iopub_msg_rate_limit=1000 (default)
+         * And for zmq, we are affected by the default ZMQ_SNDHWM setting of 1000
+         * See https://github.com/voila-dashboards/voila/issues/534 for a discussion
+         */
+        const maxMessagesInTransit = 100; // really save limit compared to ZMQ_SNDHWM
+        const maxMessagesPerSecond = 500; // lets be on the save side, in case the kernel sends more msg'es
+        const widgets_info = await Promise.all(batchRateMap(Object.keys(comm_ids), async (comm_id) => {
             const comm = await this._create_comm(this.comm_target_name, comm_id);
             return this._update_comm(comm);
-        }));
+        }, {room: maxMessagesInTransit, rate: maxMessagesPerSecond}));
 
         await Promise.all(widgets_info.map(async (widget_info) => {
             const state = widget_info.msg.content.data.state;
