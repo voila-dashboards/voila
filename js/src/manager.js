@@ -13,7 +13,20 @@ import { output } from '@jupyter-widgets/jupyterlab-manager';
 
 import * as base from '@jupyter-widgets/base';
 import * as controls from '@jupyter-widgets/controls';
+
+import * as Application from '@jupyterlab/application';
+import * as AppUtils from '@jupyterlab/apputils';
+import * as CoreUtils from '@jupyterlab/coreutils';
+import * as DocRegistry from '@jupyterlab/docregistry';
+import * as OutputArea from '@jupyterlab/outputarea';
+
 import * as PhosphorWidget from '@phosphor/widgets';
+import * as PhosphorSignaling from '@phosphor/signaling';
+import * as PhosphorVirtualdom from '@phosphor/virtualdom';
+import * as PhosphorAlgorithm from '@phosphor/algorithm';
+import * as PhosphorCommands from '@phosphor/commands';
+import * as PhosphorDomutils from '@phosphor/domutils';
+
 import { MessageLoop } from '@phosphor/messaging';
 
 import { requireLoader } from './loader';
@@ -23,7 +36,19 @@ if (typeof window !== "undefined" && typeof window.define !== "undefined") {
     window.define("@jupyter-widgets/base", base);
     window.define("@jupyter-widgets/controls", controls);
     window.define("@jupyter-widgets/output", output);
+
+    window.define("@jupyterlab/application", Application);
+    window.define("@jupyterlab/apputils", AppUtils);
+    window.define("@jupyterlab/coreutils", CoreUtils);
+    window.define("@jupyterlab/docregistry", DocRegistry);
+    window.define("@jupyterlab/outputarea", OutputArea);
+
     window.define("@phosphor/widgets", PhosphorWidget);
+    window.define("@phosphor/signaling", PhosphorSignaling);
+    window.define("@phosphor/virtualdom", PhosphorVirtualdom);
+    window.define("@phosphor/algorithm", PhosphorAlgorithm);
+    window.define("@phosphor/commands", PhosphorCommands);
+    window.define("@phosphor/domutils", PhosphorDomutils);
 }
 
 const WIDGET_MIMETYPE = 'application/vnd.jupyter.widget-view+json';
