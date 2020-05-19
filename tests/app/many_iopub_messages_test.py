@@ -5,7 +5,7 @@ import tornado.httpclient
 
 @pytest.fixture
 def voila_args_extra():
-    return ['--ExecutePreprocessor.timeout=180']
+    return ['--VoilaExecutor.timeout=180']
 
 
 @pytest.fixture
