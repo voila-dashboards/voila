@@ -8,7 +8,7 @@ BASE_DIR = os.path.dirname(__file__)
 
 @pytest.fixture
 def voila_args_extra():
-    return ['--VoilaConfiguration.strip_sources=False']
+    return ['--VoilaConfiguration.strip_sources=False', '--VoilaExecutor.timeout=240']
 
 
 async def test_no_strip_sources(http_server_client, base_url):
