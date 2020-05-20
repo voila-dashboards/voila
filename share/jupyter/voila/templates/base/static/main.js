@@ -51,7 +51,9 @@ require([window.voila_js_url || 'static/voila'], function(voila) {
         async function init() {
             // it seems if we attach this to early, it will not be called
             window.addEventListener('beforeunload', function (e) {
-                kernel.shutdown();
+                const xhttp = new XMLHttpRequest();
+                xhttp.open("DELETE", `/api/kernels/${kernel.id}`, false);
+                xhttp.send();
                 kernel.dispose();
             });
             await widgetManager.build_widgets();
