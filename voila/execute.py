@@ -157,7 +157,7 @@ class VoilaExecutor(NotebookClient):
             raise e
         except CellExecutionError as e:
             self.log.error(e)
-            result = (cell, resources)
+            result = cell
 
         # Strip errors and traceback if not in debug mode
         if should_strip_error(self.config):
