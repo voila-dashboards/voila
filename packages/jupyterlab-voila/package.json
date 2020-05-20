@@ -38,6 +38,9 @@
     "@jupyterlab/fileeditor": "^2.0.0",
     "@jupyterlab/mainmenu": "^2.0.0",
     "@jupyterlab/notebook": "^2.0.0",
+    "@jupyterlab/running": "^2.1.1",
+    "@jupyterlab/services": "^5.0.0",
+    "@jupyterlab/ui-components": "^2.1.1",
     "react": "~16.9.0",
     "react-dom": "~16.9.0"
   },

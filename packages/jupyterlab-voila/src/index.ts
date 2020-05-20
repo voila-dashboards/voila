@@ -24,6 +24,14 @@ import {
   INotebookModel
 } from "@jupyterlab/notebook";
 
+import { IRunningSessionManagers, IRunningSessions } from "@jupyterlab/running";
+
+import { KernelAPI, KernelManager, ServerConnection } from "@jupyterlab/services";
+
+import { notebookIcon } from "@jupyterlab/ui-components";
+
+import { toArray } from "@lumino/algorithm";
+
 import { CommandRegistry } from "@lumino/commands";
 
 import { ReadonlyJSONObject } from "@lumino/coreutils";
@@ -81,9 +89,9 @@ class VoilaRenderButton
 }
 
 /**
- * Initialization data for the jupyterlab-voila extension.
+ * Initialization data for the jupyterlab-voila preview plugin.
  */
-const extension: JupyterFrontEndPlugin<IVoilaPreviewTracker> = {
+const preview: JupyterFrontEndPlugin<IVoilaPreviewTracker> = {
   id: "@jupyter-voila/jupyterlab-preview:plugin",
   autoStart: true,
   requires: [INotebookTracker],
@@ -158,7 +166,7 @@ const extension: JupyterFrontEndPlugin<IVoilaPreviewTracker> = {
     };
 
     if (settingRegistry) {
-      Promise.all([settingRegistry.load(extension.id), app.restored])
+      Promise.all([settingRegistry.load(preview.id), app.restored])
         .then(([settings]) => {
           updateSettings(settings);
           settings.changed.connect(updateSettings);
@@ -235,4 +243,51 @@ const extension: JupyterFrontEndPlugin<IVoilaPreviewTracker> = {
   }
 };
 
-export default extension;
+/**
+ * A plugin to show the list of running Voila kernels.
+ */
+const kernels: JupyterFrontEndPlugin<void> = {
+  id: "@jupyter-voila/jupyterlab-preview:kernels",
+  autoStart: true,
+  requires: [IRunningSessionManagers],
+  activate: (app: JupyterFrontEnd, managers: IRunningSessionManagers) => {
+    const serverSettings = ServerConnection.makeSettings({ baseUrl: "/voila" });
+    const kernelManager = new KernelManager({ serverSettings });
+
+    managers.add({
+      name: "Voila",
+      running: () => {
+        return toArray(kernelManager.running())
+          .map(model => new RunningKernel(model));
+      },
+      shutdownAll: () => kernelManager.shutdownAll(),
+      refreshRunning: () => kernelManager.refreshRunning(),
+      runningChanged: kernelManager.runningChanged
+    });
+
+    class RunningKernel implements IRunningSessions.IRunningItem {
+      constructor(model: KernelAPI.IModel) {
+        this._model = model;
+      }
+      open() {
+        // no-op
+      }
+      shutdown() {
+        return kernelManager.shutdown(this._model.id);
+      }
+      icon() {
+        return notebookIcon;
+      }
+      label() {
+        return this._model.id;
+      }
+      labelTitle() {
+        return `name: ${this._model.name}`;
+      }
+
+      private _model: KernelAPI.IModel;
+    }
+  }
+};
+
+export default [preview, kernels];

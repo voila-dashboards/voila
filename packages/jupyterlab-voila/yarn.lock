@@ -119,6 +119,31 @@
     react-dom "~16.9.0"
     sanitize-html "~1.20.1"
 
+"@jupyterlab/apputils@^2.1.1":
+  version "2.1.1"
+  resolved "https://registry.yarnpkg.com/@jupyterlab/apputils/-/apputils-2.1.1.tgz#069dc8214261c01c9e2ef58209137430649d4c01"
+  integrity sha512-orGzvW2S1k/FjW42dhygq8XJZbQRBTsNXXKFWsqewSn9sNTd3irKjDEwS3Ilce1w+LsS/t3H03xCnsOYPu8LSQ==
+  dependencies:
+    "@jupyterlab/coreutils" "^4.1.0"
+    "@jupyterlab/services" "^5.1.0"
+    "@jupyterlab/settingregistry" "^2.1.0"
+    "@jupyterlab/statedb" "^2.1.0"
+    "@jupyterlab/ui-components" "^2.1.1"
+    "@lumino/algorithm" "^1.2.3"
+    "@lumino/commands" "^1.10.1"
+    "@lumino/coreutils" "^1.4.2"
+    "@lumino/disposable" "^1.3.5"
+    "@lumino/domutils" "^1.1.7"
+    "@lumino/messaging" "^1.3.3"
+    "@lumino/properties" "^1.1.6"
+    "@lumino/signaling" "^1.3.5"
+    "@lumino/virtualdom" "^1.6.1"
+    "@lumino/widgets" "^1.11.1"
+    "@types/react" "~16.9.16"
+    react "~16.9.0"
+    react-dom "~16.9.0"
+    sanitize-html "~1.20.1"
+
 "@jupyterlab/attachments@^2.1.0":
   version "2.1.0"
   resolved "https://registry.yarnpkg.com/@jupyterlab/attachments/-/attachments-2.1.0.tgz#86dd6c02a0ac2e5b6c1221056bed67bd4d933de1"
@@ -392,7 +417,19 @@
     lodash.escape "^4.0.1"
     marked "^0.8.0"
 
-"@jupyterlab/services@^5.1.0":
+"@jupyterlab/running@^2.1.1":
+  version "2.1.1"
+  resolved "https://registry.yarnpkg.com/@jupyterlab/running/-/running-2.1.1.tgz#232029d96e671d8d0b73ad1335220438d6e3ff3d"
+  integrity sha512-4gzXDIq7UWeVDPjVaOZNz7hB5KnFqy1AscjkCCCCEqSEDp3L6te4e5vkni34CpVKiLDaL0ts2IKcY9omSBcFKw==
+  dependencies:
+    "@jupyterlab/apputils" "^2.1.1"
+    "@jupyterlab/ui-components" "^2.1.1"
+    "@lumino/coreutils" "^1.4.2"
+    "@lumino/disposable" "^1.3.5"
+    "@lumino/signaling" "^1.3.5"
+    react "~16.9.0"
+
+"@jupyterlab/services@^5.0.0", "@jupyterlab/services@^5.1.0":
   version "5.1.0"
   resolved "https://registry.yarnpkg.com/@jupyterlab/services/-/services-5.1.0.tgz#891607d87cbe9413219cfe4ceb9905193b85b657"
   integrity sha512-xhtDvAdgw+sWNSbpkExCYyJbHxlwhiZYqc07+zhOdYrpxO19k/ZmmyNoYCyfvNLcMQ4JWVBoczI714u1QNLj4w==
@@ -459,6 +496,22 @@
   version "2.1.0"
   resolved "https://registry.yarnpkg.com/@jupyterlab/ui-components/-/ui-components-2.1.0.tgz#bf718a03845fca93c2088c361f87c80007ea0596"
   integrity sha512-EuIMnm3nKwRBb2VJ1vrKGqd97cQ4jSpytmAqVwQbDhXzatnDDjknvky/f8hwCCOZHdod5EcehgdpgrbIqYYmvQ==
+  dependencies:
+    "@blueprintjs/core" "^3.22.2"
+    "@blueprintjs/select" "^3.11.2"
+    "@jupyterlab/coreutils" "^4.1.0"
+    "@lumino/coreutils" "^1.4.2"
+    "@lumino/signaling" "^1.3.5"
+    "@lumino/virtualdom" "^1.6.1"
+    "@lumino/widgets" "^1.11.1"
+    react "~16.9.0"
+    react-dom "~16.9.0"
+    typestyle "^2.0.4"
+
+"@jupyterlab/ui-components@^2.1.1":
+  version "2.1.1"
+  resolved "https://registry.yarnpkg.com/@jupyterlab/ui-components/-/ui-components-2.1.1.tgz#ace65290ebe3e913e85e574d5d94f3c9f55d244c"
+  integrity sha512-VZWtJud5XXzSTK6HJebbqg7TkJmvuRk5K+F30u+pgX7PStC4j8OFD7IXCreLWmrvxoVvEXd4GFH2sVng5cgsQA==
   dependencies:
     "@blueprintjs/core" "^3.22.2"
     "@blueprintjs/select" "^3.11.2"
