@@ -141,7 +141,7 @@ class VoilaHandler(JupyterHandler):
 
     def _jinja_notebook_execute(self, nb, kernel_id):
         km = self.kernel_manager.get_kernel(kernel_id)
-        result = executenb(nb, km=km, cwd=self.cwd, config=self.traitlet_config)
+        result = executenb(nb, km=km, cwd=self.cwd, config=self.traitlet_config, nest_asyncio=True)
         # we modify the notebook in place, since the nb variable cannot be reassigned it seems in jinja2
         # e.g. if we do {% with nb = notebook_execute(nb, kernel_id) %}, the base template/blocks will not
         # see the updated variable (it seems to be local to our block)

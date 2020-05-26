@@ -7,16 +7,12 @@
 {%- block html_head_css -%}
 <link rel="stylesheet" href="https://unpkg.com/font-awesome@4.5.0/css/font-awesome.min.css" type="text/css" />
 {{ super() }}
-
 {{ spinner.css() }}
 {%- endblock html_head_css -%}
 
-
-
-{# this overrides the default behaviour of directly starting the kernel and executing the notebook #}
-{% block notebook_execute %}
-{% endblock notebook_execute %}
-
+{# this overrides the default behaviour of rendering static widgets #}
+{% block jupyter_widgets %}
+{% endblock jupyter_widgets %}
 
 {%- block body_header -%}
 {% if resources.theme == 'dark' %}
@@ -77,3 +73,22 @@ var voila_process = function(cell_index, cell_count) {
 </script>
 </body>
 {%- endblock body_footer -%}
+
+{% block footer_js %}
+<script
+    src="{{resources.base_url}}voila/static/require.min.js"
+    integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA="
+    crossorigin="anonymous">
+</script>
+<script>
+requirejs.config({ baseUrl: '{{resources.base_url}}voila/', waitSeconds: 30})
+requirejs(
+    [
+        "static/main",
+    {% for ext in resources.nbextensions -%}
+        "{{resources.base_url}}voila/nbextensions/{{ ext }}.js",
+    {% endfor %}
+    ]
+)
+</script>
+{% endblock footer_js %}

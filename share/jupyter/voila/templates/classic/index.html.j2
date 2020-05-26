@@ -1,12 +1,9 @@
 {%- extends 'nbconvert/templates/classic/index.html.j2' -%}
 
-
-
 {%- block html_head_js -%}
 {%- block html_head_js_jquery -%}
 {%- endblock html_head_js_jquery -%}
 {%- endblock html_head_js -%}
-
 
 {%- block html_head_css -%}
   <style>
@@ -19,14 +16,10 @@
 {{ super() }}
 {%- endblock html_head_css -%}
 
-
-
 {% block custom_css %}
 {% endblock %}
 
-
-
-{% block ipywidgets %}
+{% block jupyter_widgets %}
 {% block notebook_execute %}
     {%- set kernel_id = kernel_start() -%}
     <script id="jupyter-config-data" type="application/json">
@@ -38,19 +31,13 @@
     {# from this point on, nb.cells contains output of the executed cells #}
     {% do notebook_execute(nb, kernel_id) %}
 {%- endblock notebook_execute -%}
-
-{% endblock ipywidgets %}
-
-
+{% endblock jupyter_widgets %}
 
 {% block body_header %}
 <body data-base-url="{{resources.base_url}}voila/">
   <div tabindex="-1" id="notebook" class="border-box-sizing">
     <div class="container" id="notebook-container">
 {% endblock body_header %}
-
-
-
 
 {% block footer_js %}
 <script

@@ -174,7 +174,7 @@ class NPM(Command):
 
     node_modules = os.path.join(node_root, 'node_modules')
 
-    template_root = os.path.join(here, 'share', 'jupyter', 'voila', 'templates', 'classic', 'static')
+    template_root = os.path.join(here, 'share', 'jupyter', 'voila', 'templates', 'base', 'static')
     targets = [
         os.path.join(template_root, 'voila.js')
     ]
@@ -291,7 +291,7 @@ setup_args = {
         'jupyter_server>=0.3.0',
         'jupyter_client>=6.1.3',
         'nbclient>=0.2.0',
-        'nbconvert==6.0.0a1',
+        'nbconvert==6.0.0a3',
         'jupyterlab_pygments>=0.1.0,<0.2',
         'pygments>=2.4.1,<3'  # Explicitly requiring pygments which is a second-order dependency.
                               # An older versions is generally installed already and is otherwise not updated by pip.
