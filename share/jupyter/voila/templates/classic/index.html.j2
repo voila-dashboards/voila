@@ -1,8 +1,6 @@
 {%- extends 'nbconvert/templates/classic/index.html.j2' -%}
 
 {%- block html_head_js -%}
-{%- block html_head_js_jquery -%}
-{%- endblock html_head_js_jquery -%}
 {%- endblock html_head_js -%}
 
 {%- block html_head_css -%}
@@ -16,10 +14,10 @@
 {{ super() }}
 {%- endblock html_head_css -%}
 
-{% block custom_css %}
-{% endblock %}
-
 {% block jupyter_widgets %}
+    {{ resources.include_css("static/materialcolors.css") }}
+    {{ resources.include_css("static/labvariables.css") }}
+
 {% block notebook_execute %}
     {%- set kernel_id = kernel_start() -%}
     <script id="jupyter-config-data" type="application/json">
