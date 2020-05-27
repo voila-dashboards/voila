@@ -29,8 +29,8 @@ config.rst
 
 package-lock.json
 
-share/jupyter/voila/templates/classic/static/*voila.js
-share/jupyter/voila/templates/classic/static/*[woff|woff2|eot|svg]
+share/jupyter/voila/templates/base/static/*voila.js
+share/jupyter/voila/templates/base/static/*[woff|woff2|eot|svg]
 
 js/lib/
 
