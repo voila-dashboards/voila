@@ -3,7 +3,7 @@ from setuptools import setup
 
 
 data_files = []
-for (dirpath, dirnames, filenames) in os.walk('share/jupyter/voila/templates/'):
+for (dirpath, dirnames, filenames) in os.walk('share/jupyter/voila/templates'):
     if filenames:
         data_files.append((dirpath, [os.path.join(dirpath, filename) for filename in filenames]))
 

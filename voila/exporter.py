@@ -13,6 +13,7 @@ import traitlets
 from traitlets.config import Config
 
 from jinja2 import contextfilter
+import jinja2
 
 from nbconvert.filters.markdown_mistune import IPythonRenderer, MarkdownWithMath
 from nbconvert.exporters.html import HTMLExporter
@@ -36,10 +37,12 @@ class VoilaMarkdownRenderer(IPythonRenderer):
 class VoilaExporter(HTMLExporter):
     """Custom HTMLExporter that inlines the images using VoilaMarkdownRenderer"""
 
+    base_url = traitlets.Unicode(help="Base url for resources").tag(config=True)
     markdown_renderer_class = traitlets.Type('mistune.Renderer').tag(config=True)
 
     # The voila exporter overrides the markdown renderer from the HTMLExporter
     # to inline images.
+
     @contextfilter
     def markdown2html(self, context, source):
         cell = context['cell']
@@ -75,7 +78,7 @@ class VoilaExporter(HTMLExporter):
 
     @traitlets.default('template_file')
     def default_template_file(self):
-        return 'voila.tpl'
+        return 'index.html.j2'
 
     async def generate_from_notebook_node(self, nb, resources=None, extra_context={}, **kw):
         # this replaces from_notebook_node, but calls template.generate instead of template.render
@@ -110,3 +113,24 @@ class VoilaExporter(HTMLExporter):
         if 'jinja2.ext.do' not in env.extensions:
             env.add_extension('jinja2.ext.do')
         return env
+
+    def get_template_paths(self):
+        return self.template_path
+
+    def _init_resources(self, resources):
+        def include_css(name):
+            code = """<link rel="stylesheet" type="text/css" href="%svoila/%s">""" % (self.base_url, name)
+            return jinja2.Markup(code)
+
+        def include_js(name):
+            code = """<script src="%svoila/%s"></script>""" % (self.base_url, name)
+            return jinja2.Markup(code)
+
+        def include_url(name):
+            url = "%svoila/%s" % (self.base_url, name)
+            return jinja2.Markup(url)
+        resources = super(VoilaExporter, self)._init_resources(resources)
+        resources['include_css'] = include_css
+        resources['include_js'] = include_js
+        resources['include_url'] = include_url
+        return resources
