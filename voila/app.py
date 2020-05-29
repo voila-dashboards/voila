@@ -40,7 +40,7 @@ from traitlets.config.loader import Config
 from traitlets import Unicode, Integer, Bool, Dict, List, default
 
 from jupyter_server.services.kernels.kernelmanager import AsyncMappingKernelManager
-from jupyter_server.services.kernels.handlers import KernelHandler, ZMQChannelsHandler
+from jupyter_server.services.kernels.handlers import MainKernelHandler, KernelHandler, ZMQChannelsHandler
 from jupyter_server.services.contents.largefilemanager import LargeFileManager
 from jupyter_server.base.handlers import FileFindHandler, path_regex
 from jupyter_server.config_manager import recursive_update
@@ -70,6 +70,12 @@ _kernel_id_regex = r"(?P<kernel_id>\w+-\w+-\w+-\w+-\w+)"
 
 def _(x):
     return x
+
+
+class VoilaMainKernelHandler(MainKernelHandler):
+    @property
+    def kernel_manager(self):
+        return self.settings['voila_kernel_manager']
 
 
 class VoilaKernelHandler(KernelHandler):
@@ -589,6 +595,7 @@ class Voila(Application):
 main = Voila.launch_instance
 
 base_handlers = [
+    (r'/voila/api/kernels', VoilaMainKernelHandler),
     (r'/voila/api/kernels/%s' % _kernel_id_regex, VoilaKernelHandler),
     (r'/voila/api/kernels/%s/channels' % _kernel_id_regex, VoilaZMQChannelsHandler),
 ]
