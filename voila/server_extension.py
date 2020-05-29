@@ -75,7 +75,7 @@ def _load_jupyter_server_extension(server_app):
         'voila_configuration': voila_configuration
     }
 
-    handlers =  [
+    handlers = [
         (r'/voila/render/(.*)', VoilaHandler, {
             'config': server_app.config,
             'template_paths': template_paths,

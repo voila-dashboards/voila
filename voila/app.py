@@ -71,6 +71,7 @@ _kernel_id_regex = r"(?P<kernel_id>\w+-\w+-\w+-\w+-\w+)"
 def _(x):
     return x
 
+
 class VoilaKernelHandler(KernelHandler):
     @property
     def kernel_manager(self):
