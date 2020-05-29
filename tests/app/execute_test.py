@@ -28,7 +28,7 @@ async def test_no_execute_allowed(voila_app, app, http_server_client, base_url, 
     kernel_id = groups[0]
     print(kernel_id, base_url)
     session_id = '445edd75-c6f5-45d2-8b58-5fe8f84a7123'
-    url = f'ws://localhost:{http_server_port[1]}{base_url}api/kernels/{kernel_id}/channels?session_id={session_id}'
+    url = f'ws://localhost:{http_server_port[1]}{base_url}voila/api/kernels/{kernel_id}/channels?session_id={session_id}'
     conn = await tornado.websocket.websocket_connect(url)
 
     msg = {
