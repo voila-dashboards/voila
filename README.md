@@ -100,7 +100,7 @@ The sources of the Jupyter notebook can be displayed in a Voilà app if option `
 
 **Voilà dashboards with other language kernels**
 
-Voilà is built upon Jupyter standard formats and protocols, and is agnostic to the programming language of the notebook. In this example, we present an example of a Voilà application powered by the C++ Jupyter kernel [xeus-cling](https://github.com/QuantStack/xeus-cling), and the [xleaflet](https://github.com/QuantStack/xleaflet) project.
+Voilà is built upon Jupyter standard formats and protocols, and is agnostic to the programming language of the notebook. In this example, we present an example of a Voilà application powered by the C++ Jupyter kernel [xeus-cling](https://github.com/jupyter-xeus/xeus-cling), and the [xleaflet](https://github.com/jupyter-xeus/xleaflet) project.
 
 ![Voila cling](voila-cling.gif)
 

@@ -228,7 +228,7 @@ configured to use a specific kernel for each language::
      --VoilaConfiguration.language_kernel_mapping='{"python": "xpython"}'
 
 In this case it will use the `xeus-python
-<https://github.com/QuantStack/xeus-python/>`_. kernel to run `.py` files.
+<https://github.com/jupyter-xeus/xeus-python/>`_. kernel to run `.py` files.
 
 Note that the script will be executed as notebook with a single cell, meaning
 that only the last expression will be printed as output. Use the Jupyter
