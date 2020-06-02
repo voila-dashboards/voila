@@ -15,7 +15,7 @@ from jinja2 import Environment, FileSystemLoader
 
 from jupyter_server.utils import url_path_join
 from jupyter_server.base.handlers import path_regex, FileFindHandler
-from jupyter_server.services.kernels.kernelmanager import MappingKernelManager
+from jupyter_server.services.kernels.kernelmanager import AsyncMappingKernelManager
 
 from .paths import ROOT, collect_template_paths, collect_static_paths, jupyter_path
 from .handler import VoilaHandler
@@ -56,9 +56,11 @@ def _load_jupyter_server_extension(server_app):
 
     connection_dir = tempfile.gettempdir()
 
-    kernel_mapping_manager = MappingKernelManager(
+    kernel_manager = AsyncMappingKernelManager(
         connection_dir=connection_dir,
         allowed_message_types=[
+            'comm_open',
+            'comm_close',
             'comm_msg',
             'comm_info_request',
             'kernel_info_request',
@@ -66,7 +68,7 @@ def _load_jupyter_server_extension(server_app):
             'shutdown_request'
         ]
     )
-    web_app.settings['voila_kernel_manager'] = kernel_mapping_manager
+    web_app.settings['voila_kernel_manager'] = kernel_manager
 
     host_pattern = '.*$'
     base_url = url_path_join(web_app.settings['base_url'])
@@ -76,13 +78,13 @@ def _load_jupyter_server_extension(server_app):
     }
 
     handlers = [
+        (r'/voila', VoilaTreeHandler, tree_handler_conf),
+        (r'/voila/tree' + path_regex, VoilaTreeHandler, tree_handler_conf),
         (r'/voila/render/(.*)', VoilaHandler, {
             'config': server_app.config,
             'template_paths': template_paths,
             'voila_configuration': voila_configuration
         }),
-        (r'/voila', VoilaTreeHandler, tree_handler_conf),
-        (r'/voila/tree' + path_regex, VoilaTreeHandler, tree_handler_conf),
         (r'/voila/static/(.*)', MultiStaticFileHandler, {'paths': static_paths}),
         (
             r'/voila/files/(.*)',
