@@ -4,7 +4,7 @@ import pytest
 
 @pytest.fixture
 def voila_args_extra():
-    return ['--template=test_template']
+    return ['--template=test_template', '--VoilaExecutor.timeout=240']
 
 
 async def test_template(http_server_client, base_url):

@@ -19,7 +19,7 @@ def voila_config():
 
 @pytest.fixture
 def voila_args_extra():
-    return []
+    return ['--VoilaExecutor.timeout=240']
 
 
 @pytest.fixture

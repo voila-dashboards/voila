@@ -11,7 +11,7 @@ def cpp_file_url(base_url):
 
 @pytest.fixture
 def voila_args_extra():
-    return ['--VoilaConfiguration.extension_language_mapping={".xcpp": "C++11"}']
+    return ['--VoilaConfiguration.extension_language_mapping={".xcpp": "C++11"}', '--VoilaExecutor.timeout=240']
 
 
 @pytest.fixture
