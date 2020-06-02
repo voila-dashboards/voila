@@ -46,7 +46,7 @@ var voila_process = function(cell_index, cell_count) {
     Therefore it is important to have the cell loop in the template.
     The issue for Jinja is: https://github.com/pallets/jinja/issues/1044
     #}
-    {%- for cell in cell_generator(nb) -%}
+    {%- for cell in cell_generator(nb, kernel_id) -%}
       {% set cellloop = loop %}
       {%- block any_cell scoped -%}
       <script>

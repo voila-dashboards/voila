@@ -129,7 +129,7 @@ class VoilaHandler(JupyterHandler):
         # see the updated variable (it seems to be local to our block)
         nb.cells = result.cells
 
-    async def _jinja_cell_generator(self, nb):
+    async def _jinja_cell_generator(self, nb, kernel_id):
         """Generator that will execute a single notebook cell at a time"""
         nb, resources = ClearOutputPreprocessor().preprocess(nb, {'metadata': {'path': self.cwd}})
 
