@@ -27,7 +27,7 @@ from tornado.httputil import split_host_and_port
 from ._version import __version__
 from .execute import VoilaExecutor, strip_code_cell_warnings
 from .exporter import VoilaExporter
-
+from .paths import collect_template_paths
 
 class VoilaHandler(JupyterHandler):
 
@@ -234,6 +234,10 @@ class VoilaHandler(JupyterHandler):
 
         In case the kernel is not found, we search for a matching kernel based on the language.
         """
+        if 'voila' in notebook.metadata:
+            tplname = notebook.metadata['voila'].get('template')
+            if tplname:
+                self.nbconvert_template_paths = collect_template_paths(['voila', 'nbconvert'], tplname) + self.nbconvert_template_paths
 
         # Fetch kernel name from the notebook metadata
         if 'kernelspec' not in notebook.metadata:
