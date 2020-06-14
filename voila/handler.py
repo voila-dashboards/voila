@@ -20,7 +20,7 @@ from nbconvert.preprocessors import ClearOutputPreprocessor
 
 from .execute import VoilaExecutor
 from .exporter import VoilaExporter
-
+from .paths import collect_template_paths
 
 class VoilaHandler(JupyterHandler):
 
@@ -183,6 +183,10 @@ class VoilaHandler(JupyterHandler):
 
         In case the kernel is not found, we search for a matching kernel based on the language.
         """
+        if 'voila' in notebook.metadata:
+            tplname = notebook.metadata['voila'].get('template')
+            if tplname:
+                self.nbconvert_template_paths = collect_template_paths(['voila', 'nbconvert'], tplname) + self.nbconvert_template_paths
 
         # Fetch kernel name from the notebook metadata
         if 'kernelspec' not in notebook.metadata:
