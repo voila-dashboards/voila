@@ -22,6 +22,7 @@ from .execute import VoilaExecutor
 from .exporter import VoilaExporter
 from .paths import collect_template_paths
 
+
 class VoilaHandler(JupyterHandler):
 
     def initialize(self, **kwargs):
