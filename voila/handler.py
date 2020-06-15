@@ -117,25 +117,8 @@ class VoilaHandler(JupyterHandler):
 
     async def _jinja_kernel_start(self):
         assert not self.kernel_started, "kernel was already started"
-        kernel_id = await self.kernel_manager.start_kernel(kernel_name=self.notebook.metadata.kernelspec.name, path=self.cwd)
-        km = self.kernel_manager.get_kernel(kernel_id)
-        # When Voila is launched as an app, its kernel manager's type is AsyncMappingKernelManager, and thus
-        # its kernel client's type is AsyncKernelClient.
-        # But this has to be explicitly configured when launched as a server extension, with e.g.:
-        # --ServerApp.kernel_manager_class=jupyter_server.services.kernels.kernelmanager.AsyncMappingKernelManager
-        # If it's not done, the kernel manager might not be async, which is not a big deal, but we want the kernel
-        # client to be async, so we explicitly configure it for this particular case:
-        km.client_class = 'jupyter_client.asynchronous.AsyncKernelClient'
-        self.executor = VoilaExecutor(self.notebook, km=km, config=self.traitlet_config)
-        self.executor.kc = km.client()
-        self.executor.kc.start_channels()
-        try:
-            await self.executor.kc.wait_for_ready(timeout=self.executor.startup_timeout)
-        except RuntimeError:
-            self.executor.kc.stop_channels()
-            self.executor.km.shutdown_kernel()
-            raise
-        self.executor.kc.allow_stdin = False
+        self.executor = VoilaExecutor(self.notebook, km=self.kernel_manager, config=self.traitlet_config)
+        kc, kernel_id = await self.executor.async_start_new_kernel_client(kernel_name=self.notebook.metadata.kernelspec.name, path=self.cwd)
         self.kernel_started = True
         return kernel_id
 
