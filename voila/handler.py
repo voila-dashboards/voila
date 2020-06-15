@@ -237,7 +237,7 @@ class VoilaHandler(JupyterHandler):
         if 'voila' in notebook.metadata:
             tplname = notebook.metadata['voila'].get('template')
             if tplname:
-                self.nbconvert_template_paths = collect_template_paths(['voila', 'nbconvert'], tplname) + self.nbconvert_template_paths
+                self.template_paths = collect_template_paths(['voila', 'nbconvert'], tplname) + self.template_paths
 
         # Fetch kernel name from the notebook metadata
         if 'kernelspec' not in notebook.metadata:
