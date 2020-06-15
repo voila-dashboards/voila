@@ -29,6 +29,7 @@ from .execute import VoilaExecutor, strip_code_cell_warnings
 from .exporter import VoilaExporter
 from .paths import collect_template_paths
 
+
 class VoilaHandler(JupyterHandler):
 
     def initialize(self, **kwargs):
