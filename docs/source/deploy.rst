@@ -35,7 +35,7 @@ Setup an example project
    We omit xleaflet and xeus-cling because these require extra work that is
    beyond the scope of this guide.
 
-   .. code:: txt
+   .. code:: text
 
        bqplot
        ipympl
@@ -111,20 +111,20 @@ High level instructions, specific to voila can be found below:
 2. Add a file named runtime.txt to the project directory with the following
    content:
 
-   .. code:: txt
+   .. code:: text
 
        python-3.7.3
 
 3. Add a file named Procfile to the project directory with the
    following content if you want to show all notebooks:
 
-   ::
+   .. code:: text
 
        web: voila —-port=$PORT --no-browser
 
    Or the following if you only want to show one notebook:
 
-   ::
+   .. code:: text
 
        web: voila —-port=$PORT —-no-browser your_notebook.ipynb
 
@@ -370,7 +370,8 @@ Sharing Voilà applications with ngrok
 `ngrok <https://ngrok.com>`__ is a useful tool to expose local servers to the public internet over secure tunnels.
 It can be used to share Voilà applications served by a local instance of Voilà.
 
-The main use case for using Voilà with ngrok is to quickly share a notebook as an interactive application with
+The main use case for using Voilà with ngrok is to quickly share a notebook as an interactive application without 
+having to deploy to external hosting.
 
 .. warning::
 
