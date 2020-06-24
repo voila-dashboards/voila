@@ -61,7 +61,6 @@ from .static_file_handler import MultiStaticFileHandler, WhiteListFileHandler
 from .configuration import VoilaConfiguration
 from .execute import VoilaExecutor
 from .exporter import VoilaExporter
-from .csspreprocessor import VoilaCSSPreprocessor
 
 ioloop.install()
 _kernel_id_regex = r"(?P<kernel_id>\w+-\w+-\w+-\w+-\w+)"
@@ -130,8 +129,7 @@ class Voila(Application):
     classes = [
         VoilaConfiguration,
         VoilaExecutor,
-        VoilaExporter,
-        VoilaCSSPreprocessor
+        VoilaExporter
     ]
     connection_dir_root = Unicode(
         config=True,
