@@ -98,7 +98,7 @@ class VoilaExporter(HTMLExporter):
                 'no_prompt': self.exclude_input_prompt and self.exclude_output_prompt,
                 }
 
-        async for output in self.template.generate_async(nb=nb_copy, resources=resources, **extra_context):
+        async for output in self.template.generate_async(nb=nb_copy, resources=resources, **extra_context, static_url=self.static_url):
             yield (output, resources)
 
     @property
@@ -110,8 +110,20 @@ class VoilaExporter(HTMLExporter):
             env.add_extension('jinja2.ext.do')
         return env
 
+    def get_template_paths(self):
+        return self.template_path
+
+    def static_url(self, path):
+        """Mimics tornado.web.RequestHandler.static_url"""
+        settings = {
+            'static_url_prefix': f'{self.base_url}voila/templates/',
+            'static_path': None  # not used in TemplateStaticFileHandler.get_absolute_path
+        }
+        return TemplateStaticFileHandler.make_static_url(settings, f'{self.template_name}/static/{path}')
+
     def _init_resources(self, resources):
         def make_url(path):
+            # similar to static_url, but does not assume the static prefix
             settings = {
                 'static_url_prefix': f'{self.base_url}voila/templates/',
                 'static_path': None  # not used in TemplateStaticFileHandler.get_absolute_path
