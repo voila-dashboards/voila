@@ -58,21 +58,12 @@ class VoilaExporter(HTMLExporter):
     @property
     def default_config(self):
         c = Config({
-            'CSSHTMLHeaderPreprocessor': {
-                'enabled': False
-            },
             'VoilaExporter': {
                 'markdown_renderer_class': 'voila.exporter.VoilaMarkdownRenderer'
             }
         })
         c.merge(super(VoilaExporter, self).default_config)
         return c
-
-    # Instead, we use the VoilaCSSPreprocessor.
-
-    @traitlets.default('preprocessors')
-    def _default_preprocessors(self):
-        return ['voila.csspreprocessor.VoilaCSSPreprocessor']
 
     # Overriding the default template file.
 

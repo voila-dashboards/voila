@@ -230,14 +230,10 @@ setup_args = {
         ]
     },
     'install_requires': [
-        'async_generator',
         'jupyter_server>=0.3.0,<0.4.0',
         'jupyter_client>=6.1.3,<7',
         'nbclient>=0.4.0,<0.5',
-        'nbconvert==6.0.0a3',
-        'jupyterlab_pygments>=0.1.0,<0.2',
-        'pygments>=2.4.1,<3'  # Explicitly requiring pygments which is a second-order dependency.
-                              # An older versions is generally installed already and is otherwise not updated by pip.
+        'nbconvert==6.0.0a3'
     ],
     'extras_require': {
         'test': [
