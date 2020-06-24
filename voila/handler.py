@@ -91,11 +91,17 @@ class VoilaHandler(JupyterHandler):
             self.template_paths = collect_template_paths(['voila', 'nbconvert'], template_override)
         template_name = template_override or self.voila_configuration.template
 
+        theme = self.voila_configuration.theme
+        if 'voila' in notebook.metadata and self.voila_configuration.allow_theme_override in ['YES', 'NOTEBOOK']:
+            theme = notebook.metadata['voila'].get('theme', theme)
+        if self.voila_configuration.allow_theme_override == 'YES':
+            theme = self.get_argument("voila-theme", theme)
+
         # render notebook to html
         resources = {
             'base_url': self.base_url,
             'nbextensions': nbextensions,
-            'theme': self.voila_configuration.theme,
+            'theme': theme,
             'template': template_name,
             'metadata': {
                 'name': notebook_name
@@ -116,7 +122,7 @@ class VoilaHandler(JupyterHandler):
             template_name=template_name,
             config=self.traitlet_config,
             contents_manager=self.contents_manager,  # for the image inlining
-            theme=self.voila_configuration.theme,  # we now have the theme in two places
+            theme=theme,  # we now have the theme in two places
             base_url=self.base_url,
         )
         if self.voila_configuration.strip_sources:

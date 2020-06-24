@@ -16,6 +16,9 @@ class VoilaConfiguration(traitlets.config.Configurable):
     allow_template_override = Enum(['YES', 'NOTEBOOK', 'NO'], 'YES', help='''
     Allow overriding the template (YES), or not (NO), or only from the notebook metadata.
     ''').tag(config=True)
+    allow_theme_override = Enum(['YES', 'NOTEBOOK', 'NO'], 'YES', help='''
+    Allow overriding the theme (YES), or not (NO), or only from the notebook metadata.
+    ''').tag(config=True)
     template = Unicode(
         'lab',
         config=True,
