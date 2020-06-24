@@ -22,6 +22,8 @@ from nbconvert.filters.highlight import Highlight2HTML
 
 from jupyter_server.services.contents.manager import ContentsManager
 
+from .static_file_handler import TemplateStaticFileHandler
+
 
 class VoilaMarkdownRenderer(IPythonRenderer):
     """Custom markdown renderer that inlines images"""
@@ -109,17 +111,23 @@ class VoilaExporter(HTMLExporter):
         return env
 
     def _init_resources(self, resources):
+        def make_url(path):
+            settings = {
+                'static_url_prefix': f'{self.base_url}voila/templates/',
+                'static_path': None  # not used in TemplateStaticFileHandler.get_absolute_path
+            }
+            return TemplateStaticFileHandler.make_static_url(settings, f'{self.template_name}/{path}')
+
         def include_css(name):
-            code = """<link rel="stylesheet" type="text/css" href="%svoila/%s">""" % (self.base_url, name)
+            code = f'<link rel="stylesheet" type="text/css" href="{make_url(name)}">'
             return jinja2.Markup(code)
 
         def include_js(name):
-            code = """<script src="%svoila/%s"></script>""" % (self.base_url, name)
+            code = f'<script src="{make_url(name)}">'
             return jinja2.Markup(code)
 
         def include_url(name):
-            url = "%svoila/%s" % (self.base_url, name)
-            return jinja2.Markup(url)
+            return jinja2.Markup(make_url(name))
         resources = super(VoilaExporter, self)._init_resources(resources)
         resources['include_css'] = include_css
         resources['include_js'] = include_js

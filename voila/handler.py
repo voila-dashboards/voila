@@ -81,11 +81,22 @@ class VoilaHandler(JupyterHandler):
         self.kernel_env['SERVER_PORT'] = str(port) if port else ''
         self.kernel_env['SERVER_NAME'] = host
 
+        # we can override the template via notebook metadata or a query parameter
+        template_override = None
+        if 'voila' in notebook.metadata and self.voila_configuration.allow_template_override in ['YES', 'NOTEBOOK']:
+            template_override = notebook.metadata['voila'].get('template')
+        if self.voila_configuration.allow_template_override == 'YES':
+            template_override = self.get_argument("voila-template", template_override)
+        if template_override:
+            self.template_paths = collect_template_paths(['voila', 'nbconvert'], template_override)
+        template_name = template_override or self.voila_configuration.template
+
         # render notebook to html
         resources = {
             'base_url': self.base_url,
             'nbextensions': nbextensions,
             'theme': self.voila_configuration.theme,
+            'template': template_name,
             'metadata': {
                 'name': notebook_name
             }
@@ -102,6 +113,7 @@ class VoilaHandler(JupyterHandler):
 
         self.exporter = VoilaExporter(
             template_paths=self.template_paths,
+            template_name=template_name,
             config=self.traitlet_config,
             contents_manager=self.contents_manager,  # for the image inlining
             theme=self.voila_configuration.theme,  # we now have the theme in two places
@@ -235,10 +247,6 @@ class VoilaHandler(JupyterHandler):
 
         In case the kernel is not found, we search for a matching kernel based on the language.
         """
-        if 'voila' in notebook.metadata:
-            tplname = notebook.metadata['voila'].get('template')
-            if tplname:
-                self.template_paths = collect_template_paths(['voila', 'nbconvert'], tplname) + self.template_paths
 
         # Fetch kernel name from the notebook metadata
         if 'kernelspec' not in notebook.metadata:

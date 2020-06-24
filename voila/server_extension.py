@@ -18,7 +18,7 @@ from jupyter_server.base.handlers import path_regex, FileFindHandler
 from .paths import ROOT, collect_template_paths, collect_static_paths, jupyter_path
 from .handler import VoilaHandler
 from .treehandler import VoilaTreeHandler
-from .static_file_handler import MultiStaticFileHandler, WhiteListFileHandler
+from .static_file_handler import MultiStaticFileHandler, TemplateStaticFileHandler, WhiteListFileHandler
 from .configuration import VoilaConfiguration
 from .utils import get_server_root_dir
 
@@ -65,6 +65,7 @@ def _load_jupyter_server_extension(server_app):
         }),
         (url_path_join(base_url, '/voila'), VoilaTreeHandler, tree_handler_conf),
         (url_path_join(base_url, '/voila/tree' + path_regex), VoilaTreeHandler, tree_handler_conf),
+        (url_path_join(base_url, '/voila/templates/(.*)'), TemplateStaticFileHandler),
         (url_path_join(base_url, '/voila/static/(.*)'), MultiStaticFileHandler, {'paths': static_paths}),
         (
             url_path_join(base_url, r'/voila/files/(.*)'),

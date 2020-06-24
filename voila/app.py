@@ -57,7 +57,7 @@ from .paths import ROOT, STATIC_ROOT, collect_template_paths, collect_static_pat
 from .handler import VoilaHandler
 from .treehandler import VoilaTreeHandler
 from ._version import __version__
-from .static_file_handler import MultiStaticFileHandler, WhiteListFileHandler
+from .static_file_handler import MultiStaticFileHandler, TemplateStaticFileHandler, WhiteListFileHandler
 from .configuration import VoilaConfiguration
 from .execute import VoilaExecutor
 from .exporter import VoilaExporter
@@ -427,13 +427,17 @@ class Voila(Application):
             (url_path_join(self.server_url, r'/api/kernels/%s' % _kernel_id_regex), KernelHandler),
             (url_path_join(self.server_url, r'/api/kernels/%s/channels' % _kernel_id_regex), ZMQChannelsHandler),
             (
+                url_path_join(self.server_url, r'/voila/templates/(.*)'),
+                TemplateStaticFileHandler
+            ),
+            (
                 url_path_join(self.server_url, r'/voila/static/(.*)'),
                 MultiStaticFileHandler,
                 {
                     'paths': self.static_paths,
                     'default_filename': 'index.html'
-                }
-            )
+                },
+            ),
         ])
 
         # Serving notebook extensions

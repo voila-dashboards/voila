@@ -8,11 +8,14 @@
 #############################################################################
 
 import traitlets.config
-from traitlets import Unicode, Bool, Dict, List, Int
+from traitlets import Unicode, Bool, Dict, List, Int, Enum
 
 
 class VoilaConfiguration(traitlets.config.Configurable):
     """Common configuration options between the server extension and the application."""
+    allow_template_override = Enum(['YES', 'NOTEBOOK', 'NO'], 'YES', help='''
+    Allow overriding the template (YES), or not (NO), or only from the notebook metadata.
+    ''').tag(config=True)
     template = Unicode(
         'lab',
         config=True,
