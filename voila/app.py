@@ -361,7 +361,7 @@ class Voila(Application):
             raise ValueError(f'Notebook not found: {self.notebook_path}')
 
     def _handle_signal_stop(self, sig, frame):
-        self.log.info(f'Handle signal {sig}.')
+        self.log.info('Handle signal %s.' % sig)
         self.ioloop.add_callback_from_signal(self.ioloop.stop)
 
     def start(self):
@@ -369,8 +369,8 @@ class Voila(Application):
             prefix='voila_',
             dir=self.connection_dir_root
         )
-        self.log.info(f'Storing connection files in {self.connection_dir}.')
-        self.log.info(f'Serving static files from {self.static_root}.')
+        self.log.info('Storing connection files in %s.' % self.connection_dir)
+        self.log.info('Serving static files from %s.' % self.static_root)
 
         self.kernel_spec_manager = KernelSpecManager(
             parent=self
@@ -475,7 +475,7 @@ class Voila(Application):
                 }
             ))
         else:
-            self.log.debug(f'serving directory: {self.root_dir!r})
+            self.log.debug('serving directory: %r', self.root_dir)
             handlers.extend([
                 (self.server_url, VoilaTreeHandler, tree_handler_conf),
                 (url_path_join(self.server_url, r'/voila/tree' + path_regex),
@@ -547,7 +547,7 @@ class Voila(Application):
         try:
             browser = webbrowser.get(self.browser or None)
         except webbrowser.Error as e:
-            self.log.warning(_(f'No web browser found: {e}.')
+            self.log.warning(_('No web browser found: %s.') % e)
             browser = None
 
         if not browser:
