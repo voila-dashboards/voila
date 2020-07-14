@@ -339,17 +339,6 @@ class Voila(Application):
 
     def setup_template_dirs(self):
         if self.voila_configuration.template:
-<<<<<<< HEAD
-            collect_template_paths(
-                self.nbconvert_template_paths,
-                self.static_paths,
-                self.template_paths,
-                self.voila_configuration.template)
-        self.log.debug(f'using template: {self.voila_configuration.template}')
-        self.log.debug(f'nbconvert template paths:\n\t{"\n\t".join(self.nbconvert_template_paths)}')
-        self.log.debug(f'template paths:\n\t{"\n\t".join(self.template_paths)}')
-        self.log.debug(f'static paths:\n\t{"\n\t".join(self.static_paths)}')
-=======
             template_name = self.voila_configuration.template
             self.template_paths = collect_template_paths(['voila', 'nbconvert'], template_name, prune=True)
             self.static_paths = collect_static_paths(['voila', 'nbconvert'], template_name)
@@ -368,7 +357,6 @@ class Voila(Application):
         self.log.debug('using template: %s', self.voila_configuration.template)
         self.log.debug('template paths:\n\t%s', '\n\t'.join(self.template_paths))
         self.log.debug('static paths:\n\t%s', '\n\t'.join(self.static_paths))
->>>>>>> upstream/master
         if self.notebook_path and not os.path.exists(self.notebook_path):
             raise ValueError(f'Notebook not found: {self.notebook_path}')
 
@@ -520,10 +508,6 @@ class Voila(Application):
             yield max(1, port + random.randint(-2*n, 2*n))
 
     def listen(self):
-<<<<<<< HEAD
-        self.app.listen(self.port)
-        self.log.info(f'Voila is running at:\n{self.display_url}')
-=======
         for port in self.random_ports(self.port, self.port_retries+1):
             try:
                 self.app.listen(port)
@@ -547,7 +531,6 @@ class Voila(Application):
             self.log.critical(_('ERROR: the voila server could not be started because '
                               'no available port could be found.'))
             self.exit(1)
->>>>>>> upstream/master
 
         if self.open_browser:
             self.launch_browser()
