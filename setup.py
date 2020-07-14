@@ -43,7 +43,7 @@ def js_first(command, strict=False):
                 if strict or missing:
                     log.warn('rebuilding js and css failed')
                     if missing:
-                        log.error(f'missing files: {missing}')
+                        log.error('missing files: %s' % missing)
                     raise e
                 else:
                     log.warn('rebuilding js and css failed (not a problem)')
