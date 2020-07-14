@@ -1,4 +1,8 @@
-.wy-nav-content{
+.wy-nav-content {
     max-width: 1000px;
     margin: auto;
+}
+
+.wy-nav-content img {
+    margin: 5px auto 25px;
 }

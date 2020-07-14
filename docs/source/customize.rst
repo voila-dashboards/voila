@@ -121,7 +121,9 @@ Next, we'll copy over the base template files for Voilà, which we'll modify::
     cp -r path/to/env/share/jupyter/voila/templates/default/nbconvert_templates ./
     cp -r path/to/env/share/jupyter/voila/templates/default/templates ./
 
-We should now have a folder structure like this::
+We should now have a folder structure like this:
+
+.. code-block:: bash
 
     tree .
     ├── nbconvert_templates
