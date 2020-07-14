@@ -108,7 +108,7 @@ An example custom template
 To show how to create your own custom template, let's create our own nbconvert template.
 We'll have two goals:
 
-1. Add an ``<h1>>`` header displaying "Our awesome template" to the Voilà dashboard.
+1. Add an ``<h1>`` header displaying "Our awesome template" to the Voilà dashboard.
 2. Add a custom 404.html page that displays an image.
 
 First, we'll create a folder in ``~/.local/share/jupyter/voila/templates`` called ``mytemplate``::
