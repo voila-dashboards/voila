@@ -20,6 +20,7 @@ __pycache__
 *.swp
 *.map
 .idea/
+.vscode/
 Read the Docs
 config.rst
 
@@ -28,11 +29,8 @@ config.rst
 
 package-lock.json
 
-share/jupyter/voila/templates/nbconvert/static/index.css
-share/jupyter/voila/templates/nbconvert/static/theme-light.css
-share/jupyter/voila/templates/nbconvert/static/theme-dark.css
-share/jupyter/voila/templates/default/static/*voila.js
-share/jupyter/voila/templates/default/static/*[woff|woff2|eot|svg]
+share/jupyter/voila/templates/base/static/*voila.js
+share/jupyter/voila/templates/base/static/*[woff|woff2|eot|svg]
 
 js/lib/
 

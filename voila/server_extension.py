@@ -13,10 +13,9 @@ import gettext
 from jinja2 import Environment, FileSystemLoader
 
 from jupyter_server.utils import url_path_join
-from jupyter_server.base.handlers import path_regex
-from jupyter_server.base.handlers import FileFindHandler
+from jupyter_server.base.handlers import path_regex, FileFindHandler
 
-from .paths import ROOT, STATIC_ROOT, collect_template_paths, jupyter_path
+from .paths import ROOT, collect_template_paths, collect_static_paths, jupyter_path
 from .handler import VoilaHandler
 from .treehandler import VoilaTreeHandler
 from .static_file_handler import MultiStaticFileHandler, WhiteListFileHandler
@@ -24,21 +23,26 @@ from .configuration import VoilaConfiguration
 from .utils import get_server_root_dir
 
 
-def load_jupyter_server_extension(server_app):
-    web_app = server_app.web_app
+def _jupyter_server_extension_paths():
+    """
+    Returns a list of dictionaries with metadata describing
+    where to find the `_load_jupyter_server_extension` function.
+    """
+    return [
+        {
+            "module": "voila.server_extension"
+        }
+    ]
 
-    nbconvert_template_paths = []
-    static_paths = [STATIC_ROOT]
-    template_paths = []
+
+def _load_jupyter_server_extension(server_app):
+    web_app = server_app.web_app
 
     # common configuration options between the server extension and the application
     voila_configuration = VoilaConfiguration(parent=server_app)
-    collect_template_paths(
-        nbconvert_template_paths,
-        static_paths,
-        template_paths,
-        voila_configuration.template
-    )
+    template_name = voila_configuration.template
+    template_paths = collect_template_paths(['voila', 'nbconvert'], template_name)
+    static_paths = collect_static_paths(['voila', 'nbconvert'], template_name)
 
     jenv_opt = {"autoescape": True}
     env = Environment(loader=FileSystemLoader(template_paths), extensions=['jinja2.ext.i18n'], **jenv_opt)
@@ -56,7 +60,7 @@ def load_jupyter_server_extension(server_app):
     web_app.add_handlers(host_pattern, [
         (url_path_join(base_url, '/voila/render/(.*)'), VoilaHandler, {
             'config': server_app.config,
-            'nbconvert_template_paths': nbconvert_template_paths,
+            'template_paths': template_paths,
             'voila_configuration': voila_configuration
         }),
         (url_path_join(base_url, '/voila'), VoilaTreeHandler, tree_handler_conf),
@@ -93,3 +97,7 @@ def load_jupyter_server_extension(server_app):
                 },
             )
         ])
+
+
+# For backward compatibility
+load_jupyter_server_extension = _load_jupyter_server_extension

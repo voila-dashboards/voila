@@ -1,106 +1,182 @@
 import {
-  MainAreaWidget,
   IFrame,
   ToolbarButton,
-  ReactWidget
+  ReactWidget,
+  IWidgetTracker
 } from "@jupyterlab/apputils";
-import { DocumentRegistry } from "@jupyterlab/docregistry";
+
+import {
+  ABCWidgetFactory,
+  DocumentRegistry,
+  DocumentWidget
+} from "@jupyterlab/docregistry";
+
 import { INotebookModel } from "@jupyterlab/notebook";
+
+import { Token } from "@lumino/coreutils";
+
+import { Signal } from "@lumino/signaling";
 
 import * as React from "react";
 
+/**
+ * A class that tracks Voila Preview widgets.
+ */
+export interface IVoilaPreviewTracker extends IWidgetTracker<VoilaPreview> {}
+
+/**
+ * The Voila Preview tracker token.
+ */
+export const IVoilaPreviewTracker = new Token<IVoilaPreviewTracker>(
+  "@jupyter-voila/jupyterlab-preview:IVoilaPreviewTracker"
+);
+
+/**
+ * The class name for a Voila preview icon.
+ */
 export const VOILA_ICON_CLASS = "jp-MaterialIcon jp-VoilaIcon";
 
-export namespace VoilaPreview {
-  export interface IOptions extends MainAreaWidget.IOptionsOptionalContent {
-    url: string;
-    label: string;
-    context: DocumentRegistry.IContext<INotebookModel>;
-    renderOnSave: boolean;
-  }
-}
-
-export class VoilaPreview extends MainAreaWidget<IFrame> {
+/**
+ * A DocumentWidget that shows a Voila preview in an IFrame.
+ */
+export class VoilaPreview extends DocumentWidget<IFrame, INotebookModel> {
+  /**
+   * Instantiate a new VoilaPreview.
+   * @param options The VoilaPreview instantiation options.
+   */
   constructor(options: VoilaPreview.IOptions) {
     super({
       ...options,
       content: new IFrame({ sandbox: ["allow-same-origin", "allow-scripts"] })
     });
 
-    let { url, label, context, renderOnSave } = options;
+    const { getVoilaUrl, context, renderOnSave } = options;
 
-    this.content.url = url;
-    this.content.title.label = label;
+    this.content.url = getVoilaUrl(context.path);
     this.content.title.icon = VOILA_ICON_CLASS;
-    this.content.id = `voila-${++Private.count}`;
+
+    this.renderOnSave = renderOnSave;
+
+    context.pathChanged.connect(() => {
+      this.content.url = getVoilaUrl(context.path);
+    });
 
     const reloadButton = new ToolbarButton({
-      iconClassName: "jp-RefreshIcon",
-      onClick: this.reload,
-      tooltip: "Reload Preview"
+      iconClass: "jp-RefreshIcon",
+      tooltip: "Reload Preview",
+      onClick: () => {
+        this.reload();
+      }
     });
 
     const renderOnSaveCheckbox = ReactWidget.create(
-      <label>
+      <label className="jp-VoilaPreview-renderOnSave">
         <input
           style={{ verticalAlign: "middle" }}
           name="renderOnSave"
           type="checkbox"
           defaultChecked={renderOnSave}
           onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-            this.renderOnSave = event.target.checked;
+            this._renderOnSave = event.target.checked;
           }}
         />
         Render on Save
       </label>
     );
-    renderOnSaveCheckbox.addClass("jp-VoilaPreview-renderOnSave");
 
     this.toolbar.addItem("reload", reloadButton);
-    this.toolbar.addItem("renderOnSave", renderOnSaveCheckbox);
 
-    this.renderOnSave = renderOnSave;
-
-    this._context = context;
-    this._context.ready.then(() => {
-      if (this.isDisposed) {
-        return;
-      }
-      this._context.fileChanged.connect(this.onFileChanged, this);
-    });
+    if (context) {
+      this.toolbar.addItem("renderOnSave", renderOnSaveCheckbox);
+      void context.ready.then(() => {
+        context.fileChanged.connect(() => {
+          if (this.renderOnSave) {
+            this.reload();
+          }
+        });
+      });
+    }
   }
 
+  /**
+   * Dispose the preview widget.
+   */
   dispose() {
-    this._context.fileChanged.disconnect(this.onFileChanged, this);
+    if (this.isDisposed) {
+      return;
+    }
     super.dispose();
+    Signal.clearData(this);
   }
 
-  reload = () => {
+  /**
+   * Reload the preview.
+   */
+  reload() {
     const iframe = this.content.node.querySelector("iframe")!;
     if (iframe.contentWindow) {
       iframe.contentWindow.location.reload();
     }
-  };
+  }
 
+  /**
+   * Get whether the preview reloads when the context is saved.
+   */
   get renderOnSave(): boolean {
     return this._renderOnSave;
   }
 
+  /**
+   * Set whether the preview reloads when the context is saved.
+   */
   set renderOnSave(renderOnSave: boolean) {
     this._renderOnSave = renderOnSave;
   }
 
-  private onFileChanged(): void {
-    if (!this.renderOnSave) {
-      return;
-    }
-    this.reload();
-  }
-
-  private _context: DocumentRegistry.IContext<INotebookModel>;
   private _renderOnSave: boolean;
 }
 
-namespace Private {
-  export let count = 0;
+/**
+ * A namespace for VoilaPreview statics.
+ */
+export namespace VoilaPreview {
+  /**
+   * Instantiation options for `VoilaPreview`.
+   */
+  export interface IOptions
+    extends DocumentWidget.IOptionsOptionalContent<IFrame, INotebookModel> {
+    /**
+     * The Voila URL function.
+     */
+    getVoilaUrl: (path: string) => string;
+
+    /**
+     * Whether to reload the preview on context saved.
+     */
+    renderOnSave?: boolean;
+  }
+}
+
+export class VoilaPreviewFactory extends ABCWidgetFactory<
+  VoilaPreview,
+  INotebookModel
+> {
+  defaultRenderOnSave: boolean = false;
+
+  constructor(
+    private getVoilaUrl: (path: string) => string,
+    options: DocumentRegistry.IWidgetFactoryOptions<VoilaPreview>
+  ) {
+    super(options);
+  }
+
+  protected createNewWidget(
+    context: DocumentRegistry.IContext<INotebookModel>
+  ): VoilaPreview {
+    return new VoilaPreview({
+      context,
+      getVoilaUrl: this.getVoilaUrl,
+      renderOnSave: this.defaultRenderOnSave
+    });
+  }
 }

@@ -1,5 +1,3 @@
-from __future__ import print_function
-
 from setuptools import setup, find_packages, Command
 from setuptools.command.sdist import sdist
 from setuptools.command.build_py import build_py
@@ -7,17 +5,12 @@ from setuptools.command.develop import develop
 from setuptools.command.egg_info import egg_info
 from setuptools.command.bdist_egg import bdist_egg
 
-from io import BytesIO
 from subprocess import check_call, CalledProcessError
 
 import os
 import shlex
 import sys
-
-try:
-    from urllib.request import urlopen
-except ImportError:
-    from urllib import urlopen
+import shutil
 
 from distutils import log
 
@@ -68,64 +61,8 @@ def update_package_data(distribution):
     build_py.finalize_options()
 
 
-# TODO: remove this function once we drop Python2, see:
-#  https://github.com/QuantStack/voila/pull/322
-# `shutils.which` function copied verbatim from the Python-3.3 source.
-def which(cmd, mode=os.F_OK | os.X_OK, path=None):
-    """Given a command, mode, and a PATH string, return the path which
-    conforms to the given mode on the PATH, or None if there is no such
-    file.
-    `mode` defaults to os.F_OK | os.X_OK. `path` defaults to the result
-    of os.environ.get("PATH"), or can be overridden with a custom search
-    path.
-    """
-
-    # Check that a given file can be accessed with the correct mode.
-    # Additionally check that `file` is not a directory, as on Windows
-    # directories pass the os.access check.
-    def _access_check(fn, mode):
-        return (os.path.exists(fn) and os.access(fn, mode) and
-                not os.path.isdir(fn))
-
-    # Short circuit. If we're given a full path which matches the mode
-    # and it exists, we're done here.
-    if _access_check(cmd, mode):
-        return cmd
-
-    path = (path or os.environ.get("PATH", os.defpath)).split(os.pathsep)
-
-    if sys.platform == "win32":
-        # The current directory takes precedence on Windows.
-        if os.curdir not in path:
-            path.insert(0, os.curdir)
-
-        # PATHEXT is necessary to check on Windows.
-        pathext = os.environ.get("PATHEXT", "").split(os.pathsep)
-        # See if the given file matches any of the expected path extensions.
-        # This will allow us to short circuit when given "python.exe".
-        matches = [cmd for ext in pathext if cmd.lower().endswith(ext.lower())]
-        # If it does match, only test that one, otherwise we have to try
-        # others.
-        files = [cmd] if matches else [cmd + ext.lower() for ext in pathext]
-    else:
-        # On other platforms you don't have things like PATHEXT to tell you
-        # what file suffixes are executable, so just pass on cmd as-is.
-        files = [cmd]
-
-    seen = set()
-    for dir in path:
-        dir = os.path.normcase(dir)
-        if dir not in seen:
-            seen.add(dir)
-            for thefile in files:
-                name = os.path.join(dir, thefile)
-                if _access_check(name, mode):
-                    return name
-    return None
-
-
 # TODO: remove this function once we can depend on jupyter_packing, see:
-#  https://github.com/QuantStack/voila/pull/322
+#  https://github.com/voila-dashboards/voila/pull/322
 # `run` function copied from jupyter_packaging under the following license:
 # -------------------------------------------------------------------------
 #
@@ -164,7 +101,7 @@ def run(cmd, **kwargs):
     kwargs.setdefault('shell', os.name == 'nt')
     if not isinstance(cmd, (list, tuple)):
         cmd = shlex.split(cmd)
-    cmd_path = which(cmd[0])
+    cmd_path = shutil.which(cmd[0])
     if not cmd_path:
         sys.exit(f"Aborting. Could not find cmd ({cmd[0]}) in path. "
                  "If command is not expected to be in user's path, "
@@ -180,7 +117,7 @@ class NPM(Command):
 
     node_modules = os.path.join(node_root, 'node_modules')
 
-    template_root = os.path.join(here, 'share', 'jupyter', 'voila', 'templates', 'default', 'static')
+    template_root = os.path.join(here, 'share', 'jupyter', 'voila', 'templates', 'base', 'static')
     targets = [
         os.path.join(template_root, 'voila.js')
     ]
@@ -234,87 +171,6 @@ class NPM(Command):
         update_package_data(self.distribution)
 
 
-jupyterlab_css_version = '0.1.0'
-css_url = f"https://unpkg.com/@jupyterlab/nbconvert-css@{jupyterlab_css_version}/style/index.css"
-
-theme_light_version = '0.19.1'
-theme_light_url = f"https://unpkg.com/@jupyterlab/theme-light-extension@{theme_light_version}s/static/embed.css"
-
-theme_dark_version = '0.19.1'
-theme_dark_url = f"https://unpkg.com/@jupyterlab/theme-dark-extension@{theme_dark_version}/static/embed.css"
-
-
-class FetchCSS(Command):
-    description = "Fetch Notebook CSS from CDN"
-    user_options = []
-
-    def initialize_options(self):
-        pass
-
-    def finalize_options(self):
-        pass
-
-    def _download(self, url):
-        try:
-            return urlopen(url).read()
-        except Exception as e:
-            if 'ssl' in str(e).lower():
-                try:
-                    import pycurl  # noqa
-                except ImportError:
-                    print("Failed, try again after installing PycURL with `pip install pycurl` to avoid outdated SSL.", file=sys.stderr)
-                    raise e
-                else:
-                    print("Failed, trying again with PycURL to avoid outdated SSL.", file=sys.stderr)
-                    return self._download_pycurl(url)
-            raise e
-
-    def _download_pycurl(self, url):
-        """Download CSS with pycurl, in case of old SSL (e.g. Python < 2.7.9)."""
-        import pycurl
-        c = pycurl.Curl()
-        c.setopt(c.URL, url)
-        buf = BytesIO()
-        c.setopt(c.WRITEDATA, buf)
-        c.perform()
-        return buf.getvalue()
-
-    def run(self):
-        css_dest = os.path.join('share', 'jupyter', 'voila', 'templates', 'default', 'static', 'index.css')
-        theme_light_dest = os.path.join('share', 'jupyter', 'voila', 'templates', 'default', 'static', 'theme-light.css')
-        theme_dark_dest = os.path.join('share', 'jupyter', 'voila', 'templates', 'default', 'static', 'theme-dark.css')
-
-        try:
-            css = self._download(css_url)
-            theme_light = self._download(theme_light_url)
-            theme_dark = self._download(theme_dark_url)
-        except Exception:
-            if os.path.exists(css_dest) and os.path.exists(theme_light_dest) and os.path.exists(theme_dark_dest):
-                print("Already have CSS, moving on.")
-            else:
-                raise OSError("Need Notebook CSS to proceed.")
-            return
-
-        try:
-            os.mkdir(os.path.join('share', 'jupyter', 'voila', 'templates', 'default', 'static'))
-        except OSError:  # Use FileExistsError from python 3.3 onward.
-            pass
-        with open(css_dest, 'wb+') as f:
-            f.write(css)
-        with open(theme_light_dest, 'wb+') as f:
-            f.write(theme_light)
-        with open(theme_dark_dest, 'wb+') as f:
-            f.write(theme_dark)
-
-
-def css_first(command):
-    class CSSFirst(command):
-        def run(self):
-            self.distribution.run_command('css')
-            return command.run(self)
-    return CSSFirst
-
-
 class BdistEggDisabled(bdist_egg):
     """Disabled version of bdist_egg
 
@@ -326,12 +182,11 @@ class BdistEggDisabled(bdist_egg):
 
 
 cmdclass = {
-    'css': FetchCSS,
     'jsdeps': NPM,
-    'build_py': css_first(js_first(build_py)),
-    'egg_info': css_first(js_first(egg_info)),
-    'sdist': css_first(js_first(sdist, strict=True)),
-    'develop': css_first(develop),
+    'build_py': js_first(build_py),
+    'egg_info': js_first(egg_info),
+    'sdist': js_first(sdist, strict=True),
+    'develop': develop,
     'bdist_egg': bdist_egg if 'bdist_egg' in sys.argv else BdistEggDisabled
 }
 
@@ -375,22 +230,23 @@ setup_args = {
         ]
     },
     'install_requires': [
-        'jupyter_server>=0.1.0,<0.2.0',
-        'nbconvert>=5.6.0,<6',
-        'jupyterlab_pygments>=0.1.0,<0.2',
-        'pygments>=2.4.1,<3'  # Explicitly requiring pygments which is a second-order dependency.
-                              # An older versions is generally installed already and is otherwise not updated by pip.
+        'jupyter_server>=0.3.0,<0.4.0',
+        'jupyter_client>=6.1.3,<7',
+        'nbclient>=0.4.0,<0.5',
+        'nbconvert==6.0.0a4'
     ],
     'extras_require': {
         'test': [
             'mock',
-            'pytest<4',
-            'pytest-tornado',
-            'matplotlib'
+            'pytest',
+            'pytest-tornasync',
+            'matplotlib',
+            'ipywidgets'
         ]
     },
-    'author': 'QuantStack',
-    'author_email': 'info@quantstack.net',
+    'url': 'https://github.com/voila-dashboards/voila',
+    'author': 'Voila Development team',
+    'author_email': 'jupyter@googlegroups.com',
     'keywords': [
         'ipython',
         'jupyter',

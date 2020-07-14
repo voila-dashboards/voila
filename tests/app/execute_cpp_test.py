@@ -11,7 +11,7 @@ def cpp_file_url(base_url):
 
 @pytest.fixture
 def voila_args_extra():
-    return ['--VoilaConfiguration.extension_language_mapping={".xcpp": "C++11"}']
+    return ['--VoilaConfiguration.extension_language_mapping={".xcpp": "C++11"}', '--VoilaExecutor.timeout=240']
 
 
 @pytest.fixture
@@ -20,8 +20,7 @@ def voila_args(notebook_directory, voila_args_extra):
 
 
 @pytest.mark.skipif(not TEST_XEUS_CLING, reason='opt in to avoid having to install xeus-cling')
-@pytest.mark.gen_test
-def test_non_existing_kernel(http_client, cpp_file_url):
-    response = yield http_client.fetch(cpp_file_url)
+async def test_non_existing_kernel(http_server_client, cpp_file_url):
+    response = await http_server_client.fetch(cpp_file_url)
     assert response.code == 200
     assert 'Hello voila, from c++' in response.body.decode('utf-8')

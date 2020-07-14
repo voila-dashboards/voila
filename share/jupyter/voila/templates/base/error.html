@@ -1,0 +1,10 @@
+{% extends "page.html" %}
+
+{% block body %}
+  <div>
+    <h1>{{ status_code }}: {{ status_message }}</h1>
+
+    {% block error_detail %}
+    {% endblock %}
+  </div>
+{% endblock %}

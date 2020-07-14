@@ -1,4 +1,4 @@
-# Making a new release of voila
+# Making a new release of Voilà
 
 ## Getting a clean environment
 
@@ -19,11 +19,11 @@ git clean -fdx
 
 Make sure the `dist/` folder is empty.
 
-1. Update [voila/_version.py](./voila/_version.py) and [environment.yml](./environment.yml) with the new version number (see and [example diff](https://github.com/QuantStack/voila/commit/5c6fd8dd3ea71412ae9c20c25248453d22a3b60a))
+1. Update [voila/_version.py](./voila/_version.py) and [environment.yml](./environment.yml) with the new version number (see and [example diff](https://github.com/voila-dashboards/voila/commit/5c6fd8dd3ea71412ae9c20c25248453d22a3b60a))
 2. `python setup.py sdist bdist_wheel`
 3. Double check the size of the bundles in the `dist/` folder
 4. Run the tests
-   * (pip install ".[test]" && cd tests/test_template && pip install . && cd .. && py.test)
+   * (pip install "dist/voila-X.Y.Z-py3-none-any.whl[test]" && cd tests/test_template && pip install . && cd .. && py.test)
 5. `export TWINE_USERNAME=mypypi_username`
 6. `twine upload dist/*`
 
@@ -47,4 +47,23 @@ git tag x.y.z
 git checkout stable
 git reset --hard master
 git push origin master stable x.y.z
+```
+
+# Making a new release of @jupyter-voila/jupyterlab-preview
+
+## Releasing on npm
+
+1. Update [packages/jupyterlab-voila/package.json](./packages/jupyterlab-voila/package.json) with the new version number
+2. `cd ./packages/jupyterlab-voila`
+3. `npm login`
+4. `npm publish`
+
+## Committing
+
+Commit and push the changes, where `x.y.z` denotes the new version:
+
+```bash
+git add ./packages/jupyterlab-voila/package.json
+git commit -m "Release @jupyter-voila/jupyterlab-preview x.y.z"
+git push origin master
 ```

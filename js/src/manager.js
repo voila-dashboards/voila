@@ -13,15 +13,42 @@ import { output } from '@jupyter-widgets/jupyterlab-manager';
 
 import * as base from '@jupyter-widgets/base';
 import * as controls from '@jupyter-widgets/controls';
+
+import * as Application from '@jupyterlab/application';
+import * as AppUtils from '@jupyterlab/apputils';
+import * as CoreUtils from '@jupyterlab/coreutils';
+import * as DocRegistry from '@jupyterlab/docregistry';
+import * as OutputArea from '@jupyterlab/outputarea';
+
 import * as PhosphorWidget from '@phosphor/widgets';
+import * as PhosphorSignaling from '@phosphor/signaling';
+import * as PhosphorVirtualdom from '@phosphor/virtualdom';
+import * as PhosphorAlgorithm from '@phosphor/algorithm';
+import * as PhosphorCommands from '@phosphor/commands';
+import * as PhosphorDomutils from '@phosphor/domutils';
+
+import { MessageLoop } from '@phosphor/messaging';
 
 import { requireLoader } from './loader';
+import { batchRateMap } from './utils';
 
 if (typeof window !== "undefined" && typeof window.define !== "undefined") {
     window.define("@jupyter-widgets/base", base);
     window.define("@jupyter-widgets/controls", controls);
     window.define("@jupyter-widgets/output", output);
+
+    window.define("@jupyterlab/application", Application);
+    window.define("@jupyterlab/apputils", AppUtils);
+    window.define("@jupyterlab/coreutils", CoreUtils);
+    window.define("@jupyterlab/docregistry", DocRegistry);
+    window.define("@jupyterlab/outputarea", OutputArea);
+
     window.define("@phosphor/widgets", PhosphorWidget);
+    window.define("@phosphor/signaling", PhosphorSignaling);
+    window.define("@phosphor/virtualdom", PhosphorVirtualdom);
+    window.define("@phosphor/algorithm", PhosphorAlgorithm);
+    window.define("@phosphor/commands", PhosphorCommands);
+    window.define("@phosphor/domutils", PhosphorDomutils);
 }
 
 const WIDGET_MIMETYPE = 'application/vnd.jupyter.widget-view+json';
@@ -68,6 +95,12 @@ export class WidgetManager extends JupyterLabManager {
     display_view(msg, view, options) {
         if (options.el) {
             PhosphorWidget.Widget.attach(view.pWidget, options.el);
+        }
+        if (view.el) {
+            view.el.setAttribute('data-voila-jupyter-widget', '');
+            view.el.addEventListener('jupyterWidgetResize', function(e) {
+                MessageLoop.postMessage(view.pWidget, PhosphorWidget.Widget.ResizeMessage.UnknownSize);
+            });
         }
         return view.pWidget;
     }
@@ -117,10 +150,17 @@ export class WidgetManager extends JupyterLabManager {
     async _build_models() {
         const comm_ids = await this._get_comm_info();
         const models = {};
-        const widgets_info = await Promise.all(Object.keys(comm_ids).map(async (comm_id) => {
+        /**
+         * For the classical notebook, iopub_msg_rate_limit=1000 (default)
+         * And for zmq, we are affected by the default ZMQ_SNDHWM setting of 1000
+         * See https://github.com/voila-dashboards/voila/issues/534 for a discussion
+         */
+        const maxMessagesInTransit = 100; // really save limit compared to ZMQ_SNDHWM
+        const maxMessagesPerSecond = 500; // lets be on the save side, in case the kernel sends more msg'es
+        const widgets_info = await Promise.all(batchRateMap(Object.keys(comm_ids), async (comm_id) => {
             const comm = await this._create_comm(this.comm_target_name, comm_id);
             return this._update_comm(comm);
-        }));
+        }, {room: maxMessagesInTransit, rate: maxMessagesPerSecond}));
 
         await Promise.all(widgets_info.map(async (widget_info) => {
             const state = widget_info.msg.content.data.state;

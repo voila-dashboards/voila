@@ -14,7 +14,7 @@ from traitlets import Unicode, Bool, Dict, List
 class VoilaConfiguration(traitlets.config.Configurable):
     """Common configuration options between the server extension and the application."""
     template = Unicode(
-        'default',
+        'lab',
         config=True,
         allow_none=True,
         help=(

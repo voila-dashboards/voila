@@ -26,7 +26,7 @@ html_theme_options = {
 }
 
 def setup(app):
-    app.add_stylesheet("main_stylesheet.css")
+    app.add_css_file("main_stylesheet.css")
 
 extensions = [
     'sphinx.ext.autodoc',
@@ -38,13 +38,13 @@ html_static_path = ['_static']
 source_suffix = '.rst'
 master_doc = 'index'
 project = 'voila'
-copyright = u'2018, The Voila Development Team'
+copyright = u'2020, The Voila Development Team'
 author = u'The Voila Development Team'
 version = '.'.join(map(str, _release['version_info'][:2]))
 release = _release['__version__']
 language = None
 
-html_logo = 'quantstack-white.svg'
+html_logo = 'jupyter-white.svg'
 
 exclude_patterns = []
 highlight_language = 'python'
