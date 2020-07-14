@@ -82,7 +82,7 @@ class VoilaHandler(JupyterHandler):
             recursive_update(resources, extra_resources)
 
         self.exporter = VoilaExporter(
-            template_path=self.template_paths,
+            template_paths=self.template_paths,
             config=self.traitlet_config,
             contents_manager=self.contents_manager,  # for the image inlining
             theme=self.voila_configuration.theme,  # we now have the theme in two places

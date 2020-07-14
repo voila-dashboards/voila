@@ -105,9 +105,6 @@ class VoilaExporter(HTMLExporter):
             env.add_extension('jinja2.ext.do')
         return env
 
-    def get_template_paths(self):
-        return self.template_path
-
     def _init_resources(self, resources):
         def include_css(name):
             code = """<link rel="stylesheet" type="text/css" href="%svoila/%s">""" % (self.base_url, name)
