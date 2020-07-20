@@ -14,6 +14,18 @@ Customizing Voilà
 There are many ways you can customize Voilà to control the look and feel
 of the dashboards you create.
 
+Changing the theme
+==================
+
+By default, Voilà uses the **light** theme, but you can set the theme to **dark** by passing
+the following option:
+
+.. code-block:: bash
+
+   voila <path-to-notebook> --theme=dark
+
+Currently, Voilà supports only **light** and **dark** themes.
+
 Controlling the nbconvert template
 ==================================
 
