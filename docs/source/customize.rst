@@ -61,7 +61,7 @@ In order to create your own template, first familiarize yourself with **Jinja**,
 **HTML**, and **CSS**. Each of these is used in creating custom templates.
 For more information, see
 `the nbconvert templates documentation <https://nbconvert.readthedocs.io/en/latest/customizing.html#Custom-Templates>`_.
-For one example, `check out the nbconvert basic HTML template <https://github.com/jupyter/nbconvert/blob/master/nbconvert/templates/html/basic.tpl>`_.
+For one example, `check out the nbconvert basic HTML template <https://github.com/jupyter/nbconvert/blob/master/share/jupyter/nbconvert/templates/classic/base.html.j2>`_.
 
 Where are Voilà templates located?
 ----------------------------------
