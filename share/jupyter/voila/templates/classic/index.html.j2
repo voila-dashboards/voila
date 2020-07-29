@@ -1,6 +1,9 @@
 {%- extends 'nbconvert/templates/classic/index.html.j2' -%}
 
 {%- block html_head_js -%}
+{%- block html_head_js_jquery -%}
+<script src="{{ resources.jquery_url }}"></script>
+{%- endblock html_head_js_jquery -%}
 {%- endblock html_head_js -%}
 
 {%- block html_head_css -%}

@@ -6,6 +6,7 @@
 #                                                                           #
 # The full license is in the file LICENSE, distributed with this software.  #
 #############################################################################
+
 import logging
 
 from nbconvert.preprocessors import ClearOutputPreprocessor
@@ -52,9 +53,6 @@ class VoilaExecutor(NotebookClient):
             'instruction given to user to continue execution on timeout'
         )
     )
-
-    def __init__(self, nb, km=None, **kwargs):
-        super(VoilaExecutor, self).__init__(nb, km=km, **kwargs)
 
     def execute(self, nb, resources, km=None):
         try:

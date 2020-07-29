@@ -17,6 +17,7 @@ from jupyter_server.utils import url_path_join
 import nbformat
 
 from nbconvert.preprocessors import ClearOutputPreprocessor
+from nbclient.util import ensure_async
 
 from .execute import VoilaExecutor
 from .exporter import VoilaExporter
@@ -117,13 +118,28 @@ class VoilaHandler(JupyterHandler):
 
     async def _jinja_kernel_start(self):
         assert not self.kernel_started, "kernel was already started"
-        self.executor = VoilaExecutor(self.notebook, km=self.kernel_manager, config=self.traitlet_config)
-        kc, kernel_id = await self.executor.async_start_new_kernel_client(kernel_name=self.notebook.metadata.kernelspec.name, path=self.cwd)
+
+        kernel_id = await ensure_async(self.kernel_manager.start_kernel(
+           kernel_name=self.notebook.metadata.kernelspec.name,
+           path=self.cwd
+        ))
+        km = self.kernel_manager.get_kernel(kernel_id)
+
+        self.executor = VoilaExecutor(self.notebook, km=km, config=self.traitlet_config)
+
+        ###
+        # start kernel client
+        self.executor.kc = km.client()
+        await ensure_async(self.executor.kc.start_channels())
+        await ensure_async(self.executor.kc.wait_for_ready(timeout=self.executor.startup_timeout))
+        self.executor.kc.allow_stdin = False
+        ###
+
         self.kernel_started = True
         return kernel_id
 
     async def _jinja_notebook_execute(self, nb, kernel_id):
-        result = await self.executor.async_execute()
+        result = await self.executor.async_execute(cleanup_kc=False)
         # we modify the notebook in place, since the nb variable cannot be reassigned it seems in jinja2
         # e.g. if we do {% with nb = notebook_execute(nb, kernel_id) %}, the base template/blocks will not
         # see the updated variable (it seems to be local to our block)
