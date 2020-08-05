@@ -31,11 +31,6 @@ def strip_code_cell_warnings(cell):
     return cell
 
 
-def should_strip_error(config):
-    """Return True if errors should be stripped from the Notebook, False otherwise, depending on the current config."""
-    return 'Voila' not in config or 'log_level' not in config['Voila'] or config['Voila']['log_level'] != logging.DEBUG
-
-
 class VoilaExecutor(NotebookClient):
     """Execute, but respect the output widget behaviour"""
     cell_error_instruction = Unicode(
@@ -62,7 +57,7 @@ class VoilaExecutor(NotebookClient):
             result = (nb, resources)
 
         # Strip errors and traceback if not in debug mode
-        if should_strip_error(self.config):
+        if self.should_strip_error():
             self.strip_notebook_errors(nb)
 
         return result
@@ -79,11 +74,15 @@ class VoilaExecutor(NotebookClient):
             result = cell
 
         # Strip errors and traceback if not in debug mode
-        if should_strip_error(self.config):
+        if self.should_strip_error():
             strip_code_cell_warnings(cell)
             self.strip_code_cell_errors(cell)
 
         return result
+
+    def should_strip_error(self):
+        """Return True if errors should be stripped from the Notebook, False otherwise, depending on the current config."""
+        return 'Voila' not in self.config or 'log_level' not in self.config['Voila'] or self.config['Voila']['log_level'] != logging.DEBUG
 
     def strip_notebook_errors(self, nb):
         """Strip error messages and traceback from a Notebook."""
