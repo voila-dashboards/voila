@@ -151,17 +151,45 @@ class VoilaHandler(JupyterHandler):
     async def _jinja_cell_generator(self, nb, kernel_id):
         """Generator that will execute a single notebook cell at a time"""
         nb, resources = ClearOutputPreprocessor().preprocess(nb, {'metadata': {'path': self.cwd}})
-
-        stop_execution = False
-        for cell_idx, cell in enumerate(nb.cells):
-            if stop_execution:
-                break
+        for cell_idx, input_cell in enumerate(nb.cells):
             try:
-                res = await self.executor.execute_cell(cell, None, cell_idx, store_history=False)
+                task = asyncio.ensure_future(self.executor.execute_cell(input_cell, None, cell_idx, store_history=False))
+                while True:
+                    done, pending = await asyncio.wait({task}, timeout=self.voila_configuration.http_keep_alive_timeout)
+                    if pending:
+                        # If not done within the timeout, we send a heartbeat
+                        # this is fundamentally to avoid browser/proxy read-timeouts, but
+                        # can be used in a template to give feedback to a user
+                        self.write("<script>voila_heartbeat()</script>\n")
+                        self.flush()
+                        continue
+                    output_cell = await task
+                    break
             except TimeoutError:
-                res = cell
-                stop_execution = True
-            yield res
+                output_cell = input_cell
+                break
+            except Exception as e:
+                self.log.exception('Error at server while executing cell: %r', input_cell)
+                output_cell = nbformat.v4.new_code_cell()
+                if self.executor.should_strip_error():
+                    output_cell.outputs = [
+                        {
+                            "output_type": "stream",
+                            "name": "stderr",
+                            "text": "An exception occurred at the server (not the notebook). {}".format(self.executor.cell_error_instruction),
+                        }
+                    ]
+                else:
+                    output_cell.outputs = [
+                        {
+                            'output_type': 'error',
+                            'ename': type(e).__name__,
+                            'evalue': str(e),
+                            'traceback': traceback.format_exception(*sys.exc_info()),
+                        }
+                    ]
+            finally:
+                yield output_cell
 
     async def load_notebook(self, path):
         model = self.contents_manager.get(path=path)
