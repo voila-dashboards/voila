@@ -1,7 +1,9 @@
 {%- extends 'nbconvert/templates/lab/index.html.j2' -%}
 {% import "spinner.macro.html.j2" as spinner %}
+{% import "log.macro.html.j2" as log %}
 
 {%- block html_head_js -%}
+{{ log.js() }}
 {%- endblock html_head_js -%}
 
 {%- block html_head_css -%}
