@@ -3,7 +3,9 @@
 {% import "log.macro.html.j2" as log %}
 
 {%- block html_head_js -%}
+{%- block html_head_js_logs -%}
 {{ log.js() }}
+{%- endblock html_head_js_logs -%}
 {%- endblock html_head_js -%}
 
 {%- block html_head_css -%}
