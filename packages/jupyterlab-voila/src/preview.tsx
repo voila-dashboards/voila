@@ -27,6 +27,32 @@ export class VoilaPreview extends MainAreaWidget<IFrame> {
       content: new IFrame({ sandbox: ["allow-same-origin", "allow-scripts"] })
     });
 
+    window.onmessage = (event: any) => {
+      //console.log("EVENT: ", event);
+
+      switch (event.data?.level) {
+        case "debug":
+          console.debug(...event.data?.msg);
+          break;
+
+        case "info":
+          console.info(...event.data?.msg);
+          break;
+
+        case "warn":
+          console.warn(...event.data?.msg);
+          break;
+
+        case "error":
+          console.error(...event.data?.msg);
+          break;
+
+        default:
+          console.log(event);
+          break;
+      }
+    };
+
     let { url, label, context, renderOnSave } = options;
 
     this.content.url = url;
