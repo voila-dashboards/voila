@@ -1,5 +1,11 @@
 {%- extends 'base.tpl' -%}
 {% import "spinner.tpl" as spinner %}
+{% import "log.tpl" as log %}
+
+{%- block html_head_js -%}
+{{ log.js() }}
+{{ super() }}
+{%- endblock html_head_js -%}
 
 {# this overrides the default behaviour of directly starting the kernel and executing the notebook #}
 {% block notebook_execute %}
