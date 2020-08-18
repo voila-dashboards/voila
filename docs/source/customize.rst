@@ -275,3 +275,19 @@ The same parameters apply when using Voilà as a server extension:
 There is also the ``MappingKernelManager.cull_busy`` and ``MappingKernelManager.cull_connected`` options to cull busy kernels and kernels with an active connection.
 
 For more information about these options, check out the `Jupyter Server <https://jupyter-server.readthedocs.io/en/latest/config.html#options>`_ documentation.
+
+Hiding output and code cells based on cell tags
+===============================================
+
+Voilà uses `nbconvert <https://github.com/jupyter/nbconvert>`_ under the hood to render the notebooks so we can benefit from some of its advanced functionalities to hide code and output cells based on cell tags.
+
+To hide the cell output for every cell in your notebook that has been tagged (`how to tag <https://jupyter-notebook.readthedocs.io/en/stable/changelog.html#cell-tags>`_) with "hide" in Voilà::
+    
+    voila --TagRemovePreprocessor.remove_all_outputs_tags='{"hide"}' your_notebook.ipynb
+
+To hide both the code cell and the output cell (if any) for every cell that has been tagged with "hide"::
+
+    voila --TagRemovePreprocessor.remove_cell_tags='{"hide"}' your_notebook.ipynb
+
+You can use any tag you want but be sure to use the same tag name in the Voilà command.
+And please note that this functionality will only hide the cells in Voilà but will not prevent them from being executed.
