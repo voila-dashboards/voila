@@ -21,7 +21,9 @@ import nbformat
 
 from nbconvert.preprocessors import ClearOutputPreprocessor
 from nbclient.util import ensure_async
+from tornado.httputil import split_host_and_port
 
+from ._version import __version__
 from .execute import VoilaExecutor
 from .exporter import VoilaExporter
 
@@ -65,6 +67,17 @@ class VoilaHandler(JupyterHandler):
 
         path, basename = os.path.split(notebook_path)
         notebook_name = os.path.splitext(basename)[0]
+
+        # Adding request uri to kernel env
+        self.kernel_env = os.environ.copy()
+        self.kernel_env['SCRIPT_NAME'] = self.request.path
+        self.kernel_env['PATH_INFO'] = ''  # would be /foo/bar if voila.ipynb/foo/bar was supported
+        self.kernel_env['QUERY_STRING'] = str(self.request.query)
+        self.kernel_env['SERVER_SOFTWARE'] = 'voila/{}'.format(__version__)
+        self.kernel_env['SERVER_PROTOCOL'] = str(self.request.version)
+        host, port = split_host_and_port(self.request.host.lower())
+        self.kernel_env['SERVER_PORT'] = str(port) if port else ''
+        self.kernel_env['SERVER_NAME'] = host
 
         # render notebook to html
         resources = {
@@ -124,7 +137,8 @@ class VoilaHandler(JupyterHandler):
 
         kernel_id = await ensure_async(self.kernel_manager.start_kernel(
            kernel_name=nb.metadata.kernelspec.name,
-           path=self.cwd
+           path=self.cwd,
+           env=self.kernel_env,
         ))
         km = self.kernel_manager.get_kernel(kernel_id)
 
