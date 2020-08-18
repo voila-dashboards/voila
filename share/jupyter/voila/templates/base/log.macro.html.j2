@@ -7,22 +7,22 @@
     const _error = console.error;
 
     console.debug = (...args) => {
-        window.top.postMessage({ level: "debug", msg: ["[VOILA]:", ...args] });
+        window.top.postMessage({ level: "debug", msg: ["[Voilà]:", ...args] });
         _debug(...args);
     };
 
     console.info = console.info = (...args) => {
-        window.top.postMessage({ level: "info", msg: ["[VOILA]:", ...args] });
+        window.top.postMessage({ level: "info", msg: ["[Voilà]:", ...args] });
         _info(...args);
     };
 
     console.warn = (...args) => {
-        window.top.postMessage({ level: "warn", msg: ["[VOILA]:", ...args] });
+        window.top.postMessage({ level: "warn", msg: ["[Voilà]:", ...args] });
         _warn(...args);
     };
 
     console.error = (...args) => {
-        window.top.postMessage({ level: "error", msg: ["[VOILA]:", ...args] });
+        window.top.postMessage({ level: "error", msg: ["[Voilà]:", ...args] });
         _error(...args);
     };
     

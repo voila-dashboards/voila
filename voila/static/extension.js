@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018, Voila Contributors
+ * Copyright (c) 2018, Voilà Contributors
  * Copyright (c) 2018, QuantStack
  *
  * Distributed under the terms of the BSD 3-Clause License.
@@ -18,7 +18,7 @@ define(['jquery', 'base/js/namespace'], function($, Jupyter) {
     var load_ipython_extension = function() {
         Jupyter.toolbar.add_buttons_group([{
             id : 'toggle_codecells',
-            label : 'Voila',
+            label : 'Voilà',
             icon : 'fa-desktop',
             callback : open_voila
         }]);

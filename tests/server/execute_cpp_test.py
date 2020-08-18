@@ -23,4 +23,4 @@ def voila_args(notebook_directory, voila_args_extra):
 async def test_non_existing_kernel(http_server_client, cpp_file_url):
     response = await http_server_client.fetch(cpp_file_url)
     assert response.code == 200
-    assert 'Hello voila, from c++' in response.body.decode('utf-8')
+    assert 'Hello Voilà, from c++' in response.body.decode('utf-8')

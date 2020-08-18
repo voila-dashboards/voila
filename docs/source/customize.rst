@@ -1,4 +1,4 @@
-.. Copyright (c) 2018, Voila Contributors
+.. Copyright (c) 2018, Voilà Contributors
    Copyright (c) 2018, QuantStack
 
    Distributed under the terms of the BSD 3-Clause License.
@@ -159,12 +159,12 @@ a Jupyter notebook by using the name of the folder in the ``--template`` paramet
 
 The result should be a Voilà dashboard with your custom modifications made!
 
-Voila template cookiecutter
+Voilà template cookiecutter
 -----------------------------
-There is a Voila template cookiecutter available to give you a running start.
-This cookiecutter contains some docker configuration for live reloading of your template changes to make development easier.
-Please refer to the `cookiecutter repo <https://github.com/voila-dashboards/voila-template-cookiecutter>`_ for more information on how to use the Voila template cookiecutter.
 
+There is a Voilà template cookiecutter available to give you a running start.
+This cookiecutter contains some docker configuration for live reloading of your template changes to make development easier.
+Please refer to the `cookiecutter repo <https://github.com/voila-dashboards/voila-template-cookiecutter>`_ for more information on how to use the Voilà template cookiecutter.
 
 Adding your own static files
 ============================

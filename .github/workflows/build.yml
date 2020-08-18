@@ -31,7 +31,7 @@ jobs:
         architecture: 'x64'
     - name: Install JupyterLab
       run: python -m pip install jupyterlab
-    - name: Install the Voila Preview JupyterLab extension
+    - name: Install the Voilà Preview JupyterLab extension
       run: |
         cd packages/jupyterlab-voila
         jlpm && jlpm run build

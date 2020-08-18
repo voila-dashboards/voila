@@ -1,7 +1,7 @@
 {
   "name": "@jupyter-voila/jupyterlab-preview",
   "version": "1.1.0",
-  "description": "A JupyterLab preview extension for Voila",
+  "description": "A JupyterLab preview extension for Voilà",
   "keywords": [
     "jupyter",
     "jupyterlab",
@@ -12,7 +12,7 @@
     "url": "https://github.com/voila-dashboards/voila/issues"
   },
   "license": "BSD-3-Clause",
-  "author": "Voila contributors",
+  "author": "Voilà contributors",
   "files": [
     "lib/**/*.{d.ts,eot,gif,html,jpg,js,js.map,json,png,svg,woff2,ttf}",
     "style/**/*.{css,eot,gif,html,jpg,json,png,svg,woff2,ttf}",

@@ -46,6 +46,6 @@
     "watch:lib": "babel src --out-dir lib --watch",
     "watch:bundle": "webpack --watch --mode=development"
   },
-  "author": "Voila contributors",
+  "author": "Voilà contributors",
   "license": "BSD-3-Clause"
 }

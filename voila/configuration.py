@@ -1,6 +1,6 @@
 #############################################################################
 # Copyright (c) 2018, QuantStack                                            #
-# Copyright (c) 2018, Voila Contributors                                    #
+# Copyright (c) 2018, Voilà Contributors                                    #
 #                                                                           #
 # Distributed under the terms of the BSD 3-Clause License.                  #
 #                                                                           #
@@ -31,7 +31,7 @@ class VoilaConfiguration(traitlets.config.Configurable):
     ).tag(config=True)
     theme = Unicode('light').tag(config=True)
     strip_sources = Bool(True, help='Strip sources from rendered html').tag(config=True)
-    enable_nbextensions = Bool(False, config=True, help=('Set to True for Voila to load notebook extensions'))
+    enable_nbextensions = Bool(False, config=True, help=('Set to True for Voilà to load notebook extensions'))
 
     file_whitelist = List(
         Unicode(),

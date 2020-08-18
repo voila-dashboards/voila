@@ -26,5 +26,5 @@ async def test_lists_extension(http_server_client, base_url):
     response = await http_server_client.fetch(base_url)
     assert response.code == 200
     html_text = response.body.decode('utf-8')
-    assert 'Hi Voila' in html_text
+    assert 'Hi Voilà' in html_text
     assert 'ipytest/extension.js' in html_text

@@ -1,5 +1,5 @@
 #############################################################################
-# Copyright (c) 2018, Voila Contributors                                    #
+# Copyright (c) 2018, Voilà Contributors                                    #
 # Copyright (c) 2018, QuantStack                                            #
 #                                                                           #
 # Distributed under the terms of the BSD 3-Clause License.                  #
@@ -97,7 +97,7 @@ class Voila(Application):
         8866,
         config=True,
         help=_(
-            'Port of the voila server. Default 8866.'
+            'Port of the Voilà server. Default 8866.'
         )
     )
     autoreload = Bool(
@@ -144,7 +144,7 @@ class Voila(Application):
         '/',
         config=True,
         help=_(
-            'Path for voila API calls. If server_url is unset, this will be \
+            'Path for Voilà API calls. If server_url is unset, this will be \
             used for both the base route of the server and the client. \
             If server_url is set, the server will server the routes prefixed \
             by server_url, while the client will prefix by base_url (this is \
@@ -157,7 +157,7 @@ class Voila(Application):
         config=True,
         allow_none=True,
         help=_(
-            'Path to prefix to voila API handlers. Leave unset to default to base_url'
+            'Path to prefix to Voilà API handlers. Leave unset to default to base_url'
         )
     )
 
@@ -166,7 +166,7 @@ class Voila(Application):
         config=True,
         allow_none=True,
         help=_(
-            'path to notebook to serve with voila'
+            'path to notebook to serve with Voilà'
         )
     )
 
@@ -352,7 +352,7 @@ class Voila(Application):
                     # update the overall config with it, preserving CLI config priority
                     if 'traitlet_configuration' in conf:
                         recursive_update(conf['traitlet_configuration'], self.voila_configuration.config.VoilaConfiguration)
-                        # pass merged config to overall voila config
+                        # pass merged config to overall Voilà config
                         self.voila_configuration.config.VoilaConfiguration = Config(conf['traitlet_configuration'])
         self.log.debug('using template: %s', self.voila_configuration.template)
         self.log.debug('template paths:\n\t%s', '\n\t'.join(self.template_paths))
@@ -512,7 +512,7 @@ class Voila(Application):
             try:
                 self.app.listen(port)
                 self.port = port
-                self.log.info('Voila is running at:\n%s' % self.display_url)
+                self.log.info('Voilà is running at:\n%s' % self.display_url)
             except socket.error as e:
                 if e.errno == errno.EADDRINUSE:
                     self.log.info(_('The port %i is already in use, trying another port.') % port)
@@ -528,7 +528,7 @@ class Voila(Application):
                 break
 
         if not success:
-            self.log.critical(_('ERROR: the voila server could not be started because '
+            self.log.critical(_('ERROR: the Voilà server could not be started because '
                               'no available port could be found.'))
             self.exit(1)
 
