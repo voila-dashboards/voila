@@ -233,7 +233,7 @@ setup_args = {
         'jupyter_server>=0.3.0,<0.4.0',
         'jupyter_client>=6.1.3,<7',
         'nbclient>=0.4.0,<0.5',
-        'nbconvert==6.0.0a4'
+        'nbconvert==6.0.0a6'
     ],
     'extras_require': {
         'test': [
