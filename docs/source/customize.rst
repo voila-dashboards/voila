@@ -279,9 +279,9 @@ For more information about these options, check out the `Jupyter Server <https:/
 Hiding output and code cells based on cell tags
 ===============================================
 
-Voila uses `nbconvert <https://github.com/jupyter/nbconvert>`_ under the hood to render the notebooks so we can benefit from some of its advanced functionalities to hide code and output cells based on cell tags.
+Voilà uses `nbconvert <https://github.com/jupyter/nbconvert>`_ under the hood to render the notebooks so we can benefit from some of its advanced functionalities to hide code and output cells based on cell tags.
 
-To hide the cell output for every cell in your notebook that has been tagged (`how to tag <https://jupyter-notebook.readthedocs.io/en/stable/changelog.html#cell-tags>`_) with "hide" in Voila::
+To hide the cell output for every cell in your notebook that has been tagged (`how to tag <https://jupyter-notebook.readthedocs.io/en/stable/changelog.html#cell-tags>`_) with "hide" in Voilà::
     
     voila --TagRemovePreprocessor.remove_all_outputs_tags='{"hide"}' your_notebook.ipynb
 
@@ -289,6 +289,5 @@ To hide both the code cell and the output cell (if any) for every cell that has 
 
     voila --TagRemovePreprocessor.remove_cell_tags='{"hide"}' your_notebook.ipynb
 
-You can use any tag you want but be sure to use the same tag name in the Voila command.
-And please note that this functionality will only hide the cells in Voila but will not prevent them from being executed.
-
+You can use any tag you want but be sure to use the same tag name in the Voilà command.
+And please note that this functionality will only hide the cells in Voilà but will not prevent them from being executed.
