@@ -55,8 +55,8 @@ class VoilaHandler(JupyterHandler):
         else:
             nbextensions = []
 
-        self.notebook = await self.load_notebook(notebook_path)
-        if not self.notebook:
+        notebook = await self.load_notebook(notebook_path)
+        if not notebook:
             return
         self.cwd = os.path.dirname(notebook_path)
 
@@ -107,7 +107,7 @@ class VoilaHandler(JupyterHandler):
         # Compose reply
         self.set_header('Content-Type', 'text/html')
         # render notebook in snippets, and flush them out to the browser can render progresssively
-        async for html_snippet, resources in self.exporter.generate_from_notebook_node(self.notebook, resources=resources, extra_context=extra_context):
+        async for html_snippet, resources in self.exporter.generate_from_notebook_node(notebook, resources=resources, extra_context=extra_context):
             self.write(html_snippet)
             self.flush()  # we may not want to consider not flusing after each snippet, but add an explicit flush function to the jinja context
             # yield  # give control back to tornado's IO loop, so it can handle static files or other requests
@@ -116,16 +116,16 @@ class VoilaHandler(JupyterHandler):
     def redirect_to_file(self, path):
         self.redirect(url_path_join(self.base_url, 'voila', 'files', path))
 
-    async def _jinja_kernel_start(self):
+    async def _jinja_kernel_start(self, nb):
         assert not self.kernel_started, "kernel was already started"
 
         kernel_id = await ensure_async(self.kernel_manager.start_kernel(
-           kernel_name=self.notebook.metadata.kernelspec.name,
+           kernel_name=nb.metadata.kernelspec.name,
            path=self.cwd
         ))
         km = self.kernel_manager.get_kernel(kernel_id)
 
-        self.executor = VoilaExecutor(self.notebook, km=km, config=self.traitlet_config)
+        self.executor = VoilaExecutor(nb, km=km, config=self.traitlet_config)
 
         ###
         # start kernel client

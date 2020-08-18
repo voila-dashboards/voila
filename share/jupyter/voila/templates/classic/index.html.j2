@@ -25,7 +25,7 @@
     {{ resources.include_css("static/labvariables.css") }}
 
 {% block notebook_execute %}
-    {%- set kernel_id = kernel_start() -%}
+    {%- set kernel_id = kernel_start(nb) -%}
     <script id="jupyter-config-data" type="application/json">
     {
         "baseUrl": "{{resources.base_url}}",
