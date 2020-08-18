@@ -14,7 +14,7 @@ async def test_print(http_server_client, print_notebook_url):
     print(print_notebook_url)
     response = await http_server_client.fetch(print_notebook_url)
     assert response.code == 200
-    assert 'Hi Voila' in response.body.decode('utf-8')
+    assert 'Hi Voilà' in response.body.decode('utf-8')
 
 
 @pytest.fixture
@@ -26,7 +26,7 @@ async def test_print_py(http_server_client, print_notebook_url):
     print(print_notebook_url)
     response = await http_server_client.fetch(print_notebook_url.replace('ipynb', 'py'))
     assert response.code == 200
-    assert 'Hi Voila' in response.body.decode('utf-8')
+    assert 'Hi Voilà' in response.body.decode('utf-8')
 
 
 @pytest.mark.skipif(not TEST_XEUS_CLING, reason='opt in to avoid having to install xeus-cling')
@@ -34,4 +34,4 @@ async def test_print_julia_notebook(http_server_client, print_notebook_url):
     print(print_notebook_url)
     response = await http_server_client.fetch(print_notebook_url.replace('.ipynb', '_cpp.ipynb'))
     assert response.code == 200
-    assert 'Hi Voila, from c++' in response.body.decode('utf-8')
+    assert 'Hi Voilà, from c++' in response.body.decode('utf-8')

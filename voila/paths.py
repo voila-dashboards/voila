@@ -1,5 +1,5 @@
 #############################################################################
-# Copyright (c) 2018, Voila Contributors                                    #
+# Copyright (c) 2018, Voilà Contributors                                    #
 # Copyright (c) 2018, QuantStack                                            #
 #                                                                           #
 # Distributed under the terms of the BSD 3-Clause License.                  #
@@ -34,7 +34,7 @@ def collect_paths(
     app_names, template_name='default', subdir=None, include_root_paths=True, prune=False, root_dirs=None
 ):
     """
-    Voila supports custom templates for rendering notebooks.
+    Voilà supports custom templates for rendering notebooks.
     For a specified template name, `collect_paths` can be used to collects
         - template paths
         - resources paths (by using the subdir arg)

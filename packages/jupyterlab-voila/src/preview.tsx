@@ -20,24 +20,24 @@ import { Signal } from "@lumino/signaling";
 import * as React from "react";
 
 /**
- * A class that tracks Voila Preview widgets.
+ * A class that tracks Voilà Preview widgets.
  */
 export interface IVoilaPreviewTracker extends IWidgetTracker<VoilaPreview> {}
 
 /**
- * The Voila Preview tracker token.
+ * The Voilà Preview tracker token.
  */
 export const IVoilaPreviewTracker = new Token<IVoilaPreviewTracker>(
   "@jupyter-voila/jupyterlab-preview:IVoilaPreviewTracker"
 );
 
 /**
- * The class name for a Voila preview icon.
+ * The class name for a Voilà preview icon.
  */
 export const VOILA_ICON_CLASS = "jp-MaterialIcon jp-VoilaIcon";
 
 /**
- * A DocumentWidget that shows a Voila preview in an IFrame.
+ * A DocumentWidget that shows a Voilà preview in an IFrame.
  */
 export class VoilaPreview extends DocumentWidget<IFrame, INotebookModel> {
   /**
@@ -172,7 +172,7 @@ export namespace VoilaPreview {
   export interface IOptions
     extends DocumentWidget.IOptionsOptionalContent<IFrame, INotebookModel> {
     /**
-     * The Voila URL function.
+     * The Voilà URL function.
      */
     getVoilaUrl: (path: string) => string;
 

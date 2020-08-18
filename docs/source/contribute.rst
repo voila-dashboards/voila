@@ -1,4 +1,4 @@
-.. Copyright (c) 2018, Voila Contributors
+.. Copyright (c) 2018, Voilà Contributors
    Copyright (c) 2018, QuantStack
    
    Distributed under the terms of the BSD 3-Clause License.
@@ -42,7 +42,7 @@ First, you need to fork the project. Then setup your environment:
    npm install
    cd ..
 
-   # install Voila in editable mode
+   # install Voilà in editable mode
    python -m pip install -e .
 
 Run Voilà

@@ -245,7 +245,7 @@ setup_args = {
         ]
     },
     'url': 'https://github.com/voila-dashboards/voila',
-    'author': 'Voila Development team',
+    'author': 'Voilà Development team',
     'author_email': 'jupyter@googlegroups.com',
     'keywords': [
         'ipython',

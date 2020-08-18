@@ -1,4 +1,4 @@
-.. Copyright (c) 2018, Voila Contributors
+.. Copyright (c) 2018, Voilà Contributors
    Copyright (c) 2018, QuantStack
 
    Distributed under the terms of the BSD 3-Clause License.
@@ -104,7 +104,7 @@ automatically shutdown if it is idle.
 
 The general steps for deployment at Heroku can be found
 `here <https://devcenter.heroku.com/articles/getting-started-with-python>`__.
-High level instructions, specific to voila can be found below:
+High level instructions, specific to Voilà can be found below:
 
 1. Follow the steps of the official documentation to install the heroku
    cli and login on your machine.
@@ -202,7 +202,7 @@ High level instructions specific to Voilà can be found below:
 
        gcloud app browse
 
-Running voila on a private server
+Running Voilà on a private server
 =================================
 
 Prerequisites
@@ -277,8 +277,8 @@ Steps
 
         sudo python3 -m pip install -r requirements.txt
 
-8. Create a new systemd service for running voila in ``/usr/lib/systemd/system/voila.service``.
-The service will ensure voila is automatically restarted on startup:
+8. Create a new systemd service for running Voilà in ``/usr/lib/systemd/system/voila.service``.
+The service will ensure Voilà is automatically restarted on startup:
 
     .. code:: text
 
@@ -297,8 +297,8 @@ The service will ensure voila is automatically restarted on startup:
         [Install]
         WantedBy=multi-user.target
 
-In this example voila is started with ``voila --no-browser voila/notebooks/basics.ipynb`` to serve a single notebook.
-You can edit the command to change this behavior and the notebooks voila is serving.
+In this example Voilà is started with ``voila --no-browser voila/notebooks/basics.ipynb`` to serve a single notebook.
+You can edit the command to change this behavior and the notebooks Voilà is serving.
 
 9. Enable and start the ``voila`` service:
 
@@ -308,14 +308,14 @@ You can edit the command to change this behavior and the notebooks voila is serv
         sudo systemctl start voila.service
 
 .. note::
-    To check the logs for voila:
+    To check the logs for Voilà:
 
     .. code:: text
 
         journalctl -u voila.service
 
 
-10. Now go to ``yourdomain.com`` to access the voila application.
+10. Now go to ``yourdomain.com`` to access the Voilà application.
 
 Enable HTTPS with Let's Encrypt
 -------------------------------
@@ -348,7 +348,7 @@ Enable HTTPS with Let's Encrypt
         ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem; # managed by Certbot
         ...
 
-4. Visit https://yourdomain.com to access the voila applications over HTTPS.
+4. Visit https://yourdomain.com to access the Voilà applications over HTTPS.
 
 5. To automatically renew the certificates (they expire after 90 days), open the ``crontab`` file:
 

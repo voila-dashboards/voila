@@ -1,4 +1,4 @@
-.. Copyright (c) 2018, Voila Contributors
+.. Copyright (c) 2018, Voilà Contributors
    Copyright (c) 2018, QuantStack
 
    Distributed under the terms of the BSD 3-Clause License.
@@ -11,7 +11,7 @@
 Installing Voilà
 ================
 
-Voila can be installed with the ``conda`` package manager
+Voilà can be installed with the ``conda`` package manager
 
 .. code-block:: bash
 

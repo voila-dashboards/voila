@@ -1,12 +1,12 @@
 {
   "jupyter.lab.setting-icon-class": "jp-VoilaIcon",
-  "jupyter.lab.setting-icon-label": "Voila Preview",
-  "title": "Voila Preview",
-  "description": "Voila Preview Extension",
+  "jupyter.lab.setting-icon-label": "Voilà Preview",
+  "title": "Voilà Preview",
+  "description": "Voilà Preview Extension",
   "properties": {
     "renderOnSave": {
       "title": "Render Preview on Save",
-      "description": "Render the voila preview automatically after saving the notebook",
+      "description": "Render the Voilà preview automatically after saving the notebook",
       "default": false,
       "type": "boolean"
     }

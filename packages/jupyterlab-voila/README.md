@@ -1,6 +1,6 @@
 # @jupyter-voila/jupyterlab-preview
 
-A JupyterLab preview extension for Voila.
+A JupyterLab preview extension for Voilà.
 
 ## Prerequisites
 

@@ -1,5 +1,5 @@
 /***************************************************************************
-* Copyright (c) 2018, Voila contributors                                   *
+* Copyright (c) 2018, Voilà contributors                                   *
 *                                                                          *
 * Distributed under the terms of the BSD 3-Clause License.                 *
 *                                                                          *

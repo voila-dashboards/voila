@@ -67,7 +67,7 @@ class VoilaRenderButton
   createNew(panel: NotebookPanel): IDisposable {
     const button = new ToolbarButton({
       className: "voilaRender",
-      tooltip: "Render with Voila",
+      tooltip: "Render with Voilà",
       iconClass: VOILA_ICON_CLASS,
       onClick: () => {
         this._commands.execute(CommandIDs.voilaRender);
@@ -97,7 +97,7 @@ const extension: JupyterFrontEndPlugin<IVoilaPreviewTracker> = {
     menu: IMainMenu | null,
     settingRegistry: ISettingRegistry | null
   ) => {
-    // Create a widget tracker for Voila Previews.
+    // Create a widget tracker for Voilà Previews.
     const tracker = new WidgetTracker<VoilaPreview>({
       namespace: "voila-preview"
     });
@@ -173,7 +173,7 @@ const extension: JupyterFrontEndPlugin<IVoilaPreviewTracker> = {
     const { commands, docRegistry } = app;
 
     commands.addCommand(CommandIDs.voilaRender, {
-      label: "Render Notebook with Voila",
+      label: "Render Notebook with Voilà",
       execute: async args => {
         const current = getCurrent(args);
         let context: DocumentRegistry.IContext<INotebookModel>;
@@ -194,7 +194,7 @@ const extension: JupyterFrontEndPlugin<IVoilaPreviewTracker> = {
     });
 
     commands.addCommand(CommandIDs.voilaOpen, {
-      label: "Open with Voila in New Browser Tab",
+      label: "Open with Voilà in New Browser Tab",
       execute: async args => {
         const current = getCurrent(args);
         if (!current) {

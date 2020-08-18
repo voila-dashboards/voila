@@ -1,5 +1,5 @@
 #############################################################################
-# Copyright (c) 2018, Voila Contributors                                    #
+# Copyright (c) 2018, Voilà Contributors                                    #
 # Copyright (c) 2018, QuantStack                                            #
 #                                                                           #
 # Distributed under the terms of the BSD 3-Clause License.                  #
@@ -39,7 +39,7 @@ def should_strip_error(config):
 class VoilaExecutor(NotebookClient):
     """Execute, but respect the output widget behaviour"""
     cell_error_instruction = Unicode(
-        'Please run Voila with --debug to see the error message.',
+        'Please run Voilà with --debug to see the error message.',
         config=True,
         help=(
             'instruction given to user to debug cell errors'
@@ -47,7 +47,7 @@ class VoilaExecutor(NotebookClient):
     )
 
     cell_timeout_instruction = Unicode(
-        'Please run Voila with --VoilaExecutor.interrupt_on_timeout=True to continue executing the rest of the notebook.',
+        'Please run Voilà with --VoilaExecutor.interrupt_on_timeout=True to continue executing the rest of the notebook.',
         config=True,
         help=(
             'instruction given to user to continue execution on timeout'
