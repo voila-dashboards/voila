@@ -1,6 +1,7 @@
 {%- extends 'nbconvert/templates/lab/index.html.j2' -%}
 {% import "spinner.macro.html.j2" as spinner %}
 {% import "log.macro.html.j2" as log %}
+{% from 'voila_setup.macro.html.j2' import voila_setup %}
 
 {%- block html_head_js -%}
 {%- block html_head_js_logs -%}
@@ -82,20 +83,5 @@ var voila_heartbeat = function() {
 {%- endblock body_footer -%}
 
 {% block footer_js %}
-<script
-    src="{{resources.base_url}}voila/static/require.min.js"
-    integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA="
-    crossorigin="anonymous">
-</script>
-<script>
-requirejs.config({ baseUrl: '{{resources.base_url}}voila/', waitSeconds: 30})
-requirejs(
-    [
-        "static/main",
-    {% for ext in resources.nbextensions -%}
-        "{{resources.base_url}}voila/nbextensions/{{ ext }}.js",
-    {% endfor %}
-    ]
-)
-</script>
+{{ voila_setup(resources.base_url, resources.nbextensions) }}
 {% endblock footer_js %}
