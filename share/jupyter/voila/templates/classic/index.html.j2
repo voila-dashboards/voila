@@ -1,5 +1,6 @@
 {%- extends 'nbconvert/templates/classic/index.html.j2' -%}
 {% import "log.macro.html.j2" as log %}
+{% from 'voila_setup.macro.html.j2' import voila_setup %}
 
 {%- block html_head_js -%}
 {%- block html_head_js_logs -%}
@@ -8,23 +9,6 @@
 {%- block html_head_js_jquery -%}
 <script src="{{ resources.jquery_url }}"></script>
 {%- endblock html_head_js_jquery -%}
-{%- endblock html_head_js -%}
-
-{%- block html_head_css -%}
-  <style>
-    /*Hide empty cells*/
-    .jp-mod-noOutputs.jp-mod-noInput {
-      display: none;
-    }
-  </style>
-<link rel="stylesheet" href="https://unpkg.com/font-awesome@4.5.0/css/font-awesome.min.css" type="text/css" />
-{{ super() }}
-{%- endblock html_head_css -%}
-
-{% block jupyter_widgets %}
-    {{ resources.include_css("static/materialcolors.css") }}
-    {{ resources.include_css("static/labvariables.css") }}
-
 {% block notebook_execute %}
     {%- set kernel_id = kernel_start(nb) -%}
     <script id="jupyter-config-data" type="application/json">
@@ -36,7 +20,21 @@
     {# from this point on, nb.cells contains output of the executed cells #}
     {% do notebook_execute(nb, kernel_id) %}
 {%- endblock notebook_execute -%}
-{% endblock jupyter_widgets %}
+
+{%- endblock html_head_js -%}
+
+{%- block html_head_css -%}
+  {{ resources.include_css("static/materialcolors.css") }}
+  {{ resources.include_css("static/labvariables.css") }}
+  <style>
+    /*Hide empty cells*/
+    .jp-mod-noOutputs.jp-mod-noInput {
+      display: none;
+    }
+  </style>
+<link rel="stylesheet" href="https://unpkg.com/font-awesome@4.5.0/css/font-awesome.min.css" type="text/css" />
+{{ super() }}
+{%- endblock html_head_css -%}
 
 {% block body_header %}
 <body data-base-url="{{resources.base_url}}voila/">
@@ -45,21 +43,6 @@
 {% endblock body_header %}
 
 {% block footer_js %}
-<script
-    src="{{resources.base_url}}voila/static/require.min.js"
-    integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA="
-    crossorigin="anonymous">
-</script>
-<script>
-requirejs.config({ baseUrl: '{{resources.base_url}}voila/', waitSeconds: 30})
-requirejs(
-    [
-        "static/main",
-    {% for ext in resources.nbextensions -%}
-        "{{resources.base_url}}voila/nbextensions/{{ ext }}.js",
-    {% endfor %}
-    ]
-)
-</script>
+{{ voila_setup() }}
 {% endblock footer_js %}
 
