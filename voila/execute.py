@@ -69,9 +69,6 @@ class VoilaExecutor(NotebookClient):
             self.log.error(e)
             self.show_code_cell_timeout(cell)
             raise e
-        except CellExecutionError as e:
-            self.log.error(e)
-            result = cell
 
         # Strip errors and traceback if not in debug mode
         if self.should_strip_error():
