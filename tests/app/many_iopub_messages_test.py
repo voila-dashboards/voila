@@ -2,10 +2,12 @@ import os
 import pytest
 import tornado.httpclient
 
+MAX_TIMEOUT_SECONDS = 240
+
 
 @pytest.fixture
 def voila_args_extra():
-    return ['--VoilaExecutor.timeout=180']
+    return [f'--VoilaExecutor.timeout={MAX_TIMEOUT_SECONDS}']
 
 
 @pytest.fixture
@@ -17,7 +19,7 @@ def voila_notebook(notebook_directory):
 def http_client(request, http_server):
     """Get an asynchronous HTTP client.
     """
-    client = tornado.httpclient.AsyncHTTPClient(defaults=dict(request_timeout=200))
+    client = tornado.httpclient.AsyncHTTPClient(defaults=dict(request_timeout=MAX_TIMEOUT_SECONDS+20))
 
     def _close():
         client.close()
