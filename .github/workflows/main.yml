@@ -42,11 +42,6 @@ jobs:
         python -m pip install ".[test]"
         cd tests/test_template; pip install .; cd ../../;
 
-    - name: Flake8
-      shell: bash -l {0}
-      run: |
-        python -m flake8 voila tests setup.py
-
     - name: Run tests
       shell: bash -l {0}
       run: |
@@ -57,3 +52,8 @@ jobs:
         voila tests/notebooks/sleep10seconds.ipynb --port=8878 --VoilaConfiguration.http_keep_alive_timeout=2 &
         sleep 2
         wget --read-timeout=5 --tries=1 http://localhost:8878
+
+    - name: Flake8
+      shell: bash -l {0}
+      run: |
+        python -m flake8 voila tests setup.py
