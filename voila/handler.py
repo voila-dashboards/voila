@@ -84,8 +84,11 @@ class VoilaHandler(JupyterHandler):
         self.exporter = VoilaExporter(
             template_path=self.nbconvert_template_paths,
             config=self.traitlet_config,
-            contents_manager=self.contents_manager  # for the image inlining
         )
+
+        # TODO: pass the contents manager in a cleaner way.
+        self.exporter.contents_manager = self.contents_manager  # for the image inlining
+
         if self.voila_configuration.strip_sources:
             self.exporter.exclude_input = True
             self.exporter.exclude_output_prompt = True
