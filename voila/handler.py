@@ -20,11 +20,12 @@ from jupyter_server.utils import url_path_join
 import nbformat
 
 from nbconvert.preprocessors import ClearOutputPreprocessor
+from nbclient.exceptions import CellExecutionError
 from nbclient.util import ensure_async
 from tornado.httputil import split_host_and_port
 
 from ._version import __version__
-from .execute import VoilaExecutor
+from .execute import VoilaExecutor, strip_code_cell_warnings
 from .exporter import VoilaExporter
 
 
@@ -180,6 +181,12 @@ class VoilaHandler(JupyterHandler):
                     output_cell = await task
                     break
             except TimeoutError:
+                output_cell = input_cell
+                break
+            except CellExecutionError:
+                if self.executor.should_strip_error():
+                    strip_code_cell_warnings(input_cell)
+                    self.executor.strip_code_cell_errors(input_cell)
                 output_cell = input_cell
                 break
             except Exception as e:
