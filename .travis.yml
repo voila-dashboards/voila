@@ -21,7 +21,7 @@ before_install:
   - conda create -q -n test-environment -c conda-forge python=$PYTHON_VERSION jupyterlab_pygments==0.1.0 pytest-cov nodejs flake8 ipywidgets matplotlib xeus-cling
   - source activate test-environment
 install:
-  - pip install --ignore-installed ".[test]"
+  - pip install ".[test]"
   - cd tests/test_template; pip install .; cd ../../;
 script:
   - VOILA_TEST_DEBUG=1 VOILA_TEST_XEUS_CLING=1 py.test tests/ --async-test-timeout=240
