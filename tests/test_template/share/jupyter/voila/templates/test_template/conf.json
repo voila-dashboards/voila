@@ -1,9 +1,17 @@
 {
+  "base_template": "classic",
   "traitlet_configuration": {
     "resources": {
       "test_template": {
         "test_resource": "test resource from config file"
       }
+    }
+  },
+  "preprocessors": {
+    "100-remove-skip-voila-cells": {
+        "type": "nbconvert.preprocessors.tagremove.TagRemovePreprocessor",
+        "remove_cell_tags": ["skip-voila"],
+        "enabled": true
     }
   }
 }
