@@ -7,8 +7,6 @@
 # The full license is in the file LICENSE, distributed with this software.  #
 #############################################################################
 
-from zmq.eventloop import ioloop
-
 import gettext
 import io
 import json
@@ -62,7 +60,6 @@ from .configuration import VoilaConfiguration
 from .execute import VoilaExecutor
 from .exporter import VoilaExporter
 
-ioloop.install()
 _kernel_id_regex = r"(?P<kernel_id>\w+-\w+-\w+-\w+-\w+)"
 
 
