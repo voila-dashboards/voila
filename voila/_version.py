@@ -7,7 +7,7 @@
 # The full license is in the file LICENSE, distributed with this software.  #
 #############################################################################
 
-version_info = (0, 2, 0, 'beta', 0)
+version_info = (0, 2, 0, 'beta', 1)
 
 _specifier_ = {'alpha': 'a', 'beta': 'b', 'candidate': 'rc', 'final': ''}
 
