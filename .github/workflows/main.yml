@@ -18,7 +18,7 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-latest, macos-latest]
-        python-version: [3.6, 3.7, 3.8]
+        python_version: [3.6, 3.7, 3.8]
 
     steps:
     - uses: actions/checkout@v2
@@ -31,7 +31,7 @@ jobs:
 
     - name: Create the conda environment
       shell: bash -l {0}
-      run: mamba install -q python=${{ matrix.python-version }} pip jupyterlab_pygments==0.1.0 pytest-cov nodejs flake8 ipywidgets matplotlib xeus-cling traitlets=4.3.3
+      run: mamba install -q python=${{ matrix.python_version }} pip jupyterlab_pygments==0.1.0 pytest-cov nodejs flake8 ipywidgets matplotlib xeus-cling traitlets=4.3.3
 
     - name: Install dependencies
       shell: bash -l {0}
@@ -42,12 +42,18 @@ jobs:
         python -m pip install ".[test]"
         cd tests/test_template; pip install .; cd ../../;
 
-    - name: Run tests
+    - name: Run tests (with traitlets 5)
+      if: matrix.python_version != '3.6'
+      shell: bash -l {0}
+      run: |
+        pip install "traitlets>=5.0.3,<6"
+        VOILA_TEST_DEBUG=1 VOILA_TEST_XEUS_CLING=1 py.test tests/ --async-test-timeout=240
+
+    - name: Run tests (with traitlets 4)
       shell: bash -l {0}
       run: |
         pip install "traitlets>=4,<5"
         VOILA_TEST_DEBUG=1 VOILA_TEST_XEUS_CLING=1 py.test tests/ --async-test-timeout=240
-        pip install "traitlets>=5.0.3,<6"
         VOILA_TEST_DEBUG=1 VOILA_TEST_XEUS_CLING=1 py.test tests/ --async-test-timeout=240
         voila --help  # Making sure we can run `voila --help`
         # tests if voila sends a 'heartbeat' to avoid proxies from closing an appearently stale connection
