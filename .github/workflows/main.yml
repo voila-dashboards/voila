@@ -45,6 +45,9 @@ jobs:
     - name: Run tests
       shell: bash -l {0}
       run: |
+        pip install "traitlets>=4,<5"
+        VOILA_TEST_DEBUG=1 VOILA_TEST_XEUS_CLING=1 py.test tests/ --async-test-timeout=240
+        pip install "traitlets>=5.0.3,<6"
         VOILA_TEST_DEBUG=1 VOILA_TEST_XEUS_CLING=1 py.test tests/ --async-test-timeout=240
         voila --help  # Making sure we can run `voila --help`
         # tests if voila sends a 'heartbeat' to avoid proxies from closing an appearently stale connection
