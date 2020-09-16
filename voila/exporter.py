@@ -135,7 +135,7 @@ class VoilaExporter(HTMLExporter):
             return jinja2.Markup(code)
 
         def include_js(name):
-            code = f'<script src="{make_url(name)}">'
+            code = f'<script src="{make_url(name)}"></script>'
             return jinja2.Markup(code)
 
         def include_url(name):
