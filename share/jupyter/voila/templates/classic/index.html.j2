@@ -1,6 +1,6 @@
 {%- extends 'nbconvert/templates/classic/index.html.j2' -%}
 {% import "log.macro.html.j2" as log %}
-{% from 'voila_setup.macro.html.j2' import voila_setup %}
+{% from 'voila_setup.macro.html.j2' import voila_setup with context %}
 
 {%- block html_head_js -%}
 {%- block html_head_js_logs -%}
