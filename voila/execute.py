@@ -7,8 +7,6 @@
 # The full license is in the file LICENSE, distributed with this software.  #
 #############################################################################
 
-import logging
-
 from nbconvert.preprocessors import ClearOutputPreprocessor
 from nbclient.exceptions import CellExecutionError
 from nbclient import NotebookClient
@@ -79,7 +77,7 @@ class VoilaExecutor(NotebookClient):
 
     def should_strip_error(self):
         """Return True if errors should be stripped from the Notebook, False otherwise, depending on the current config."""
-        return 'Voila' not in self.config or 'log_level' not in self.config['Voila'] or self.config['Voila']['log_level'] != logging.DEBUG
+        return 'Voila' not in self.config or not self.config['Voila'].get('show_tracebacks', False)
 
     def strip_notebook_errors(self, nb):
         """Strip error messages and traceback from a Notebook."""
