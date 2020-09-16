@@ -108,6 +108,7 @@ contains a collection of Jupyter notebooks that can be rendered using Voilà:
   `ipympl <https://github.com/matplotlib/jupyter-matplotlib>`__ widget.
 * **ipyvolume.ipynb** - uses custom Jupyter widgets such as
   `ipyvolume <https://github.com/maartenbreddels/ipyvolume>`__.
+* **query-strings.ipynb** - uses HTTP query parameters to parametrize a notebook
 * **xleaflet.ipynb** - a notebook that uses C++ kernel and interactive widgets
 
 These examples demonstrate different interactive HTML widgets and can be used as inspiration
