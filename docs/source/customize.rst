@@ -24,7 +24,22 @@ the following option:
 
    voila <path-to-notebook> --theme=dark
 
+
+Or by passing in the query parameter ``voila-theme``, e.g. a URL like ``http://localhost:8867/voila/render/query-strings.ipynb?voila-theme=dark``.
+
+The theme can also set in the notebook metadata, under ``metadata/voila/theme`` by editing the notebook file manually, or using the metadata editor in for instance the classical notebook
+
+.. image:: metadata-theme-classic.png
+   :alt: Edit metadata
+
+System administrators who want to disable changing the theme, can pass ``--VoilaConfiguration.allow_theme_override=NO` or
+``--VoilaConfiguration.allow_theme_override=NOTEBOOK`` to disable changing the theme completely, or only allow it from the notebook metadata.
+
 Currently, Voilà supports only **light** and **dark** themes.
+
+
+.. note::
+   Changing the theme from the notebook metadata may change in the future if this features moves to nbconvert.
 
 Controlling the nbconvert template
 ==================================
@@ -51,6 +66,21 @@ For example, to use the `gridstack <https://github.com/voila-dashboards/voila-gr
 
    voila <path-to-notebook> --template=gridstack
 
+
+Or by passing in the query parameter ``voila-template``, e.g. a URL like ``http://localhost:8867/voila/render/query-strings.ipynb?voila-template=material`` (Note that this requires installing voila-material).
+
+The template can also set in the notebook metadata, under ``metadata/voila/template`` by editing the notebook file manually, or using the metadata editor in for instance the classical notebook
+
+.. image:: metadata-template-classic.png
+   :alt: Edit metadata
+
+System administrators who want to disable changing the theme, can pass ``--VoilaConfiguration.allow_template_override=NO` or
+``--VoilaConfiguration.allow_template_override=NOTEBOOK`` to disable changing the theme completely, or only allow it from the notebook metadata.
+
+.. note::
+   Changing the template from the notebook metadata may change in the future if this features moves to nbconvert.
+
+
 Creating your own template
 ==========================
 
@@ -62,6 +92,13 @@ In order to create your own template, first familiarize yourself with **Jinja**,
 For more information, see
 `the nbconvert templates documentation <https://nbconvert.readthedocs.io/en/latest/customizing.html#Custom-Templates>`_.
 For one example, `check out the nbconvert basic HTML template <https://github.com/jupyter/nbconvert/blob/master/share/jupyter/nbconvert/templates/classic/base.html.j2>`_.
+
+A few example voila/nbconvert template projects are:
+
+* https://github.com/voila-dashboards/voila-gridstack
+* https://github.com/voila-dashboards/voila-material
+* https://github.com/voila-dashboards/voila-vuetify
+
 
 Where are Voilà templates located?
 ----------------------------------
