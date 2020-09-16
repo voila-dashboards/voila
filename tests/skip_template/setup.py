@@ -9,7 +9,7 @@ for (dirpath, dirnames, filenames) in os.walk('share/jupyter/voila/templates'):
 
 
 setup(
-    name='voila_skip_template',
+    name='skip_template',
     version="0.0.1",
     description="Test template for Voilà",
     data_files=data_files,

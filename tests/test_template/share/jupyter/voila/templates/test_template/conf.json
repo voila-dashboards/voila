@@ -1,5 +1,4 @@
 {
-  "base_template": "classic",
   "traitlet_configuration": {
     "resources": {
       "test_template": {
