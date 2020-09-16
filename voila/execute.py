@@ -7,8 +7,6 @@
 # The full license is in the file LICENSE, distributed with this software.  #
 #############################################################################
 
-import logging
-
 from nbconvert.preprocessors import ClearOutputPreprocessor
 from nbclient.exceptions import CellExecutionError
 from nbclient import NotebookClient
