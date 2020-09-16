@@ -1,8 +1,8 @@
 .. Copyright (c) 2018, Voilà Contributors
    Copyright (c) 2018, QuantStack
-   
+
    Distributed under the terms of the BSD 3-Clause License.
-   
+
    The full license is in the file LICENSE, distributed with this software.
 
 .. _contribute:
@@ -91,7 +91,7 @@ For Jupyter Server:
 
 .. code-block:: bash
 
-   jupyter extension enable voila --sys-prefix
+   jupyter server extension enable voila.server_extension --sys-prefix
 
 This makes Voilà available as a server extension: `http://localhost:8888/voila/tree <http://localhost:8888/voila/tree>`_.
 
@@ -132,7 +132,7 @@ To install the JupyterLab extension locally:
 
    jupyter labextension install @jupyter-widgets/jupyterlab-manager
    jupyter labextension install ./packages/jupyterlab-voila
-   
+
    # start in watch mode to pick up changes automatically
    jupyter lab --watch
 
@@ -149,7 +149,7 @@ Enable the Jupyter server extension:
 
 .. code-block:: bash
 
-   jupyter extension enable voila --sys-prefix
+   jupyter server extension enable voila.server_extension --sys-prefix
 
 Running the tests locally also requires the `test_template` to be installed:
 
