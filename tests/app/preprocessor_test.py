@@ -10,7 +10,7 @@ def voila_notebook(notebook_directory):
 
 @pytest.fixture
 def voila_args_extra():
-    return ['--template=test_template']
+    return ['--template=skip_template']
 
 
 async def test_markdown_preprocessor(http_server_client, base_url):
