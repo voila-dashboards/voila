@@ -67,7 +67,6 @@ var voila_heartbeat = function() {
 {%- endblock body_loop -%}
 
 {%- block body_footer -%}
-{{ super() }}
 </div>
 <script type="text/javascript">
   (function() {
@@ -79,7 +78,7 @@ var voila_heartbeat = function() {
     el.style.display = 'unset'
   })();
 </script>
-</body>
+{{ super() }}
 {%- endblock body_footer -%}
 
 {% block footer_js %}
