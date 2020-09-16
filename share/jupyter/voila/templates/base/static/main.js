@@ -7,7 +7,7 @@
 ****************************************************************************/
 
 // NOTE: this file is not transpiled, async/await is the only modern feature we use here
-require(['static/voila'], function(voila) {
+require([window.voila_js_url || 'static/voila'], function(voila) {
     // requirejs doesn't like to be passed an async function, so create one inside
     (async function() {
         var kernel = await voila.connectKernel()

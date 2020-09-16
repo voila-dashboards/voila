@@ -8,7 +8,7 @@ BASE_DIR = os.path.dirname(__file__)
 
 @pytest.fixture
 def voila_args_extra():
-    return ['--template=None', '--VoilaExecutor.timeout=240']
+    return ['--template=test_template', '--VoilaExecutor.timeout=240']
 
 
 @pytest.fixture

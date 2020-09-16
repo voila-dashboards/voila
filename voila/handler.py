@@ -27,6 +27,7 @@ from tornado.httputil import split_host_and_port
 from ._version import __version__
 from .execute import VoilaExecutor, strip_code_cell_warnings
 from .exporter import VoilaExporter
+from .paths import collect_template_paths
 
 
 class VoilaHandler(JupyterHandler):
@@ -80,11 +81,28 @@ class VoilaHandler(JupyterHandler):
         self.kernel_env['SERVER_PORT'] = str(port) if port else ''
         self.kernel_env['SERVER_NAME'] = host
 
+        # we can override the template via notebook metadata or a query parameter
+        template_override = None
+        if 'voila' in notebook.metadata and self.voila_configuration.allow_template_override in ['YES', 'NOTEBOOK']:
+            template_override = notebook.metadata['voila'].get('template')
+        if self.voila_configuration.allow_template_override == 'YES':
+            template_override = self.get_argument("voila-template", template_override)
+        if template_override:
+            self.template_paths = collect_template_paths(['voila', 'nbconvert'], template_override)
+        template_name = template_override or self.voila_configuration.template
+
+        theme = self.voila_configuration.theme
+        if 'voila' in notebook.metadata and self.voila_configuration.allow_theme_override in ['YES', 'NOTEBOOK']:
+            theme = notebook.metadata['voila'].get('theme', theme)
+        if self.voila_configuration.allow_theme_override == 'YES':
+            theme = self.get_argument("voila-theme", theme)
+
         # render notebook to html
         resources = {
             'base_url': self.base_url,
             'nbextensions': nbextensions,
-            'theme': self.voila_configuration.theme,
+            'theme': theme,
+            'template': template_name,
             'metadata': {
                 'name': notebook_name
             }
@@ -101,9 +119,10 @@ class VoilaHandler(JupyterHandler):
 
         self.exporter = VoilaExporter(
             template_paths=self.template_paths,
+            template_name=template_name,
             config=self.traitlet_config,
             contents_manager=self.contents_manager,  # for the image inlining
-            theme=self.voila_configuration.theme,  # we now have the theme in two places
+            theme=theme,  # we now have the theme in two places
             base_url=self.base_url,
         )
         if self.voila_configuration.strip_sources:

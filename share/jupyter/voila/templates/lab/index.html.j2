@@ -1,7 +1,7 @@
 {%- extends 'nbconvert/templates/lab/index.html.j2' -%}
 {% import "spinner.macro.html.j2" as spinner %}
 {% import "log.macro.html.j2" as log %}
-{% from 'voila_setup.macro.html.j2' import voila_setup %}
+{% from 'voila_setup.macro.html.j2' import voila_setup with context %}
 
 {%- block html_head_js -%}
 {%- block html_head_js_logs -%}

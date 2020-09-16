@@ -22,6 +22,8 @@ from nbconvert.filters.highlight import Highlight2HTML
 
 from jupyter_server.services.contents.manager import ContentsManager
 
+from .static_file_handler import TemplateStaticFileHandler
+
 
 class VoilaMarkdownRenderer(IPythonRenderer):
     """Custom markdown renderer that inlines images"""
@@ -96,7 +98,7 @@ class VoilaExporter(HTMLExporter):
                 'no_prompt': self.exclude_input_prompt and self.exclude_output_prompt,
                 }
 
-        async for output in self.template.generate_async(nb=nb_copy, resources=resources, **extra_context):
+        async for output in self.template.generate_async(nb=nb_copy, resources=resources, **extra_context, static_url=self.static_url):
             yield (output, resources)
 
     @property
@@ -108,18 +110,36 @@ class VoilaExporter(HTMLExporter):
             env.add_extension('jinja2.ext.do')
         return env
 
+    def get_template_paths(self):
+        return self.template_path
+
+    def static_url(self, path):
+        """Mimics tornado.web.RequestHandler.static_url"""
+        settings = {
+            'static_url_prefix': f'{self.base_url}voila/templates/',
+            'static_path': None  # not used in TemplateStaticFileHandler.get_absolute_path
+        }
+        return TemplateStaticFileHandler.make_static_url(settings, f'{self.template_name}/static/{path}')
+
     def _init_resources(self, resources):
+        def make_url(path):
+            # similar to static_url, but does not assume the static prefix
+            settings = {
+                'static_url_prefix': f'{self.base_url}voila/templates/',
+                'static_path': None  # not used in TemplateStaticFileHandler.get_absolute_path
+            }
+            return TemplateStaticFileHandler.make_static_url(settings, f'{self.template_name}/{path}')
+
         def include_css(name):
-            code = """<link rel="stylesheet" type="text/css" href="%svoila/%s">""" % (self.base_url, name)
+            code = f'<link rel="stylesheet" type="text/css" href="{make_url(name)}">'
             return jinja2.Markup(code)
 
         def include_js(name):
-            code = """<script src="%svoila/%s"></script>""" % (self.base_url, name)
+            code = f'<script src="{make_url(name)}">'
             return jinja2.Markup(code)
 
         def include_url(name):
-            url = "%svoila/%s" % (self.base_url, name)
-            return jinja2.Markup(url)
+            return jinja2.Markup(make_url(name))
         resources = super(VoilaExporter, self)._init_resources(resources)
         resources['include_css'] = include_css
         resources['include_js'] = include_js
