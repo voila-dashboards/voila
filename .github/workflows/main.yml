@@ -40,7 +40,8 @@ jobs:
         python --version
 
         python -m pip install ".[test]"
-        cd tests/test_template; pip install .; cd ../../;
+        (cd tests/test_template; pip install .)
+        (cd tests/skip_template; pip install .)
 
     - name: Run tests (with traitlets 5)
       if: matrix.python_version != '3.6'

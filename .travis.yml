@@ -22,7 +22,8 @@ before_install:
   - source activate test-environment
 install:
   - pip install ".[test]"
-  - cd tests/test_template; pip install .; cd ../../;
+  - (cd tests/test_template; pip install .)
+  - (cd tests/skip_template; pip install .)
 script:
   - VOILA_TEST_DEBUG=1 VOILA_TEST_XEUS_CLING=1 py.test tests/ --async-test-timeout=240
   - voila --help  # Making sure we can run `voila --help`
