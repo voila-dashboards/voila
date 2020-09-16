@@ -143,7 +143,7 @@ Install the test dependencies
 
 .. code-block:: bash
 
-   python -m pip install ".[test]"
+   python -m pip install -e ".[test]"
 
 Enable the Jupyter server extension:
 
