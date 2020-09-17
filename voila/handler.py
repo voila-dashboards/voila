@@ -112,6 +112,11 @@ class VoilaHandler(JupyterHandler):
         extra_resources = self.voila_configuration.config.VoilaConfiguration.resources
         # if no resources get configured from neither the CLI nor a config file,
         # extra_resources is a traitlets.config.loader.LazyConfigValue object
+        # This seems to only happy with the notebook server and traitlets 5
+        # Note that we use string checking for backward compatibility
+        if 'DeferredConfigString' in str(type(extra_resources)):
+            from .configuration import VoilaConfiguration
+            extra_resources = VoilaConfiguration.resources.from_string(extra_resources)
         if not isinstance(extra_resources, dict):
             extra_resources = extra_resources.to_dict()
         if extra_resources:
