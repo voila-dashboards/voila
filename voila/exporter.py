@@ -20,8 +20,6 @@ from nbconvert.exporters.html import HTMLExporter
 from nbconvert.exporters.templateexporter import TemplateExporter
 from nbconvert.filters.highlight import Highlight2HTML
 
-from jupyter_server.services.contents.manager import ContentsManager
-
 from .static_file_handler import TemplateStaticFileHandler
 
 
@@ -43,7 +41,8 @@ class VoilaExporter(HTMLExporter):
 
     base_url = traitlets.Unicode(help="Base url for resources").tag(config=True)
     markdown_renderer_class = traitlets.Type('mistune.Renderer').tag(config=True)
-    contents_manager = traitlets.Instance(ContentsManager)
+    # Can be a ContentsManager from notebook or jupyter_server, so Any will have to do for now
+    contents_manager = traitlets.Any()
 
     # The voila exporter overrides the markdown renderer from the HTMLExporter
     # to inline images.
