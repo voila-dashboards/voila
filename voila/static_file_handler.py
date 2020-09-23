@@ -53,7 +53,7 @@ class TemplateStaticFileHandler(tornado.web.StaticFileHandler):
 
     @classmethod
     def get_absolute_path(cls, root, path):
-        template, static, relpath = path.split('/', 2)
+        template, static, relpath = os.path.normpath(path).split(os.path.sep, 2)
         assert static == 'static'
         roots = collect_static_paths(['voila', 'nbconvert'], template)
         for root in roots:
