@@ -9,6 +9,7 @@
 
 import gettext
 import io
+import sys
 import json
 import logging
 import threading
@@ -317,7 +318,35 @@ class Voila(Application):
         else:
             return getcwd()
 
+    def _init_asyncio_patch(self):
+        """set default asyncio policy to be compatible with tornado
+        Tornado 6 (at least) is not compatible with the default
+        asyncio implementation on Windows
+        Pick the older SelectorEventLoopPolicy on Windows
+        if the known-incompatible default policy is in use.
+        do this as early as possible to make it a low priority and overrideable
+        ref: https://github.com/tornadoweb/tornado/issues/2608
+        FIXME: if/when tornado supports the defaults in asyncio,
+               remove and bump tornado requirement for py38
+        """
+        if sys.platform.startswith("win") and sys.version_info >= (3, 8):
+            import asyncio
+            try:
+                from asyncio import (
+                    WindowsProactorEventLoopPolicy,
+                    WindowsSelectorEventLoopPolicy,
+                )
+            except ImportError:
+                pass
+                # not affected
+            else:
+                if type(asyncio.get_event_loop_policy()) is WindowsProactorEventLoopPolicy:
+                    # WindowsProactorEventLoopPolicy is not compatible with tornado 6
+                    # fallback to the pre-3.8 default of Selector
+                    asyncio.set_event_loop_policy(WindowsSelectorEventLoopPolicy())
+
     def initialize(self, argv=None):
+        self._init_asyncio_patch()
         self.log.debug("Searching path %s for config files", self.config_file_paths)
         # to make config_file_paths settable via cmd line, we first need to parse it
         super(Voila, self).initialize(argv)
