@@ -13,6 +13,12 @@
 <link rel="stylesheet" href="https://unpkg.com/font-awesome@4.5.0/css/font-awesome.min.css" type="text/css" />
 {{ super() }}
 {{ spinner.css() }}
+  <style>
+    /*Hide empty cells*/
+    .jp-mod-noOutputs.jp-mod-noInput {
+      display: none;
+    }
+  </style>
 {%- endblock html_head_css -%}
 
 {# this overrides the default behaviour of rendering static widgets #}
