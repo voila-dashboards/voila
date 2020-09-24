@@ -147,6 +147,9 @@ class VoilaHandler(JupyterHandler):
 
         # Compose reply
         self.set_header('Content-Type', 'text/html')
+        self.set_header('Cache-Control', 'no-cache, no-store, must-revalidate')
+        self.set_header('Pragma', 'no-cache')
+        self.set_header('Expires', '0')
         # render notebook in snippets, and flush them out to the browser can render progresssively
         async for html_snippet, resources in self.exporter.generate_from_notebook_node(notebook, resources=resources, extra_context=extra_context):
             self.write(html_snippet)
