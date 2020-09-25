@@ -328,3 +328,11 @@ To hide both the code cell and the output cell (if any) for every cell that has 
 
 You can use any tag you want but be sure to use the same tag name in the Voilà command.
 And please note that this functionality will only hide the cells in Voilà but will not prevent them from being executed.
+
+
+Integrate with Papermill for Parameterized Applications
+=======================================================
+
+If your notebook is setup to be parameterized with Papermill (e.g. first cell has "parameters" tag), you can inject parameters
+into your notebook by providing them as query parameters, or as JSON in the body of your request.
+
