@@ -242,7 +242,10 @@ setup_args = {
             'pytest-tornasync',
             'matplotlib',
             'ipywidgets'
-        ]
+        ],
+        'papermill': [
+            'papermill>=1.2.0,<3'
+        ],
     },
     'url': 'https://github.com/voila-dashboards/voila',
     'author': 'Voilà Development team',

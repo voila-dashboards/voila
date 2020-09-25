@@ -13,6 +13,7 @@ import sys
 import traceback
 
 import tornado.web
+import tornado.escape
 
 from jupyter_server.base.handlers import JupyterHandler
 from jupyter_server.config_manager import recursive_update
@@ -66,6 +67,48 @@ class VoilaHandler(JupyterHandler):
         if not notebook:
             return
         self.cwd = os.path.dirname(notebook_path)
+
+        # Grab parameters from body if too big for query parameters
+        try:
+            body = tornado.escape.json_decode(self.request.body)
+        except ValueError:
+            body = {}
+
+        # Grab parameters
+        parameters = self.get_argument("parameters", body.get("parameters", {}))
+
+         # try to convert to dict if not e.g. string/unicode
+        if not isinstance(parameters, dict):
+            try:
+                parameters = tornado.escape.json_decode(parameters)
+            except ValueError:
+                parameters = None
+
+         # if passed and a dict, use papermill to inject parameters
+        if parameters and isinstance(parameters, dict):
+            try:
+                from papermill.parameterize import parameterize_notebook
+
+                # setup for papermill
+                # 
+                # these two blocks are done
+                # to avoid triggering errors
+                # in papermill's notebook
+                # loading logic
+                for cell in notebook.cells:
+                    if 'tags' not in cell.metadata:
+                        cell.metadata.tags = []
+                if "papermill" not in notebook.metadata:
+                    notebook.metadata.papermill = {}
+
+                # Parameterize with papermill
+                notebook = parameterize_notebook(notebook, parameters)
+
+            except ImportError:
+                self.log.warning('Parameters passed but papermill not installed')
+            except AttributeError:
+                # if issues, dont parameterize
+                self.log.warning('Parameters passed but notebook did not except them')
 
         path, basename = os.path.split(notebook_path)
         notebook_name = os.path.splitext(basename)[0]

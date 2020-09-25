@@ -13,8 +13,14 @@ class VoilaTest(voila.app.Voila):
 
 
 @pytest.fixture
+def voila_notebook(notebook_directory):
+    return os.path.join(notebook_directory, 'print_parameterized.ipynb')
+
+
+@pytest.fixture
 def voila_config():
     return lambda app: None
+
 
 
 @pytest.fixture
