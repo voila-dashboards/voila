@@ -56,7 +56,7 @@ from .paths import ROOT, STATIC_ROOT, collect_template_paths, collect_static_pat
 from .handler import VoilaHandler
 from .treehandler import VoilaTreeHandler
 from ._version import __version__
-from .static_file_handler import MultiStaticFileHandler, TemplateStaticFileHandler, WhiteListFileHandler
+from .static_file_handler import MultiStaticFileHandler, TemplateStaticFileHandler, AllowListFileHandler
 from .configuration import VoilaConfiguration
 from .execute import VoilaExecutor
 from .exporter import VoilaExporter
@@ -488,10 +488,10 @@ class Voila(Application):
         handlers.append(
             (
                 url_path_join(self.server_url, r'/voila/files/(.*)'),
-                WhiteListFileHandler,
+                AllowListFileHandler,
                 {
-                    'whitelist': self.voila_configuration.file_whitelist,
-                    'blacklist': self.voila_configuration.file_blacklist,
+                    'allowlist': self.voila_configuration.file_allowlist,
+                    'denylist': self.voila_configuration.file_denylist,
                     'path': self.root_dir,
                 },
             )

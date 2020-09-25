@@ -94,19 +94,19 @@ class MultiStaticFileHandler(tornado.web.StaticFileHandler):
         return abspath
 
 
-class WhiteListFileHandler(tornado.web.StaticFileHandler):
-    def initialize(self, whitelist=[], blacklist=[], **kwargs):
-        self.whitelist = whitelist
-        self.blacklist = blacklist
-        super(WhiteListFileHandler, self).initialize(**kwargs)
+class AllowListFileHandler(tornado.web.StaticFileHandler):
+    def initialize(self, allowlist=[], denylist=[], **kwargs):
+        self.allowlist = allowlist
+        self.denylist = denylist
+        super(AllowListFileHandler, self).initialize(**kwargs)
 
     def get_absolute_path(self, root, path):
         # StaticFileHandler.get always calls this method first, so we use this as the
         # place to check the path. Note that now the path seperator is os dependent (\\ on windows)
-        whitelisted = any(re.fullmatch(pattern, path) for pattern in self.whitelist)
-        blacklisted = any(re.fullmatch(pattern, path) for pattern in self.blacklist)
-        if not whitelisted:
-            raise tornado.web.HTTPError(403, 'File not whitelisted')
-        if blacklisted:
-            raise tornado.web.HTTPError(403, 'File blacklisted')
-        return super(WhiteListFileHandler, self).get_absolute_path(root, path)
+        allowlisted = any(re.fullmatch(pattern, path) for pattern in self.allowlist)
+        denylisted = any(re.fullmatch(pattern, path) for pattern in self.denylist)
+        if not allowlisted:
+            raise tornado.web.HTTPError(403, 'File not allowlisted')
+        if denylisted:
+            raise tornado.web.HTTPError(403, 'File denylisted')
+        return super(AllowListFileHandler, self).get_absolute_path(root, path)

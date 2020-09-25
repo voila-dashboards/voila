@@ -39,25 +39,25 @@ class VoilaConfiguration(traitlets.config.Configurable):
     strip_sources = Bool(True, help='Strip sources from rendered html').tag(config=True)
     enable_nbextensions = Bool(False, config=True, help=('Set to True for Voilà to load notebook extensions'))
 
-    file_whitelist = List(
+    file_allowlist = List(
         Unicode(),
         [r'.*\.(png|jpg|gif|svg)'],
         help=r"""
     List of regular expressions for controlling which static files are served.
-    All files that are served should at least match 1 whitelist rule, and no blacklist rule
-    Example: --VoilaConfiguration.file_whitelist="['.*\.(png|jpg|gif|svg)', 'public.*']"
+    All files that are served should at least match 1 allowlist rule, and no denylist rule
+    Example: --VoilaConfiguration.file_allowlist="['.*\.(png|jpg|gif|svg)', 'public.*']"
     """,
     ).tag(config=True)
 
-    file_blacklist = List(
+    file_denylist = List(
         Unicode(),
         [r'.*\.(ipynb|py)'],
         help=r"""
     List of regular expressions for controlling which static files are forbidden to be served.
-    All files that are served should at least match 1 whitelist rule, and no blacklist rule
+    All files that are served should at least match 1 allowlist rule, and no denylist rule
     Example:
-    --VoilaConfiguration.file_whitelist="['.*']" # all files
-    --VoilaConfiguration.file_blacklist="['private.*', '.*\.(ipynb)']" # except files in the private dir and notebook files
+    --VoilaConfiguration.file_allowlist="['.*']" # all files
+    --VoilaConfiguration.file_denylist="['private.*', '.*\.(ipynb)']" # except files in the private dir and notebook files
     """
     ).tag(config=True)
 
