@@ -203,6 +203,25 @@ There is a Voilà template cookiecutter available to give you a running start.
 This cookiecutter contains some docker configuration for live reloading of your template changes to make development easier.
 Please refer to the `cookiecutter repo <https://github.com/voila-dashboards/voila-template-cookiecutter>`_ for more information on how to use the Voilà template cookiecutter.
 
+
+Accessing the tornado request (`prelaunch-hook`)
+---------------------------------------------------
+
+Unfortunately it is not currently possible to use custom templates to access the tornado request object, which might be necessary in certain custom setups if you need
+to check for authentication cookies or access details about the request headers, etc.
+Instead, you can leverage the `prelaunch-hook`, which lets you inject a function to inspect the notebook and request prior to executing them.
+
+The format of this hook should be:
+
+.. code-block:: python
+
+   def hook(req: tornado.web.RequestHandler,
+            notebook: nbformat.NotebookNode,
+            cwd: str):
+
+
+
+
 Adding your own static files
 ============================
 

@@ -241,6 +241,7 @@ class Voila(Application):
                                    or any other necessary pre-launch functions.
                                    
                                    Should be of the form
+                                   
                                    def hook(req: tornado.web.RequestHandler,
                                             notebook: nbformat.NotebookNode,
                                             cwd: str)
