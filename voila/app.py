@@ -36,7 +36,7 @@ import tornado.web
 
 from traitlets.config.application import Application
 from traitlets.config.loader import Config
-from traitlets import Unicode, Integer, Bool, Dict, List, default
+from traitlets import Unicode, Integer, Bool, Dict, List, Any, default
 
 from jupyter_server.services.kernels.kernelmanager import AsyncMappingKernelManager
 from jupyter_server.services.kernels.handlers import KernelHandler, ZMQChannelsHandler
@@ -234,6 +234,23 @@ class Voila(Application):
                                  This option is intended to be used when the URL to display to the user
                                  cannot be determined reliably by the Jupyter notebook server (proxified
                                  or containerized setups for example)."""))
+
+    prelaunch_hook = Any(default_value=None, allow_none=True,
+                         help=_("""A function that is called prior to the launch of a new kernel instance
+                                   when a user visits the voila webpage. Used for custom user authorization
+                                   or any other necessary pre-launch functions.
+                                   
+                                   Should be of the form
+                                   def hook(req: tornado.web.RequestHandler,
+                                            notebook: nbformat.NotebookNode,
+                                            cwd: str)
+                                   
+                                   Although most customizations can leverage templates, if you need access
+                                   to the request object (e.g. to inspect cookies for authentication),
+                                   or to modify the notebook itself (e.g. to inject some custom structure,
+                                   althought much of this can be done by interacting with the kernel
+                                   in javascript) the prelaunch hook lets you do that.
+                                   """))
 
     @property
     def display_url(self):
@@ -508,7 +525,8 @@ class Voila(Application):
                     'notebook_path': os.path.relpath(self.notebook_path, self.root_dir),
                     'template_paths': self.template_paths,
                     'config': self.config,
-                    'voila_configuration': self.voila_configuration
+                    'voila_configuration': self.voila_configuration,
+                    'prelaunch_hook': self.prelaunch_hook
                 }
             ))
         else:
