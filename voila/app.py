@@ -235,6 +235,35 @@ class Voila(Application):
                                  cannot be determined reliably by the Jupyter notebook server (proxified
                                  or containerized setups for example)."""))
 
+    warm_kernel = Bool(default_value=False,
+                       help=_("""Kernel warming starts instances of the kernel prior to a user
+                       visiting the website to request one. The goal of this is to reduce the
+                       response time.
+
+                       This variable has several dependent variables:
+
+                       `warm_kernel_preload_count` (int); This variable controls how many kernel instances are staged. This
+                       is useful if you generally have users visiting in bursts, as several kernels
+                       will be warmed together.
+
+                       `warm_kernel_preexecute_cell_count` (int); This variable allows and controls the preexecution of cells
+                       after kernel startup, e.g. after starting a kernel, execute the first 2 cells of imports prior to a user
+                       visiting the page. This can dramatically reduce startup time, but since some code might condition on the
+                       user visiting the site or have other execution side effects, one should exercise caution. 
+                       """))
+
+    warm_kernel_preload_count = Integer(default_value=1,
+                       help=_("""This variable controls how many kernel instances are staged. This
+                       is useful if you generally have users visiting in bursts, as several kernels
+                       will be warmed together."""))
+
+    warm_kernel_preexecute_cell_count = Integer(default_value=1,
+                       help=_("""This variable allows and controls the preexecution of cells
+                       after kernel startup, e.g. after starting a kernel, execute the first 2 cells of imports prior to a user
+                       visiting the page. This can dramatically reduce startup time, but since some code might condition on the
+                       user visiting the site or have other execution side effects, one should exercise caution. 
+                       """))
+
     @property
     def display_url(self):
         if self.custom_display_url:
