@@ -64,7 +64,7 @@ class VoilaConfiguration(traitlets.config.Configurable):
     language_kernel_mapping = Dict(
         {},
         help="""Mapping of language name to kernel name
-        Example mapping python to use xeus-python, and C++11 to use xeus-cling:
+        Example mapping python to use xeus-pythoRen, and C++11 to use xeus-cling:
         --VoilaConfiguration.extension_language_mapping='{"python": "xpython", "C++11": "xcpp11"}'
         """,
     ).tag(config=True)
@@ -81,3 +81,34 @@ class VoilaConfiguration(traitlets.config.Configurable):
     When a cell takes a long time to execute, the http connection can timeout (possibly because of a proxy).
     Voila sends a 'heartbeat' message after the timeout is passed to keep the http connection alive.
     """).tag(config=True)
+
+    warm_kernel = Bool(default_value=False,
+                       help="""Kernel warming starts instances of the kernel prior to a user
+                       visiting the website to request one. The goal of this is to reduce the
+                       response time.
+
+                       This variable has several dependent variables:
+
+                       `warm_kernel_preload_count` (int); This variable controls how many kernel instances are staged. This
+                       is useful if you generally have users visiting in bursts, as several kernels
+                       will be warmed together.
+
+                       `warm_kernel_preexecute_cell_count` (int); This variable allows and controls the preexecution of cells
+                       after kernel startup, e.g. after starting a kernel, execute the first 2 cells of imports prior to a user
+                       visiting the page. This can dramatically reduce startup time, but since some code might condition on the
+                       user visiting the site or have other execution side effects, one should exercise caution.
+
+                       Note: Kernel warming is only available when you run Voilà against a specific notebook (since notebooks
+                       might have different kernels).
+                       """)
+
+    warm_kernel_preload_count = Int(default_value=1,
+                                    help="""This variable controls how many kernel instances are staged. This
+                                    is useful if you generally have users visiting in bursts, as several kernels
+                                    will be warmed together.""")
+
+    warm_kernel_preexecute_cell_count = Int(default_value=1,
+                                            help="""This variable allows and controls the preexecution of cells
+                                            after kernel startup, e.g. after starting a kernel, execute the first 2 cells of imports prior to a user
+                                            visiting the page. This can dramatically reduce startup time, but since some code might condition on the
+                                            user visiting the site or have other execution side effects, one should exercise caution.""")

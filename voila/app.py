@@ -60,6 +60,8 @@ from .static_file_handler import MultiStaticFileHandler, TemplateStaticFileHandl
 from .configuration import VoilaConfiguration
 from .execute import VoilaExecutor
 from .exporter import VoilaExporter
+from .kernel import KernelWarmer
+
 
 _kernel_id_regex = r"(?P<kernel_id>\w+-\w+-\w+-\w+-\w+)"
 
@@ -234,35 +236,6 @@ class Voila(Application):
                                  This option is intended to be used when the URL to display to the user
                                  cannot be determined reliably by the Jupyter notebook server (proxified
                                  or containerized setups for example)."""))
-
-    warm_kernel = Bool(default_value=False,
-                       help=_("""Kernel warming starts instances of the kernel prior to a user
-                       visiting the website to request one. The goal of this is to reduce the
-                       response time.
-
-                       This variable has several dependent variables:
-
-                       `warm_kernel_preload_count` (int); This variable controls how many kernel instances are staged. This
-                       is useful if you generally have users visiting in bursts, as several kernels
-                       will be warmed together.
-
-                       `warm_kernel_preexecute_cell_count` (int); This variable allows and controls the preexecution of cells
-                       after kernel startup, e.g. after starting a kernel, execute the first 2 cells of imports prior to a user
-                       visiting the page. This can dramatically reduce startup time, but since some code might condition on the
-                       user visiting the site or have other execution side effects, one should exercise caution. 
-                       """))
-
-    warm_kernel_preload_count = Integer(default_value=1,
-                       help=_("""This variable controls how many kernel instances are staged. This
-                       is useful if you generally have users visiting in bursts, as several kernels
-                       will be warmed together."""))
-
-    warm_kernel_preexecute_cell_count = Integer(default_value=1,
-                       help=_("""This variable allows and controls the preexecution of cells
-                       after kernel startup, e.g. after starting a kernel, execute the first 2 cells of imports prior to a user
-                       visiting the page. This can dramatically reduce startup time, but since some code might condition on the
-                       user visiting the site or have other execution side effects, one should exercise caution. 
-                       """))
 
     @property
     def display_url(self):
@@ -466,11 +439,24 @@ class Voila(Application):
         # default server_url to base_url
         self.server_url = self.server_url or self.base_url
 
+        # Setup the kernel warmer
+        self.kernel_warmer = KernelWarmer(
+                 notebook_path=self.notebook_path,
+                 contents_manager=self.contents_manager,
+                 config_manager=self.config_manager,
+                 kernel_manager=self.kernel_manager,
+                 kernel_spec_manager=self.kernel_spec_manager,
+                 template_paths=self.template_paths,
+                 traitlet_config=self.config,
+                 voila_configuration=self.voila_configuration,
+                 logger=self.log)
+
         self.app = tornado.web.Application(
             base_url=self.base_url,
             server_url=self.server_url or self.base_url,
             kernel_manager=self.kernel_manager,
             kernel_spec_manager=self.kernel_spec_manager,
+            kernel_warmer=self.kernel_warmer,
             allow_remote_access=True,
             autoreload=self.autoreload,
             voila_jinja2_env=env,
@@ -529,6 +515,7 @@ class Voila(Application):
         tree_handler_conf = {
             'voila_configuration': self.voila_configuration
         }
+
         if self.notebook_path:
             handlers.append((
                 url_path_join(self.server_url, r'/(.*)'),
@@ -537,7 +524,8 @@ class Voila(Application):
                     'notebook_path': os.path.relpath(self.notebook_path, self.root_dir),
                     'template_paths': self.template_paths,
                     'config': self.config,
-                    'voila_configuration': self.voila_configuration
+                    'voila_configuration': self.voila_configuration,
+                    'kernel_warmer': self.kernel_warmer,
                 }
             ))
         else:
@@ -551,7 +539,8 @@ class Voila(Application):
                  {
                      'template_paths': self.template_paths,
                      'config': self.config,
-                     'voila_configuration': self.voila_configuration
+                     'voila_configuration': self.voila_configuration,
+                     'kernel_warmer': self.kernel_warmer,
                  }),
             ])
 
