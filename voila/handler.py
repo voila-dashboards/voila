@@ -70,15 +70,15 @@ class VoilaHandler(JupyterHandler):
         self.cwd = os.path.dirname(notebook_path)
 
         if self.prelaunch_hook:
-             # Allow for preprocessing the notebook.
-             # Can be used to add auth, do custom formatting/standardization
-             # of the notebook, raise exceptions, etc
-             #
-             # Necessary inside of the handler if you need
-             # to access the tornado request itself
-             self.prelaunch_hook(self,
-                                 notebook=notebook,
-                                 cwd=self.cwd)
+            # Allow for preprocessing the notebook.
+            # Can be used to add auth, do custom formatting/standardization
+            # of the notebook, raise exceptions, etc
+            #
+            # Necessary inside of the handler if you need
+            # to access the tornado request itself
+            self.prelaunch_hook(self,
+                                notebook=notebook,
+                                cwd=self.cwd)
 
         path, basename = os.path.split(notebook_path)
         notebook_name = os.path.splitext(basename)[0]

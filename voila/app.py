@@ -239,13 +239,13 @@ class Voila(Application):
                          help=_("""A function that is called prior to the launch of a new kernel instance
                                    when a user visits the voila webpage. Used for custom user authorization
                                    or any other necessary pre-launch functions.
-                                   
-                                   Should be of the form
-                                   
+
+                                   Should be of the form:
+
                                    def hook(req: tornado.web.RequestHandler,
                                             notebook: nbformat.NotebookNode,
                                             cwd: str)
-                                   
+
                                    Although most customizations can leverage templates, if you need access
                                    to the request object (e.g. to inspect cookies for authentication),
                                    or to modify the notebook itself (e.g. to inject some custom structure,
