@@ -35,8 +35,7 @@ class VoilaHandler(JupyterHandler):
             self.redirect_to_file(path)
             return None
 
-        executor = self.kernel_warmer.get()
-        await executor.preload(self.base_url, notebook_path, self)
+        executor = await self.kernel_warmer.get(self.base_url, notebook_path, self)
 
         # Compose reply
         self.set_header('Content-Type', 'text/html')

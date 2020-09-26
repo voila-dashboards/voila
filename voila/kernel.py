@@ -20,6 +20,7 @@ import nbformat
 from nbconvert.preprocessors import ClearOutputPreprocessor
 from nbclient.exceptions import CellExecutionError
 from nbclient.util import ensure_async
+from queue import Queue
 from tornado.httputil import split_host_and_port
 
 from ._version import __version__
@@ -39,7 +40,8 @@ class KernelWarmer(object):
                  template_paths,
                  traitlet_config,
                  voila_configuration,
-                 logger):
+                 logger,
+                 base_url):
 
         self.contents_manager = contents_manager
         self.config_manager = config_manager
@@ -52,8 +54,34 @@ class KernelWarmer(object):
         self.voila_configuration = voila_configuration
 
         self.log = logger
+        self.base_url = base_url
 
-    def get(self):
+        # if kernel warming, preload a collection of kernels
+        self.warm_kernel = voila_configuration.warm_kernel
+        self.warm_kernel_preexecute_cell_count = voila_configuration.warm_kernel_preexecute_cell_count
+        self.warm_kernel_preload_count = voila_configuration.warm_kernel_preload_count
+
+        if self.warm_kernel:
+            self.log.critical('Enabling kernel warming')
+            if not self.notebook_path:
+                # must provide notebook
+                self.log.critical('Enabled kernel warming, but did not provide a notebook...disabling.')
+                self.warm_kernel = False
+                self.warm_kernel_preload_count = 0
+                self.warm_kernel_preexecute_cell_count = 0
+            else:
+                self.kernel_pool = Queue()
+
+                self.log.critical('Preloading {} kernels'.format(self.warm_kernel_preload_count))
+                for _ in range(self.warm_kernel_preload_count):
+                    asyncio.ensure_future(self._new_and_put())
+
+    async def _new_and_put(self):
+        executor = self._new()
+        await executor.preload()
+        return self.kernel_pool.put(executor)
+
+    def _new(self):
         return KernelExecutor(self.notebook_path,
                               self.contents_manager,
                               self.config_manager,
@@ -62,7 +90,20 @@ class KernelWarmer(object):
                               self.template_paths,
                               self.traitlet_config,
                               self.voila_configuration,
-                              self.log)
+                              self.log,
+                              self.base_url)
+
+    async def get(self, base_url, notebook_path, request):
+        if self.warm_kernel:
+            if self.kernel_pool.qsize() > 0:
+                # add a new one "later"
+                asyncio.ensure_future(self._new_and_put())
+                return self.kernel_pool.get()
+
+        # spin up a new instance and return
+        executor = self._new()
+        await executor.preload(base_url, notebook_path, request)
+        return executor
 
 
 class KernelExecutor(object):
@@ -76,7 +117,8 @@ class KernelExecutor(object):
                  template_paths,
                  traitlet_config,
                  voila_configuration,
-                 logger):
+                 logger,
+                 base_url):
 
         self.contents_manager = contents_manager
         self.config_manager = config_manager
@@ -89,6 +131,7 @@ class KernelExecutor(object):
         self.voila_configuration = voila_configuration
 
         self.log = logger
+        self.base_url = base_url
 
         self.kernel_started = False
         self.notebook_to_execute = None
@@ -98,9 +141,10 @@ class KernelExecutor(object):
         self.output_cache = []
         self.warmed = False
 
-    async def preload(self, base_url, path=None, request=None):
+    async def preload(self, base_url=None, path=None, request=None):
         # if the handler got a notebook_path argument, always serve that
         notebook_path = self.notebook_path or path
+        base_url = base_url or self.base_url
 
         if self.voila_configuration.enable_nbextensions:
             # generate a list of nbextensions that are enabled for the classical notebook
@@ -210,20 +254,25 @@ class KernelExecutor(object):
         }
 
         if self.warm_kernel:
-            # render notebook in snippets, and stash them in a cache until a user requests them
-            async for html_snippet, _ in self.exporter.generate_from_notebook_node(self.notebook, resources=self.resources, extra_context=self.extra_context):
-                self.output_cache.append(html_snippet)
+            self.log.debug('Warming {} cells'.format(self.warm_kernel_preexecute_cell_count))
+
+            kernel_id = await self._jinja_kernel_start(self.notebook)
+            async for output_cell in self._jinja_cell_generator(self.notebook, kernel_id):
+                self.output_cache.append(output_cell)
+            self.log.critical('Done warming cells')
+            self.warmed = True
 
         return self.notebook
 
     async def render(self):
+        # first yield the outputs from notebook warming
         async for html_snippet, _ in self.exporter.generate_from_notebook_node(self.notebook, resources=self.resources, extra_context=self.extra_context):
             yield html_snippet
 
     async def _jinja_kernel_start(self, nb):
         # if the kernel is already started, leave it
         if self.kernel_started:
-            return
+            return self.kernel_id
 
         kernel_id = await ensure_async(self.kernel_manager.start_kernel(
            kernel_name=nb.metadata.kernelspec.name,
@@ -242,6 +291,7 @@ class KernelExecutor(object):
         self.executor.kc.allow_stdin = False
         ###
 
+        self.kernel_id = kernel_id
         self.kernel_started = True
         return kernel_id
 
@@ -257,10 +307,9 @@ class KernelExecutor(object):
         if not self.warmed:
             self.notebook_to_execute, _ = ClearOutputPreprocessor().preprocess(nb, {'metadata': {'path': self.cwd}})
 
-        else:
-            # first yield the outputs from notebook warming
-            for warmed_cell_output in self.output_cache:
-                yield warmed_cell_output
+        if self.warm_kernel and self.output_cache:
+            for cell in self.output_cache:
+                yield cell
 
         for cell_idx, input_cell in enumerate(self.notebook_to_execute.cells):
             if self.warm_kernel and not self.warmed and cell_idx >= self.warm_kernel_preexecute_cell_count:
@@ -269,7 +318,14 @@ class KernelExecutor(object):
 
             elif self.warm_kernel and self.warmed and cell_idx < self.warm_kernel_preexecute_cell_count:
                 # already executed this cell during warming
+                self.log.critical('Skipping reexecution of pre-warmed cell: {}'.format(cell_idx))
                 continue
+
+            elif self.warm_kernel and not self.warmed:
+                self.log.critical('Warming cell: {}'.format(cell_idx))
+
+            else:
+                self.log.critical('Executing cell: {}'.format(cell_idx))
 
             try:
                 task = asyncio.ensure_future(self.executor.execute_cell(input_cell, None, cell_idx, store_history=False))
@@ -318,11 +374,6 @@ class KernelExecutor(object):
                     ]
             finally:
                 yield output_cell
-
-        # set myself to warm for next execution
-        self.warmed = True
-
-        yield ''
 
     async def load_notebook(self, path):
         model = self.contents_manager.get(path=path)

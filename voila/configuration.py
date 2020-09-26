@@ -16,9 +16,11 @@ class VoilaConfiguration(traitlets.config.Configurable):
     allow_template_override = Enum(['YES', 'NOTEBOOK', 'NO'], 'YES', help='''
     Allow overriding the template (YES), or not (NO), or only from the notebook metadata.
     ''').tag(config=True)
+
     allow_theme_override = Enum(['YES', 'NOTEBOOK', 'NO'], 'YES', help='''
     Allow overriding the theme (YES), or not (NO), or only from the notebook metadata.
     ''').tag(config=True)
+
     template = Unicode(
         'lab',
         config=True,
@@ -27,6 +29,7 @@ class VoilaConfiguration(traitlets.config.Configurable):
             'template name to be used by voila.'
         )
     )
+
     resources = Dict(
         allow_none=True,
         help="""
@@ -35,8 +38,11 @@ class VoilaConfiguration(traitlets.config.Configurable):
         --VoilaConfiguration.resources="{'reveal': {'transition': 'fade', 'scroll': True}}"
         """
     ).tag(config=True)
+
     theme = Unicode('light').tag(config=True)
+
     strip_sources = Bool(True, help='Strip sources from rendered html').tag(config=True)
+
     enable_nbextensions = Bool(False, config=True, help=('Set to True for Voilà to load notebook extensions'))
 
     file_whitelist = List(
@@ -100,15 +106,15 @@ class VoilaConfiguration(traitlets.config.Configurable):
 
                        Note: Kernel warming is only available when you run Voilà against a specific notebook (since notebooks
                        might have different kernels).
-                       """)
+                       """).tag(config=True)
 
     warm_kernel_preload_count = Int(default_value=1,
                                     help="""This variable controls how many kernel instances are staged. This
                                     is useful if you generally have users visiting in bursts, as several kernels
-                                    will be warmed together.""")
+                                    will be warmed together.""").tag(config=True)
 
     warm_kernel_preexecute_cell_count = Int(default_value=1,
                                             help="""This variable allows and controls the preexecution of cells
                                             after kernel startup, e.g. after starting a kernel, execute the first 2 cells of imports prior to a user
                                             visiting the page. This can dramatically reduce startup time, but since some code might condition on the
-                                            user visiting the site or have other execution side effects, one should exercise caution.""")
+                                            user visiting the site or have other execution side effects, one should exercise caution.""").tag(config=True)

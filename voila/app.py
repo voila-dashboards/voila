@@ -449,7 +449,8 @@ class Voila(Application):
                  template_paths=self.template_paths,
                  traitlet_config=self.config,
                  voila_configuration=self.voila_configuration,
-                 logger=self.log)
+                 logger=self.log,
+                 base_url=self.base_url)
 
         self.app = tornado.web.Application(
             base_url=self.base_url,
