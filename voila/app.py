@@ -441,7 +441,7 @@ class Voila(Application):
 
         # Setup the kernel warmer
         self.kernel_warmer = KernelWarmer(
-                 notebook_path=self.notebook_path,
+                 notebook_path=os.path.relpath(self.notebook_path, self.root_dir),
                  contents_manager=self.contents_manager,
                  config_manager=self.config_manager,
                  kernel_manager=self.kernel_manager,
