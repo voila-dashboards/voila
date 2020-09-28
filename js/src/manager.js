@@ -182,7 +182,9 @@ export class WidgetManager extends JupyterLabManager {
     async _update_comm(comm) {
         return new Promise(function(resolve, reject) {
             comm.on_msg(async (msg) => {
-                base.put_buffers(msg.content.data.state, msg.content.data.buffer_paths, msg.buffers);
+                if(msg.content.data.buffer_paths) {
+                    base.put_buffers(msg.content.data.state, msg.content.data.buffer_paths, msg.buffers);
+                }
                 if (msg.content.data.method === 'update') {
                     resolve({comm: comm, msg: msg});
                 }
