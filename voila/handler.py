@@ -211,6 +211,7 @@ class VoilaHandler(JupyterHandler):
                 output_cell = input_cell
                 break
             except CellExecutionError:
+                self.log.exception('Error at server while executing cell: %r', input_cell)
                 if self.executor.should_strip_error():
                     strip_code_cell_warnings(input_cell)
                     self.executor.strip_code_cell_errors(input_cell)
