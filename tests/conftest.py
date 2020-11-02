@@ -18,5 +18,10 @@ def print_notebook_url(base_url):
 
 
 @pytest.fixture
+def syntax_error_notebook_url(base_url):
+    return base_url + "voila/render/syntax_error.ipynb"
+
+
+@pytest.fixture
 def voila_notebook(notebook_directory):
     return os.path.join(notebook_directory, 'print.ipynb')
