@@ -3,12 +3,13 @@
 {% from 'voila_setup.macro.html.j2' import voila_setup with context %}
 
 {%- block html_head_js -%}
-  <!-- voila require js -->
+  {%- block html_head_js_requirejs -%}
   <script
     src="{{resources.base_url}}voila/static/require.min.js"
     integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA="
     crossorigin="anonymous">
   </script>
+  {%- endblock html_head_js_requirejs -%}
 {%- block html_head_js_logs -%}
 {{ log.js() }}
 {%- endblock html_head_js_logs -%}
