@@ -1,9 +1,4 @@
 {%- macro voila_setup(base_url, nbextensions) -%}
-<script
-    src="{{base_url}}voila/static/require.min.js"
-    integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA="
-    crossorigin="anonymous">
-</script>
 <script>
 requirejs.config({ baseUrl: '{{base_url}}voila/', waitSeconds: 30})
 window.voila_js_url = "{{ static_url('voila.js')}}"
