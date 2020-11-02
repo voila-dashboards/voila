@@ -18,10 +18,9 @@ window.VoilaDebug = VoilaDebug = {
         await Promise.all(Object.values(model.views))
     },
     async waitForAllViews() {
-        console.log(window.VoilaDebug._widgetManagerPromise)
         const widgetManager = await window.VoilaDebug._widgetManagerPromise;
         for(const modelId in widgetManager._models) {
-            await VoilaDebug.waitForViews(modelId);
+            await window.VoilaDebug.waitForViews(modelId);
         }
     }
 }
