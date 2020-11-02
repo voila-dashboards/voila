@@ -413,6 +413,8 @@ class Voila(Application):
             parent=self,
             connection_dir=self.connection_dir,
             kernel_spec_manager=self.kernel_spec_manager,
+            allow_tracebacks=self.voila_configuration.show_tracebacks,
+            traceback_replacement_message='An error occurred, run Voilà with --show_traceback=True or --debug to show the traceback.',
             allowed_message_types=[
                 'comm_open',
                 'comm_close',
