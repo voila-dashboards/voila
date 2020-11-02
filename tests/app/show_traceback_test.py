@@ -36,8 +36,8 @@ async def test_output_widget_traceback(http_server_client, exception_runtime_not
     page = await browser.newPage()
     try:
         await page.goto(http_server_client.get_url(exception_runtime_notebook_url), waitUntil='networkidle2')
-        await page.evaluate('async () => await VoilaDebug.widgetManagerPromise')
-        await page.evaluate('async () => await VoilaDebug.waitForAllViews()')
+        await page.evaluate('async () => await window.VoilaDebug.widgetManagerPromise')
+        await page.evaluate('async () => await window.VoilaDebug.waitForAllViews()')
         await page.evaluate("document.querySelector('.button2').click()")
         for i in range(20):
             await asyncio.sleep(0.05)
