@@ -7,9 +7,10 @@
 <script>
 requirejs.config({ baseUrl: '{{base_url}}voila/', waitSeconds: 30})
 window.voila_js_url = "{{ static_url('voila.js')}}"
+window.voila_main_url = "{{ static_url('main.js') }}"
 requirejs(
     [
-        "{{ static_url('main.js') }}",
+        voila_main_url,
     {% for ext in nbextensions -%}
         "{{base_url}}voila/nbextensions/{{ ext }}.js",
     {% endfor %}
