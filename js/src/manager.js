@@ -62,6 +62,7 @@ export class WidgetManager extends JupyterLabManager {
             mimeTypes: [WIDGET_MIMETYPE],
             createRenderer: options => new WidgetRenderer(options, this)
         }, 1);
+        this.missed_models = {}
         this._registerWidgets();
         this.loader = requireLoader;
     }
@@ -147,8 +148,16 @@ export class WidgetManager extends JupyterLabManager {
         });
     }
 
+    async handle_comm_open(comm, msg) {
+        // make handle_comm_open not return a promose to we don't stall the message handling ordering
+        super.handle_comm_open(comm, msg);
+        return 42;
+    }
+
     async _build_models() {
+        console.log('Creating jupyter-widgets');
         const comm_ids = await this._get_comm_info();
+        const t0 = Date.now();
         const models = {};
         /**
          * For the classical notebook, iopub_msg_rate_limit=1000 (default)
@@ -157,7 +166,7 @@ export class WidgetManager extends JupyterLabManager {
          */
         const maxMessagesInTransit = 100; // really save limit compared to ZMQ_SNDHWM
         const maxMessagesPerSecond = 500; // lets be on the save side, in case the kernel sends more msg'es
-        const widgets_info = await Promise.all(batchRateMap(Object.keys(comm_ids), async (comm_id) => {
+        const widgets_info = await Promise.all(batchRateMap(Object.keys(this.missed_models), async (comm_id) => {
             const comm = await this._create_comm(this.comm_target_name, comm_id);
             return this._update_comm(comm);
         }, {room: maxMessagesInTransit, rate: maxMessagesPerSecond}));
@@ -174,9 +183,37 @@ export class WidgetManager extends JupyterLabManager {
             );
             const model = await modelPromise;
             models[model.model_id] = model;
+            const missed = this.missed_models[model.model_id];
+            if (missed) {
+                console.log('found', model.model_id);
+                missed.accept(model);
+            }
             return modelPromise;
         }));
+        console.log('Took', Date.now() - t0, 'msec to fetch all widgets');
+        await Promise.all(Object.keys(this._models).map(async (id) => {
+            models[id] = await this._models[id]
+        }));
         return models;
+    }
+    async new_model(options, serialized_state) {
+        const model_id = options.model_id;
+        const model = await super.new_model(options, serialized_state)
+        const missed = this.missed_models[model_id];
+        if (missed) {
+            console.log('found', model_id);
+            missed.accept(model);
+        }
+    }
+    async get_model(model_id) {
+        return super.get_model(model_id).catch((reason) => {
+            console.error('catch', reason);
+            this._models[model_id] = new Promise((resolve, reject) => {
+                console.log('missed', model_id)
+                this.missed_models[model_id] = {resolve, reject};
+            });
+            return this._models[model_id];
+        });
     }
 
     async _update_comm(comm) {
