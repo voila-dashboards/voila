@@ -60,6 +60,8 @@ var voila_heartbeat = function() {
         "kernelId": "{{kernel_id}}"
     }
     </script>
+    {{ voila_setup(resources.base_url, resources.nbextensions) }}
+
     {% set cell_count = nb.cells|length %}
     {#
     Voilà is using Jinja's Template.generate method to not render the whole template in one go.
@@ -95,5 +97,4 @@ var voila_heartbeat = function() {
 {%- endblock body_footer -%}
 
 {% block footer_js %}
-{{ voila_setup(resources.base_url, resources.nbextensions) }}
 {% endblock footer_js %}
