@@ -194,7 +194,123 @@ export class WidgetManager extends JupyterLabManager {
     });
   }
 
+  /**
+   * This is the implementation of building widgets models making use of the
+   * jupyter.widget.control comm channel
+   */
   async _build_models(): Promise<{ [key: string]: base.WidgetModel }> {
+    const models: { [key: string]: base.WidgetModel } = {};
+    const commId = base.uuid();
+    const initComm = await this._create_comm(
+      'jupyter.widget.control',
+      commId,
+      { widgets: null },
+      { version: '1.0.0' }
+    );
+
+    // Fetch widget states
+    let data: any;
+    let buffers: any;
+    try {
+      await new Promise((resolve, reject) => {
+        initComm.on_msg(msg => {
+          data = msg['content']['data'];
+
+          if (data.method !== 'update_states') {
+            console.warn(`
+              Unknown ${data.method} message on the Control channel
+            `);
+            return;
+          }
+
+          buffers = (msg.buffers || []).map((b: any) => {
+            if (b instanceof DataView) {
+              return b;
+            } else {
+              return new DataView(b instanceof ArrayBuffer ? b : b.buffer);
+            }
+          });
+
+          resolve(null);
+        });
+
+        initComm.on_close(reject);
+
+        // Send a states request msg
+        initComm.send({ method: 'request_states' }, {});
+      });
+    } catch (error) {
+      console.warn(
+        'Failed to open "jupyter.widget.control" comm channel, fallback to slow fetching of widgets.',
+        error
+      );
+      // Fallback to the old implementation for old ipywidgets versions (<=7.6)
+      return this._build_models_slow();
+    }
+
+    initComm.close();
+
+    const states: any = data.states;
+
+    // Extract buffer paths
+    // Why do we have to do this? Is there another way?
+    const bufferPaths: any = {};
+    for (const bufferPath of data.buffer_paths) {
+      if (!bufferPaths[bufferPath[0]]) {
+        bufferPaths[bufferPath[0]] = [];
+      }
+      bufferPaths[bufferPath[0]].push(bufferPath.slice(1));
+    }
+
+    const widgetPromises: Promise<base.WidgetModel>[] = [];
+
+    // Start creating all widgets
+    for (const [widget_id, state] of Object.entries(states) as any) {
+      try {
+        const comm = await this._create_comm('jupyter.widget', widget_id);
+
+        // Put binary buffers
+        if (widget_id in bufferPaths) {
+          const nBuffers = bufferPaths[widget_id].length;
+          base.put_buffers(
+            state,
+            bufferPaths[widget_id],
+            buffers.splice(0, nBuffers)
+          );
+        }
+
+        const modelPromise = this.new_model(
+          {
+            model_name: state.model_name,
+            model_module: state.model_module,
+            model_module_version: state.model_module_version,
+            model_id: widget_id,
+            comm: comm
+          },
+          state.state
+        );
+        widgetPromises.push(modelPromise);
+      } catch (error) {
+        // Failed to create a widget model, we continue creating other models so that
+        // other widgets can render
+        console.error(error);
+      }
+    }
+
+    // Wait for widgets to be created
+    const widgets = await Promise.all(widgetPromises);
+    for (const model of widgets) {
+      models[model.model_id] = model;
+    }
+
+    return models;
+  }
+
+  /**
+   * This is the old implementation of building widgets models
+   * We keep it around for supporting old ipywidgets versions (<=7.6)
+   */
+  async _build_models_slow(): Promise<{ [key: string]: base.WidgetModel }> {
     const comm_ids = await this._get_comm_info();
     const models: { [key: string]: base.WidgetModel } = {};
     /**
