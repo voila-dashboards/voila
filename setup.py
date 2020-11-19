@@ -242,7 +242,8 @@ setup_args = {
             'pytest',
             'pytest-tornasync',
             'matplotlib',
-            'ipywidgets'
+            'ipywidgets',
+            'pyppeteer',
         ]
     },
     'url': 'https://github.com/voila-dashboards/voila',
