@@ -32,6 +32,12 @@
 {% block jupyter_widgets %}
 {% endblock jupyter_widgets %}
 
+{% block error -%}
+<div>An unexpected error occurred while executing...</div>
+{{ super() }}
+{%- endblock error %}
+
+
 {%- block body_header -%}
 {% if resources.theme == 'dark' %}
 <body class="jp-Notebook theme-dark" data-base-url="{{resources.base_url}}voila/">
