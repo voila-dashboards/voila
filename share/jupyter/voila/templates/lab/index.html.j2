@@ -33,8 +33,10 @@
 {% endblock jupyter_widgets %}
 
 {% block error -%}
-<div>An unexpected error occurred while executing...</div>
+<details>
+<summary>An unexpected error occurred while executing...</summary>
 {{ super() }}
+</details>
 {%- endblock error %}
 
 
