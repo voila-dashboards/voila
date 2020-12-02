@@ -91,9 +91,6 @@ var voila_heartbeat = function() {
     el.style.display = 'unset'
   })();
 </script>
+{{ voila_setup(resources.base_url, resources.nbextensions) }}
 {{ super() }}
 {%- endblock body_footer -%}
-
-{% block footer_js %}
-{{ voila_setup(resources.base_url, resources.nbextensions) }}
-{% endblock footer_js %}
