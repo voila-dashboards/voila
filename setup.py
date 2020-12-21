@@ -240,6 +240,7 @@ setup_args = {
             'mock',
             'pytest',
             'pytest-tornasync',
+            'jupyter_server~=1.0.1',
             'matplotlib',
             'ipywidgets'
         ]
