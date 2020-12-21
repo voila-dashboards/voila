@@ -3,8 +3,8 @@ import pytest
 
 
 @pytest.fixture
-def cwd_subdir_notebook_url(base_url):
-    return base_url + "voila/render/subdir/cwd_subdir.ipynb"
+def cwd_subdir_notebook_url(jp_base_url):
+    return jp_base_url + "voila/render/subdir/cwd_subdir.ipynb"
 
 
 @pytest.fixture

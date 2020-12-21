@@ -2,8 +2,8 @@ import pytest
 
 
 @pytest.fixture
-def syntax_error_notebook(base_url):
-    return base_url + "voila/render/syntax_error.ipynb"
+def syntax_error_notebook(jp_base_url):
+    return jp_base_url + "voila/render/syntax_error.ipynb"
 
 
 @pytest.fixture

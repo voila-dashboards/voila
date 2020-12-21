@@ -13,8 +13,8 @@ def voila_args_extra():
     return ['--template=skip_template']
 
 
-async def test_markdown_preprocessor(http_server_client, base_url):
-    response = await http_server_client.fetch(base_url)
+async def test_markdown_preprocessor(http_server_client, jp_base_url):
+    response = await http_server_client.fetch(jp_base_url)
     assert response.code == 200
     html_text = response.body.decode('utf-8')
     assert 'Hi Voilà cell' in html_text

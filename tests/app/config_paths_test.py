@@ -26,8 +26,8 @@ def test_config_contents_manager(voila_app):
     assert voila_app.contents_manager.use_atomic_writing is False
 
 
-async def test_template(http_server_client, base_url):
-    response = await http_server_client.fetch(base_url)
+async def test_template(http_server_client, jp_base_url):
+    response = await http_server_client.fetch(jp_base_url)
     assert response.code == 200
     assert 'test_template.css' in response.body.decode('utf-8')
     assert 'Hi Voilà' in response.body.decode('utf-8')

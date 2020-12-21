@@ -22,8 +22,8 @@ def voila_config_file_paths_arg():
     return '--VoilaTest.config_file_paths=[%r]' % path
 
 
-async def test_lists_extension(http_server_client, base_url):
-    response = await http_server_client.fetch(base_url)
+async def test_lists_extension(http_server_client, jp_base_url):
+    response = await http_server_client.fetch(jp_base_url)
     assert response.code == 200
     html_text = response.body.decode('utf-8')
     assert 'Hi Voilà' in html_text

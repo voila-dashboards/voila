@@ -11,8 +11,8 @@ except ImportError:
     import mock
 
 
-async def test_hello_world(http_server_client, base_url):
-    response = await http_server_client.fetch(base_url)
+async def test_hello_world(http_server_client, jp_base_url):
+    response = await http_server_client.fetch(jp_base_url)
     assert response.code == 200
     html_text = response.body.decode('utf-8')
     assert 'Hi Voilà' in html_text
@@ -20,15 +20,15 @@ async def test_hello_world(http_server_client, base_url):
     assert 'test_template.css' not in html_text, "test_template should not be the default"
 
 
-async def test_no_execute_allowed(voila_app, app, http_server_client, base_url, http_server_port):
+async def test_no_execute_allowed(voila_app, app, http_server_client, jp_base_url, http_server_port):
     assert voila_app.app is app
-    response = (await http_server_client.fetch(base_url)).body.decode('utf-8')
+    response = (await http_server_client.fetch(jp_base_url)).body.decode('utf-8')
     pattern = r"""kernelId": ["']([0-9a-zA-Z-]+)["']"""
     groups = re.findall(pattern, response)
     kernel_id = groups[0]
-    print(kernel_id, base_url)
+    print(kernel_id, jp_base_url)
     session_id = '445edd75-c6f5-45d2-8b58-5fe8f84a7123'
-    url = f'ws://localhost:{http_server_port[1]}{base_url}api/kernels/{kernel_id}/channels?session_id={session_id}'
+    url = f'ws://localhost:{http_server_port[1]}{jp_base_url}api/kernels/{kernel_id}/channels?session_id={session_id}'
     conn = await tornado.websocket.websocket_connect(url)
 
     msg = {

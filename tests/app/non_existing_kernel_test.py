@@ -2,8 +2,8 @@ import pytest
 
 
 @pytest.fixture
-def non_existing_kernel_notebook(base_url):
-    return base_url + "voila/render/non_existing_kernel.ipynb"
+def non_existing_kernel_notebook(jp_base_url):
+    return jp_base_url + "voila/render/non_existing_kernel.ipynb"
 
 
 @pytest.fixture

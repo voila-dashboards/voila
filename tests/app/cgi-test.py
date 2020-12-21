@@ -2,8 +2,8 @@ import pytest
 
 
 @pytest.fixture
-def notebook_cgi_path(base_url):
-    return base_url + "voila/render/cgi.ipynb"
+def notebook_cgi_path(jp_base_url):
+    return jp_base_url + "voila/render/cgi.ipynb"
 
 
 @pytest.fixture

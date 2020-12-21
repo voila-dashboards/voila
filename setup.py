@@ -239,6 +239,7 @@ setup_args = {
     'extras_require': {
         'test': [
             'mock',
+            'jupyter_server[test]>=1.1.0,<2.0.0',
             'pytest',
             'pytest-tornasync',
             'matplotlib',
