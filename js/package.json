@@ -1,7 +1,8 @@
 {
-  "name": "@QuantStack/voila",
+  "name": "@voila-dashboards/voila",
+  "private": true,
   "version": "1.0.0",
-  "description": "",
+  "description": "The Voilà Frontend",
   "main": "lib/index.js",
   "browserslist": ">0.8%, not ie 11, not op_mini all, not dead",
   "dependencies": {
