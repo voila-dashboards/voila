@@ -32,7 +32,7 @@ package-lock.json
 share/jupyter/voila/templates/base/static/*voila.js
 share/jupyter/voila/templates/base/static/*[woff|woff2|eot|svg]
 
-js/lib/
+lib
 
 packages/jupyterlab-voila/lib/
 voila/labextension

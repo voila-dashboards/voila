@@ -21,11 +21,11 @@ version = get_version(os.path.join(name, "_version.py"))
 labext_name = "@voila-dashboards/jupyterlab-preview"
 lab_extension_dest = os.path.join(HERE, name, "labextension")
 lab_extension_source = os.path.join(HERE, "packages", "jupyterlab-voila")
-voila_js_source = os.path.join(HERE, "js")
+voila_js_source = os.path.join(HERE, "packages", "voila")
 
 # Representative files that should exist after a successful build
 jstargets = [
-    os.path.join(HERE, "share/jupyter/voila/templates/base/static/voila.js"),
+    os.path.join(HERE, "share", "jupyter", "voila", "templates", "base", "static", "voila.js"),
     os.path.join(lab_extension_dest, "package.json"),
 ]
 

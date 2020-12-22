@@ -66,7 +66,7 @@ When making changes to the frontend side of Voilà, open a new terminal window a
 
 .. code-block:: bash
 
-   cd js/
+   cd packages/voila/
    npm run watch
 
 Then reload the browser tab.
