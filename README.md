@@ -38,7 +38,7 @@ pip install voila
 Voilà provides a JupyterLab extension that displays a Voilà preview of your Notebook in a side-pane:
 
 ```
-jupyter labextension install @jupyter-voila/jupyterlab-preview
+jupyter labextension install @voila-dashboards/jupyterlab-preview
 ```
 
 ## Usage

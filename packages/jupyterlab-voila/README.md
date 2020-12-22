@@ -1,4 +1,4 @@
-# @jupyter-voila/jupyterlab-preview
+# @voila-dashboards/jupyterlab-preview
 
 A JupyterLab preview extension for Voilà.
 
@@ -9,5 +9,5 @@ A JupyterLab preview extension for Voilà.
 ## Install
 
 ```bash
-jupyter labextension install @jupyter-voila/jupyterlab-preview
+jupyter labextension install @voila-dashboards/jupyterlab-preview
 ```

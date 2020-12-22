@@ -84,7 +84,7 @@ class VoilaRenderButton
  * Initialization data for the jupyterlab-voila extension.
  */
 const extension: JupyterFrontEndPlugin<IVoilaPreviewTracker> = {
-  id: "@jupyter-voila/jupyterlab-preview:plugin",
+  id: "@voila-dashboards/jupyterlab-preview:plugin",
   autoStart: true,
   requires: [INotebookTracker],
   optional: [ICommandPalette, ILayoutRestorer, IMainMenu, ISettingRegistry],

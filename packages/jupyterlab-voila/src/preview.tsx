@@ -28,7 +28,7 @@ export interface IVoilaPreviewTracker extends IWidgetTracker<VoilaPreview> {}
  * The Voilà Preview tracker token.
  */
 export const IVoilaPreviewTracker = new Token<IVoilaPreviewTracker>(
-  "@jupyter-voila/jupyterlab-preview:IVoilaPreviewTracker"
+  "@voila-dashboards/jupyterlab-preview:IVoilaPreviewTracker"
 );
 
 /**
@@ -57,7 +57,7 @@ export class VoilaPreview extends DocumentWidget<IFrame, INotebookModel> {
         case "debug":
           console.debug(...event.data?.msg);
           break;
-        
+
         case "info":
           console.info(...event.data?.msg);
           break;
@@ -69,7 +69,7 @@ export class VoilaPreview extends DocumentWidget<IFrame, INotebookModel> {
         case "error":
           console.error(...event.data?.msg);
           break;
-      
+
         default:
           console.log(event);
           break;
