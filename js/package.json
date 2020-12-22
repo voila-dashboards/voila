@@ -39,9 +39,10 @@
   },
   "style": "style/index.css",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "prepare": "npm run build:lib && webpack",
+    "build": "npm run build:lib && webpack",
     "build:lib": "babel src --out-dir lib",
+    "prepare": "npm run build:lib && webpack",
+    "test": "echo \"Error: no test specified\" && exit 1",
     "watch": "npm-run-all -p watch:*",
     "watch:lib": "babel src --out-dir lib --watch",
     "watch:bundle": "webpack --watch --mode=development"
