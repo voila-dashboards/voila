@@ -25,7 +25,9 @@ voila_js_source = os.path.join(HERE, "packages", "voila")
 
 # Representative files that should exist after a successful build
 jstargets = [
-    os.path.join(HERE, "share", "jupyter", "voila", "templates", "base", "static", "voila.js"),
+    os.path.join(
+        HERE, "share", "jupyter", "voila", "templates", "base", "static", "voila.js"
+    ),
     os.path.join(lab_extension_dest, "package.json"),
 ]
 
@@ -51,7 +53,7 @@ data_files_spec = [
     ("share/jupyter/nbextensions/voila", "voila/static", "extension.js"),
     ("share/jupyter/labextensions/%s" % labext_name, lab_extension_dest, "**"),
     ("share/jupyter/labextensions/%s" % labext_name, HERE, "install.json"),
-    ("share/jupyter/voila/templates", "share/jupyter/voila/templates", "**"),
+    ("share/jupyter/voila/templates", "share/jupyter/voila/templates", "**/*[!.map]"),
 ]
 
 
