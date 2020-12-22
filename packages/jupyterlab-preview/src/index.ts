@@ -81,7 +81,7 @@ class VoilaRenderButton
 }
 
 /**
- * Initialization data for the jupyterlab-voila extension.
+ * Initialization data for the jupyterlab-preview extension.
  */
 const extension: JupyterFrontEndPlugin<IVoilaPreviewTracker> = {
   id: "@voila-dashboards/jupyterlab-preview:plugin",

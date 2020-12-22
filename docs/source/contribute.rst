@@ -151,7 +151,7 @@ added in JupyterLab 3.0. To setup the development environment:
    jupyter labextension develop . --overwrite
 
    # go to the extension directory
-   cd packages/jupyter-voila
+   cd packages/jupyterlab-preview
 
    # build the extension
    jlpm run build

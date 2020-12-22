@@ -22,7 +22,7 @@ Make sure the `dist/` folder is empty.
 1. Update [voila/_version.py](./voila/_version.py) and [environment.yml](./environment.yml) with the new version number (see and [example diff](https://github.com/voila-dashboards/voila/commit/5c6fd8dd3ea71412ae9c20c25248453d22a3b60a))
 2. `python setup.py sdist bdist_wheel`
 3. Double check the size of the bundles in the `dist/` folder
-4. If the JupyterLab extension has changed, make sure to bump the version number in `./packages/jupyterlab-voila/package.json`
+4. If the JupyterLab extension has changed, make sure to bump the version number in `./packages/jupyterlab-preview/package.json`
 5. Make sure the JupyterLab extension is correctly bundled in source distribution
 6. Run the tests
    * (pip install "dist/voila-X.Y.Z-py3-none-any.whl[test]" && (cd tests/test_template; pip install .) && (cd tests/skip_template; pip install .) && py.test)
@@ -62,8 +62,8 @@ However we also publish it to `npm` to:
 
 ## Releasing on npm
 
-1. Update [packages/jupyterlab-voila/package.json](./packages/jupyterlab-voila/package.json) with the new version number (to be done when making a new release of the Python package)
-2. `cd ./packages/jupyterlab-voila`
+1. Update [packages/jupyterlab-preview/package.json](./packages/jupyterlab-preview/package.json) with the new version number (to be done when making a new release of the Python package)
+2. `cd ./packages/jupyterlab-preview`
 3. `npm login`
 4. `npm publish`
 

@@ -34,6 +34,5 @@ share/jupyter/voila/templates/base/static/*[woff|woff2|eot|svg]
 
 lib
 
-packages/jupyterlab-voila/lib/
 voila/labextension
 tsconfig.tsbuildinfo
