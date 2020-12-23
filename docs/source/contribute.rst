@@ -66,7 +66,7 @@ When making changes to the frontend side of Voilà, open a new terminal window a
 
 .. code-block:: bash
 
-   cd js/
+   cd packages/voila/
    npm run watch
 
 Then reload the browser tab.
@@ -126,15 +126,38 @@ You can verify if the server extension is enabled by running:
 
    jupyter serverextension list
 
-To install the JupyterLab extension locally:
+
+If you use Jupyter Server:
 
 .. code-block:: bash
 
-   jupyter labextension install @jupyter-widgets/jupyterlab-manager
-   jupyter labextension install ./packages/jupyterlab-voila
+   jupyter server extension enable voila --sys-prefix
 
-   # start in watch mode to pick up changes automatically
-   jupyter lab --watch
+You can verify if the server extension is enabled by running:
+
+.. code-block:: bash
+
+   jupyter server extension list
+
+The JupyterLab extension is developed as a prebuilt extension using the new distribution system
+added in JupyterLab 3.0. To setup the development environment:
+
+.. code-block:: bash
+
+   # install the package in development mode
+   python -m pip install -e .
+
+   # link your development version of the extension with JupyterLab
+   jupyter labextension develop . --overwrite
+
+   # go to the extension directory
+   cd packages/jupyterlab-preview
+
+   # build the extension
+   jlpm run build
+
+   # it is also possible to start in watch mode to pick up changes automatically
+   jlpm run watch
 
 Tests
 =====
