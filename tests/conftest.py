@@ -8,6 +8,11 @@ BASE_DIR = os.path.dirname(__file__)
 
 
 @pytest.fixture
+def base_url():
+    return "/"
+
+
+@pytest.fixture
 def notebook_directory():
     return os.path.join(BASE_DIR, 'notebooks')
 
