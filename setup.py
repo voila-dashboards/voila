@@ -99,8 +99,6 @@ setup_args = dict(
         "test": [
             "ipywidgets",
             "mock",
-            # TODO: unpin
-            "jupyter_server~=1.0.1",
             "matplotlib",
             "pytest",
             "pytest-tornasync",
