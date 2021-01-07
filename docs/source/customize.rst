@@ -328,3 +328,14 @@ To hide both the code cell and the output cell (if any) for every cell that has 
 
 You can use any tag you want but be sure to use the same tag name in the Voilà command.
 And please note that this functionality will only hide the cells in Voilà but will not prevent them from being executed.
+
+Cell execution timeouts
+=======================
+
+By default, Voilà does not have an execution timeout, meaning there is no limit for how long it takes for Voilà to execute and render your notebook.  If you have potentially long-running cells, you may wish to set a cell execution timeout so that users of your dashboard will get an error if it takes longer than expected to execute the notebook.  For example:
+
+.. code-block:: bash
+
+    voila ---VoilaExecutor.timeout=30 your_notebook.ipynb
+
+With this setting, if any cell takes longer than 30 seconds to run, a ``TimeoutError`` will be raised.  You can further customize this behavior using the ``VoilaExecutor.timeout_func`` and ``VoilaExecutor.interrupt_on_timeout`` options.
