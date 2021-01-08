@@ -336,6 +336,6 @@ By default, Voilà does not have an execution timeout, meaning there is no limit
 
 .. code-block:: bash
 
-    voila ---VoilaExecutor.timeout=30 your_notebook.ipynb
+    voila --VoilaExecutor.timeout=30 your_notebook.ipynb
 
 With this setting, if any cell takes longer than 30 seconds to run, a ``TimeoutError`` will be raised.  You can further customize this behavior using the ``VoilaExecutor.timeout_func`` and ``VoilaExecutor.interrupt_on_timeout`` options.
