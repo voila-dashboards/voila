@@ -66,7 +66,7 @@ being used for reproducible research, making it an excellent fit for deploying V
 
 3. Go to `mybinder.org <https://mybinder.org>`__ and enter the URL of the repository.
 
-4. In ``Path to a notebook file``, select ``URL`` and use the Voilà endpoint: ``/voila/render/path/to/notebook.ipynb``
+4. In ``Path to a notebook file``, select ``URL`` and use the Voilà endpoint: ``voila/render/path/to/notebook.ipynb``
 
 5. Click ``Launch``.
 
