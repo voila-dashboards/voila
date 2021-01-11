@@ -1,3 +1,3 @@
 [build-system]
-requires = ["jupyter_packaging~=0.7.9", "jupyterlab>=3.0.0rc15,==3.*", "setuptools>=40.8.0", "wheel", "jupyter_core"]
+requires = ["jupyter_packaging~=0.7.9", "jupyterlab~=3.0", "setuptools>=40.8.0", "wheel", "jupyter_core"]
 build-backend = "setuptools.build_meta"
