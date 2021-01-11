@@ -32,7 +32,7 @@ jobs:
       run: |
         python -m pip install --upgrade pip
         python -m pip install jupyter_packaging
-        python -m pip install --pre jupyterlab
+        python -m pip install jupyterlab
 
     - name: Install the Voilà Preview JupyterLab extension
       run: |
