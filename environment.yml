@@ -2,6 +2,7 @@ name: voila
 channels:
   - conda-forge
 dependencies:
+  - jupyterlab=3
   - ipyvolume
   - bqplot
   - scipy
