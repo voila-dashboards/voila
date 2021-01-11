@@ -49,7 +49,9 @@
     <div class="container" id="notebook-container">
 {% endblock body_header %}
 
+{%- block footer %}
 {% block footer_js %}
 {{ voila_setup(resources.base_url, resources.nbextensions) }}
 {% endblock footer_js %}
-
+</html>
+{%- endblock footer-%}

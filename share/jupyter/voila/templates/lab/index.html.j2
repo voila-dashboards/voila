@@ -94,3 +94,9 @@ var voila_heartbeat = function() {
 {{ voila_setup(resources.base_url, resources.nbextensions) }}
 {{ super() }}
 {%- endblock body_footer -%}
+
+{%- block footer %}
+{% block footer_js %}
+{% endblock footer_js %}
+</html>
+{%- endblock footer-%}
