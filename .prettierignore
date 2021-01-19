@@ -7,6 +7,3 @@ node_modules
 build
 notebooks/
 .vscode/
-
-# TODO: re-enable
-packages/voila

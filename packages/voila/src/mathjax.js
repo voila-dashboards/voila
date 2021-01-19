@@ -29,8 +29,14 @@ const chtml = new CHTML({
 
 const tex = new TeX({
   packages: AllPackages,
-  inlineMath: [['$', '$'], ['\\(', '\\)']],
-  displayMath: [['$$', '$$'], ['\\[', '\\]']],
+  inlineMath: [
+    ['$', '$'],
+    ['\\(', '\\)']
+  ],
+  displayMath: [
+    ['$$', '$$'],
+    ['\\[', '\\]']
+  ],
   processEscapes: true,
   processEnvironments: true
 });
@@ -42,10 +48,11 @@ const html = mathjax.document(document, {
 });
 
 export function renderMathJax() {
-  html.findMath()
+  html
+    .findMath()
     .compile()
     .getMetrics()
     .typeset()
     .updateDocument()
     .reset();
-};
+}

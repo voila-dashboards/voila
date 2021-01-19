@@ -11,6 +11,7 @@ node_modules
 **/typings
 **/schemas
 **/themes
+**/templates
 coverage
 *.map.js
 *.bundle.js
@@ -21,6 +22,3 @@ coverage
 # ms IDE stuff
 .history/
 .vscode/
-
-# TODO: re-enable
-packages/voila
