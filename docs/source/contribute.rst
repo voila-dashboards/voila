@@ -150,14 +150,46 @@ added in JupyterLab 3.0. To setup the development environment:
    # link your development version of the extension with JupyterLab
    jupyter labextension develop . --overwrite
 
-   # go to the extension directory
-   cd packages/jupyterlab-preview
-
-   # build the extension
-   jlpm run build
+   # build the lab extension
+   jlpm run build --scope @voila-dashboards/jupyterlab-preview
 
    # it is also possible to start in watch mode to pick up changes automatically
    jlpm run watch
+
+
+Frontend Packages
+-----------------
+
+The Voilà repository consists of several packages such as the Voilà frontend and the JupyterLab extension.
+
+It follows a monorepo structure and uses ``lerna`` to streamline the workflow.
+
+To build all the frontend packages at once, run the following commands:
+
+.. code-block:: bash
+
+   # install dependencies
+   jlpm
+
+   # build the packages
+   jlpm run build
+
+This will run the ``build`` script in each of the packages.
+
+Using this structure, packages can easily be linted and follow the same code style and conventions used in other Jupyter projects.
+To lint the packages:
+
+.. code-block:: bash
+
+   # install dependencies
+   jlpm
+
+   # run ESLint
+   jlpm run eslint
+
+   # run prettier
+   jlpm run prettier
+
 
 Tests
 =====
