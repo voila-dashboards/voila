@@ -20,8 +20,6 @@ version = get_version(os.path.join(name, "_version.py"))
 
 labext_name = "@voila-dashboards/jupyterlab-preview"
 lab_extension_dest = os.path.join(HERE, name, "labextension")
-lab_extension_source = os.path.join(HERE, "packages", "jupyterlab-preview")
-voila_js_source = os.path.join(HERE, "packages", "voila")
 
 # Representative files that should exist after a successful build
 jstargets = [
@@ -62,8 +60,7 @@ cmdclass = create_cmdclass(
 )
 
 js_command = combine_commands(
-    install_npm(voila_js_source, build_cmd="build", npm=["npm"]),
-    install_npm(lab_extension_source, build_cmd="build:prod", npm=["jlpm"]),
+    install_npm(HERE, build_cmd="build:prod", npm=["jlpm"]),
     ensure_targets(jstargets),
 )
 
