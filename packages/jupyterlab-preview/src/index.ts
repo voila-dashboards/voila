@@ -26,7 +26,7 @@ import {
 
 import { CommandRegistry } from '@lumino/commands';
 
-import { ReadonlyJSONObject } from '@lumino/coreutils';
+import { ReadonlyPartialJSONObject } from '@lumino/coreutils';
 
 import { IDisposable } from '@lumino/disposable';
 
@@ -114,7 +114,7 @@ const extension: JupyterFrontEndPlugin<IVoilaPreviewTracker> = {
       });
     }
 
-    function getCurrent(args: ReadonlyJSONObject): NotebookPanel | null {
+    function getCurrent(args: ReadonlyPartialJSONObject): NotebookPanel | null {
       const widget = notebooks.currentWidget;
       const activate = args['activate'] !== false;
 

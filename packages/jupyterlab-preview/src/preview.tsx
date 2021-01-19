@@ -81,7 +81,7 @@ export class VoilaPreview extends DocumentWidget<IFrame, INotebookModel> {
     this.content.url = getVoilaUrl(context.path);
     this.content.title.icon = VOILA_ICON_CLASS;
 
-    this.renderOnSave = renderOnSave;
+    this._renderOnSave = renderOnSave ?? false;
 
     context.pathChanged.connect(() => {
       this.content.url = getVoilaUrl(context.path);
