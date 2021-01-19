@@ -3,6 +3,8 @@
   "private": true,
   "version": "1.0.0",
   "description": "The Voilà Frontend",
+  "author": "Voilà contributors",
+  "license": "BSD-3-Clause",
   "main": "lib/index.js",
   "browserslist": ">0.8%, not ie 11, not op_mini all, not dead",
   "dependencies": {
@@ -41,13 +43,12 @@
   "style": "style/index.css",
   "scripts": {
     "build": "npm run build:lib && webpack",
+    "build:prod": "npm run build:lib && webpack --production",
     "build:lib": "babel src --out-dir lib",
     "prepare": "npm run build:lib && webpack",
     "test": "echo \"Error: no test specified\" && exit 1",
     "watch": "npm-run-all -p watch:*",
     "watch:lib": "babel src --out-dir lib --watch",
     "watch:bundle": "webpack --watch --mode=development"
-  },
-  "author": "Voilà contributors",
-  "license": "BSD-3-Clause"
+  }
 }
