@@ -1,5 +1,5 @@
 {
   "extends": "./tsconfigbase",
-  "include": ["packages/**/*"],
+  "include": ["packages/**/*", "lint-staged.config.js"],
   "types": ["jest"]
 }

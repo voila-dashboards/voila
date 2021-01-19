@@ -1,4 +1,4 @@
-@import "variables.css";
+@import 'variables.css';
 
 .jp-VoilaIcon {
   background-image: var(--jp-icon-voila);

@@ -2,9 +2,9 @@
   "base_template": "classic",
   "preprocessors": {
     "100-remove-skip-voila-cells": {
-        "type": "nbconvert.preprocessors.tagremove.TagRemovePreprocessor",
-        "remove_cell_tags": ["skip-voila"],
-        "enabled": true
+      "type": "nbconvert.preprocessors.tagremove.TagRemovePreprocessor",
+      "remove_cell_tags": ["skip-voila"],
+      "enabled": true
     }
   }
 }

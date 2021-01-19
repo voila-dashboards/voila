@@ -21,3 +21,6 @@ coverage
 # ms IDE stuff
 .history/
 .vscode/
+
+# TODO: re-enable
+packages/voila

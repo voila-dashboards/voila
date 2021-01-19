@@ -3,21 +3,21 @@ import {
   ToolbarButton,
   ReactWidget,
   IWidgetTracker
-} from "@jupyterlab/apputils";
+} from '@jupyterlab/apputils';
 
 import {
   ABCWidgetFactory,
   DocumentRegistry,
   DocumentWidget
-} from "@jupyterlab/docregistry";
+} from '@jupyterlab/docregistry';
 
-import { INotebookModel } from "@jupyterlab/notebook";
+import { INotebookModel } from '@jupyterlab/notebook';
 
-import { Token } from "@lumino/coreutils";
+import { Token } from '@lumino/coreutils';
 
-import { Signal } from "@lumino/signaling";
+import { Signal } from '@lumino/signaling';
 
-import * as React from "react";
+import * as React from 'react';
 
 /**
  * A class that tracks Voilà Preview widgets.
@@ -28,13 +28,13 @@ export interface IVoilaPreviewTracker extends IWidgetTracker<VoilaPreview> {}
  * The Voilà Preview tracker token.
  */
 export const IVoilaPreviewTracker = new Token<IVoilaPreviewTracker>(
-  "@voila-dashboards/jupyterlab-preview:IVoilaPreviewTracker"
+  '@voila-dashboards/jupyterlab-preview:IVoilaPreviewTracker'
 );
 
 /**
  * The class name for a Voilà preview icon.
  */
-export const VOILA_ICON_CLASS = "jp-MaterialIcon jp-VoilaIcon";
+export const VOILA_ICON_CLASS = 'jp-MaterialIcon jp-VoilaIcon';
 
 /**
  * A DocumentWidget that shows a Voilà preview in an IFrame.
@@ -47,26 +47,26 @@ export class VoilaPreview extends DocumentWidget<IFrame, INotebookModel> {
   constructor(options: VoilaPreview.IOptions) {
     super({
       ...options,
-      content: new IFrame({ sandbox: ["allow-same-origin", "allow-scripts"] })
+      content: new IFrame({ sandbox: ['allow-same-origin', 'allow-scripts'] })
     });
 
     window.onmessage = (event: any) => {
       //console.log("EVENT: ", event);
 
       switch (event.data?.level) {
-        case "debug":
+        case 'debug':
           console.debug(...event.data?.msg);
           break;
 
-        case "info":
+        case 'info':
           console.info(...event.data?.msg);
           break;
 
-        case "warn":
+        case 'warn':
           console.warn(...event.data?.msg);
           break;
 
-        case "error":
+        case 'error':
           console.error(...event.data?.msg);
           break;
 
@@ -88,8 +88,8 @@ export class VoilaPreview extends DocumentWidget<IFrame, INotebookModel> {
     });
 
     const reloadButton = new ToolbarButton({
-      iconClass: "jp-RefreshIcon",
-      tooltip: "Reload Preview",
+      iconClass: 'jp-RefreshIcon',
+      tooltip: 'Reload Preview',
       onClick: () => {
         this.reload();
       }
@@ -98,7 +98,7 @@ export class VoilaPreview extends DocumentWidget<IFrame, INotebookModel> {
     const renderOnSaveCheckbox = ReactWidget.create(
       <label className="jp-VoilaPreview-renderOnSave">
         <input
-          style={{ verticalAlign: "middle" }}
+          style={{ verticalAlign: 'middle' }}
           name="renderOnSave"
           type="checkbox"
           defaultChecked={renderOnSave}
@@ -110,10 +110,10 @@ export class VoilaPreview extends DocumentWidget<IFrame, INotebookModel> {
       </label>
     );
 
-    this.toolbar.addItem("reload", reloadButton);
+    this.toolbar.addItem('reload', reloadButton);
 
     if (context) {
-      this.toolbar.addItem("renderOnSave", renderOnSaveCheckbox);
+      this.toolbar.addItem('renderOnSave', renderOnSaveCheckbox);
       void context.ready.then(() => {
         context.fileChanged.connect(() => {
           if (this.renderOnSave) {
@@ -127,7 +127,7 @@ export class VoilaPreview extends DocumentWidget<IFrame, INotebookModel> {
   /**
    * Dispose the preview widget.
    */
-  dispose() {
+  dispose(): void {
     if (this.isDisposed) {
       return;
     }
@@ -138,8 +138,8 @@ export class VoilaPreview extends DocumentWidget<IFrame, INotebookModel> {
   /**
    * Reload the preview.
    */
-  reload() {
-    const iframe = this.content.node.querySelector("iframe")!;
+  reload(): void {
+    const iframe = this.content.node.querySelector('iframe')!;
     if (iframe.contentWindow) {
       iframe.contentWindow.location.reload();
     }
@@ -187,7 +187,7 @@ export class VoilaPreviewFactory extends ABCWidgetFactory<
   VoilaPreview,
   INotebookModel
 > {
-  defaultRenderOnSave: boolean = false;
+  defaultRenderOnSave = false;
 
   constructor(
     private getVoilaUrl: (path: string) => string,

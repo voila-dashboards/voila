@@ -5,3 +5,8 @@ node_modules
 **/labextension
 **/static
 build
+notebooks/
+.vscode/
+
+# TODO: re-enable
+packages/voila
