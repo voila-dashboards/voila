@@ -91,6 +91,7 @@ https://voila.readthedocs.io/
 The following two examples show how a standalone Jupyter notebook can be turned into a separate app, from the command-line integration.
 
 ### Rendering a notebook including interactive widgets and rich mime-type rendering
+
 ![Voilà basics](voila-basics.gif)
 
 ### Rendering a notebook making use of a custom widget library ([bqplot](https://github.com/bloomberg/bqplot))
@@ -103,7 +104,7 @@ The sources of the Jupyter notebook can be displayed in a Voilà app if option `
 
 ![Voilà sources](voila-sources.gif)
 
-### Voilà dashboards with other language kernels**
+### Voilà dashboards with other language kernels\*\*
 
 Voilà is built upon Jupyter standard formats and protocols, and is agnostic to the programming language of the notebook. In this example, we present an example of a Voilà application powered by the C++ Jupyter kernel [xeus-cling](https://github.com/jupyter-xeus/xeus-cling), and the [xleaflet](https://github.com/jupyter-xeus/xleaflet) project.
 

@@ -1,7 +1,0 @@
-[data-jp-theme-light="true"] {
-  --jp-icon-voila: url("./voila-light.svg");
-}
-
-[data-jp-theme-light="false"] {
-  --jp-icon-voila: url("./voila-dark.svg");
-}

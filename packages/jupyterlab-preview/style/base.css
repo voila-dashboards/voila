@@ -1,0 +1,7 @@
+.jp-VoilaIcon {
+  background-image: var(--jp-icon-voila);
+}
+
+.jp-VoilaPreview-renderOnSave {
+  align-items: center;
+}
