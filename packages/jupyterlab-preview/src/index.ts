@@ -31,13 +31,12 @@ import { ReadonlyPartialJSONObject } from '@lumino/coreutils';
 import { IDisposable } from '@lumino/disposable';
 
 import {
-  VOILA_ICON_CLASS,
   VoilaPreview,
   IVoilaPreviewTracker,
   VoilaPreviewFactory
 } from './preview';
 
-import '../style/index.css';
+import { voilaIcon } from './icons';
 
 /**
  * The command IDs used by the plugin.
@@ -68,7 +67,7 @@ class VoilaRenderButton
     const button = new ToolbarButton({
       className: 'voilaRender',
       tooltip: 'Render with Voilà',
-      iconClass: VOILA_ICON_CLASS,
+      icon: voilaIcon,
       onClick: () => {
         this._commands.execute(CommandIDs.voilaRender);
       }
