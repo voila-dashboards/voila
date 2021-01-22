@@ -101,3 +101,74 @@ jobs:
           jupyter nbextension list 2>&1 | grep -ie "voila/extension.*enabled" -
           voila --version
           voila --help
+
+  release:
+    # TODO
+    # if: startsWith(github.ref, 'refs/tags/')
+    needs: [install]
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+      with:
+        fetch-depth: 0
+    - uses: actions/download-artifact@v2
+      with:
+        name: dist ${{ github.run_number }}
+        path: ./tmp
+    - name: Copy to ./dist
+      run: |
+        mkdir dist/
+        cp ./tmp/voila*.tar.gz ./tmp/voila*.whl dist
+        ls dist
+    - name: Publish a Python distribution to PyPI
+      uses: pypa/gh-action-pypi-publish@master
+      with:
+        user: __token__
+        # TODO: switch to prod
+        password: ${{ secrets.TEST_PYPI_API_TOKEN }}
+        repository_url: https://test.pypi.org/legacy/
+        skip_existing: true
+    - uses: actions/setup-node@v2
+      with:
+       node-version: '14.x'
+       registry-url: 'https://registry.npmjs.org'
+    - name: Publish to npm
+      env:
+        NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+      run: |
+        npm config set //registry.npmjs.org/:_authToken ${NPM_TOKEN}
+        cd packages/jupyterlab-preview
+        npm publish
+    - name: Get the current tag
+      id: current_tag
+      run: |
+        tag=`git describe --abbrev=0 --tags $(git rev-list --tags --max-count=1)`
+        echo "::set-output name=tag::${tag}"
+    - name: Get the previous tag
+      id: previous_tag
+      run: |
+        tag=`git describe --abbrev=0 --tags $(git rev-list --tags --skip=1 --max-count=1)`
+        echo "::set-output name=tag::${tag}"
+    - name: Generate Changelog
+      env:
+        CHANGELOG_GITHUB_TOKEN: ${{ secrets.CHANGELOG_GITHUB_TOKEN }}
+      run: |
+        docker run --rm -v "$(pwd)":/usr/local/src/your-app \
+          -e CHANGELOG_GITHUB_TOKEN=${CHANGELOG_GITHUB_TOKEN} \
+          ferrarimarco/github-changelog-generator \
+          github_changelog_generator -u voila-dashboards -p voila --usernames-as-github-logins --no-issues --no-unreleased \
+          --since-tag ${{ steps.previous_tag.outputs.tag }} --header "" --pr-label "## Changes"
+        head -n -1 CHANGELOG.md > CHANGELOG
+    # - name: Create Release
+    #   id: create_release
+    #   uses: actions/create-release@v1
+    #   env:
+    #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    #   with:
+    #     tag_name: ${{ github.ref }}
+    #     release_name: ${{ github.ref }}
+    #     body_path: CHANGELOG
+    #     # TODO: set to false?
+    #     draft: true
+    #     prerelease: false
+
