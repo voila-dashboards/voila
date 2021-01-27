@@ -7,16 +7,16 @@
  * The full license is in the file LICENSE, distributed with this software. *
  ****************************************************************************/
 
-let cdn = 'https://unpkg.com/';
+const cdn = 'https://unpkg.com/';
 
 /**
  * Load a package using requirejs and return a promise
  *
  * @param pkg Package name or names to load
  */
-let requirePromise = function(pkg) {
+const requirePromise = function(pkg) {
   return new Promise((resolve, reject) => {
-    let require = window.requirejs;
+    const require = window.requirejs;
     if (require === undefined) {
       reject('Requirejs is needed, please ensure it is loaded on the page.');
     } else {
@@ -58,10 +58,10 @@ function moduleNameToCDNUrl(moduleName, moduleVersion) {
  */
 export function requireLoader(moduleName, moduleVersion) {
   return requirePromise([`${moduleName}`]).catch(err => {
-    let failedId = err.requireModules && err.requireModules[0];
+    const failedId = err.requireModules && err.requireModules[0];
     if (failedId) {
       console.log(`Falling back to ${cdn} for ${moduleName}@${moduleVersion}`);
-      let require = window.requirejs;
+      const require = window.requirejs;
       if (require === undefined) {
         throw new Error(
           'Requirejs is needed, please ensure it is loaded on the page.'

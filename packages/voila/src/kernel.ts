@@ -15,7 +15,7 @@ export async function connectKernel(baseUrl, kernelId) {
   kernelId = kernelId || PageConfig.getOption('kernelId');
   const connectionInfo = ServerConnection.makeSettings({ baseUrl });
 
-  let model = await Kernel.findById(kernelId, connectionInfo);
-  let kernel = await Kernel.connectTo(model, connectionInfo);
+  const model = await Kernel.findById(kernelId, connectionInfo);
+  const kernel = await Kernel.connectTo(model, connectionInfo);
   return kernel;
 }

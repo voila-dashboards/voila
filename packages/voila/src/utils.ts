@@ -8,7 +8,7 @@ const delay = sec => new Promise(resolve => setTimeout(resolve, sec * 1000));
  * Note that the minimum window at which rate is respected is room/rate seconds.
  */
 export const batchRateMap = (list, fn, { room, rate }) => {
-  var limit = pLimit(room);
+  const limit = pLimit(room);
   return list.map(async value => {
     return new Promise((valueResolve, reject) => {
       limit(() => {
