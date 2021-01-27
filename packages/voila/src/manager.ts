@@ -125,7 +125,11 @@ export class WidgetManager extends JupyterLabManager {
     return view.pWidget;
   }
 
-  async loadClass(className, moduleName, moduleVersion) {
+  async loadClass(
+    className: string,
+    moduleName: string,
+    moduleVersion: string
+  ): Promise<any> {
     if (
       moduleName === '@jupyter-widgets/base' ||
       moduleName === '@jupyter-widgets/controls' ||
@@ -151,8 +155,7 @@ export class WidgetManager extends JupyterLabManager {
     }
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-empty-function
-  restoreWidgets(notebook): Promise<void> {
+  restoreWidgets(notebook: INotebookModel): Promise<void> {
     return Promise.resolve();
   }
 
@@ -174,7 +177,7 @@ export class WidgetManager extends JupyterLabManager {
     });
   }
 
-  async _build_models() {
+  async _build_models(): Promise<{ [key: string]: base.WidgetModel }> {
     const comm_ids = await this._get_comm_info();
     const models = {};
     /**
@@ -215,7 +218,9 @@ export class WidgetManager extends JupyterLabManager {
     return models;
   }
 
-  async _update_comm(comm) {
+  async _update_comm(
+    comm: base.IClassicComm
+  ): Promise<{ comm: base.IClassicComm; msg: any }> {
     return new Promise((resolve, reject) => {
       comm.on_msg(async msg => {
         if (msg.content.data.buffer_paths) {
