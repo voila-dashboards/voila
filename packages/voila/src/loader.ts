@@ -56,7 +56,7 @@ function moduleNameToCDNUrl(moduleName, moduleVersion) {
  *
  * The semver range is only used with the CDN.
  */
-export function requireLoader(moduleName, moduleVersion) {
+export function requireLoader(moduleName, moduleVersion): Promise<any> {
   return requirePromise([`${moduleName}`]).catch(err => {
     const failedId = err.requireModules && err.requireModules[0];
     if (failedId) {

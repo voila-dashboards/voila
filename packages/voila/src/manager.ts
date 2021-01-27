@@ -65,23 +65,26 @@ export class WidgetManager extends JupyterLabManager {
       1
     );
     this._registerWidgets();
-    this.loader = requireLoader;
+    this._loader = requireLoader;
   }
 
-  async build_widgets() {
+  async build_widgets(): Promise<void> {
     const models = await this._build_models();
     const tags = document.body.querySelectorAll(
       'script[type="application/vnd.jupyter.widget-view+json"]'
     );
-    for (let i = 0; i !== tags.length; ++i) {
+    tags.forEach(async viewtag => {
+      if (!viewtag?.parentElement) {
+        return;
+      }
       try {
-        const viewtag = tags[i];
         const widgetViewObject = JSON.parse(viewtag.innerHTML);
         const { model_id } = widgetViewObject;
         const model = models[model_id];
         const widgetel = document.createElement('div');
         viewtag.parentElement.insertBefore(widgetel, viewtag);
-        const view = await this.display_model(undefined, model, {
+        // TODO: fix typing
+        await this.display_model(undefined as any, model, {
           el: widgetel
         });
       } catch (error) {
@@ -95,7 +98,7 @@ export class WidgetManager extends JupyterLabManager {
         // This workaround may not be necessary anymore with templates that make use
         // of progressive rendering.
       }
-    }
+    });
   }
 
   display_view(msg, view, options) {
@@ -123,7 +126,7 @@ export class WidgetManager extends JupyterLabManager {
       return super.loadClass(className, moduleName, moduleVersion);
     } else {
       // TODO: code duplicate from HTMLWidgetManager, consider a refactor
-      return this.loader(moduleName, moduleVersion).then(module => {
+      return this._loader(moduleName, moduleVersion).then(module => {
         if (module[className]) {
           return module[className];
         } else {
@@ -141,23 +144,25 @@ export class WidgetManager extends JupyterLabManager {
   }
 
   // eslint-disable-next-line @typescript-eslint/no-empty-function
-  restoreWidgets(notebook) {}
+  restoreWidgets(notebook): Promise<void> {
+    return Promise.resolve();
+  }
 
-  _registerWidgets() {
+  private _registerWidgets(): void {
     this.register({
       name: '@jupyter-widgets/base',
       version: base.JUPYTER_WIDGETS_VERSION,
-      exports: base
+      exports: base as any
     });
     this.register({
       name: '@jupyter-widgets/controls',
       version: controls.JUPYTER_CONTROLS_VERSION,
-      exports: controls
+      exports: controls as any
     });
     this.register({
       name: '@jupyter-widgets/output',
       version: output.OUTPUT_WIDGET_VERSION,
-      exports: output
+      exports: output as any
     });
   }
 
@@ -184,13 +189,13 @@ export class WidgetManager extends JupyterLabManager {
 
     await Promise.all(
       widgets_info.map(async widget_info => {
-        const state = widget_info.msg.content.data.state;
+        const state = (widget_info as any).msg.content.data.state;
         const modelPromise = this.new_model(
           {
             model_name: state._model_name,
             model_module: state._model_module,
             model_module_version: state._model_module_version,
-            comm: widget_info.comm
+            comm: (widget_info as any).comm
           },
           state
         );
@@ -219,4 +224,6 @@ export class WidgetManager extends JupyterLabManager {
       comm.send({ method: 'request_state' }, {});
     });
   }
+
+  private _loader: (name: any, version: any) => Promise<any>;
 }

@@ -20,8 +20,9 @@ RegisterHTMLHandler(browserAdaptor());
 
 // Override dynamically generated fonts in favor
 // of our font css that is picked up by webpack.
-class emptyFont extends TeXFont {}
-emptyFont.defaultFonts = {};
+class emptyFont extends TeXFont {
+  readonly defaultFonts = {};
+}
 
 const chtml = new CHTML({
   font: new emptyFont()
@@ -47,7 +48,7 @@ const html = mathjax.document(document, {
   OutputJax: chtml
 });
 
-export function renderMathJax() {
+export function renderMathJax(): void {
   html
     .findMath()
     .compile()
