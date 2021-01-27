@@ -1,6 +1,7 @@
 import pLimit from 'p-limit';
 
-const delay = sec => new Promise(resolve => setTimeout(resolve, sec * 1000));
+const delay = (sec: number) =>
+  new Promise(resolve => setTimeout(resolve, sec * 1000));
 
 /**
  * Map a function onto a list where fn is being called at a limit of 'rate' number of calls per second.

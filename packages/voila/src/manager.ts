@@ -115,7 +115,7 @@ export class WidgetManager extends JupyterLabManager {
     }
     if (view.el) {
       view.el.setAttribute('data-voila-jupyter-widget', '');
-      view.el.addEventListener('jupyterWidgetResize', e => {
+      view.el.addEventListener('jupyterWidgetResize', (e: Event) => {
         MessageLoop.postMessage(
           view.pWidget,
           PhosphorWidget.Widget.ResizeMessage.UnknownSize
@@ -179,7 +179,7 @@ export class WidgetManager extends JupyterLabManager {
 
   async _build_models(): Promise<{ [key: string]: base.WidgetModel }> {
     const comm_ids = await this._get_comm_info();
-    const models = {};
+    const models: { [key: string]: base.WidgetModel } = {};
     /**
      * For the classical notebook, iopub_msg_rate_limit=1000 (default)
      * And for zmq, we are affected by the default ZMQ_SNDHWM setting of 1000

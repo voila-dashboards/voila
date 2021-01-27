@@ -14,7 +14,7 @@ const cdn = 'https://unpkg.com/';
  *
  * @param pkg Package name or names to load
  */
-const requirePromise = function(pkg) {
+const requirePromise = function(pkg: string[]) {
   return new Promise((resolve, reject) => {
     const require = window.requirejs;
     if (require === undefined) {
@@ -25,7 +25,7 @@ const requirePromise = function(pkg) {
   });
 };
 
-function moduleNameToCDNUrl(moduleName, moduleVersion) {
+function moduleNameToCDNUrl(moduleName: string, moduleVersion: string) {
   let packageName = moduleName;
   let fileName = 'index'; // default filename
   // if a '/' is present, like 'foo/bar', packageName is changed to 'foo', and path to 'bar'
@@ -70,7 +70,7 @@ export function requireLoader(
           'Requirejs is needed, please ensure it is loaded on the page.'
         );
       }
-      const conf = { paths: {} };
+      const conf: { paths: { [key: string]: string } } = { paths: {} };
       conf.paths[moduleName] = moduleNameToCDNUrl(moduleName, moduleVersion);
       require.undef(failedId);
       require.config(conf);
