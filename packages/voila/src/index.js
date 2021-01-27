@@ -7,7 +7,6 @@
  * The full license is in the file LICENSE, distributed with this software. *
  ****************************************************************************/
 
-import { PageConfig, URLExt } from '@jupyterlab/coreutils';
 import '../style/index.css';
 
 export {
