@@ -19,6 +19,9 @@ import * as AppUtils from '@jupyterlab/apputils';
 import * as CoreUtils from '@jupyterlab/coreutils';
 import * as DocRegistry from '@jupyterlab/docregistry';
 import * as OutputArea from '@jupyterlab/outputarea';
+import { DocumentRegistry } from '@jupyterlab/docregistry';
+import { INotebookModel } from '@jupyterlab/notebook';
+import { IRenderMimeRegistry } from '@jupyterlab/rendermime';
 
 import * as PhosphorWidget from '@phosphor/widgets';
 import * as PhosphorSignaling from '@phosphor/signaling';
@@ -31,6 +34,7 @@ import { MessageLoop } from '@phosphor/messaging';
 
 import { requireLoader } from './loader';
 import { batchRateMap } from './utils';
+import { Widget } from '@phosphor/widgets';
 
 if (typeof window !== 'undefined' && typeof window.define !== 'undefined') {
   window.define('@jupyter-widgets/base', base);
@@ -54,7 +58,11 @@ if (typeof window !== 'undefined' && typeof window.define !== 'undefined') {
 const WIDGET_MIMETYPE = 'application/vnd.jupyter.widget-view+json';
 
 export class WidgetManager extends JupyterLabManager {
-  constructor(context, rendermime, settings) {
+  constructor(
+    context: DocumentRegistry.IContext<INotebookModel>,
+    rendermime: IRenderMimeRegistry,
+    settings: JupyterLabManager.Settings
+  ) {
     super(context, rendermime, settings);
     rendermime.addFactory(
       {
@@ -101,7 +109,7 @@ export class WidgetManager extends JupyterLabManager {
     });
   }
 
-  display_view(msg, view, options) {
+  async display_view(msg: any, view: any, options: any): Promise<Widget> {
     if (options.el) {
       PhosphorWidget.Widget.attach(view.pWidget, options.el);
     }

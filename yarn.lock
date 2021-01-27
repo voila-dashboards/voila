@@ -1604,7 +1604,7 @@
     "@lumino/widgets" "^1.16.1"
     react "^17.0.1"
 
-"@jupyterlab/docregistry@^1.2.0", "@jupyterlab/docregistry@^1.2.9":
+"@jupyterlab/docregistry@^1.0.0", "@jupyterlab/docregistry@^1.2.0", "@jupyterlab/docregistry@^1.2.9":
   version "1.2.9"
   resolved "https://registry.yarnpkg.com/@jupyterlab/docregistry/-/docregistry-1.2.9.tgz#d08d2898fa2aa186239a0cc5b426844bf8706e28"
   integrity sha512-08vlx/kRV3kx/3S1vNohu9LSY1cs9CbYgJLAhAMXLn3gA/O6wniPMWK5gNBsOzzl30gQ6M01hsE7993Cuk2i4Q==
@@ -1759,7 +1759,7 @@
   dependencies:
     "@lumino/coreutils" "^1.5.3"
 
-"@jupyterlab/notebook@^1.2.0":
+"@jupyterlab/notebook@^1.0.0", "@jupyterlab/notebook@^1.2.0":
   version "1.2.10"
   resolved "https://registry.yarnpkg.com/@jupyterlab/notebook/-/notebook-1.2.10.tgz#5ffcf7daed78ee037f139d8d0670ca24de6ccefe"
   integrity sha512-6yqYS2ii4/8z7uO/q2vtGfL8hIYX07HYXv774OizSJWNv/oM//e9NTI7gL0Cu6e49XEzchFJvWEECd7EneVh1A==
