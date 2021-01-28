@@ -36,3 +36,6 @@ lib
 
 voila/labextension
 tsconfig.tsbuildinfo
+
+packages/jupyterlab-preview/artifacts
+junit.xml
