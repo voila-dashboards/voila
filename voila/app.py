@@ -60,6 +60,7 @@ from .static_file_handler import MultiStaticFileHandler, TemplateStaticFileHandl
 from .configuration import VoilaConfiguration
 from .execute import VoilaExecutor
 from .exporter import VoilaExporter
+from .kernelmanager import PoolMappingKernelManager
 
 _kernel_id_regex = r"(?P<kernel_id>\w+-\w+-\w+-\w+-\w+)"
 
@@ -130,7 +131,8 @@ class Voila(Application):
     classes = [
         VoilaConfiguration,
         VoilaExecutor,
-        VoilaExporter
+        VoilaExporter,
+        PoolMappingKernelManager
     ]
     connection_dir_root = Unicode(
         config=True,
@@ -409,7 +411,7 @@ class Voila(Application):
             parent=self
         )
 
-        self.kernel_manager = AsyncMappingKernelManager(
+        self.kernel_manager = PoolMappingKernelManager(
             parent=self,
             connection_dir=self.connection_dir,
             kernel_spec_manager=self.kernel_spec_manager,
