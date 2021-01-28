@@ -56,8 +56,8 @@ jobs:
 
     - name: Test
       run: |
-        # TODO setup test runner
         cd packages/jupyterlab-preview
+        jlpm run build:test
         jlpm run test:ci
 
     - uses: actions/upload-artifact@v2
