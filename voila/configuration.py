@@ -81,3 +81,7 @@ class VoilaConfiguration(traitlets.config.Configurable):
     When a cell takes a long time to execute, the http connection can timeout (possibly because of a proxy).
     Voila sends a 'heartbeat' message after the timeout is passed to keep the http connection alive.
     """).tag(config=True)
+
+    show_tracebacks = Bool(False, config=True, help=(
+        'Whether to send tracebacks to clients on exceptions.'
+    ))

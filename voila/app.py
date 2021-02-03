@@ -75,7 +75,10 @@ class Voila(Application):
 
     flags = {
         'debug': (
-            {'Voila': {'log_level': logging.DEBUG, 'show_tracebacks': True}},
+            {
+                'Voila': {'log_level': logging.DEBUG},
+                'VoilaConfiguration': {'show_tracebacks': True},
+            },
             _("Set the log level to logging.DEBUG, and show exception tracebacks in output.")
         ),
         'no-browser': ({'Voila': {'open_browser': False}}, _('Don\'t open the notebook in a browser after startup.'))
@@ -125,7 +128,8 @@ class Voila(Application):
         'theme': 'VoilaConfiguration.theme',
         'base_url': 'Voila.base_url',
         'server_url': 'Voila.server_url',
-        'enable_nbextensions': 'VoilaConfiguration.enable_nbextensions'
+        'enable_nbextensions': 'VoilaConfiguration.enable_nbextensions',
+        'show_tracebacks': 'VoilaConfiguration.show_tracebacks',
     }
     classes = [
         VoilaConfiguration,
@@ -186,10 +190,6 @@ class Voila(Application):
             'paths to static assets'
         )
     )
-
-    show_tracebacks = Bool(False, config=True, help=_(
-        'Whether to send tracebacks to clients on exceptions.'
-    ))
 
     port_retries = Integer(50, config=True,
                            help=_("The number of additional ports to try if the specified port is not available.")

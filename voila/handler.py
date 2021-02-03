@@ -170,7 +170,8 @@ class VoilaHandler(JupyterHandler):
         ))
         km = self.kernel_manager.get_kernel(kernel_id)
 
-        self.executor = VoilaExecutor(nb, km=km, config=self.traitlet_config)
+        self.executor = VoilaExecutor(nb, km=km, config=self.traitlet_config,
+                                      show_tracebacks=self.voila_configuration.show_tracebacks)
 
         ###
         # start kernel client
