@@ -7,14 +7,18 @@
  * The full license is in the file LICENSE, distributed with this software. *
  ****************************************************************************/
 
-import { PageConfig, URLExt } from '@jupyterlab/coreutils';
-import '../style/index.css';
+import { Kernel, ServerConnection } from '@jupyterlab/services';
+import { PageConfig } from '@jupyterlab/coreutils';
 
-export {
-  RenderMimeRegistry,
-  standardRendererFactories
-} from '@jupyterlab/rendermime';
+export async function connectKernel(
+  baseUrl: string,
+  kernelId: string
+): Promise<Kernel.IKernel> {
+  baseUrl = baseUrl || PageConfig.getBaseUrl();
+  kernelId = kernelId || PageConfig.getOption('kernelId');
+  const connectionInfo = ServerConnection.makeSettings({ baseUrl });
 
-export { WidgetManager } from './manager';
-export { connectKernel } from './kernel';
-export { renderMathJax } from './mathjax';
+  const model = await Kernel.findById(kernelId, connectionInfo);
+  const kernel = Kernel.connectTo(model, connectionInfo);
+  return kernel;
+}

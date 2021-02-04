@@ -7,16 +7,16 @@
  * The full license is in the file LICENSE, distributed with this software. *
  ****************************************************************************/
 
-let cdn = 'https://unpkg.com/';
+const cdn = 'https://unpkg.com/';
 
 /**
  * Load a package using requirejs and return a promise
  *
  * @param pkg Package name or names to load
  */
-let requirePromise = function(pkg) {
+const requirePromise = function(pkg: string[]) {
   return new Promise((resolve, reject) => {
-    let require = window.requirejs;
+    const require = window.requirejs;
     if (require === undefined) {
       reject('Requirejs is needed, please ensure it is loaded on the page.');
     } else {
@@ -25,7 +25,7 @@ let requirePromise = function(pkg) {
   });
 };
 
-function moduleNameToCDNUrl(moduleName, moduleVersion) {
+function moduleNameToCDNUrl(moduleName: string, moduleVersion: string) {
   let packageName = moduleName;
   let fileName = 'index'; // default filename
   // if a '/' is present, like 'foo/bar', packageName is changed to 'foo', and path to 'bar'
@@ -56,18 +56,21 @@ function moduleNameToCDNUrl(moduleName, moduleVersion) {
  *
  * The semver range is only used with the CDN.
  */
-export function requireLoader(moduleName, moduleVersion) {
+export function requireLoader(
+  moduleName: string,
+  moduleVersion: string
+): Promise<any> {
   return requirePromise([`${moduleName}`]).catch(err => {
-    let failedId = err.requireModules && err.requireModules[0];
+    const failedId = err.requireModules && err.requireModules[0];
     if (failedId) {
       console.log(`Falling back to ${cdn} for ${moduleName}@${moduleVersion}`);
-      let require = window.requirejs;
+      const require = window.requirejs;
       if (require === undefined) {
         throw new Error(
           'Requirejs is needed, please ensure it is loaded on the page.'
         );
       }
-      const conf = { paths: {} };
+      const conf: { paths: { [key: string]: string } } = { paths: {} };
       conf.paths[moduleName] = moduleNameToCDNUrl(moduleName, moduleVersion);
       require.undef(failedId);
       require.config(conf);

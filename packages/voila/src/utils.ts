@@ -1,14 +1,19 @@
 import pLimit from 'p-limit';
 
-const delay = sec => new Promise(resolve => setTimeout(resolve, sec * 1000));
+const delay = (sec: number) =>
+  new Promise(resolve => setTimeout(resolve, sec * 1000));
 
 /**
  * Map a function onto a list where fn is being called at a limit of 'rate' number of calls per second.
  * and 'room' number of parallel calls.
  * Note that the minimum window at which rate is respected is room/rate seconds.
  */
-export const batchRateMap = (list, fn, { room, rate }) => {
-  var limit = pLimit(room);
+export const batchRateMap = (
+  list: string[],
+  fn: (...args: any[]) => Promise<any>,
+  { room, rate }: { room: number; rate: number }
+): Promise<any>[] => {
+  const limit = pLimit(room);
   return list.map(async value => {
     return new Promise((valueResolve, reject) => {
       limit(() => {
