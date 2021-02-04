@@ -31,10 +31,11 @@ import * as PhosphorCommands from '@phosphor/commands';
 import * as PhosphorDomutils from '@phosphor/domutils';
 
 import { MessageLoop } from '@phosphor/messaging';
+import { Widget } from '@phosphor/widgets';
 
 import { requireLoader } from './loader';
 import { batchRateMap } from './utils';
-import { Widget } from '@phosphor/widgets';
+import * as errorwidget from './errorwidget';
 
 if (typeof window !== 'undefined' && typeof window.define !== 'undefined') {
   window.define('@jupyter-widgets/base', base);
@@ -53,6 +54,8 @@ if (typeof window !== 'undefined' && typeof window.define !== 'undefined') {
   window.define('@phosphor/algorithm', PhosphorAlgorithm);
   window.define('@phosphor/commands', PhosphorCommands);
   window.define('@phosphor/domutils', PhosphorDomutils);
+
+  window.define('voila-errorwidget', errorwidget);
 }
 
 const WIDGET_MIMETYPE = 'application/vnd.jupyter.widget-view+json';
@@ -130,10 +133,23 @@ export class WidgetManager extends JupyterLabManager {
     moduleName: string,
     moduleVersion: string
   ): Promise<any> {
+    try {
+      return await this._loadClass(className, moduleName, moduleVersion);
+    } catch (error) {
+      return errorwidget.createErrorWidget(error);
+    }
+  }
+
+  async _loadClass(
+    className: string,
+    moduleName: string,
+    moduleVersion: string
+  ): Promise<any> {
     if (
       moduleName === '@jupyter-widgets/base' ||
       moduleName === '@jupyter-widgets/controls' ||
-      moduleName === '@jupyter-widgets/output'
+      moduleName === '@jupyter-widgets/output' ||
+      moduleName === 'voila-errorwidget'
     ) {
       return super.loadClass(className, moduleName, moduleVersion);
     } else {
@@ -142,7 +158,7 @@ export class WidgetManager extends JupyterLabManager {
         if (module[className]) {
           return module[className];
         } else {
-          return Promise.reject(
+          throw Error(
             'Class ' +
               className +
               ' not found in module ' +
@@ -174,6 +190,11 @@ export class WidgetManager extends JupyterLabManager {
       name: '@jupyter-widgets/output',
       version: output.OUTPUT_WIDGET_VERSION,
       exports: output as any
+    });
+    this.register({
+      name: 'voila-errorwidget',
+      version: '1.0.0',
+      exports: errorwidget as any
     });
   }
 
