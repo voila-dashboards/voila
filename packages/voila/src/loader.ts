@@ -7,7 +7,7 @@
  * The full license is in the file LICENSE, distributed with this software. *
  ****************************************************************************/
 
-const cdn = 'https://unpkg.com/';
+const cdn = 'https://cdn.jsdelivr.net/npm/';
 
 /**
  * Load a package using requirejs and return a promise
@@ -50,7 +50,7 @@ function moduleNameToCDNUrl(moduleName: string, moduleVersion: string) {
  * @param moduleName The name of the module to load..
  * @param version The semver range for the module, if loaded from a CDN.
  *
- * By default, the CDN service used is unpkg.com. However, this default can be
+ * By default, the CDN service used is cdn.jsdelivr.net. However, this default can be
  * overriden by specifying another URL via the HTML attribute
  * "data-jupyter-widgets-cdn" on a script tag of the page.
  *
