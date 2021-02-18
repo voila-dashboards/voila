@@ -44,7 +44,7 @@ export class VoilaPreview extends DocumentWidget<IFrame, INotebookModel> {
   constructor(options: VoilaPreview.IOptions) {
     super({
       ...options,
-      content: new IFrame({ sandbox: ["allow-same-origin", "allow-scripts", "allow-downloads"] })
+      content: new IFrame({ sandbox: ['allow-same-origin', 'allow-scripts', 'allow-downloads'] })
     });
 
     window.onmessage = (event: any) => {
