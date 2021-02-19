@@ -88,7 +88,6 @@ class VoilaHandler(JupyterHandler):
             for header_name in self.voila_configuration.http_header_envs:
                 if header_name in self.request.headers:
                     http_headers_dict[header_name] = self.request.headers.get(header_name)
-            
             self.kernel_env['HTTP_HEADERS'] = json.dumps(http_headers_dict)
 
         # we can override the template via notebook metadata or a query parameter
