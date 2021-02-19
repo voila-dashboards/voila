@@ -11,6 +11,7 @@ import asyncio
 import os
 import sys
 import traceback
+import json
 
 import tornado.web
 
@@ -80,6 +81,15 @@ class VoilaHandler(JupyterHandler):
         host, port = split_host_and_port(self.request.host.lower())
         self.kernel_env['SERVER_PORT'] = str(port) if port else ''
         self.kernel_env['SERVER_NAME'] = host
+
+        # Add HTTP Headers as env vars
+        if len(self.voila_configuration.http_header_envs) > 0:
+            http_headers_dict = {}
+            for header_name in self.voila_configuration.http_header_envs:
+                if header_name in self.request.headers:
+                    http_headers_dict[header_name] = self.request.headers.get(header_name)
+            
+            self.kernel_env['HTTP_HEADERS'] = json.dumps(http_headers_dict)
 
         # we can override the template via notebook metadata or a query parameter
         template_override = None
