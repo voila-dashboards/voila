@@ -85,3 +85,12 @@ class VoilaConfiguration(traitlets.config.Configurable):
     show_tracebacks = Bool(False, config=True, help=(
         'Whether to send tracebacks to clients on exceptions.'
     ))
+
+    http_header_envs = List(
+        Unicode(),
+        [],
+        help=r"""
+    List of HTTP Headers that should be passed as env vars to the kernel.
+    Example: --VoilaConfiguration.http_header_envs="['X-CDSDASHBOARDS-JH-USER']"
+    """,
+    ).tag(config=True)
