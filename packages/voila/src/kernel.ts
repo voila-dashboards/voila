@@ -7,18 +7,23 @@
  * The full license is in the file LICENSE, distributed with this software. *
  ****************************************************************************/
 
-import { Kernel, ServerConnection } from '@jupyterlab/services';
 import { PageConfig } from '@jupyterlab/coreutils';
+
+import { Kernel, KernelManager, ServerConnection } from '@jupyterlab/services';
 
 export async function connectKernel(
   baseUrl?: string,
   kernelId?: string
-): Promise<Kernel.IKernel> {
+): Promise<Kernel.IKernelConnection | undefined> {
   baseUrl = baseUrl ?? PageConfig.getBaseUrl();
   kernelId = kernelId ?? PageConfig.getOption('kernelId');
-  const connectionInfo = ServerConnection.makeSettings({ baseUrl });
+  const serverSettings = ServerConnection.makeSettings({ baseUrl });
 
-  const model = await Kernel.findById(kernelId, connectionInfo);
-  const kernel = Kernel.connectTo(model, connectionInfo);
+  const manager = new KernelManager({ standby: 'never', serverSettings });
+  const model = await manager.findById(kernelId);
+  if (!model) {
+    return;
+  }
+  const kernel = manager.connectTo({ model });
   return kernel;
 }

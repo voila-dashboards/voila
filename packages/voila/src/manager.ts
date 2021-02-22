@@ -7,8 +7,11 @@
  * The full license is in the file LICENSE, distributed with this software. *
  ****************************************************************************/
 
-import { WidgetManager as JupyterLabManager } from '@jupyter-widgets/jupyterlab-manager';
-import { WidgetRenderer } from '@jupyter-widgets/jupyterlab-manager';
+import {
+  WidgetManager as JupyterLabManager,
+  WidgetRenderer
+} from '@jupyter-widgets/jupyterlab-manager';
+
 import { output } from '@jupyter-widgets/jupyterlab-manager';
 
 import * as base from '@jupyter-widgets/base';
@@ -19,6 +22,7 @@ import * as AppUtils from '@jupyterlab/apputils';
 import * as CoreUtils from '@jupyterlab/coreutils';
 import * as DocRegistry from '@jupyterlab/docregistry';
 import * as OutputArea from '@jupyterlab/outputarea';
+
 import { DocumentRegistry } from '@jupyterlab/docregistry';
 import { INotebookModel } from '@jupyterlab/notebook';
 import { IRenderMimeRegistry } from '@jupyterlab/rendermime';
@@ -32,9 +36,11 @@ import * as PhosphorDomutils from '@phosphor/domutils';
 
 import { MessageLoop } from '@phosphor/messaging';
 
-import { requireLoader } from './loader';
-import { batchRateMap } from './utils';
 import { Widget } from '@phosphor/widgets';
+
+import { requireLoader } from './loader';
+
+import { batchRateMap } from './utils';
 
 if (typeof window !== 'undefined' && typeof window.define !== 'undefined') {
   window.define('@jupyter-widgets/base', base);
