@@ -9,7 +9,9 @@
 
 import { PageConfig } from '@jupyterlab/coreutils';
 
-import { Kernel, KernelManager, ServerConnection } from '@jupyterlab/services';
+import { Kernel, KernelAPI, ServerConnection } from '@jupyterlab/services';
+
+import { KernelConnection } from '@jupyterlab/services/lib/kernel/default';
 
 export async function connectKernel(
   baseUrl?: string,
@@ -19,11 +21,10 @@ export async function connectKernel(
   kernelId = kernelId ?? PageConfig.getOption('kernelId');
   const serverSettings = ServerConnection.makeSettings({ baseUrl });
 
-  const manager = new KernelManager({ standby: 'never', serverSettings });
-  const model = await manager.findById(kernelId);
+  const model = await KernelAPI.getKernelModel(kernelId);
   if (!model) {
     return;
   }
-  const kernel = manager.connectTo({ model });
+  const kernel = new KernelConnection({ model, serverSettings });
   return kernel;
 }
