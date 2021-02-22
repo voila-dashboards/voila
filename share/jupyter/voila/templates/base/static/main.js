@@ -16,12 +16,20 @@ require([window.voila_js_url || 'static/voila'], function(voila) {
         }
 
         const context = {
-            session: {
-                kernel,
+            sessionContext: {
+                session: {
+                    kernel,
+                    kernelChanged: {
+                        connect: () => {}
+                    },
+                },
+                statusChanged: {
+                    connect: () => {}
+                },
                 kernelChanged: {
                     connect: () => {}
                 },
-                statusChanged: {
+                connectionStatusChanged: {
                     connect: () => {}
                 },
             },
