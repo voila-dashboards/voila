@@ -11,11 +11,11 @@ import { Kernel, ServerConnection } from '@jupyterlab/services';
 import { PageConfig } from '@jupyterlab/coreutils';
 
 export async function connectKernel(
-  baseUrl: string,
-  kernelId: string
+  baseUrl?: string,
+  kernelId?: string
 ): Promise<Kernel.IKernel> {
-  baseUrl = baseUrl || PageConfig.getBaseUrl();
-  kernelId = kernelId || PageConfig.getOption('kernelId');
+  baseUrl = baseUrl ?? PageConfig.getBaseUrl();
+  kernelId = kernelId ?? PageConfig.getOption('kernelId');
   const connectionInfo = ServerConnection.makeSettings({ baseUrl });
 
   const model = await Kernel.findById(kernelId, connectionInfo);

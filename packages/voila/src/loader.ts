@@ -14,7 +14,7 @@ const cdn = 'https://cdn.jsdelivr.net/npm/';
  *
  * @param pkg Package name or names to load
  */
-const requirePromise = function(pkg: string[]) {
+function requirePromise(pkg: string[]) {
   return new Promise((resolve, reject) => {
     const require = window.requirejs;
     if (require === undefined) {
@@ -23,7 +23,7 @@ const requirePromise = function(pkg: string[]) {
       require(pkg, resolve, reject);
     }
   });
-};
+}
 
 function moduleNameToCDNUrl(moduleName: string, moduleVersion: string) {
   let packageName = moduleName;

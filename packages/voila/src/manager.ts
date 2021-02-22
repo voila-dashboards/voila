@@ -57,6 +57,9 @@ if (typeof window !== 'undefined' && typeof window.define !== 'undefined') {
 
 const WIDGET_MIMETYPE = 'application/vnd.jupyter.widget-view+json';
 
+/**
+ * A custom widget manager to render widgets with Voila
+ */
 export class WidgetManager extends JupyterLabManager {
   constructor(
     context: DocumentRegistry.IContext<INotebookModel>,
