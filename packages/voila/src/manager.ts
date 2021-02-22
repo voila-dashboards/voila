@@ -27,16 +27,16 @@ import { DocumentRegistry } from '@jupyterlab/docregistry';
 import { INotebookModel } from '@jupyterlab/notebook';
 import { IRenderMimeRegistry } from '@jupyterlab/rendermime';
 
-import * as PhosphorWidget from '@phosphor/widgets';
-import * as PhosphorSignaling from '@phosphor/signaling';
-import * as PhosphorVirtualdom from '@phosphor/virtualdom';
-import * as PhosphorAlgorithm from '@phosphor/algorithm';
-import * as PhosphorCommands from '@phosphor/commands';
-import * as PhosphorDomutils from '@phosphor/domutils';
+import * as LuminoWidget from '@lumino/widgets';
+import * as LuminoSignaling from '@lumino/signaling';
+import * as LuminoVirtualdom from '@lumino/virtualdom';
+import * as LuminoAlgorithm from '@lumino/algorithm';
+import * as LuminoCommands from '@lumino/commands';
+import * as LuminoDomutils from '@lumino/domutils';
 
-import { MessageLoop } from '@phosphor/messaging';
+import { MessageLoop } from '@lumino/messaging';
 
-import { Widget } from '@phosphor/widgets';
+import { Widget } from '@lumino/widgets';
 
 import { requireLoader } from './loader';
 
@@ -53,12 +53,19 @@ if (typeof window !== 'undefined' && typeof window.define !== 'undefined') {
   window.define('@jupyterlab/docregistry', DocRegistry);
   window.define('@jupyterlab/outputarea', OutputArea);
 
-  window.define('@phosphor/widgets', PhosphorWidget);
-  window.define('@phosphor/signaling', PhosphorSignaling);
-  window.define('@phosphor/virtualdom', PhosphorVirtualdom);
-  window.define('@phosphor/algorithm', PhosphorAlgorithm);
-  window.define('@phosphor/commands', PhosphorCommands);
-  window.define('@phosphor/domutils', PhosphorDomutils);
+  window.define('@phosphor/widgets', LuminoWidget);
+  window.define('@phosphor/signaling', LuminoSignaling);
+  window.define('@phosphor/virtualdom', LuminoVirtualdom);
+  window.define('@phosphor/algorithm', LuminoAlgorithm);
+  window.define('@phosphor/commands', LuminoCommands);
+  window.define('@phosphor/domutils', LuminoDomutils);
+
+  window.define('@lumino/widgets', LuminoWidget);
+  window.define('@lumino/signaling', LuminoSignaling);
+  window.define('@lumino/virtualdom', LuminoVirtualdom);
+  window.define('@lumino/algorithm', LuminoAlgorithm);
+  window.define('@lumino/commands', LuminoCommands);
+  window.define('@lumino/domutils', LuminoDomutils);
 }
 
 const WIDGET_MIMETYPE = 'application/vnd.jupyter.widget-view+json';
@@ -120,14 +127,14 @@ export class WidgetManager extends JupyterLabManager {
 
   async display_view(msg: any, view: any, options: any): Promise<Widget> {
     if (options.el) {
-      PhosphorWidget.Widget.attach(view.pWidget, options.el);
+      LuminoWidget.Widget.attach(view.pWidget, options.el);
     }
     if (view.el) {
       view.el.setAttribute('data-voila-jupyter-widget', '');
       view.el.addEventListener('jupyterWidgetResize', (e: Event) => {
         MessageLoop.postMessage(
           view.pWidget,
-          PhosphorWidget.Widget.ResizeMessage.UnknownSize
+          LuminoWidget.Widget.ResizeMessage.UnknownSize
         );
       });
     }
