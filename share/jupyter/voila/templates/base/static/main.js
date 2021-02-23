@@ -11,14 +11,25 @@ require([window.voila_js_url || 'static/voila'], function(voila) {
     // requirejs doesn't like to be passed an async function, so create one inside
     (async function() {
         var kernel = await voila.connectKernel()
+        if (!kernel) {
+            return;
+        }
 
         const context = {
-            session: {
-                kernel,
+            sessionContext: {
+                session: {
+                    kernel,
+                    kernelChanged: {
+                        connect: () => {}
+                    },
+                },
+                statusChanged: {
+                    connect: () => {}
+                },
                 kernelChanged: {
                     connect: () => {}
                 },
-                statusChanged: {
+                connectionStatusChanged: {
                     connect: () => {}
                 },
             },
