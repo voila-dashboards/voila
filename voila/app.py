@@ -128,8 +128,6 @@ class Voila(Application):
         'static': 'Voila.static_root',
         'server_url': 'Voila.server_url',
         'pool_size': 'VoilaConfiguration.default_pool_size',
-        'enable_nbextensions': 'VoilaConfiguration.enable_nbextensions',
-        'nbextensions_path': 'VoilaConfiguration.nbextensions_path',
         'show_tracebacks': 'VoilaConfiguration.show_tracebacks',
         'preheat_kernel': 'VoilaConfiguration.preheat_kernel',
         'strip_sources': 'VoilaConfiguration.strip_sources',
@@ -326,21 +324,9 @@ class Voila(Application):
     def _default_log_level(self):
         return logging.INFO
 
-    # similar to NotebookApp, except no extra path
     @property
-    def nbextensions_path(self):
-        """The path to look for Javascript notebook extensions"""
-        if self.voila_configuration.nbextensions_path:
-            return self.voila_configuration.nbextensions_path
-        path = jupyter_path('nbextensions')
-        # FIXME: remove IPython nbextensions path after a migration period
-        try:
-            from IPython.paths import get_ipython_dir
-        except ImportError:
-            pass
-        else:
-            path.append(os.path.join(get_ipython_dir(), 'nbextensions'))
-        return path
+    def labextensions_path(self):
+        return jupyter_path('labextensions')
 
     @default('root_dir')
     def _default_root_dir(self):
@@ -532,18 +518,17 @@ class Voila(Application):
                     RequestInfoSocketHandler
                 )
             )
-        # Serving notebook extensions
-        if self.voila_configuration.enable_nbextensions:
-            handlers.append(
-                (
-                    url_path_join(self.server_url, r'/voila/nbextensions/(.*)'),
-                    FileFindHandler,
-                    {
-                        'path': self.nbextensions_path,
-                        'no_cache_paths': ['/'],  # don't cache anything in nbextensions
-                    },
-                )
+        # Serving JupyterLab extensions
+        handlers.append(
+            (
+                url_path_join(self.server_url, r'/voila/labextensions/(.*)'),
+                FileFindHandler,
+                {
+                    'path': self.labextensions_path,
+                    'no_cache_paths': ['/'],  # don't cache anything in labextensions
+                },
             )
+        )
         handlers.append(
             (
                 url_path_join(self.server_url, r'/voila/files/(.*)'),

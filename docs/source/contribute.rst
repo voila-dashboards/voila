@@ -189,6 +189,23 @@ To lint the packages:
    # run prettier
    jlpm run prettier
 
+About the Voila Frontend
+========================
+
+The Voila frontend is built as a JupyterLab-based application using JupyterLab components.
+
+This makes it possible to reuse existing plugins and extensions for Jupyterlab such as core JupyterLab plugin like the JSON viewer,
+as well as third-party mime renderers like the `FASTA viewer <https://github.com/jupyterlab/jupyter-renderers>`_.
+
+The Voila frontend is able to load existing JupyterLab extensions installed as prebuilt extensions under ``${PREFIX}/share/labextensions``,
+similar to the way it works in JupyterLab.
+
+These extensions are typically distributed via ``pip`` and ``conda`` packages and can easily be installed by end users without requiring Node.js.
+Widget packages usually now include a prebuilt extension for JupyterLab 3.0 by default, which should automatically work in Voila too.
+
+Check out the `JupyterLab Documentation on prebuilt extensions <https://jupyterlab.readthedocs.io/en/stable/extension/extension_dev.html#prebuilt-extensions>`_ for more info.
+
+The code for the frontend is located under ``packages/voila``, with support for loading federated extensions in ``packages/voila/index.js``.
 
 Tests
 =====

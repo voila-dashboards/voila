@@ -92,30 +92,26 @@ def _load_jupyter_server_extension(server_app):
         ),
     ])
 
-    # Serving notebook extensions
-    if voila_configuration.enable_nbextensions:
-        # First check whether a custom nbextensions_path has been set in
-        # the VoilaConfiguration object, if not, then fall back to
-        # looking into 'nbextensions_path' configuration key (classic notebook)
-        # otherwise fall back to default path for nbextensions (jupyter server).
-        if voila_configuration.nbextensions_path:
-            nbextensions_path = voila_configuration.nbextensions_path
-        elif 'nbextensions_path' in web_app.settings:
-            nbextensions_path = web_app.settings['nbextensions_path']
-        else:
-            nbextensions_path = jupyter_path('nbextensions')
+    # Serving lab extensions
+    # TODO: reuse existing lab server endpoint?
+    # First look into 'labextensions_path' configuration key (classic notebook)
+    # and fall back to default path for labextensions (jupyter server).
+    if 'labextensions_path' in web_app.settings:
+        labextensions_path = web_app.settings['labextensions_path']
+    else:
+        labextensions_path = jupyter_path('labextensions')
 
-        web_app.add_handlers(host_pattern, [
-            # this handler serves the nbextensions similar to the classical notebook
-            (
-                url_path_join(base_url, r'/voila/nbextensions/(.*)'),
-                FileFindHandler,
-                {
-                    'path': nbextensions_path,
-                    'no_cache_paths': ['/'],  # don't cache anything in nbextensions
-                },
-            )
-        ])
+    web_app.add_handlers(host_pattern, [
+        (
+            # TODO: update handler
+            url_path_join(base_url, r'/voila/labextensions/(.*)'),
+            FileFindHandler,
+            {
+                'path': labextensions_path,
+                'no_cache_paths': ['/'],  # don't cache anything
+            },
+        )
+    ])
 
 
 # For backward compatibility

@@ -7,14 +7,4 @@
  * The full license is in the file LICENSE, distributed with this software. *
  ****************************************************************************/
 
-import '../style/index.css';
-
-export {
-  RenderMimeRegistry,
-  standardRendererFactories
-} from '@jupyterlab/rendermime';
-
-export { extendedRendererFactories } from './rendermime';
-export { WidgetManager } from './manager';
-export { connectKernel } from './kernel';
-export { renderMathJax } from './mathjax';
+export * from './app';

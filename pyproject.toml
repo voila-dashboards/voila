@@ -32,7 +32,7 @@ version-cmd = "python scripts/bump-version.py --force"
 ignore = [
     ".binder/**", "docs/**", "notebooks/**",
     "packages/**",
-    "share/**/*.js", "share/**/*.woff", "share/**/*.css",
+    "share/**/*.js", "share/**/*.txt", "share/**/*.woff", "share/**/*.css",
     "*.json", "*.gif", "yarn.lock",
     "environment.yml", "readthedocs.yml", ".*",
     "lint-staged.config.js", "scripts/**",

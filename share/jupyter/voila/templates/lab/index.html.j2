@@ -1,16 +1,9 @@
 {%- extends 'nbconvert/templates/lab/index.html.j2' -%}
 {% import "spinner.macro.html.j2" as spinner %}
 {% import "log.macro.html.j2" as log %}
-{% from 'voila_setup.macro.html.j2' import voila_setup_helper_functions, voila_setup_nbextensions with context %}
+{% from 'voila_setup.macro.html.j2' import voila_setup_helper_functions, voila_setup_labextensions with context %}
 
 {%- block html_head_js -%}
-  {%- block html_head_js_requirejs -%}
-  <script
-    src="{{resources.base_url}}voila/static/require.min.js"
-    integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA="
-    crossorigin="anonymous">
-  </script>
-  {%- endblock html_head_js_requirejs -%}
 {%- block html_head_js_logs -%}
 {{ log.js() }}
 {%- endblock html_head_js_logs -%}
@@ -46,14 +39,20 @@
 
 {%- block body_loop -%}
   {# from this point on, the kernel is started #}
+
+  {# Copy so we do not modify the page_config with updates. #}
+  {% set page_config_full = page_config.copy() %}
+
   {%- with kernel_id = kernel_start(nb) -%}
+    {# Set a dummy variable - we just want the side effect of the update. #}
+    {% set _ = page_config_full.update(baseUrl=resources.base_url, kernelId=kernel_id) %}
+
     <script id="jupyter-config-data" type="application/json">
-    {
-        "baseUrl": "{{resources.base_url}}",
-        "kernelId": "{{kernel_id}}"
-    }
+      {{ page_config_full | tojson }}
     </script>
+
     {% set cell_count = nb.cells|length %}
+
     {#
     Voilà is using Jinja's Template.generate method to not render the whole template in one go.
     The current implementation of Jinja will however not yield template snippets if we call a blocks' super()
@@ -84,7 +83,7 @@
     el.style.display = '';
   })();
 </script>
-{{ voila_setup_nbextensions(resources.base_url, resources.nbextensions) }}
+{{ voila_setup_labextensions(resources.base_url, resources.labextensions) }}
 {{ super() }}
 {%- endblock body_footer -%}
 

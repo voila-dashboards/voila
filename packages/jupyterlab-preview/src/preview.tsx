@@ -146,8 +146,8 @@ export class VoilaPreview extends DocumentWidget<IFrame, INotebookModel> {
    * Reload the preview.
    */
   reload(): void {
-    const iframe = this.content.node.querySelector('iframe')!;
-    if (iframe.contentWindow) {
+    const iframe = this.content.node.querySelector('iframe');
+    if (iframe && iframe.contentWindow) {
       iframe.contentWindow.location.reload();
     }
   }

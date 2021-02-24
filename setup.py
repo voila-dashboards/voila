@@ -43,7 +43,6 @@ data_files_spec = [
         "etc/jupyter/nbconfig/notebook.d",
         "voila.json",
     ),
-    ("share/jupyter/nbextensions/voila", "voila/static", "extension.js"),
     ("share/jupyter/labextensions/%s" % labext_name, str(lab_extension_dest), "**"),
     ("share/jupyter/labextensions/%s" % labext_name, str(HERE), "install.json"),
     ("share/jupyter/voila/templates", "share/jupyter/voila/templates", "**/*[!.map]"),
