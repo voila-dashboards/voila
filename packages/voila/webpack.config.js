@@ -1,35 +1,53 @@
-var path = require('path');
+// Copyright (c) Jupyter Development Team.
+// Copyright (c) Voila Development Team.
+// Distributed under the terms of the Modified BSD License.
 
-var rules = [
-  { test: /\.css$/, use: ['style-loader', 'css-loader'] },
-  // required to load font-awesome
-  {
-    test: /\.woff2(\?v=\d+\.\d+\.\d+)?$/,
-    use:
-      'url-loader?limit=10000&mimetype=application/font-woff&publicPath=/voila/static/'
-  },
-  {
-    test: /\.woff(\?v=\d+\.\d+\.\d+)?$/,
-    use:
-      'url-loader?limit=10000&mimetype=application/font-woff&publicPath=/voila/static/'
-  },
-  {
-    test: /\.ttf(\?v=\d+\.\d+\.\d+)?$/,
-    use:
-      'url-loader?limit=10000&mimetype=application/octet-stream&publicPath=/voila/static/'
-  },
-  {
-    test: /\.eot(\?v=\d+\.\d+\.\d+)?$/,
-    use: 'file-loader&publicPath=/voila/static/'
-  },
-  {
-    test: /\.svg(\?v=\d+\.\d+\.\d+)?$/,
-    use:
-      'url-loader?limit=10000&mimetype=image/svg+xml&publicPath=/voila/static/'
-  }
-];
+const fs = require('fs-extra');
+const path = require('path');
+const webpack = require('webpack');
+const merge = require('webpack-merge').default;
+const { ModuleFederationPlugin } = webpack.container;
 
-var distRoot = path.resolve(
+const Build = require('@jupyterlab/builder').Build;
+const baseConfig = require('@jupyterlab/builder/lib/webpack.config.base');
+
+const data = require('./package.json');
+
+const names = Object.keys(data.dependencies).filter(name => {
+  const packageData = require(path.join(name, 'package.json'));
+  return packageData.jupyterlab !== undefined;
+});
+
+// Ensure a clear build directory.
+const buildDir = path.resolve(__dirname, 'build');
+if (fs.existsSync(buildDir)) {
+  fs.removeSync(buildDir);
+}
+fs.ensureDirSync(buildDir);
+
+// Copy files to the build directory
+const libDir = path.resolve(__dirname, 'lib');
+const index = path.resolve(__dirname, 'index.js');
+const style = path.resolve(__dirname, 'style.css');
+fs.copySync(libDir, buildDir);
+fs.copySync(index, path.resolve(buildDir, 'index.js'));
+fs.copySync(style, path.resolve(buildDir, 'style.css'));
+
+const extras = Build.ensureAssets({
+  packageNames: names,
+  output: buildDir
+});
+
+// Make a bootstrap entrypoint
+const entryPoint = path.join(buildDir, 'bootstrap.js');
+const bootstrap = 'import("./index.js");';
+fs.writeFileSync(entryPoint, bootstrap);
+
+if (process.env.NODE_ENV === 'production') {
+  baseConfig.mode = 'production';
+}
+
+const distRoot = path.resolve(
   __dirname,
   '..',
   '..',
@@ -42,14 +60,28 @@ var distRoot = path.resolve(
 );
 
 module.exports = [
-  {
-    entry: ['./lib/index.js'],
+  merge(baseConfig, {
+    mode: 'development',
+    entry: ['./publicpath.js', './' + path.relative(__dirname, entryPoint)],
     output: {
-      filename: 'voila.js',
       path: distRoot,
-      libraryTarget: 'amd'
+      library: {
+        type: 'var',
+        name: ['_JUPYTERLAB', 'CORE_OUTPUT']
+      },
+      filename: 'voila.js'
     },
-    module: { rules: rules },
-    devtool: 'source-map'
-  }
-];
+    plugins: [
+      new ModuleFederationPlugin({
+        library: {
+          type: 'var',
+          name: ['_JUPYTERLAB', 'CORE_LIBRARY_FEDERATION']
+        },
+        name: 'CORE_FEDERATION',
+        shared: {
+          ...data.dependencies
+        }
+      })
+    ]
+  })
+].concat(extras);
