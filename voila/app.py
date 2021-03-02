@@ -38,7 +38,6 @@ from traitlets.config.application import Application
 from traitlets.config.loader import Config
 from traitlets import Unicode, Integer, Bool, Dict, List, default
 
-from jupyter_server.services.kernels.kernelmanager import AsyncMappingKernelManager
 from jupyter_server.services.kernels.handlers import KernelHandler, ZMQChannelsHandler
 from jupyter_server.services.contents.largefilemanager import LargeFileManager
 from jupyter_server.base.handlers import FileFindHandler, path_regex
@@ -409,7 +408,7 @@ class Voila(Application):
             parent=self
         )
 
-        self.kernel_manager = AsyncMappingKernelManager(
+        self.kernel_manager = self.voila_configuration.multi_kernel_manager_class(
             parent=self,
             connection_dir=self.connection_dir,
             kernel_spec_manager=self.kernel_spec_manager,

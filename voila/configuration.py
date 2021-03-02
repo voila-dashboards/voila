@@ -8,7 +8,7 @@
 #############################################################################
 
 import traitlets.config
-from traitlets import Unicode, Bool, Dict, List, Int, Enum
+from traitlets import Unicode, Bool, Dict, List, Int, Enum, Type
 
 
 class VoilaConfiguration(traitlets.config.Configurable):
@@ -85,3 +85,11 @@ class VoilaConfiguration(traitlets.config.Configurable):
     show_tracebacks = Bool(False, config=True, help=(
         'Whether to send tracebacks to clients on exceptions.'
     ))
+
+    multi_kernel_manager_class = Type(
+        default_value='jupyter_server.services.kernels.kernelmanager.AsyncMappingKernelManager',
+        klass='jupyter_client.multikernelmanager.MultiKernelManager',
+        help="""The kernel manager class. This is useful to specify a different kernel manager,
+        for example a kernel manager with support for pooling.
+        """
+    ).tag(config=True)
