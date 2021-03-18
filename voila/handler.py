@@ -274,7 +274,8 @@ class VoilaHandler(JupyterHandler):
         # Find a spec matching the language if the kernel name does not exist in the kernelspecs
         if kernel_name not in all_kernel_specs:
             missing_kernel_name = kernel_name
-            kernel_name = await self.find_kernel_name_for_language(kernelspec.language.lower(), kernel_specs=all_kernel_specs)
+            language = kernelspec.get('language', notebook.metadata.get('language_info', {}).get('name', ''))
+            kernel_name = await self.find_kernel_name_for_language(language.lower(), kernel_specs=all_kernel_specs)
             self.log.warning('Could not find a kernel named %r, will use  %r', missing_kernel_name, kernel_name)
         # We make sure the notebook's kernelspec is correct
         notebook.metadata.kernelspec.name = kernel_name
