@@ -6,7 +6,7 @@ on:
     - master
   pull_request:
     branches:
-    - master
+    - '*'
   schedule:
   - cron: "0 2 * * 1-5"  # run on weekdays at 2:00am UTC
 
