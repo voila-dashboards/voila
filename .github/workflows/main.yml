@@ -18,54 +18,37 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-latest, macos-latest]
-        python-version: [3.5, 3.6, 3.7]
+        python_version: [3.6, 3.7, 3.8, 3.9]
 
     steps:
-    - uses: actions/checkout@v1
+    - uses: actions/checkout@v2
 
-    - name: Add conda to $PATH
-      run: echo ::add-path::$CONDA/condabin
-
-    - name: Update conda on Mac
-      if: matrix.os == 'macos-latest'
-      run: |
-        # sudo required?
-        sudo conda update -y -n base conda setuptools
-        
-    - name: Update conda on Linux
-      if: matrix.os == 'ubuntu-latest'
-      run: |
-        conda update -y -n base conda setuptools
-    
-    - name: Init conda
-      run: |
-        conda init bash
-        conda info -a
+    - name: Setup mamba
+      uses: conda-incubator/setup-miniconda@v2
+      with:
+        mamba-version: "*"
+        channels: conda-forge
 
     - name: Create the conda environment
-      run: conda create -q -y -n voila-tests -c conda-forge python=$PYTHON_VERSION pip jupyterlab_pygments==0.1.0 nbconvert=5.5 pytest-cov nodejs flake8 ipywidgets matplotlib xeus-cling
-      env:
-        PYTHON_VERSION: ${{ matrix.python-version }}
+      shell: bash -l {0}
+      run: mamba install -q python=${{ matrix.python_version }} pip jupyterlab_pygments==0.1.0 nbconvert=5.5 pytest-cov nodejs flake8 ipywidgets matplotlib xeus-cling
 
-    - name: Install dependencies 
+    - name: Install dependencies
+      shell: bash -l {0}
       run: |
-        source "$CONDA/etc/profile.d/conda.sh"
-        conda activate voila-tests
         whereis python
         python --version
-        
-        python -m pip install ".[test]"
-        cd tests/test_template; pip install .; cd ../../;
 
-    - name: Flake8
-      run: |
-        source "$CONDA/etc/profile.d/conda.sh"
-        conda activate voila-tests
-        python -m flake8 voila tests setup.py
+        python -m pip install ".[test]"
+        cd tests/test_template; python -m pip install .; cd ../../;
 
     - name: Run tests
+      shell: bash -l {0}
       run: |
-        source "$CONDA/etc/profile.d/conda.sh"
-        conda activate voila-tests
         VOILA_TEST_DEBUG=1 VOILA_TEST_XEUS_CLING=1 py.test tests/ --async-test-timeout=240
         voila --help  # Making sure we can run `voila --help`
+
+    - name: Flake8
+      shell: bash -l {0}
+      run: |
+        python -m flake8 voila tests setup.py
