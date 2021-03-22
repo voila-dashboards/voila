@@ -168,7 +168,7 @@ class VoilaHandler(JupyterHandler):
            path=self.cwd,
            env=self.kernel_env,
         ))
-        km = self.kernel_manager.get_kernel(kernel_id)
+        km = await ensure_async(self.kernel_manager.get_kernel(kernel_id))
 
         self.executor = VoilaExecutor(nb, km=km, config=self.traitlet_config,
                                       show_tracebacks=self.voila_configuration.show_tracebacks)
