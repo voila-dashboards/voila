@@ -38,6 +38,7 @@ jobs:
       run: |
         whereis python
         python --version
+        python -m pip install "traitlets>=4,<5"
 
         python -m pip install ".[test]"
         cd tests/test_template; python -m pip install .; cd ../../;
