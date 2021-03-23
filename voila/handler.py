@@ -168,7 +168,7 @@ class VoilaHandler(JupyterHandler):
            path=self.cwd,
            env=self.kernel_env,
         ))
-        km = self.kernel_manager.get_kernel(kernel_id)
+        km = await ensure_async(self.kernel_manager.get_kernel(kernel_id))
 
         self.executor = VoilaExecutor(nb, km=km, config=self.traitlet_config,
                                       show_tracebacks=self.voila_configuration.show_tracebacks)
@@ -270,7 +270,7 @@ class VoilaHandler(JupyterHandler):
         kernelspec = notebook.metadata.kernelspec
         kernel_name = kernelspec.get('name', self.kernel_manager.default_kernel_name)
         # We use `maybe_future` to support RemoteKernelSpecManager
-        all_kernel_specs = await tornado.gen.maybe_future(self.kernel_spec_manager.get_all_specs())
+        all_kernel_specs = await ensure_async(self.kernel_spec_manager.get_all_specs())
         # Find a spec matching the language if the kernel name does not exist in the kernelspecs
         if kernel_name not in all_kernel_specs:
             missing_kernel_name = kernel_name
@@ -284,7 +284,7 @@ class VoilaHandler(JupyterHandler):
         return notebook
 
     async def create_notebook(self, model, language):
-        all_kernel_specs = await tornado.gen.maybe_future(self.kernel_spec_manager.get_all_specs())
+        all_kernel_specs = await ensure_async(self.kernel_spec_manager.get_all_specs())
         kernel_name = await self.find_kernel_name_for_language(language, kernel_specs=all_kernel_specs)
         spec = all_kernel_specs[kernel_name]
         notebook = nbformat.v4.new_notebook(
@@ -307,7 +307,7 @@ class VoilaHandler(JupyterHandler):
         if kernel_language in self.voila_configuration.language_kernel_mapping:
             return self.voila_configuration.language_kernel_mapping[kernel_language]
         if kernel_specs is None:
-            kernel_specs = await tornado.gen.maybe_future(self.kernel_spec_manager.get_all_specs())
+            kernel_specs = await ensure_async(self.kernel_spec_manager.get_all_specs())
         matches = [
             name for name, kernel in kernel_specs.items()
             if kernel["spec"]["language"].lower() == kernel_language.lower()
