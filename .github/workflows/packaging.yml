@@ -2,9 +2,11 @@ name: Packaging
 
 on:
   push:
-    branches: [ master ]
+    branches:
+    - '*'
   pull_request:
-    branches: '*'
+    branches:
+    - '*'
 
 env:
   PIP_DISABLE_PIP_VERSION_CHECK: 1
