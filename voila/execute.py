@@ -32,7 +32,7 @@ def strip_code_cell_warnings(cell):
 class VoilaExecutor(NotebookClient):
     """Execute, but respect the output widget behaviour"""
     cell_error_instruction = Unicode(
-        'Please run Voilà with --show_tracebacks=True or --debug to see the error message, or configure VoilaConfigurion.show_tracebacks.',
+        'Please run Voilà with --show_tracebacks=True or --debug to see the error message, or configure VoilaConfiguration.show_tracebacks.',
         config=True,
         help=(
             'instruction given to user to debug cell errors'
