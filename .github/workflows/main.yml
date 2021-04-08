@@ -49,12 +49,14 @@ jobs:
       shell: bash -l {0}
       run: |
         pip install "traitlets>=5.0.3,<6"
+        pip list
         VOILA_TEST_DEBUG=1 VOILA_TEST_XEUS_CLING=1 py.test tests/ --async-test-timeout=240
 
     - name: Run tests (with traitlets 4)
       shell: bash -l {0}
       run: |
         pip install "traitlets>=4,<5"
+        pip list
         VOILA_TEST_DEBUG=1 VOILA_TEST_XEUS_CLING=1 py.test tests/ --async-test-timeout=240
         VOILA_TEST_DEBUG=1 VOILA_TEST_XEUS_CLING=1 py.test tests/ --async-test-timeout=240
         voila --help  # Making sure we can run `voila --help`
