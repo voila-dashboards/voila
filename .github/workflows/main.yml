@@ -40,6 +40,7 @@ jobs:
         python --version
 
         python -m pip install ".[test]"
+        python -m pip install https://github.com/davidbrochart/jupyter_client/archive/fix_threaded_client.zip --ignore-installed
         (cd tests/test_template; pip install .)
         (cd tests/skip_template; pip install .)
 
