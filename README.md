@@ -21,13 +21,13 @@ callbacks to changes in Jupyter interactive widgets.
 
 ## Installation
 
-Voilà can be installed with the conda package manager
+Voilà can be installed with the mamba (or conda) package manager from conda-forge
 
 ```
-conda install -c conda-forge voila
+mamba install -c conda-forge voila
 ```
 
-or from pypi
+or from PyPI
 
 ```
 pip install voila
@@ -57,7 +57,7 @@ To serve a directory of jupyter notebooks, run `voila` with no argument.
 For example, to render the example notebook `bqplot.ipynb` from this repository with Voilà, you can first update your current environment with the requirements of this notebook (in this case in a [conda environment](https://docs.conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html) and render the notebook with
 
 ```
-conda env update -f environment.yml
+mamba env update -f environment.yml
 cd notebooks/
 voila bqplot.ipynb
 ```
