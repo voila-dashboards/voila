@@ -311,7 +311,7 @@ The same parameters apply when using Voilà as a server extension:
 
 There is also the ``MappingKernelManager.cull_busy`` and ``MappingKernelManager.cull_connected`` options to cull busy kernels and kernels with an active connection.
 
-For more information about these options, check out the `Jupyter Server <https://jupyter-server.readthedocs.io/en/latest/config.html#options>`_ documentation.
+For more information about these options, check out the `Jupyter Server <https://jupyter-server.readthedocs.io/en/latest/other/full-config.html#options>`_ documentation.
 
 Hiding output and code cells based on cell tags
 ===============================================
