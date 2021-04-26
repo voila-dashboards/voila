@@ -21,7 +21,7 @@ export async function connectKernel(
   kernelId = kernelId ?? PageConfig.getOption('kernelId');
   const serverSettings = ServerConnection.makeSettings({ baseUrl });
 
-  const model = await KernelAPI.getKernelModel(kernelId);
+  const model = await KernelAPI.getKernelModel(kernelId, serverSettings);
   if (!model) {
     return;
   }
