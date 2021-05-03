@@ -544,6 +544,7 @@ class Voila(Application):
             yield max(1, port + random.randint(-2*n, 2*n))
 
     def listen(self):
+        success = False
         for port in self.random_ports(self.port, self.port_retries+1):
             try:
                 self.app.listen(port)
