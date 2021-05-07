@@ -13,7 +13,7 @@ import {
 
 import { INotebookModel } from '@jupyterlab/notebook';
 
-import { refreshIcon } from '@juperlab/ui-components';
+import { refreshIcon } from '@jupyterlab/ui-components';
 
 import { Token } from '@lumino/coreutils';
 
