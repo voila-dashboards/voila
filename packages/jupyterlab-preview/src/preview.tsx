@@ -13,6 +13,8 @@ import {
 
 import { INotebookModel } from '@jupyterlab/notebook';
 
+import { refreshIcon } from '@juperlab/ui-components';
+
 import { Token } from '@lumino/coreutils';
 
 import { Signal } from '@lumino/signaling';
@@ -87,7 +89,7 @@ export class VoilaPreview extends DocumentWidget<IFrame, INotebookModel> {
     });
 
     const reloadButton = new ToolbarButton({
-      iconClass: 'jp-RefreshIcon',
+      icon: refreshIcon,
       tooltip: 'Reload Preview',
       onClick: () => {
         this.reload();
