@@ -13,7 +13,7 @@ import tornado.web
 
 from jupyter_server.base.handlers import JupyterHandler
 from jupyter_server.config_manager import recursive_update
-from jupyter_server.utils import url_path_join
+from jupyter_server.utils import url_path_join, ensure_async
 import nbformat
 
 from nbconvert.preprocessors import ClearOutputPreprocessor
