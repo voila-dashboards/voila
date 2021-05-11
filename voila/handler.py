@@ -162,7 +162,7 @@ class VoilaHandler(JupyterHandler):
             yield res
 
     async def load_notebook(self, path):
-        model = self.contents_manager.get(path=path)
+        model = await ensure_async(self.contents_manager.get(path=path))
         if 'content' not in model:
             raise tornado.web.HTTPError(404, 'file not found')
         __, extension = os.path.splitext(model.get('path', ''))
