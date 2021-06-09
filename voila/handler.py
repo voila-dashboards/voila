@@ -182,6 +182,7 @@ class VoilaHandler(JupyterHandler):
             await orig_shutdown_kernel(*args, **kwargs)
 
         # Monkey patching the shutdown_kernel function
+        self.log.info("Monkey patching shutdown for kernel")
         from jupyter_client import AsyncKernelManager
         km.shutdown_kernel = shutdown_kernel.__get__(km, AsyncKernelManager)
 
