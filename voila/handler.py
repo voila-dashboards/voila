@@ -172,6 +172,18 @@ class VoilaHandler(JupyterHandler):
 
         self.executor = VoilaExecutor(nb, km=km, config=self.traitlet_config,
                                       show_tracebacks=self.voila_configuration.show_tracebacks)
+        
+        # Getting a reference to the original shutdown_kernel method
+        orig_shutdown_kernel = km.shutdown_kernel
+
+        # Defining a new shutdown_kernel method, that also stops client channels
+        async def shutdown_kernel(self, *args, executor=self.executor, **kwargs):
+            executor.kc.stop_channels()
+            await orig_shutdown_kernel(*args, **kwargs)
+
+        # Monkey patching the shutdown_kernel function
+        from jupyter_client import AsyncKernelManager
+        km.shutdown_kernel = shutdown_kernel.__get__(km, AsyncKernelManager)
 
         ###
         # start kernel client
