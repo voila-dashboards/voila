@@ -27,12 +27,12 @@ the following option:
 
 Or by passing in the query parameter ``voila-theme``, e.g. a URL like ``http://localhost:8867/voila/render/query-strings.ipynb?voila-theme=dark``.
 
-The theme can also set in the notebook metadata, under ``metadata/voila/theme`` by editing the notebook file manually, or using the metadata editor in for instance the classical notebook
+The theme can also be set in the notebook metadata, under ``metadata/voila/theme`` by editing the notebook file manually, or using the metadata editor in for instance the classical notebook
 
 .. image:: metadata-theme-classic.png
    :alt: Edit metadata
 
-System administrators who want to disable changing the theme, can pass ``--VoilaConfiguration.allow_theme_override=NO` or
+System administrators who want to disable changing the theme, can pass ``--VoilaConfiguration.allow_theme_override=NO`` or
 ``--VoilaConfiguration.allow_theme_override=NOTEBOOK`` to disable changing the theme completely, or only allow it from the notebook metadata.
 
 Currently, Voilà supports only **light** and **dark** themes.
