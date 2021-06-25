@@ -97,6 +97,7 @@ setup_args = dict(
             "ipywidgets",
             "mock",
             "matplotlib",
+            "pandas",
             "pytest",
             "pytest-tornasync",
         ]
