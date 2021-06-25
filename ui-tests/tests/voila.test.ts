@@ -49,13 +49,20 @@ describe('Voila Visual Regression', () => {
     const previewSelector = '.jp-ToolbarButton .voilaRender';
     const button = await page.$(previewSelector);
     button.click();
+
+    await galata.notebook.close(true);
+    await galata.toggleSimpleMode(true);
+
     const iframe = await page.waitForSelector('iframe');
     const contentFrame = await iframe.contentFrame();
     await contentFrame.waitForLoadState('networkidle');
-  });
 
-  test('Close notebook widgets.ipynb', async () => {
-    await galata.notebook.close(true);
+    // TODO: wait for widgets to render
+    await page.waitForTimeout(10000);
+
+    const imageName = 'basics';
+    await galata.capture.screenshot(imageName, iframe);
+    expect(await galata.capture.compareScreenshot(imageName)).toBe('same');
   });
 
   test('Open home directory', async () => {

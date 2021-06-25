@@ -1,3 +1,5 @@
 {
-  "testId": "test"
+  "testId": "test",
+  "pageWidth": 1600,
+  "pageHeight": 900
 }
