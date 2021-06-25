@@ -47,7 +47,7 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip jupyterlab~=3.0
-          python -m pip install -e .
+          python -m pip install ".[test]"
           jlpm
           jlpm build
 
