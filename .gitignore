@@ -36,3 +36,5 @@ lib
 
 voila/labextension
 tsconfig.tsbuildinfo
+
+ui-tests/test-output/*
