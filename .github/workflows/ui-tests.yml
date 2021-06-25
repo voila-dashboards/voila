@@ -78,7 +78,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v2
         with:
-          name: ui-test-output
+          name: voila-ui-test-output
           path: |
             ui-tests/test-output
 
@@ -95,6 +95,6 @@ jobs:
         if: ${{ failure() }}
         uses: actions/upload-artifact@v2
         with:
-          name: ui-test-new-reference
+          name: voila-ui-test-new-reference
           path: |
             ui-tests/test-output/test/screenshots/*.png
