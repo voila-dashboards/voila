@@ -55,10 +55,9 @@ describe('Voila Visual Regression', () => {
 
     const iframe = await page.waitForSelector('iframe');
     const contentFrame = await iframe.contentFrame();
-    await contentFrame.waitForLoadState('networkidle');
 
-    // TODO: wait for widgets to render
-    await page.waitForTimeout(10000);
+    await contentFrame.waitForSelector('.jupyter-widgets');
+    await contentFrame.waitForLoadState('networkidle');
 
     const imageName = 'basics';
     await galata.capture.screenshot(imageName, iframe);
