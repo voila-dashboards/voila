@@ -58,6 +58,9 @@ describe('Voila Visual Regression', () => {
 
     await contentFrame.waitForSelector('.jupyter-widgets');
     await contentFrame.waitForLoadState('networkidle');
+    // for the basics notebook we expect to find 2 MathJax element
+    await contentFrame.waitForSelector('#MathJax-Element-1-Frame');
+    await contentFrame.waitForSelector('#MathJax-Element-2-Frame');
 
     const imageName = 'basics';
     await galata.capture.screenshot(imageName, iframe);
