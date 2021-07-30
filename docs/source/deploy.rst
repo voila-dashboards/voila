@@ -288,7 +288,8 @@ The service will ensure Voilà is automatically restarted on startup:
         [Service]
         Type=simple
         PIDFile=/run/voila.pid
-        ExecStart=voila --no-browser voila/notebooks/basics.ipynb
+        ExecStart=/home/ubuntu/.venv/bin/voila --no-browser voila/notebooks/basics.ipynb
+
         User=ubuntu
         WorkingDirectory=/home/ubuntu/
         Restart=always
