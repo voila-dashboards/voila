@@ -1,4 +1,4 @@
-# tests programmatic config of template sytem
+# tests programmatic config of template system
 import pytest
 
 import os

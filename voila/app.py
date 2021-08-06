@@ -138,7 +138,7 @@ class Voila(Application):
     connection_dir_root = Unicode(
         config=True,
         help=_(
-            'Location of temporry connection files. Defaults '
+            'Location of temporary connection files. Defaults '
             'to system `tempfile.gettempdir()` value.'
         )
     )
@@ -323,7 +323,7 @@ class Voila(Application):
         asyncio implementation on Windows
         Pick the older SelectorEventLoopPolicy on Windows
         if the known-incompatible default policy is in use.
-        do this as early as possible to make it a low priority and overrideable
+        do this as early as possible to make it a low priority and overridable
         ref: https://github.com/tornadoweb/tornado/issues/2608
         FIXME: if/when tornado supports the defaults in asyncio,
                remove and bump tornado requirement for py38

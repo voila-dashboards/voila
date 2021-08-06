@@ -722,7 +722,7 @@
 - Add flag for nbextensions [#185](https://github.com/voila-dashboards/voila/pull/185) ([@SylvainCorlay](https://github.com/SylvainCorlay))
 - Expose phosphor [#183](https://github.com/voila-dashboards/voila/pull/183) ([@SylvainCorlay](https://github.com/SylvainCorlay))
 - add top-level serverextension and installation instructions [#182](https://github.com/voila-dashboards/voila/pull/182) ([@ivanov](https://github.com/ivanov))
-- Add @web.autenticated to /voila/tree [#181](https://github.com/voila-dashboards/voila/pull/181) ([@jtpio](https://github.com/jtpio))
+- Add @web.authenticated to /voila/tree [#181](https://github.com/voila-dashboards/voila/pull/181) ([@jtpio](https://github.com/jtpio))
 - Review example notebooks [#178](https://github.com/voila-dashboards/voila/pull/178) ([@SylvainCorlay](https://github.com/SylvainCorlay))
 - Update environment.yml [#177](https://github.com/voila-dashboards/voila/pull/177) ([@lheagy](https://github.com/lheagy))
 - Fixup nbextension [#176](https://github.com/voila-dashboards/voila/pull/176) ([@SylvainCorlay](https://github.com/SylvainCorlay))

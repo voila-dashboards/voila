@@ -40,7 +40,7 @@ all of MD as it is not optimized for dense, information rich UIs.
 /* @import url('https://fonts.googleapis.com/css?family=Roboto+Mono'); */
 
 /*
- * Added for compabitility with output area
+ * Added for compatibility with output area
  */
 :root {
   --jp-icon-search: none;
