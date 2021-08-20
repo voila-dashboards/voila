@@ -97,6 +97,7 @@ export class WidgetManager extends JupyterLabManager {
     const tags = document.body.querySelectorAll(
       'script[type="application/vnd.jupyter.widget-view+json"]'
     );
+
     tags.forEach(async viewtag => {
       if (!viewtag?.parentElement) {
         return;

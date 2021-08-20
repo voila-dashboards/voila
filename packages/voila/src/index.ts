@@ -14,6 +14,7 @@ export {
   standardRendererFactories
 } from '@jupyterlab/rendermime';
 
+export { extendedRendererFactories } from './rendermime';
 export { WidgetManager } from './manager';
 export { connectKernel } from './kernel';
 export { renderMathJax } from './mathjax';

@@ -15,6 +15,7 @@
     "@jupyterlab/apputils": "^3.0.0",
     "@jupyterlab/coreutils": "^5.0.0",
     "@jupyterlab/docregistry": "^3.0.0",
+    "@jupyterlab/javascript-extension": "^3.0.0",
     "@jupyterlab/notebook": "^3.0.0",
     "@jupyterlab/outputarea": "^3.0.0",
     "@jupyterlab/rendermime": "^3.0.0",
