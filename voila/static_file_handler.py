@@ -24,7 +24,7 @@ class TemplateStaticFileHandler(tornado.web.StaticFileHandler):
     /my/prefix/jupyter/voila/templates/base/static/voila.js
     Meaning the url portion is not part of the real (absolute path)
 
-    For this sytem, we don't need to use the root, since this is handled in the
+    For this system, we don't need to use the root, since this is handled in the
     paths module.
     """
     def initialize(self):
@@ -102,7 +102,7 @@ class WhiteListFileHandler(tornado.web.StaticFileHandler):
 
     def get_absolute_path(self, root, path):
         # StaticFileHandler.get always calls this method first, so we use this as the
-        # place to check the path. Note that now the path seperator is os dependent (\\ on windows)
+        # place to check the path. Note that now the path separator is os dependent (\\ on windows)
         whitelisted = any(re.fullmatch(pattern, path) for pattern in self.whitelist)
         blacklisted = any(re.fullmatch(pattern, path) for pattern in self.blacklist)
         if not whitelisted:

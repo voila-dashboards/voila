@@ -398,4 +398,4 @@ Sharing Voilà applications
 
 4. Send the link
 
-5. When using the ngrok link, the requests will be forwared to your local instance of Voilà.
+5. When using the ngrok link, the requests will be forwarded to your local instance of Voilà.

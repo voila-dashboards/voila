@@ -1,4 +1,4 @@
-# tests config of template sytem from JSON file
+# tests config of template system from JSON file
 import pytest
 
 import os

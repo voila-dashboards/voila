@@ -51,7 +51,7 @@ function moduleNameToCDNUrl(moduleName: string, moduleVersion: string) {
  * @param version The semver range for the module, if loaded from a CDN.
  *
  * By default, the CDN service used is cdn.jsdelivr.net. However, this default can be
- * overriden by specifying another URL via the HTML attribute
+ * overridden by specifying another URL via the HTML attribute
  * "data-jupyter-widgets-cdn" on a script tag of the page.
  *
  * The semver range is only used with the CDN.

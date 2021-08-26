@@ -114,9 +114,9 @@ export class WidgetManager extends JupyterLabManager {
       } catch (error) {
         // Each widget view tag rendering is wrapped with a try-catch statement.
         //
-        // This fixes issues with widget models that are explicitely "closed"
+        // This fixes issues with widget models that are explicitly "closed"
         // but are still referred to in a previous cell output.
-        // Without the try-catch statement, this error interupts the loop and
+        // Without the try-catch statement, this error interrupts the loop and
         // prevents the rendering of further cells.
         //
         // This workaround may not be necessary anymore with templates that make use
