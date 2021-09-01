@@ -43,7 +43,7 @@ require([window.voila_js_url || 'static/voila'], function(voila) {
         };
 
         const rendermime = new voila.RenderMimeRegistry({
-            initialFactories: voila.standardRendererFactories
+            initialFactories: voila.extendedRendererFactories
         });
 
         var widgetManager = new voila.WidgetManager(context, rendermime, settings);
