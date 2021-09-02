@@ -1,35 +1,28 @@
-import os
+#############################################################################
+# Copyright (c) 2018, Voilà Contributors                                    #
+# Copyright (c) 2018, QuantStack                                            #
+#                                                                           #
+# Distributed under the terms of the BSD 3-Clause License.                  #
+#                                                                           #
+# The full license is in the file LICENSE, distributed with this software.  #
+#############################################################################
+from pathlib import Path
 
-from jupyter_packaging import (
-    create_cmdclass,
-    install_npm,
-    ensure_targets,
-    get_version,
-    combine_commands,
-    skip_if_exists,
-)
 import setuptools
 
-HERE = os.path.abspath(os.path.dirname(__file__))
+HERE = Path(__file__).parent.resolve()
 
 # The name of the project
-name = "voila"
-
-# Get our version
-version = get_version(os.path.join(name, "_version.py"))
+NAME = "voila"
 
 labext_name = "@voila-dashboards/jupyterlab-preview"
-lab_extension_dest = os.path.join(HERE, name, "labextension")
+lab_extension_dest = HERE / NAME / "labextension"
 
 # Representative files that should exist after a successful build
-jstargets = [
-    os.path.join(
-        HERE, "share", "jupyter", "voila", "templates", "base", "static", "voila.js"
-    ),
-    os.path.join(lab_extension_dest, "package.json"),
+ensured_targets = [
+    str(HERE / "share/jupyter/voila/templates/base/static/voila.js"),
+    str(lab_extension_dest / "package.json"),
 ]
-
-package_data_spec = {name: ["*"]}
 
 
 data_files_spec = [
@@ -49,80 +42,21 @@ data_files_spec = [
         "voila.json",
     ),
     ("share/jupyter/nbextensions/voila", "voila/static", "extension.js"),
-    ("share/jupyter/labextensions/%s" % labext_name, lab_extension_dest, "**"),
-    ("share/jupyter/labextensions/%s" % labext_name, HERE, "install.json"),
+    ("share/jupyter/labextensions/%s" % labext_name, str(lab_extension_dest), "**"),
+    ("share/jupyter/labextensions/%s" % labext_name, str(HERE), "install.json"),
     ("share/jupyter/voila/templates", "share/jupyter/voila/templates", "**/*[!.map]"),
 ]
 
+try:
+    from jupyter_packaging import wrap_installers, npm_builder, get_data_files
 
-cmdclass = create_cmdclass(
-    "jsdeps", package_data_spec=package_data_spec, data_files_spec=data_files_spec
-)
+    # In develop mode, just run yarn
+    builder = npm_builder(build_cmd="build", npm="jlpm", force=True)
+    cmdclass = wrap_installers(post_develop=builder, ensured_targets=ensured_targets)
 
-js_command = combine_commands(
-    install_npm(HERE, build_cmd="build:prod", npm=["jlpm"]),
-    ensure_targets(jstargets),
-)
-
-is_repo = os.path.exists(os.path.join(HERE, ".git"))
-if is_repo:
-    cmdclass["jsdeps"] = js_command
-else:
-    cmdclass["jsdeps"] = skip_if_exists(jstargets, js_command)
-
-
-with open("README.md", "r") as fh:
-    long_description = fh.read()
-
-setup_args = dict(
-    name=name,
-    version=version,
-    url="https://github.com/voila-dashboards/voila",
-    author="Voila Development Team",
-    author_email="jupyter@googlegroups.com",
-    description="Voilà turns Jupyter notebooks into standalone web applications",
-    long_description=long_description,
-    long_description_content_type="text/markdown",
-    cmdclass=cmdclass,
-    packages=setuptools.find_packages(),
-    entry_points={"console_scripts": ["voila = voila.app:main"]},
-    install_requires=[
-        "jupyter_server>=0.3.0,<2.0.0",
-        "jupyter_client>=6.1.3,<7",
-        "nbclient>=0.4.0,<0.6",
-        "nbconvert>=6.0.0,<7",
-    ],
-    extras_require={
-        "test": [
-            "ipywidgets",
-            "mock",
-            "matplotlib",
-            "pandas",
-            "pytest",
-            "pytest-tornasync",
-        ]
-    },
-    zip_safe=False,
-    include_package_data=True,
-    python_requires=">=3.6",
-    license="BSD-3-Clause",
-    platforms="Linux, Mac OS X, Windows",
-    keywords=["Jupyter", "JupyterLab", "Voila"],
-    classifiers=[
-        "License :: OSI Approved :: BSD License",
-        "Programming Language :: Python",
-        "Programming Language :: Python :: 3",
-        "Programming Language :: Python :: 3.6",
-        "Programming Language :: Python :: 3.7",
-        "Programming Language :: Python :: 3.8",
-        "Programming Language :: Python :: 3.9",
-        "Framework :: Jupyter",
-        "Framework :: Jupyter :: JupyterLab",
-        "Framework :: Jupyter :: JupyterLab :: 3",
-        "Framework :: Jupyter :: JupyterLab :: Extensions",
-        "Framework :: Jupyter :: JupyterLab :: Extensions :: Prebuilt",
-    ],
-)
+    setup_args = dict(cmdclass=cmdclass, data_files=get_data_files(data_files_spec))
+except ImportError:
+    setup_args = dict()
 
 
 if __name__ == "__main__":
