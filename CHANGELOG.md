@@ -8,32 +8,32 @@
 
 ## Enhancements made
 
-* Update @jupyterlab/services dependency to version 6.1.8 [#933](https://github.com/voila-dashboards/voila/pull/933) ([@julian-west](https://github.com/julian-west))
-* Render Javascript output [#931](https://github.com/voila-dashboards/voila/pull/931) ([@trungleduc](https://github.com/trungleduc))
-* Preview extension: switch to LabIcon for the refresh button [#884](https://github.com/voila-dashboards/voila/pull/884) ([@ohrely](https://github.com/ohrely))
+- Update @jupyterlab/services dependency to version 6.1.8 [#933](https://github.com/voila-dashboards/voila/pull/933) ([@julian-west](https://github.com/julian-west))
+- Render Javascript output [#931](https://github.com/voila-dashboards/voila/pull/931) ([@trungleduc](https://github.com/trungleduc))
+- Preview extension: switch to LabIcon for the refresh button [#884](https://github.com/voila-dashboards/voila/pull/884) ([@ohrely](https://github.com/ohrely))
 
 ## Bugs fixed
 
-* Handle the case when one widget model fails to be created [#935](https://github.com/voila-dashboards/voila/pull/935) ([@martinRenou](https://github.com/martinRenou))
-* Support async content manager [#889](https://github.com/voila-dashboards/voila/pull/889) ([@cailiang9](https://github.com/cailiang9))
+- Handle the case when one widget model fails to be created [#935](https://github.com/voila-dashboards/voila/pull/935) ([@martinRenou](https://github.com/martinRenou))
+- Support async content manager [#889](https://github.com/voila-dashboards/voila/pull/889) ([@cailiang9](https://github.com/cailiang9))
 
 ## Maintenance and upkeep improvements
 
-* Improve Galata tests, update the reference screenshot [#934](https://github.com/voila-dashboards/voila/pull/934) ([@jtpio](https://github.com/jtpio))
-* Fixed typos [#928](https://github.com/voila-dashboards/voila/pull/928) ([@giswqs](https://github.com/giswqs))
-* Add UI Tests [#916](https://github.com/voila-dashboards/voila/pull/916) ([@jtpio](https://github.com/jtpio))
-* Create pull_request_template.md [#914](https://github.com/voila-dashboards/voila/pull/914) ([@jtpio](https://github.com/jtpio))
+- Improve Galata tests, update the reference screenshot [#934](https://github.com/voila-dashboards/voila/pull/934) ([@jtpio](https://github.com/jtpio))
+- Fixed typos [#928](https://github.com/voila-dashboards/voila/pull/928) ([@giswqs](https://github.com/giswqs))
+- Add UI Tests [#916](https://github.com/voila-dashboards/voila/pull/916) ([@jtpio](https://github.com/jtpio))
+- Create pull_request_template.md [#914](https://github.com/voila-dashboards/voila/pull/914) ([@jtpio](https://github.com/jtpio))
 
 ## Documentation improvements
 
-* Update deploy.rst [#925](https://github.com/voila-dashboards/voila/pull/925) ([@Elijah-Watson](https://github.com/Elijah-Watson))
-* Update environment.yml [#918](https://github.com/voila-dashboards/voila/pull/918) ([@astrojuanlu](https://github.com/astrojuanlu))
-* Add CHANGELOG.md [#912](https://github.com/voila-dashboards/voila/pull/912) ([@jtpio](https://github.com/jtpio))
-* typos [#910](https://github.com/voila-dashboards/voila/pull/910) ([@12rambau](https://github.com/12rambau))
+- Update deploy.rst [#925](https://github.com/voila-dashboards/voila/pull/925) ([@Elijah-Watson](https://github.com/Elijah-Watson))
+- Update environment.yml [#918](https://github.com/voila-dashboards/voila/pull/918) ([@astrojuanlu](https://github.com/astrojuanlu))
+- Add CHANGELOG.md [#912](https://github.com/voila-dashboards/voila/pull/912) ([@jtpio](https://github.com/jtpio))
+- typos [#910](https://github.com/voila-dashboards/voila/pull/910) ([@12rambau](https://github.com/12rambau))
 
 ## Other merged PRs
 
-* success variable was undefined when no port can be found [#880](https://github.com/voila-dashboards/voila/pull/880) ([@danlester](https://github.com/danlester))
+- success variable was undefined when no port can be found [#880](https://github.com/voila-dashboards/voila/pull/880) ([@danlester](https://github.com/danlester))
 
 ## Contributors to this release
 
