@@ -22,7 +22,7 @@ Make sure the `dist/` folder is empty.
 1. If the JupyterLab extension has changed, make sure to bump the version number in `./packages/jupyterlab-preview/package.json`
 2. If the Voilà front-end JavaScript has changed, make sure to bump the version number in `./packages/voila/package.json`
 3. Update [voila/\_version.py](./voila/_version.py) and [environment.yml](./environment.yml) with the new version number (see and [example diff](https://github.com/voila-dashboards/voila/commit/5c6fd8dd3ea71412ae9c20c25248453d22a3b60a))
-4. `python setup.py sdist bdist_wheel`
+4. `python -m build`
 5. Double check the size of the bundles in the `dist/` folder
 6. Make sure the JupyterLab extension is correctly bundled in source distribution
 7. Run the tests
