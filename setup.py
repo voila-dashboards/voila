@@ -7,7 +7,6 @@
 # The full license is in the file LICENSE, distributed with this software.  #
 #############################################################################
 from pathlib import Path
-from jupyter_packaging.setupbase import ensure_targets
 
 import setuptools
 
