@@ -2,6 +2,47 @@
 
 <!-- <START NEW CHANGELOG ENTRY> -->
 
+## 0.2.11
+
+([full changelog](https://github.com/voila-dashboards/voila/compare/0.2.10...56fe4cf4bfe114168819f065e22afcb760f51ac6))
+
+## Enhancements made
+
+- Update @jupyterlab/services dependency to version 6.1.8 [#933](https://github.com/voila-dashboards/voila/pull/933) ([@julian-west](https://github.com/julian-west))
+- Render Javascript output [#931](https://github.com/voila-dashboards/voila/pull/931) ([@trungleduc](https://github.com/trungleduc))
+- Preview extension: switch to LabIcon for the refresh button [#884](https://github.com/voila-dashboards/voila/pull/884) ([@ohrely](https://github.com/ohrely))
+
+## Bugs fixed
+
+- Handle the case when one widget model fails to be created [#935](https://github.com/voila-dashboards/voila/pull/935) ([@martinRenou](https://github.com/martinRenou))
+- Support async content manager [#889](https://github.com/voila-dashboards/voila/pull/889) ([@cailiang9](https://github.com/cailiang9))
+
+## Maintenance and upkeep improvements
+
+- Improve Galata tests, update the reference screenshot [#934](https://github.com/voila-dashboards/voila/pull/934) ([@jtpio](https://github.com/jtpio))
+- Fixed typos [#928](https://github.com/voila-dashboards/voila/pull/928) ([@giswqs](https://github.com/giswqs))
+- Add UI Tests [#916](https://github.com/voila-dashboards/voila/pull/916) ([@jtpio](https://github.com/jtpio))
+- Create pull_request_template.md [#914](https://github.com/voila-dashboards/voila/pull/914) ([@jtpio](https://github.com/jtpio))
+
+## Documentation improvements
+
+- Update deploy.rst [#925](https://github.com/voila-dashboards/voila/pull/925) ([@Elijah-Watson](https://github.com/Elijah-Watson))
+- Update environment.yml [#918](https://github.com/voila-dashboards/voila/pull/918) ([@astrojuanlu](https://github.com/astrojuanlu))
+- Add CHANGELOG.md [#912](https://github.com/voila-dashboards/voila/pull/912) ([@jtpio](https://github.com/jtpio))
+- typos [#910](https://github.com/voila-dashboards/voila/pull/910) ([@12rambau](https://github.com/12rambau))
+
+## Other merged PRs
+
+- success variable was undefined when no port can be found [#880](https://github.com/voila-dashboards/voila/pull/880) ([@danlester](https://github.com/danlester))
+
+## Contributors to this release
+
+([GitHub contributors page for this release](https://github.com/voila-dashboards/voila/graphs/contributors?from=2021-04-28&to=2021-09-02&type=c))
+
+[@12rambau](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3A12rambau+updated%3A2021-04-28..2021-09-02&type=Issues) | [@afonit](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Aafonit+updated%3A2021-04-28..2021-09-02&type=Issues) | [@agoose77](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Aagoose77+updated%3A2021-04-28..2021-09-02&type=Issues) | [@astrojuanlu](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Aastrojuanlu+updated%3A2021-04-28..2021-09-02&type=Issues) | [@cailiang9](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Acailiang9+updated%3A2021-04-28..2021-09-02&type=Issues) | [@danlester](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Adanlester+updated%3A2021-04-28..2021-09-02&type=Issues) | [@Elijah-Watson](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3AElijah-Watson+updated%3A2021-04-28..2021-09-02&type=Issues) | [@giswqs](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Agiswqs+updated%3A2021-04-28..2021-09-02&type=Issues) | [@heng2j](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Aheng2j+updated%3A2021-04-28..2021-09-02&type=Issues) | [@jasongrout](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Ajasongrout+updated%3A2021-04-28..2021-09-02&type=Issues) | [@jtpio](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Ajtpio+updated%3A2021-04-28..2021-09-02&type=Issues) | [@julian-west](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Ajulian-west+updated%3A2021-04-28..2021-09-02&type=Issues) | [@maartenbreddels](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Amaartenbreddels+updated%3A2021-04-28..2021-09-02&type=Issues) | [@martinRenou](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3AmartinRenou+updated%3A2021-04-28..2021-09-02&type=Issues) | [@ohrely](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Aohrely+updated%3A2021-04-28..2021-09-02&type=Issues) | [@trungleduc](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Atrungleduc+updated%3A2021-04-28..2021-09-02&type=Issues)
+
+<!-- <END NEW CHANGELOG ENTRY> -->
+
 ## 0.2.10
 
 ([full changelog](https://github.com/voila-dashboards/voila/compare/0.2.9...0.2.10))
@@ -19,8 +60,6 @@
 ([GitHub contributors page for this release](https://github.com/voila-dashboards/voila/graphs/contributors?from=2021-04-13&to=2021-04-28&type=c))
 
 [@jtpio](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Ajtpio+updated%3A2021-04-13..2021-04-28&type=Issues) | [@maartenbreddels](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Amaartenbreddels+updated%3A2021-04-13..2021-04-28&type=Issues) | [@mariobuikhuizen](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Amariobuikhuizen+updated%3A2021-04-13..2021-04-28&type=Issues) | [@sir-sigurd](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Asir-sigurd+updated%3A2021-04-13..2021-04-28&type=Issues)
-
-<!-- <END NEW CHANGELOG ENTRY> -->
 
 ## 0.2.9
 
