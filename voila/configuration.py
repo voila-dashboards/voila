@@ -99,3 +99,12 @@ class VoilaConfiguration(traitlets.config.Configurable):
         for example a kernel manager with support for pooling.
         """
     )
+
+    http_header_envs = List(
+        Unicode(),
+        [],
+        help=r"""
+    List of HTTP Headers that should be passed as env vars to the kernel.
+    Example: --VoilaConfiguration.http_header_envs="['X-CDSDASHBOARDS-JH-USER']"
+    """,
+    ).tag(config=True)

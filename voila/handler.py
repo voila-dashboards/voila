@@ -81,6 +81,15 @@ class VoilaHandler(JupyterHandler):
         self.kernel_env['SERVER_PORT'] = str(port) if port else ''
         self.kernel_env['SERVER_NAME'] = host
 
+        # Add HTTP Headers as env vars following rfc3875#section-4.1.18
+        if len(self.voila_configuration.http_header_envs) > 0:
+            config_headers_lower = [header.lower() for header in self.voila_configuration.http_header_envs]
+            for header_name in self.request.headers:
+                # Use case insensitive comparison of header names as per rfc2616#section-4.2
+                if header_name.lower() in config_headers_lower:
+                    env_name = f'HTTP_{header_name.upper().replace("-", "_")}'
+                    self.kernel_env[env_name] = self.request.headers.get(header_name)
+
         # we can override the template via notebook metadata or a query parameter
         template_override = None
         if 'voila' in notebook.metadata and self.voila_configuration.allow_template_override in ['YES', 'NOTEBOOK']:
