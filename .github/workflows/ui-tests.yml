@@ -65,7 +65,6 @@ jobs:
           cd ui-tests
           # Install only Chromium browser
           jlpm playwright install chromium
-          jlpm run build
 
       - name: Wait for JupyterLab
         uses: ifaxity/wait-on-action@v1
