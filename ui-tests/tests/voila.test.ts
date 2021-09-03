@@ -1,78 +1,29 @@
 // Copyright (c) Jupyter Development Team.
 // Distributed under the terms of the Modified BSD License.
 
-import { galata, describe, test } from '@jupyterlab/galata';
+import { expect, test } from '@playwright/test';
 
-import * as path from 'path';
+test.describe('Voila Tests', () => {
+  test('Render the basics notebook', async ({ page }) => {
+    // render the notebook
+    await page.goto('render/tests/notebooks/basics.ipynb');
 
-jest.setTimeout(100000);
+    // wait for the widgets to load
+    // await page.waitForSelector('.jupyter-widgets');
+    await page.waitForSelector('span[role="presentation"] >> text=x');
 
-describe('Voila Visual Regression', () => {
-  beforeAll(async () => {
-    await galata.resetUI();
-    galata.context.capturePrefix = 'voila';
-  });
+    // change the value of the slider
+    await page.fill('text=4.00', '8.00');
+    await page.keyboard.down('Enter');
 
-  afterAll(async () => {
-    galata.context.capturePrefix = '';
-  });
-
-  test('Upload files to JupyterLab', async () => {
-    await galata.contents.moveDirectoryToServer(
-      path.resolve(__dirname, './notebooks'),
-      'uploaded'
-    );
-    expect(
-      await galata.contents.fileExists('uploaded/basics.ipynb')
-    ).toBeTruthy();
-  });
-
-  test('Refresh File Browser', async () => {
-    await galata.filebrowser.refresh();
-  });
-
-  test('Open directory uploaded', async () => {
-    await galata.filebrowser.openDirectory('uploaded');
-    expect(
-      await galata.filebrowser.isFileListedInBrowser('basics.ipynb')
-    ).toBeTruthy();
-  });
-
-  test('Open basics.ipynb with the Voila preview', async () => {
-    const notebook = 'basics.ipynb';
-    await galata.notebook.open(notebook);
-    expect(await galata.notebook.isOpen(notebook)).toBeTruthy();
-    await galata.notebook.activate(notebook);
-    expect(await galata.notebook.isActive(notebook)).toBeTruthy();
-
-    const page = galata.context.page;
-    const previewSelector = '.jp-ToolbarButton .voilaRender';
-    const button = await page.$(previewSelector);
-    button.click();
-
-    await galata.notebook.close(true);
-    await galata.toggleSimpleMode(true);
-
-    const iframe = await page.waitForSelector('iframe');
-    const contentFrame = await iframe.contentFrame();
-
-    await contentFrame.waitForSelector('.jupyter-widgets');
-    await contentFrame.waitForLoadState('networkidle');
+    // fetch the value of the label
+    const value = await page.$eval('input', el => el.value);
+    expect(value).toBe('64');
 
     // wait for the final MathJax message to be hidden
-    await contentFrame.$('text=Typesetting math: 100%');
-    await contentFrame.waitForSelector('#MathJax_Message', { state: 'hidden' });
+    await page.$('text=Typesetting math: 100%');
+    await page.waitForSelector('#MathJax_Message', { state: 'hidden' });
 
-    const imageName = 'basics';
-    await galata.capture.screenshot(imageName, iframe);
-    expect(await galata.capture.compareScreenshot(imageName)).toBe('same');
-  });
-
-  test('Open home directory', async () => {
-    await galata.filebrowser.openHomeDirectory();
-  });
-
-  test('Delete uploaded directory', async () => {
-    await galata.contents.deleteDirectory('uploaded');
+    expect(await page.screenshot()).toMatchSnapshot('basics.png');
   });
 });
