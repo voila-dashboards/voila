@@ -46,7 +46,8 @@ module.exports = {
     ],
     curly: ['error', 'all'],
     eqeqeq: 'error',
-    'prefer-arrow-callback': 'error'
+    'prefer-arrow-callback': 'error',
+    'jest/no-done-callback': 'off'
   },
   settings: {
     react: {

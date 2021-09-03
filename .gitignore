@@ -37,5 +37,5 @@ lib
 voila/labextension
 tsconfig.tsbuildinfo
 
-ui-tests/test-output/*
+ui-tests/playwright-report
 ui-tests/jlab_root

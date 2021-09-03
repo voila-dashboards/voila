@@ -44,57 +44,42 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-yarn-
 
-      - name: Install dependencies
-        run: |
-          python -m pip install --upgrade pip jupyterlab~=3.0
-          python -m pip install ".[test]"
-          jlpm
-          jlpm build
-
-      - name: Install Galata
-        run: |
-          cd ui-tests
-          jlpm install --frozen-lockfile
-
       - name: Launch JupyterLab
         run: |
-          cd ui-tests
-          mkdir jlab_root
-          jlpm run start-jlab:detached
-
+          cd galata
+          # Mount a volume to overwrite the server configuration
+          jlpm start 2>&1 > /tmp/jupyterlab_server.log &
+      - name: Install browser
+        run: |
+          cd galata
+          # Install only Chromium browser
+          jlpm playwright install chromium
+          jlpm run build
       - name: Wait for JupyterLab
         uses: ifaxity/wait-on-action@v1
         with:
-          resource: http-get://localhost:8888/api
-          timeout: 20000
+          resource: http-get://localhost:8888/lab
+          timeout: 360000
 
-      - name: Run UI Tests
+      - name: Test
         run: |
-          cd ui-tests
+          cd galata
           jlpm run test
-          rm -rf jlab_root
-
-      - name: Upload UI Test artifacts
+      - name: Upload Galata Test assets
         if: always()
         uses: actions/upload-artifact@v2
         with:
-          name: voila-ui-test-output
+          name: galata-test-assets
           path: |
-            ui-tests/test-output
-
-      - name: Run UI Tests
-        if: ${{ failure() }}
-        run: |
-          cd ui-tests
-          [ -d "jlab_root" ] && rm -rf jlab_root
-          mkdir jlab_root
-          jlpm run test:create-references
-          rm -rf jlab_root
-
-      - name: Upload UI Test new reference artifacts
-        if: ${{ failure() }}
+            galata/test-results
+      - name: Upload Galata Test report
+        if: always()
         uses: actions/upload-artifact@v2
         with:
-          name: voila-ui-test-new-reference
+          name: galata-report
           path: |
-            ui-tests/test-output/test/screenshots/*.png
+            galata/playwright-report
+      - name: Print JupyterLab logs
+        if: always()
+        run: |
+          cat /tmp/jupyterlab_server.log
