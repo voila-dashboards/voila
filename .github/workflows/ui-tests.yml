@@ -46,15 +46,17 @@ jobs:
 
       - name: Launch JupyterLab
         run: |
-          cd galata
+          cd ui-tests
           # Mount a volume to overwrite the server configuration
           jlpm start 2>&1 > /tmp/jupyterlab_server.log &
+
       - name: Install browser
         run: |
-          cd galata
+          cd ui-tests
           # Install only Chromium browser
           jlpm playwright install chromium
           jlpm run build
+
       - name: Wait for JupyterLab
         uses: ifaxity/wait-on-action@v1
         with:
@@ -63,22 +65,25 @@ jobs:
 
       - name: Test
         run: |
-          cd galata
+          cd ui-tests
           jlpm run test
+
       - name: Upload Galata Test assets
         if: always()
         uses: actions/upload-artifact@v2
         with:
-          name: galata-test-assets
+          name: voila-test-assets
           path: |
-            galata/test-results
+            ui-tests/test-results
+
       - name: Upload Galata Test report
         if: always()
         uses: actions/upload-artifact@v2
         with:
-          name: galata-report
+          name: voila-report
           path: |
-            galata/playwright-report
+            ui-tests/playwright-report
+
       - name: Print JupyterLab logs
         if: always()
         run: |
