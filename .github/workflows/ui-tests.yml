@@ -89,7 +89,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v2
         with:
-          name: voila-report
+          name: voila-test-report
           path: |
             ui-tests/playwright-report
 
