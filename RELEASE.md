@@ -2,7 +2,9 @@
 
 ## Using `jupyter_releaser`
 
-The recommended way to make a release is to use [`jupyter_releaser`](https://github.com/jupyter-server/jupyter_releaser#typical-workflow).
+Soon, the recommended way to make a release will be to use [`jupyter_releaser`](https://github.com/jupyter-server/jupyter_releaser#typical-workflow).
+
+For now releases are still done manually (see section below).
 
 ## Releasing on conda-forge
 
@@ -35,12 +37,18 @@ Make sure the `dist/` folder is empty.
 
 1. If the JupyterLab extension has changed, make sure to bump the version number in `./packages/jupyterlab-preview/package.json`
 2. If the Voilà front-end JavaScript has changed, make sure to bump the version number in `./packages/voila/package.json`
-3. Update [voila/\_version.py](./voila/_version.py) and [environment.yml](./environment.yml) with the new version number (see and [example diff](https://github.com/voila-dashboards/voila/commit/5c6fd8dd3ea71412ae9c20c25248453d22a3b60a))
+3. Bump the version:
+   - `pip install tbump@git+git://github.com/dmerejkowsky/tbump.git@03988d5d2267ddd4a33b3c4196b05b7f24f0a0a4`
+   - `tbump x.y.z`
+   - Update [environment.yml](./environment.yml) with the new version number (see and [example diff](https://github.com/voila-dashboards/voila/commit/5c6fd8dd3ea71412ae9c20c25248453d22a3b60a))
 4. `python -m build`
 5. Double check the size of the bundles in the `dist/` folder
 6. Make sure the JupyterLab extension is correctly bundled in source distribution
 7. Run the tests
-   - (pip install "dist/voila-X.Y.Z-py3-none-any.whl[test]" && (cd tests/test_template; pip install .) && (cd tests/skip_template; pip install .) && py.test)
+   - `pip install "dist/voila-X.Y.Z-py3-none-any.whl[test]`
+   - `cd tests/test_template`
+   - `pip install tests/test_template tests/skip_template`
+   - `py.test`
 8. `export TWINE_USERNAME=mypypi_username`
 9. `twine upload dist/*`
 
