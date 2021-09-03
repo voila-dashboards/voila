@@ -6,22 +6,17 @@ import { test } from '@jupyterlab/galata';
 import { expect } from '@playwright/test';
 
 test.describe('Notebook Tests', () => {
-  test('Create New Notebook', async ({ page, tmpPath }) => {
-    const fileName = 'create_test.ipynb';
-    await page.notebook.createNew(fileName);
-    expect(
-      await page.waitForSelector(`[role="main"] >> text=${fileName}`)
-    ).toBeTruthy();
+  test('Create New Notebook', async ({ page }) => {
+    // render the notebook
+    await page.goto('render/tests/notebooks/basics.ipynb');
 
-    expect(await page.contents.fileExists(`${tmpPath}/${fileName}`)).toEqual(
-      true
-    );
+    await page.waitForSelector('.jupyter-widgets');
 
-    // await contentFrame.waitForSelector('.jupyter-widgets');
-    // await contentFrame.waitForLoadState('networkidle');
+    // wait for the final MathJax message to be hidden
+    await page.$('text=Typesetting math: 100%');
+    await page.waitForSelector('#MathJax_Message', { state: 'hidden' });
 
-    // // wait for the final MathJax message to be hidden
-    // await contentFrame.$('text=Typesetting math: 100%');
-    // await contentFrame.waitForSelector('#MathJax_Message', { state: 'hidden' });
+    // TODO: move slider and check value
+    expect(true).toBe(true);
   });
 });
