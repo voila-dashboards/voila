@@ -7,3 +7,5 @@ node_modules
 build
 notebooks/
 .vscode/
+
+ui-tests/playwright-report

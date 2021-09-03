@@ -22,3 +22,5 @@ coverage
 # ms IDE stuff
 .history/
 .vscode/
+
+ui-tests/playwright-report
