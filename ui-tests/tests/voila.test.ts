@@ -3,8 +3,8 @@
 
 import { expect, test } from '@playwright/test';
 
-test.describe('Notebook Tests', () => {
-  test('Create New Notebook', async ({ page }) => {
+test.describe('Voila Tests', () => {
+  test('Render the basics notebook', async ({ page }) => {
     // render the notebook
     await page.goto('render/tests/notebooks/basics.ipynb');
 
