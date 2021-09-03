@@ -7,7 +7,6 @@ dependencies:
   - bqplot
   - scipy
   - ipympl
-  - voila=0.2.11
   - ipympl
   - xleaflet=0.14.0
   - xeus-cling=0.12.1
