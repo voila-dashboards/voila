@@ -50,6 +50,9 @@ jobs:
           python -m pip install ".[test]"
           jlpm
           jlpm build
+          jupyter labextension develop . --overwrite
+          cd ui-tests
+          jlpm install --frozen-lockfile
 
       - name: Launch JupyterLab
         run: |
