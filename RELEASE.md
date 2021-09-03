@@ -40,7 +40,6 @@ Make sure the `dist/` folder is empty.
 3. Bump the version:
    - `pip install tbump@git+git://github.com/dmerejkowsky/tbump.git@03988d5d2267ddd4a33b3c4196b05b7f24f0a0a4`
    - `tbump x.y.z`
-   - Update [environment.yml](./environment.yml) with the new version number (see and [example diff](https://github.com/voila-dashboards/voila/commit/5c6fd8dd3ea71412ae9c20c25248453d22a3b60a))
 4. `python -m build`
 5. Double check the size of the bundles in the `dist/` folder
 6. Make sure the JupyterLab extension is correctly bundled in source distribution
