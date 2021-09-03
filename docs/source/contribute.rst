@@ -16,7 +16,7 @@ Voilà is a subproject of Project Jupyter and subject to the `Jupyter governance
 General Guidelines
 ==================
 
-For general documentation about contributing to Jupyter projects, see the `Project Jupyter Contributor Documentation <https://jupyter.readthedocs.io/en/latest/contributor/content-contributor.html>`_.
+For general documentation about contributing to Jupyter projects, see the `Project Jupyter Contributor Documentation <https://jupyter.readthedocs.io/en/latest/contributing/content-contributor.html>`_.
 
 Community
 =========

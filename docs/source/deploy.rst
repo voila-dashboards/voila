@@ -348,7 +348,7 @@ Enable HTTPS with Let's Encrypt
         ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem; # managed by Certbot
         ...
 
-4. Visit https://yourdomain.com to access the Voilà applications over HTTPS.
+4. Visit ``yourdomain.com`` to access the Voilà applications over HTTPS.
 
 5. To automatically renew the certificates (they expire after 90 days), open the ``crontab`` file:
 
@@ -370,7 +370,7 @@ Sharing Voilà applications with ngrok
 `ngrok <https://ngrok.com>`__ is a useful tool to expose local servers to the public internet over secure tunnels.
 It can be used to share Voilà applications served by a local instance of Voilà.
 
-The main use case for using Voilà with ngrok is to quickly share a notebook as an interactive application without 
+The main use case for using Voilà with ngrok is to quickly share a notebook as an interactive application without
 having to deploy to external hosting.
 
 .. warning::
@@ -394,7 +394,7 @@ Sharing Voilà applications
 
 2. In a new terminal window, start ngrok: ``ngrok http 8866``
 
-3. Copy the link from the ngrok terminal window. The links looks like the following: https://8bb6fded.ngrok.io/
+3. Copy the link from the ngrok terminal window. The links looks like the following: ``8bb6fded.ngrok.io``
 
 4. Send the link
 
