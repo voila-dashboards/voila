@@ -47,7 +47,13 @@ export class VoilaPreview extends DocumentWidget<IFrame, INotebookModel> {
     super({
       ...options,
       content: new IFrame({
-        sandbox: ['allow-same-origin', 'allow-scripts', 'allow-downloads']
+        sandbox: [
+          'allow-same-origin',
+          'allow-scripts',
+          'allow-downloads',
+          'allow-modals',
+          'allow-popups'
+        ]
       })
     });
 
