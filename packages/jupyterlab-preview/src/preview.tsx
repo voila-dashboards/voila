@@ -51,6 +51,7 @@ export class VoilaPreview extends DocumentWidget<IFrame, INotebookModel> {
           'allow-same-origin',
           'allow-scripts',
           'allow-downloads',
+          'allow-modals',
           'allow-popups'
         ]
       })
