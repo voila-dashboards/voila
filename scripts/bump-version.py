@@ -19,7 +19,7 @@ def get_python_version():
     return voila.__version__
 
 
-def patch():
+def patch(force=False):
     python_version = get_python_version()
     if "a" in python_version or "b" in python_version or "rc" in python_version:
         raise Exception("Can only make a patch release from a final version")
@@ -32,6 +32,12 @@ def patch():
     # switches to rc.
     run("bumpversion release --allow-dirty", quiet=True)
     # switches to final.
+
+    # Version the changed
+    cmd = "jlpm run lerna version patch --no-push --force-publish --no-git-tag-version"
+    if force:
+      cmd += ' --yes'
+    run(cmd)
 
 
 def update(spec, force=False):
@@ -94,7 +100,7 @@ def update(spec, force=False):
 @click.option("--force", default=False)
 def bump(spec, force):
     if spec == "patch":
-        patch()
+        patch(force)
         return
 
     update(spec, force)
