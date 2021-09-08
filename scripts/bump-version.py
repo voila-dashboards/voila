@@ -96,9 +96,9 @@ def update(spec, force=False):
 
 
 @click.command()
+@click.option("--force", default=False, is_flag=True)
 @click.argument("spec", nargs=1)
-@click.option("--force", default=False)
-def bump(spec, force):
+def bump(force, spec):
     if spec == "patch":
         patch(force)
         return
