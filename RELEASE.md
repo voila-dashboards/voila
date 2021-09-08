@@ -38,8 +38,8 @@ Make sure the `dist/` folder is empty.
 1. If the JupyterLab extension has changed, make sure to bump the version number in `./packages/jupyterlab-preview/package.json`
 2. If the Voilà front-end JavaScript has changed, make sure to bump the version number in `./packages/voila/package.json`
 3. Bump the version:
-   - `pip install tbump@git+git://github.com/dmerejkowsky/tbump.git@03988d5d2267ddd4a33b3c4196b05b7f24f0a0a4`
-   - `tbump x.y.z`
+   - For a patch release: `python scripts/bump-version patch`
+   - For a build release: `python scripts/bump-version build`
 4. `python -m build`
 5. Double check the size of the bundles in the `dist/` folder
 6. Make sure the JupyterLab extension is correctly bundled in source distribution
