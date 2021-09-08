@@ -36,7 +36,7 @@ def patch(force=False):
     # Version the changed
     cmd = "jlpm run lerna version patch --no-push --force-publish --no-git-tag-version"
     if force:
-      cmd += ' --yes'
+        cmd += " --yes"
     run(cmd)
 
 
