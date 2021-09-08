@@ -1,0 +1,1 @@
+from jupyter_releaser import run
