@@ -17,13 +17,13 @@ def bump(spec):
     if "a" in python_version or "b" in python_version or "rc" in python_version:
         raise Exception("Can only make a patch release from a final version")
 
-    run("bumpversion patch")
+    run("bumpversion patch", quiet=True)
     # switches to alpha
-    run("bumpversion release --allow-dirty")
+    run("bumpversion release --allow-dirty", quiet=True)
     # switches to beta
-    run("bumpversion release --allow-dirty")
+    run("bumpversion release --allow-dirty", quiet=True)
     # switches to rc.
-    run("bumpversion release --allow-dirty")
+    run("bumpversion release --allow-dirty", quiet=True)
     # switches to final.
 
 
