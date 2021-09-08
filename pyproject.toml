@@ -34,4 +34,4 @@ src = "voila/_version.py"
 before-build-npm = ["python -m pip install jupyterlab~=3.0", "jlpm"]
 
 [tool.check-manifest]
-ignore = [".binder/**", "docs/**", "notebooks/**", "packages/**", "share/**/*.js", "share/**/*.woff", "*.json", "*.gif", "yarn.lock", "environment.yml", "readthedocs.yml", ".*", "lint-staged.config.js", "voila/labextension/**", "voila/static/**", "tests/**", "ui-tests/**"]
+ignore = [".binder/**", "docs/**", "notebooks/**", "packages/**", "share/**/*.js", "share/**/*.woff", "*.json", "*.gif", "yarn.lock", "environment.yml", "readthedocs.yml", ".*", "lint-staged.config.js", "scripts/**", "voila/labextension/**", "voila/static/**", "tests/**", "ui-tests/**"]
