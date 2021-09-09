@@ -38,6 +38,7 @@ Make sure the `dist/` folder is empty.
 1. If the JupyterLab extension has changed, make sure to bump the version number in `./packages/jupyterlab-preview/package.json`
 2. If the Voilà front-end JavaScript has changed, make sure to bump the version number in `./packages/voila/package.json`
 3. Bump the version:
+   - `python -m pip install bump2version jupyter-releaser`
    - For a patch release: `python scripts/bump-version patch`
    - For a build release: `python scripts/bump-version build`
 4. `python -m build`
