@@ -6,6 +6,24 @@ Soon, the recommended way to make a release will be to use [`jupyter_releaser`](
 
 For now releases are still done manually (see section below).
 
+## Bumping versions
+
+`voila` follows a similar bump strategy as in JupyterLab:
+
+https://github.com/jupyterlab/jupyterlab/blob/master/RELEASE.md#bump-version
+
+To manually bump the version, run:
+
+```bash
+# install the dependencies
+python -m pip install -e ".[test,dev]"
+
+# bump the version
+python scripts/bump-version.py <spec>
+```
+
+Where `<spec>` can be one of the following: `patch`, `minor`, `major`, `release`.
+
 ## Releasing on conda-forge
 
 1. Open a new PR on https://github.com/conda-forge/voila-feedstock to update the `version` and the `sha256` hash (see [example](https://github.com/conda-forge/voila-feedstock/pull/23/files))
