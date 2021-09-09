@@ -55,8 +55,6 @@ def update(spec, force=False):
     if is_final and spec == "build":
         raise Exception("Cannot increment a build on a final release")
 
-    # TODO: check git status
-
     # If this is a major release during the alpha cycle, bump
     # just the Python version.
     if "a" in prev and spec == "major":
@@ -99,6 +97,10 @@ def update(spec, force=False):
 @click.option("--force", default=False, is_flag=True)
 @click.argument("spec", nargs=1)
 def bump(force, spec):
+    status = run("git status --porcelain").strip()
+    if len(status) > 0:
+        raise Exception("Must be in a clean git state with no untracked files")
+
     if spec == "patch":
         patch(force)
         return
