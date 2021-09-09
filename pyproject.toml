@@ -21,7 +21,7 @@ skip = ["check-links"]
 
 [tool.jupyter-releaser.hooks]
 before-bump-version = ["python -m pip install bump2version jupyterlab~=3.0"]
-before-build-npm = ["python -m pip install jupyterlab~=3.0", "jlpm"]
+before-build-npm = ["python -m pip install jupyterlab~=3.0"]
 
 [tool.jupyter-releaser.options]
 version-cmd = "python scripts/bump-version.py --force"
