@@ -2,6 +2,33 @@
 
 <!-- <START NEW CHANGELOG ENTRY> -->
 
+## 0.2.12
+
+([Full Changelog](https://github.com/voila-dashboards/voila/compare/0.2.11...ea89b19b74f9600d16d83219a4bfacb5b7448665))
+
+### Enhancements made
+
+- Add `allow-popups` and `allow-modals` to the preview sandbox [#951](https://github.com/voila-dashboards/voila/pull/951) ([@jtpio](https://github.com/jtpio))
+- http_header_envs option to include http headers as an env var (following CGI standards) [#922](https://github.com/voila-dashboards/voila/pull/922) ([@mariobuikhuizen](https://github.com/mariobuikhuizen))
+
+### Maintenance and upkeep improvements
+
+- Add a script to bump the version [#954](https://github.com/voila-dashboards/voila/pull/954) ([@jtpio](https://github.com/jtpio))
+- Update to lerna 4 [#952](https://github.com/voila-dashboards/voila/pull/952) ([@jtpio](https://github.com/jtpio))
+- Add Binder on PR workflow [#949](https://github.com/voila-dashboards/voila/pull/949) ([@jtpio](https://github.com/jtpio))
+- Update the UI Tests setup [#946](https://github.com/voila-dashboards/voila/pull/946) ([@jtpio](https://github.com/jtpio))
+- add JupyterLab trove classifiers [#944](https://github.com/voila-dashboards/voila/pull/944) ([@RhnSharma](https://github.com/RhnSharma))
+- Update to Jupyter Packaging 0.10 [#943](https://github.com/voila-dashboards/voila/pull/943) ([@jtpio](https://github.com/jtpio))
+- Add check-release step on CI [#913](https://github.com/voila-dashboards/voila/pull/913) ([@jtpio](https://github.com/jtpio))
+
+### Contributors to this release
+
+([GitHub contributors page for this release](https://github.com/voila-dashboards/voila/graphs/contributors?from=2021-09-02&to=2021-09-10&type=c))
+
+[@github-actions](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Agithub-actions+updated%3A2021-09-02..2021-09-10&type=Issues) | [@jtpio](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Ajtpio+updated%3A2021-09-02..2021-09-10&type=Issues) | [@maartenbreddels](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Amaartenbreddels+updated%3A2021-09-02..2021-09-10&type=Issues) | [@mariobuikhuizen](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Amariobuikhuizen+updated%3A2021-09-02..2021-09-10&type=Issues) | [@RhnSharma](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3ARhnSharma+updated%3A2021-09-02..2021-09-10&type=Issues)
+
+<!-- <END NEW CHANGELOG ENTRY> -->
+
 ## 0.2.11
 
 ([full changelog](https://github.com/voila-dashboards/voila/compare/0.2.10...56fe4cf4bfe114168819f065e22afcb760f51ac6))
@@ -40,8 +67,6 @@
 ([GitHub contributors page for this release](https://github.com/voila-dashboards/voila/graphs/contributors?from=2021-04-28&to=2021-09-02&type=c))
 
 [@12rambau](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3A12rambau+updated%3A2021-04-28..2021-09-02&type=Issues) | [@afonit](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Aafonit+updated%3A2021-04-28..2021-09-02&type=Issues) | [@agoose77](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Aagoose77+updated%3A2021-04-28..2021-09-02&type=Issues) | [@astrojuanlu](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Aastrojuanlu+updated%3A2021-04-28..2021-09-02&type=Issues) | [@cailiang9](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Acailiang9+updated%3A2021-04-28..2021-09-02&type=Issues) | [@danlester](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Adanlester+updated%3A2021-04-28..2021-09-02&type=Issues) | [@Elijah-Watson](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3AElijah-Watson+updated%3A2021-04-28..2021-09-02&type=Issues) | [@giswqs](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Agiswqs+updated%3A2021-04-28..2021-09-02&type=Issues) | [@heng2j](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Aheng2j+updated%3A2021-04-28..2021-09-02&type=Issues) | [@jasongrout](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Ajasongrout+updated%3A2021-04-28..2021-09-02&type=Issues) | [@jtpio](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Ajtpio+updated%3A2021-04-28..2021-09-02&type=Issues) | [@julian-west](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Ajulian-west+updated%3A2021-04-28..2021-09-02&type=Issues) | [@maartenbreddels](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Amaartenbreddels+updated%3A2021-04-28..2021-09-02&type=Issues) | [@martinRenou](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3AmartinRenou+updated%3A2021-04-28..2021-09-02&type=Issues) | [@ohrely](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Aohrely+updated%3A2021-04-28..2021-09-02&type=Issues) | [@trungleduc](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Atrungleduc+updated%3A2021-04-28..2021-09-02&type=Issues)
-
-<!-- <END NEW CHANGELOG ENTRY> -->
 
 ## 0.2.10
 
