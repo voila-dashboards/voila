@@ -53,22 +53,20 @@ git clean -fdx
 
 Make sure the `dist/` folder is empty.
 
-1. If the JupyterLab extension has changed, make sure to bump the version number in `./packages/jupyterlab-preview/package.json`
-2. If the Voilà front-end JavaScript has changed, make sure to bump the version number in `./packages/voila/package.json`
-3. Bump the version:
+1. Bump the version:
    - `python -m pip install bump2version jupyter-releaser`
    - For a patch release: `python scripts/bump-version patch`
    - For a build release: `python scripts/bump-version build`
-4. `python -m build`
-5. Double check the size of the bundles in the `dist/` folder
-6. Make sure the JupyterLab extension is correctly bundled in source distribution
-7. Run the tests
+2. `python -m build`
+3. Double check the size of the bundles in the `dist/` folder
+4. Make sure the JupyterLab extension is correctly bundled in source distribution
+5. Run the tests
    - `pip install "dist/voila-X.Y.Z-py3-none-any.whl[test]`
    - `cd tests/test_template`
    - `pip install tests/test_template tests/skip_template`
    - `py.test`
-8. `export TWINE_USERNAME=mypypi_username`
-9. `twine upload dist/*`
+6. `export TWINE_USERNAME=mypypi_username`
+7. `twine upload dist/*`
 
 ### Committing and tagging
 
