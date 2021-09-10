@@ -6,6 +6,24 @@ Soon, the recommended way to make a release will be to use [`jupyter_releaser`](
 
 For now releases are still done manually (see section below).
 
+## Bumping versions
+
+`voila` follows a similar bump strategy as in JupyterLab:
+
+https://github.com/jupyterlab/jupyterlab/blob/master/RELEASE.md#bump-version
+
+To manually bump the version, run:
+
+```bash
+# install the dependencies
+python -m pip install -e ".[test,dev]"
+
+# bump the version
+python scripts/bump-version.py <spec>
+```
+
+Where `<spec>` can be one of the following: `patch`, `minor`, `major`, `release`.
+
 ## Releasing on conda-forge
 
 1. Open a new PR on https://github.com/conda-forge/voila-feedstock to update the `version` and the `sha256` hash (see [example](https://github.com/conda-forge/voila-feedstock/pull/23/files))
@@ -38,8 +56,9 @@ Make sure the `dist/` folder is empty.
 1. If the JupyterLab extension has changed, make sure to bump the version number in `./packages/jupyterlab-preview/package.json`
 2. If the Voilà front-end JavaScript has changed, make sure to bump the version number in `./packages/voila/package.json`
 3. Bump the version:
-   - `pip install tbump@git+git://github.com/dmerejkowsky/tbump.git@03988d5d2267ddd4a33b3c4196b05b7f24f0a0a4`
-   - `tbump x.y.z`
+   - `python -m pip install bump2version jupyter-releaser`
+   - For a patch release: `python scripts/bump-version patch`
+   - For a build release: `python scripts/bump-version build`
 4. `python -m build`
 5. Double check the size of the bundles in the `dist/` folder
 6. Make sure the JupyterLab extension is correctly bundled in source distribution

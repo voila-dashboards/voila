@@ -7,15 +7,27 @@
 # The full license is in the file LICENSE, distributed with this software.  #
 #############################################################################
 
-import re
+# Copyright (c) Jupyter Development Team.
+# Distributed under the terms of the Modified BSD License.
 
-# Version string must appear intact for tbump versioning
-__version__ = '0.2.11'
+from collections import namedtuple
 
-# Build up version_info tuple for backwards compatibility
-pattern = r'(?P<major>\d+).(?P<minor>\d+).(?P<patch>\d+)(?P<rest>.*)'
-match = re.match(pattern, __version__)
-parts = [int(match[part]) for part in ['major', 'minor', 'patch']]
-if match['rest']:
-    parts.append(match['rest'])
-version_info = tuple(parts)
+VersionInfo = namedtuple(
+    "VersionInfo", ["major", "minor", "micro", "releaselevel", "serial"]
+)
+
+# DO NOT EDIT THIS DIRECTLY!  It is managed by bumpversion
+version_info = VersionInfo(0, 2, 11, "final", 0)
+
+_specifier_ = {"alpha": "a", "beta": "b", "candidate": "rc", "final": ""}
+
+__version__ = "{}.{}.{}{}".format(
+    version_info.major,
+    version_info.minor,
+    version_info.micro,
+    (
+        ""
+        if version_info.releaselevel == "final"
+        else _specifier_[version_info.releaselevel] + str(version_info.serial)
+    ),
+)
