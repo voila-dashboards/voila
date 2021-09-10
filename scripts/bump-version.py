@@ -6,22 +6,15 @@
 # - https://github.com/jupyterlab/retrolab/blob/main/buildutils/src/release-bump.ts
 
 import click
-from jupyter_releaser.util import run
+from jupyter_releaser.util import get_version, run
 
 
 OPTIONS = ["major", "minor", "release", "build"]
 
 
-def get_python_version():
-    """Return the version of the voila Python package"""
-    import voila
-
-    return voila.__version__
-
-
 def patch(force=False):
-    python_version = get_python_version()
-    if "a" in python_version or "b" in python_version or "rc" in python_version:
+    version = get_version()
+    if "a" in version or "b" in version or "rc" in version:
         raise Exception("Can only make a patch release from a final version")
 
     run("bumpversion patch", quiet=True)
@@ -41,7 +34,7 @@ def patch(force=False):
 
 
 def update(spec, force=False):
-    prev = get_python_version()
+    prev = get_version()
 
     # Make sure we have a valid version spec.
     if spec not in OPTIONS:
