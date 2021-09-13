@@ -22,9 +22,9 @@ export async function addBenchmarkToTest(
   const testTimeArray = [];
   for (let idx = 0; idx < benchmarkTime; idx++) {
     const testTime = await timeit(testFunction);
-    console.log(notebookName, 'testTime', testTime);
+    console.log(notebookName, 'execution time:', testTime, ' s');
     testTimeArray.push(testTime);
-    await new Promise(r => setTimeout(r, 1000));
+    await new Promise(r => setTimeout(r, 500));
   }
   testInfo.attachments.push({
     name: notebookName,

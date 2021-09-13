@@ -5,6 +5,9 @@ import { expect, test } from '@playwright/test';
 import { addBenchmarkToTest } from './utils';
 
 test.describe('Voila performance Tests', () => {
+  test.afterEach(async ({ page }) => {
+    await page.close({ runBeforeUnload: true });
+  });
   test('Render and benchmark basics.ipynb', async ({ page }, testInfo) => {
     const notebookName = 'basics';
     const testFunction = async () => {
@@ -24,7 +27,7 @@ test.describe('Voila performance Tests', () => {
       await page.$('text=Typesetting math: 100%');
       await page.waitForSelector('#MathJax_Message', { state: 'hidden' });
     };
-    await addBenchmarkToTest(notebookName, testFunction, testInfo, 1);
+    await addBenchmarkToTest(notebookName, testFunction, testInfo);
     expect(await page.screenshot()).toMatchSnapshot(`${notebookName}.png`);
   });
 
@@ -32,15 +35,50 @@ test.describe('Voila performance Tests', () => {
     const notebookName = 'bqplot';
     const testFunction = async () => {
       await page.goto(`render/${notebookName}.ipynb`);
-      await page.waitForSelector('span[role="presentation"] >> text=x');
-      await page.fill('text=4.00', '8.00');
-      await page.keyboard.down('Enter');
-      const value = await page.$eval('input', el => el.value);
-      expect(value).toBe('64');
-      await page.$('text=Typesetting math: 100%');
-      await page.waitForSelector('#MathJax_Message', { state: 'hidden' });
+      await page.waitForSelector('svg.svg-figure');
     };
-    await addBenchmarkToTest(notebookName, testFunction, testInfo, 1);
+    await addBenchmarkToTest(notebookName, testFunction, testInfo);
+    expect(await page.screenshot()).toMatchSnapshot(`${notebookName}.png`);
+  });
+
+  test('Render and benchmark dashboard.ipynb', async ({ page }, testInfo) => {
+    const notebookName = 'dashboard';
+    const testFunction = async () => {
+      await page.goto(`render/${notebookName}.ipynb`);
+      await page.waitForSelector('svg.svg-figure');
+    };
+    await addBenchmarkToTest(notebookName, testFunction, testInfo);
+    const title = await page.$$('text.mainheading');
+    expect(title).toHaveLength(2);
+    expect(await title[0].innerHTML()).toEqual('Histogram');
+    expect(await title[1].innerHTML()).toEqual('Line Chart');
+  });
+
+  test('Render and benchmark gridspecLayout.ipynb', async ({
+    page
+  }, testInfo) => {
+    const notebookName = 'gridspecLayout';
+    const testFunction = async () => {
+      await page.goto(`render/${notebookName}.ipynb`);
+      await page.waitForSelector(
+        'button.jupyter-widgets.jupyter-button.widget-button >> text=10'
+      );
+    };
+    await addBenchmarkToTest(notebookName, testFunction, testInfo);
+    expect(await page.screenshot()).toMatchSnapshot(`${notebookName}.png`);
+  });
+
+  test('Render and benchmark interactive.ipynb', async ({ page }, testInfo) => {
+    const notebookName = 'interactive';
+    const testFunction = async () => {
+      await page.goto(`render/${notebookName}.ipynb`);
+      await page.waitForSelector('div.widget-slider.widget-hslider');
+      await page.fill('div.widget-readout', '8.00');
+      await page.keyboard.down('Enter');
+      await page.fill('div.widget-readout >> text=0', '8.00');
+      await page.keyboard.down('Enter');
+    };
+    await addBenchmarkToTest(notebookName, testFunction, testInfo);
     expect(await page.screenshot()).toMatchSnapshot(`${notebookName}.png`);
   });
 
@@ -54,7 +92,7 @@ test.describe('Voila performance Tests', () => {
         'button.jupyter-widgets.jupyter-button.widget-button >> text=400'
       );
     };
-    await addBenchmarkToTest(notebookName, testMultipleWidget, testInfo, 5);
+    await addBenchmarkToTest(notebookName, testMultipleWidget, testInfo);
     expect(await page.screenshot()).toMatchSnapshot(`${notebookName}.png`);
   });
 });
