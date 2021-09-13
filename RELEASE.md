@@ -22,7 +22,7 @@ python -m pip install -e ".[test,dev]"
 python scripts/bump-version.py <spec>
 ```
 
-Where `<spec>` can be one of the following: `patch`, `minor`, `major`, `release`.
+Where `<spec>` can be one of the following: `patch`, `minor`, `major`, `release` or `next` (auto for `patch` or `minor`).
 
 ## Releasing on conda-forge
 
@@ -55,8 +55,7 @@ Make sure the `dist/` folder is empty.
 
 1. Bump the version:
    - `python -m pip install bump2version jupyter-releaser`
-   - For a patch release: `python scripts/bump-version patch`
-   - For a build release: `python scripts/bump-version build`
+   - For a patch or build release: `python scripts/bump-version next`
 2. `python -m build`
 3. Double check the size of the bundles in the `dist/` folder
 4. Make sure the JupyterLab extension is correctly bundled in source distribution
