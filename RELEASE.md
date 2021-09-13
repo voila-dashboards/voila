@@ -12,6 +12,10 @@ For now releases are still done manually (see section below).
 
 https://github.com/jupyterlab/jupyterlab/blob/master/RELEASE.md#bump-version
 
+`jupyter_releaser` handles the bump automatically so it is necessary to do it manually, as long as the spec is correctly specified in the workflow.
+
+### Manual for `patch` and `build` releases
+
 To manually bump the version, run:
 
 ```bash
@@ -23,6 +27,12 @@ python scripts/bump-version.py <spec>
 ```
 
 Where `<spec>` can be one of the following: `patch`, `minor`, `major`, `release` or `next` (auto for `patch` or `minor`).
+
+## Major JS bump
+
+When there is a breaking change in a JS package, the version of the package should be bumped by one major version.
+
+For example if the version of the preview extension was `2.1.0-alpha.1` and a breaking is introduced, bump to `3.0.0-alpha.0`.
 
 ## Releasing on conda-forge
 
