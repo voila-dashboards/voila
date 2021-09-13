@@ -6,7 +6,7 @@
 # - https://github.com/jupyterlab/retrolab/blob/main/buildutils/src/release-bump.ts
 
 import click
-from jupyter_releaser.util import get_version, run
+from jupyter_releaser.util import is_prerelease, get_version, run
 
 
 OPTIONS = ["major", "minor", "release", "build"]
@@ -14,7 +14,7 @@ OPTIONS = ["major", "minor", "release", "build"]
 
 def patch(force=False):
     version = get_version()
-    if "a" in version or "b" in version or "rc" in version:
+    if is_prerelease(version):
         raise Exception("Can only make a patch release from a final version")
 
     run("bumpversion patch", quiet=True)
@@ -40,7 +40,7 @@ def update(spec, force=False):
     if spec not in OPTIONS:
         raise Exception(f"Version spec must be one of: {OPTIONS}")
 
-    is_final = "a" not in prev and "b" not in prev and "c" not in prev
+    is_final = not is_prerelease(prev)
 
     if is_final and spec == "release":
         raise Exception('Use "major" or "minor" to switch back to alpha release')
@@ -93,6 +93,11 @@ def bump(force, spec):
     status = run("git status --porcelain").strip()
     if len(status) > 0:
         raise Exception("Must be in a clean git state with no untracked files")
+
+    prev = get_version()
+    is_final = not is_prerelease(prev)
+    if spec == "next":
+        spec = "patch" if is_final else "build"
 
     if spec == "patch":
         patch(force)
