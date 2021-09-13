@@ -4,7 +4,7 @@
   "description": "Voila UI Tests",
   "private": true,
   "scripts": {
-    "start": "jupyter lab --config ./jupyter_server_config.py",
+    "start": "voila ../notebooks --no-browser",
     "start:detached": "yarn run start-jlab&",
     "test": "playwright test",
     "test:debug": "PWDEBUG=1 playwright test",
@@ -14,6 +14,6 @@
   "author": "Project Jupyter",
   "license": "BSD-3-Clause",
   "dependencies": {
-    "@jupyterlab/galata": "~4.3.0-alpha.7"
+    "@jupyterlab/galata": "~4.3.0-alpha.8"
   }
 }
