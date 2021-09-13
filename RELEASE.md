@@ -12,9 +12,9 @@ For now releases are still done manually (see section below).
 
 https://github.com/jupyterlab/jupyterlab/blob/master/RELEASE.md#bump-version
 
-`jupyter_releaser` handles the bump automatically so it is necessary to do it manually, as long as the spec is correctly specified in the workflow.
+`jupyter_releaser` handles the bump automatically so it is not necessary to do it manually, as long as the spec is correctly specified in the workflow.
 
-### Manual for `patch` and `build` releases
+### Manual bump
 
 To manually bump the version, run:
 
