@@ -6,8 +6,8 @@
       "file": "basics.ipynb",
       "project": "",
       "test": "Render",
-      "time": "5449.000",
-      "reference": "expected"
+      "time": "3875.800",
+      "reference": "actual"
     },
     {
       "nSamples": 5,
@@ -15,8 +15,8 @@
       "file": "basics.ipynb",
       "project": "",
       "test": "Render",
-      "time": "3963.900",
-      "reference": "expected"
+      "time": "3700.950",
+      "reference": "actual"
     },
     {
       "nSamples": 5,
@@ -24,8 +24,8 @@
       "file": "basics.ipynb",
       "project": "",
       "test": "Render",
-      "time": "3457.433",
-      "reference": "expected"
+      "time": "3517.367",
+      "reference": "actual"
     },
     {
       "nSamples": 5,
@@ -33,8 +33,8 @@
       "file": "basics.ipynb",
       "project": "",
       "test": "Render",
-      "time": "3226.000",
-      "reference": "expected"
+      "time": "3441.575",
+      "reference": "actual"
     },
     {
       "nSamples": 5,
@@ -42,8 +42,8 @@
       "file": "basics.ipynb",
       "project": "",
       "test": "Render",
-      "time": "3157.360",
-      "reference": "expected"
+      "time": "3379.120",
+      "reference": "actual"
     },
     {
       "nSamples": 5,
@@ -51,8 +51,8 @@
       "file": "bqplot.ipynb",
       "project": "",
       "test": "Render",
-      "time": "2586.700",
-      "reference": "expected"
+      "time": "2976.100",
+      "reference": "actual"
     },
     {
       "nSamples": 5,
@@ -60,8 +60,8 @@
       "file": "bqplot.ipynb",
       "project": "",
       "test": "Render",
-      "time": "2815.550",
-      "reference": "expected"
+      "time": "3603.900",
+      "reference": "actual"
     },
     {
       "nSamples": 5,
@@ -69,8 +69,8 @@
       "file": "bqplot.ipynb",
       "project": "",
       "test": "Render",
-      "time": "2642.100",
-      "reference": "expected"
+      "time": "3420.933",
+      "reference": "actual"
     },
     {
       "nSamples": 5,
@@ -78,8 +78,8 @@
       "file": "bqplot.ipynb",
       "project": "",
       "test": "Render",
-      "time": "2592.550",
-      "reference": "expected"
+      "time": "3320.925",
+      "reference": "actual"
     },
     {
       "nSamples": 5,
@@ -87,8 +87,8 @@
       "file": "bqplot.ipynb",
       "project": "",
       "test": "Render",
-      "time": "2614.720",
-      "reference": "expected"
+      "time": "3226.740",
+      "reference": "actual"
     },
     {
       "nSamples": 5,
@@ -96,8 +96,8 @@
       "file": "dashboard.ipynb",
       "project": "",
       "test": "Render",
-      "time": "2671.200",
-      "reference": "expected"
+      "time": "3792.800",
+      "reference": "actual"
     },
     {
       "nSamples": 5,
@@ -105,8 +105,8 @@
       "file": "dashboard.ipynb",
       "project": "",
       "test": "Render",
-      "time": "2938.950",
-      "reference": "expected"
+      "time": "3824.650",
+      "reference": "actual"
     },
     {
       "nSamples": 5,
@@ -114,8 +114,8 @@
       "file": "dashboard.ipynb",
       "project": "",
       "test": "Render",
-      "time": "2860.733",
-      "reference": "expected"
+      "time": "3708.767",
+      "reference": "actual"
     },
     {
       "nSamples": 5,
@@ -123,8 +123,8 @@
       "file": "dashboard.ipynb",
       "project": "",
       "test": "Render",
-      "time": "2798.150",
-      "reference": "expected"
+      "time": "3607.525",
+      "reference": "actual"
     },
     {
       "nSamples": 5,
@@ -132,8 +132,8 @@
       "file": "dashboard.ipynb",
       "project": "",
       "test": "Render",
-      "time": "2812.220",
-      "reference": "expected"
+      "time": "3622.720",
+      "reference": "actual"
     },
     {
       "nSamples": 5,
@@ -141,8 +141,8 @@
       "file": "gridspecLayout.ipynb",
       "project": "",
       "test": "Render",
-      "time": "3063.200",
-      "reference": "expected"
+      "time": "4747.900",
+      "reference": "actual"
     },
     {
       "nSamples": 5,
@@ -150,8 +150,8 @@
       "file": "gridspecLayout.ipynb",
       "project": "",
       "test": "Render",
-      "time": "3637.250",
-      "reference": "expected"
+      "time": "4661.000",
+      "reference": "actual"
     },
     {
       "nSamples": 5,
@@ -159,8 +159,8 @@
       "file": "gridspecLayout.ipynb",
       "project": "",
       "test": "Render",
-      "time": "3464.300",
-      "reference": "expected"
+      "time": "4523.467",
+      "reference": "actual"
     },
     {
       "nSamples": 5,
@@ -168,8 +168,8 @@
       "file": "gridspecLayout.ipynb",
       "project": "",
       "test": "Render",
-      "time": "3399.925",
-      "reference": "expected"
+      "time": "4452.750",
+      "reference": "actual"
     },
     {
       "nSamples": 5,
@@ -177,8 +177,8 @@
       "file": "gridspecLayout.ipynb",
       "project": "",
       "test": "Render",
-      "time": "3348.400",
-      "reference": "expected"
+      "time": "4452.660",
+      "reference": "actual"
     },
     {
       "nSamples": 5,
@@ -186,8 +186,8 @@
       "file": "interactive.ipynb",
       "project": "",
       "test": "Render",
-      "time": "1968.200",
-      "reference": "expected"
+      "time": "2558.900",
+      "reference": "actual"
     },
     {
       "nSamples": 5,
@@ -195,8 +195,8 @@
       "file": "interactive.ipynb",
       "project": "",
       "test": "Render",
-      "time": "1966.050",
-      "reference": "expected"
+      "time": "2660.100",
+      "reference": "actual"
     },
     {
       "nSamples": 5,
@@ -204,8 +204,8 @@
       "file": "interactive.ipynb",
       "project": "",
       "test": "Render",
-      "time": "2014.000",
-      "reference": "expected"
+      "time": "2673.867",
+      "reference": "actual"
     },
     {
       "nSamples": 5,
@@ -213,8 +213,8 @@
       "file": "interactive.ipynb",
       "project": "",
       "test": "Render",
-      "time": "2036.150",
-      "reference": "expected"
+      "time": "2656.250",
+      "reference": "actual"
     },
     {
       "nSamples": 5,
@@ -222,8 +222,8 @@
       "file": "interactive.ipynb",
       "project": "",
       "test": "Render",
-      "time": "2016.040",
-      "reference": "expected"
+      "time": "2654.520",
+      "reference": "actual"
     },
     {
       "nSamples": 5,
@@ -231,8 +231,8 @@
       "file": "ipympl.ipynb",
       "project": "",
       "test": "Render",
-      "time": "4575.300",
-      "reference": "expected"
+      "time": "4743.400",
+      "reference": "actual"
     },
     {
       "nSamples": 5,
@@ -240,8 +240,8 @@
       "file": "ipympl.ipynb",
       "project": "",
       "test": "Render",
-      "time": "3583.050",
-      "reference": "expected"
+      "time": "4356.000",
+      "reference": "actual"
     },
     {
       "nSamples": 5,
@@ -249,8 +249,8 @@
       "file": "ipympl.ipynb",
       "project": "",
       "test": "Render",
-      "time": "3257.033",
-      "reference": "expected"
+      "time": "4212.700",
+      "reference": "actual"
     },
     {
       "nSamples": 5,
@@ -258,8 +258,8 @@
       "file": "ipympl.ipynb",
       "project": "",
       "test": "Render",
-      "time": "3119.425",
-      "reference": "expected"
+      "time": "4079.000",
+      "reference": "actual"
     },
     {
       "nSamples": 5,
@@ -267,8 +267,8 @@
       "file": "ipympl.ipynb",
       "project": "",
       "test": "Render",
-      "time": "3044.320",
-      "reference": "expected"
+      "time": "3982.220",
+      "reference": "actual"
     },
     {
       "nSamples": 5,
@@ -276,8 +276,8 @@
       "file": "ipyvolume.ipynb",
       "project": "",
       "test": "Render",
-      "time": "9012.000",
-      "reference": "expected"
+      "time": "12182.500",
+      "reference": "actual"
     },
     {
       "nSamples": 5,
@@ -285,8 +285,8 @@
       "file": "ipyvolume.ipynb",
       "project": "",
       "test": "Render",
-      "time": "11421.900",
-      "reference": "expected"
+      "time": "18508.600",
+      "reference": "actual"
     },
     {
       "nSamples": 5,
@@ -294,8 +294,8 @@
       "file": "ipyvolume.ipynb",
       "project": "",
       "test": "Render",
-      "time": "14125.400",
-      "reference": "expected"
+      "time": "19553.200",
+      "reference": "actual"
     },
     {
       "nSamples": 5,
@@ -303,8 +303,8 @@
       "file": "ipyvolume.ipynb",
       "project": "",
       "test": "Render",
-      "time": "14129.650",
-      "reference": "expected"
+      "time": "20811.075",
+      "reference": "actual"
     },
     {
       "nSamples": 5,
@@ -312,8 +312,8 @@
       "file": "ipyvolume.ipynb",
       "project": "",
       "test": "Render",
-      "time": "14726.420",
-      "reference": "expected"
+      "time": "21515.260",
+      "reference": "actual"
     },
     {
       "nSamples": 5,
@@ -321,8 +321,8 @@
       "file": "multiple_widgets.ipynb",
       "project": "",
       "test": "Render",
-      "time": "10008.800",
-      "reference": "expected"
+      "time": "15319.200",
+      "reference": "actual"
     },
     {
       "nSamples": 5,
@@ -330,8 +330,8 @@
       "file": "multiple_widgets.ipynb",
       "project": "",
       "test": "Render",
-      "time": "10401.200",
-      "reference": "expected"
+      "time": "15659.550",
+      "reference": "actual"
     },
     {
       "nSamples": 5,
@@ -339,8 +339,8 @@
       "file": "multiple_widgets.ipynb",
       "project": "",
       "test": "Render",
-      "time": "10742.767",
-      "reference": "expected"
+      "time": "15796.300",
+      "reference": "actual"
     },
     {
       "nSamples": 5,
@@ -348,8 +348,8 @@
       "file": "multiple_widgets.ipynb",
       "project": "",
       "test": "Render",
-      "time": "10840.150",
-      "reference": "expected"
+      "time": "15912.400",
+      "reference": "actual"
     },
     {
       "nSamples": 5,
@@ -357,8 +357,8 @@
       "file": "multiple_widgets.ipynb",
       "project": "",
       "test": "Render",
-      "time": "10947.060",
-      "reference": "expected"
+      "time": "16055.700",
+      "reference": "actual"
     },
     {
       "nSamples": 5,
@@ -366,8 +366,8 @@
       "file": "query-strings.ipynb",
       "project": "",
       "test": "Render",
-      "time": "1289.100",
-      "reference": "expected"
+      "time": "1516.800",
+      "reference": "actual"
     },
     {
       "nSamples": 5,
@@ -375,8 +375,8 @@
       "file": "query-strings.ipynb",
       "project": "",
       "test": "Render",
-      "time": "1576.850",
-      "reference": "expected"
+      "time": "1920.000",
+      "reference": "actual"
     },
     {
       "nSamples": 5,
@@ -384,8 +384,8 @@
       "file": "query-strings.ipynb",
       "project": "",
       "test": "Render",
-      "time": "1674.533",
-      "reference": "expected"
+      "time": "1997.067",
+      "reference": "actual"
     },
     {
       "nSamples": 5,
@@ -393,8 +393,8 @@
       "file": "query-strings.ipynb",
       "project": "",
       "test": "Render",
-      "time": "1697.725",
-      "reference": "expected"
+      "time": "2113.000",
+      "reference": "actual"
     },
     {
       "nSamples": 5,
@@ -402,8 +402,8 @@
       "file": "query-strings.ipynb",
       "project": "",
       "test": "Render",
-      "time": "1655.040",
-      "reference": "expected"
+      "time": "2102.500",
+      "reference": "actual"
     }
   ],
   "metadata": {
@@ -417,14 +417,14 @@
     "systemInformation": {
       "cpu": {
         "manufacturer": "Intel®",
-        "brand": "Xeon® Platinum 8272CL",
+        "brand": "Xeon® E5-2673 v3",
         "vendor": "GenuineIntel",
         "family": "6",
-        "model": "85",
-        "stepping": "7",
+        "model": "63",
+        "stepping": "2",
         "revision": "",
         "voltage": "",
-        "speed": 2.6,
+        "speed": 2.4,
         "speedMin": null,
         "speedMax": null,
         "governor": "",
@@ -432,13 +432,13 @@
         "physicalCores": 2,
         "processors": 1,
         "socket": "",
-        "flags": "fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush mmx fxsr sse sse2 ss ht syscall nx pdpe1gb rdtscp lm constant_tsc rep_good nopl xtopology cpuid pni pclmulqdq ssse3 fma cx16 pcid sse4_1 sse4_2 movbe popcnt aes xsave avx f16c rdrand hypervisor lahf_lm abm 3dnowprefetch invpcid_single pti fsgsbase bmi1 hle avx2 smep bmi2 erms invpcid rtm mpx avx512f avx512dq rdseed adx smap clflushopt avx512cd avx512bw avx512vl xsaveopt xsavec xsaves md_clear",
+        "flags": "fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush mmx fxsr sse sse2 ss ht syscall nx pdpe1gb rdtscp lm constant_tsc rep_good nopl xtopology cpuid pni pclmulqdq ssse3 fma cx16 pcid sse4_1 sse4_2 movbe popcnt aes xsave avx f16c rdrand hypervisor lahf_lm abm invpcid_single pti fsgsbase bmi1 avx2 smep bmi2 erms invpcid xsaveopt md_clear",
         "virtualization": false,
         "cache": {
           "l1d": 65536,
           "l1i": 65536,
-          "l2": 2097152,
-          "l3": 36700160
+          "l2": 524288,
+          "l3": 31457280
         }
       },
       "mem": {
