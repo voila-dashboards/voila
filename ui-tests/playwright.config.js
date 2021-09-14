@@ -4,6 +4,10 @@ module.exports = {
   ...baseConfig,
   reporter: [
     [process.env.CI ? 'dot' : 'list'],
+    [
+      '@jupyterlab/galata/lib/benchmarkReporter',
+      { outputFile: 'voila-benchmark.json' }
+    ],
     ['@playwright/test/lib/test/reporters/html']
   ],
   use: {
