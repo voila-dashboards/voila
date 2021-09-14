@@ -5,6 +5,9 @@ import { expect, test } from '@playwright/test';
 import { addBenchmarkToTest } from './utils';
 
 test.describe('Voila performance Tests', () => {
+  test.beforeEach(({ page }) => {
+    page.setDefaultTimeout(120000);
+  });
   test.afterEach(async ({ page, browserName }) => {
     await page.close({ runBeforeUnload: true });
   });

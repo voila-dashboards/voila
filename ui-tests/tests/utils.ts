@@ -20,7 +20,7 @@ export async function addBenchmarkToTest(
   testFunction: () => Promise<void>,
   testInfo: TestInfo,
   browserName: string,
-  nSamples = 1
+  nSamples = 5
 ): Promise<void> {
   const testTimeArray = [];
   const attachmentCommon = {
