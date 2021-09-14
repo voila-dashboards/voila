@@ -1,5 +1,7 @@
 import { TestInfo } from '@playwright/test';
 import { benchmark } from '@jupyterlab/galata';
+import { performance } from 'perf_hooks';
+
 export async function timeit(fn: () => Promise<void>): Promise<string> {
   const start = performance.now();
   await fn();
