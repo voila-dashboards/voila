@@ -85,12 +85,17 @@ class VoilaRenderButton
 const extension: JupyterFrontEndPlugin<IVoilaPreviewTracker> = {
   id: '@voila-dashboards/jupyterlab-preview:plugin',
   autoStart: true,
-  requires: [INotebookTracker],
-  optional: [ICommandPalette, ILayoutRestorer, IMainMenu, ISettingRegistry],
+  optional: [
+    INotebookTracker,
+    ICommandPalette,
+    ILayoutRestorer,
+    IMainMenu,
+    ISettingRegistry
+  ],
   provides: IVoilaPreviewTracker,
   activate: (
     app: JupyterFrontEnd,
-    notebooks: INotebookTracker,
+    notebooks: INotebookTracker | null,
     palette: ICommandPalette | null,
     restorer: ILayoutRestorer | null,
     menu: IMainMenu | null,
@@ -114,7 +119,7 @@ const extension: JupyterFrontEndPlugin<IVoilaPreviewTracker> = {
     }
 
     function getCurrent(args: ReadonlyPartialJSONObject): NotebookPanel | null {
-      const widget = notebooks.currentWidget;
+      const widget = notebooks?.currentWidget ?? null;
       const activate = args['activate'] !== false;
 
       if (activate && widget) {
@@ -126,8 +131,8 @@ const extension: JupyterFrontEndPlugin<IVoilaPreviewTracker> = {
 
     function isEnabled(): boolean {
       return (
-        notebooks.currentWidget !== null &&
-        notebooks.currentWidget === app.shell.currentWidget
+        notebooks?.currentWidget !== null &&
+        notebooks?.currentWidget === app.shell.currentWidget
       );
     }
 
