@@ -63,3 +63,9 @@ jobs:
           RH_VERSION_SPEC: next
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Upload Distributions
+        uses: actions/upload-artifact@v2
+        with:
+          name: voila-releaser-dist-${{ github.run_number }}
+          path: .jupyter_releaser_checkout/dist
