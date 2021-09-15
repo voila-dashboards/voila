@@ -2,9 +2,7 @@
 
 ## Using `jupyter_releaser`
 
-Soon, the recommended way to make a release will be to use [`jupyter_releaser`](https://github.com/jupyter-server/jupyter_releaser#typical-workflow).
-
-For now releases are still done manually (see section below).
+The recommended way to make a release is to use [`jupyter_releaser`](https://github.com/jupyter-server/jupyter_releaser#typical-workflow).
 
 ## Bumping versions
 
