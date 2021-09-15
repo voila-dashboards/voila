@@ -2,6 +2,34 @@
 
 <!-- <START NEW CHANGELOG ENTRY> -->
 
+## 0.2.13
+
+([Full Changelog](https://github.com/voila-dashboards/voila/compare/0.2.12...a8811ef618bdaad42b0bd205831cee3b167ad0c2))
+
+### Enhancements made
+
+- Make `INotebookTracker` optional [#963](https://github.com/voila-dashboards/voila/pull/963) ([@jtpio](https://github.com/jtpio))
+
+### Maintenance and upkeep improvements
+
+- Upload the distributions built by the releaser [#964](https://github.com/voila-dashboards/voila/pull/964) ([@jtpio](https://github.com/jtpio))
+- Add UI test and benchmark report [#962](https://github.com/voila-dashboards/voila/pull/962) ([@trungleduc](https://github.com/trungleduc))
+- Clean up bump version script [#960](https://github.com/voila-dashboards/voila/pull/960) ([@jtpio](https://github.com/jtpio))
+- Default to clean all for the preview extension [#959](https://github.com/voila-dashboards/voila/pull/959) ([@jtpio](https://github.com/jtpio))
+- Minor release fixes [#957](https://github.com/voila-dashboards/voila/pull/957) ([@jtpio](https://github.com/jtpio))
+
+### Documentation improvements
+
+- Minor release fixes [#957](https://github.com/voila-dashboards/voila/pull/957) ([@jtpio](https://github.com/jtpio))
+
+### Contributors to this release
+
+([GitHub contributors page for this release](https://github.com/voila-dashboards/voila/graphs/contributors?from=2021-09-10&to=2021-09-15&type=c))
+
+[@github-actions](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Agithub-actions+updated%3A2021-09-10..2021-09-15&type=Issues) | [@jtpio](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Ajtpio+updated%3A2021-09-10..2021-09-15&type=Issues) | [@trungleduc](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Atrungleduc+updated%3A2021-09-10..2021-09-15&type=Issues)
+
+<!-- <END NEW CHANGELOG ENTRY> -->
+
 ## 0.2.12
 
 ([Full Changelog](https://github.com/voila-dashboards/voila/compare/0.2.11...ea89b19b74f9600d16d83219a4bfacb5b7448665))
@@ -26,8 +54,6 @@
 ([GitHub contributors page for this release](https://github.com/voila-dashboards/voila/graphs/contributors?from=2021-09-02&to=2021-09-10&type=c))
 
 [@github-actions](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Agithub-actions+updated%3A2021-09-02..2021-09-10&type=Issues) | [@jtpio](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Ajtpio+updated%3A2021-09-02..2021-09-10&type=Issues) | [@maartenbreddels](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Amaartenbreddels+updated%3A2021-09-02..2021-09-10&type=Issues) | [@mariobuikhuizen](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Amariobuikhuizen+updated%3A2021-09-02..2021-09-10&type=Issues) | [@RhnSharma](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3ARhnSharma+updated%3A2021-09-02..2021-09-10&type=Issues)
-
-<!-- <END NEW CHANGELOG ENTRY> -->
 
 ## 0.2.11
 
