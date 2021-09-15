@@ -21,7 +21,7 @@ jobs:
       - name: Set up Node
         uses: actions/setup-node@v1
         with:
-          node-version: '12.x'
+          node-version: '14.x'
 
       - name: Cache pip on Linux
         uses: actions/cache@v2
@@ -46,7 +46,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          python -m pip install --upgrade pip jupyterlab~=3.0
+          python -m pip install --upgrade pip jupyterlab~=3.0 numpy bqplot matplotlib ipympl ipyvolume scipy
           python -m pip install ".[test]"
           jlpm
           jlpm build
@@ -54,7 +54,7 @@ jobs:
           cd ui-tests
           jlpm install --frozen-lockfile
 
-      - name: Launch JupyterLab
+      - name: Launch Voila
         run: |
           cd ui-tests
           # Mount a volume to overwrite the server configuration
@@ -69,15 +69,41 @@ jobs:
       - name: Wait for JupyterLab
         uses: ifaxity/wait-on-action@v1
         with:
-          resource: http-get://localhost:8888/lab
+          resource: http-get://localhost:8866/
           timeout: 360000
 
+      - uses: iterative/setup-cml@v1
       - name: Test
+        env:
+          REPO_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPORT: ./benchmark-results/voila-benchmark.md
+        shell: bash
         run: |
           cd ui-tests
           jlpm run test
+          
+          # Publish image to cml.dev
+          echo "" >> ${REPORT}
+          cml-publish ./benchmark-results/voila-benchmark.png --md >> ${REPORT}
+          echo "" >> ${REPORT}
 
-      - name: Upload Galata Test assets
+          # Test if metadata have changed
+          export METADATA_DIFF="/tmp/metadata.diff"
+          diff -u <(jq --sort-keys .metadata benchmark-results/voila-benchmark.json) <(jq --sort-keys .metadata voila-benchmark-expected.json) > ${METADATA_DIFF} || true
+          if [[ -s ${METADATA_DIFF} ]]; then
+            echo "<details><summary>:exclamation: Test metadata have changed</summary>" >> ${REPORT}
+            echo "" >> ${REPORT}
+            echo "\`\`\`diff" >> ${REPORT}
+            cat ${METADATA_DIFF} >> ${REPORT}
+            echo "\`\`\`" >> ${REPORT}
+            echo "" >> ${REPORT}
+            echo "</details>" >> ${REPORT}
+          fi
+
+          # Save PR number for comment publication
+          echo "${{ github.event.number }}" > ./benchmark-results/NR
+
+      - name: Upload Playwright Test assets
         if: always()
         uses: actions/upload-artifact@v2
         with:
@@ -85,7 +111,15 @@ jobs:
           path: |
             ui-tests/test-results
 
-      - name: Upload Galata Test report
+      - name: Upload Playwright Benchmark report
+        if: always()
+        uses: actions/upload-artifact@v2
+        with:
+          name: voila-benchmark-report
+          path: |
+            ui-tests/benchmark-results
+
+      - name: Upload Playwright Test report
         if: always()
         uses: actions/upload-artifact@v2
         with:
@@ -97,3 +131,4 @@ jobs:
         if: always()
         run: |
           cat /tmp/jupyterlab_server.log
+
