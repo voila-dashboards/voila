@@ -31,7 +31,6 @@ export async function addBenchmarkToTest(
   };
   for (let idx = 0; idx < nSamples; idx++) {
     const testTime = await timeit(testFunction);
-    console.log(notebookName, 'execution time:', testTime, 'ms');
     testTimeArray.push(testTime);
     testInfo.attachments.push(
       benchmark.addAttachment({
@@ -42,9 +41,4 @@ export async function addBenchmarkToTest(
     );
     await new Promise(r => setTimeout(r, 500));
   }
-  // testInfo.attachments.push({
-  //   name: notebookName,
-  //   contentType: 'application/json',
-  //   body: Buffer.from(JSON.stringify({ testTime: average(testTimeArray) }))
-  // });
 }
