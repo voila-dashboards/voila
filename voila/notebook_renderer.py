@@ -2,32 +2,26 @@ import asyncio
 import os
 import sys
 import traceback
-from typing import Callable, Dict, Union
-from tornado.httputil import split_host_and_port
-from .exporter import VoilaExporter
-from .paths import collect_template_paths
-import tornado.web
+from typing import Callable, Union
 
-from jupyter_server.base.handlers import JupyterHandler
-from jupyter_server.config_manager import recursive_update
-from jupyter_server.utils import url_path_join
 import nbformat
-
-from nbconvert.preprocessors import ClearOutputPreprocessor
+import tornado.web
+from jupyter_server.config_manager import recursive_update
 from nbclient.exceptions import CellExecutionError
 from nbclient.util import ensure_async
-from tornado.httputil import split_host_and_port
+from nbconvert.preprocessors import ClearOutputPreprocessor
+from traitlets.config.configurable import LoggingConfigurable
 
 from ._version import __version__
 from .execute import VoilaExecutor, strip_code_cell_warnings
-from traitlets.config.configurable import LoggingConfigurable
+from .exporter import VoilaExporter
+from .paths import collect_template_paths
 
 
 class NotebookRenderer(LoggingConfigurable):
     def __init__(self, **kwargs):
-
         super().__init__()
-        self.root_dir  = kwargs.get("root_dir", []) 
+        self.root_dir = kwargs.get("root_dir", [])
         self.notebook_path = kwargs.get("notebook_path", [])  # should it be []
         self.template_paths = kwargs.get("template_paths", [])
         self.traitlet_config = kwargs.get("config", None)
@@ -39,10 +33,9 @@ class NotebookRenderer(LoggingConfigurable):
         self.base_url = kwargs.get("base_url")
         self.kernel_started = False
 
-    async def initialize(self):
+    async def initialize(self, **kwargs):
 
         notebook_path = self.notebook_path
-        print("notebook", notebook_path)
         if self.voila_configuration.enable_nbextensions:
             # generate a list of nbextensions that are enabled for the classical notebook
             # a template can use that to load classical notebook extensions, but does not have to
@@ -68,33 +61,44 @@ class NotebookRenderer(LoggingConfigurable):
         _, basename = os.path.split(notebook_path)
         notebook_name = os.path.splitext(basename)[0]
 
-        # we can override the template via notebook metadata but not in
-        # query parameter
+        # we can override the template via notebook metadata or via
+        # input parameter
         template_override = None
         if (
             "voila" in self.notebook.metadata
             and self.voila_configuration.allow_template_override in ["YES", "NOTEBOOK"]
         ):
             template_override = self.notebook.metadata["voila"].get("template")
+
+        if self.voila_configuration.allow_template_override == "YES":
+            template_arg = kwargs.get("template", None)
+            template_override = (
+                template_arg if template_arg is not None else template_override
+            )
         if template_override:
             self.template_paths = collect_template_paths(
                 ["voila", "nbconvert"], template_override
             )
-        template_name = template_override or self.voila_configuration.template
+        self.template_name = template_override or self.voila_configuration.template
 
-        theme = self.voila_configuration.theme
+        theme_override = self.voila_configuration.theme
         if (
             "voila" in self.notebook.metadata
             and self.voila_configuration.allow_theme_override in ["YES", "NOTEBOOK"]
         ):
-            theme = self.notebook.metadata["voila"].get("theme", theme)
-
+            theme_override = self.notebook.metadata["voila"].get(
+                "theme", theme_override
+            )
+        if self.voila_configuration.allow_theme_override == "YES":
+            theme_arg = kwargs.get("theme", None)
+            theme_override = theme_arg if theme_arg is not None else theme_override
+        self.theme = theme_override
         # render notebook to html
         self.resources = {
             "base_url": "/",
             "nbextensions": nbextensions,
-            "theme": theme,
-            "template": template_name,
+            "theme": self.theme,
+            "template": self.template_name,
             "metadata": {"name": notebook_name},
         }
 
@@ -116,10 +120,10 @@ class NotebookRenderer(LoggingConfigurable):
 
         self.exporter = VoilaExporter(
             template_paths=self.template_paths,
-            template_name=template_name,
+            template_name=self.template_name,
             config=self.traitlet_config,
             contents_manager=self.contents_manager,  # for the image inlining
-            theme=theme,  # we now have the theme in two places
+            theme=self.theme,  # we now have the theme in two places
             base_url=self.base_url,
         )
 
@@ -145,6 +149,7 @@ class NotebookRenderer(LoggingConfigurable):
             "cell_generator": inner_cell_generator,
             "notebook_execute": self._jinja_notebook_execute,
         }
+
         return self.exporter.generate_from_notebook_node(
             self.notebook, resources=self.resources, extra_context=extra_context
         )
@@ -157,9 +162,7 @@ class NotebookRenderer(LoggingConfigurable):
     ):
         html = ""
         # render notebook in snippets, and flush them out to the browser can render progresssively
-        async for html_snippet, _ in self.generate_html(
-            kernel_id, kernel_future
-        ):
+        async for html_snippet, _ in self.generate_html(kernel_id, kernel_future):
             html += html_snippet
         return html
 
@@ -186,9 +189,7 @@ class NotebookRenderer(LoggingConfigurable):
         return kernel_id
 
     async def _jinja_notebook_execute(self, nb, kernel_id):
-        print(
-            "\033[91m" + "_jinja_notebook_execute" + "\033[0m",
-        )
+
         result = await self.executor.async_execute(cleanup_kc=False)
         # we modify the notebook in place, since the nb variable cannot be reassigned it seems in jinja2
         # e.g. if we do {% with nb = notebook_execute(nb, kernel_id) %}, the base template/blocks will not
@@ -197,12 +198,6 @@ class NotebookRenderer(LoggingConfigurable):
 
     async def _jinja_cell_generator(self, nb, kernel_id, timeout_callback):
         """Generator that will execute a single notebook cell at a time"""
-        print(
-            "\033[91m"
-            + "_jinja_cell_generator "
-            + str(self.voila_configuration.http_keep_alive_timeout)
-            + "\033[0m",
-        )
         nb, _ = ClearOutputPreprocessor().preprocess(
             nb, {"metadata": {"path": self.cwd}}
         )
@@ -266,7 +261,7 @@ class NotebookRenderer(LoggingConfigurable):
                 yield output_cell
 
     async def load_notebook(self, path):
-        print('loading path', path)
+
         model = await ensure_async(self.contents_manager.get(path=path))
         if "content" not in model:
             raise tornado.web.HTTPError(404, "file not found")
