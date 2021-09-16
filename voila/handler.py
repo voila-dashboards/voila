@@ -77,7 +77,7 @@ class VoilaHandler(JupyterHandler):
         try:
             notebook_html_dict: Dict = self.kernel_manager.notebook_html
             notebook_data: Dict = self.kernel_manager.notebook_data.get(notebook_path, {})
-        except Exception:
+        except AttributeError:
             # Extension mode
             notebook_html_dict = notebook_data = {}
         # If we have a heated kernel in pool, use it
@@ -93,13 +93,13 @@ class VoilaHandler(JupyterHandler):
                     kernel_name=notebook_data['notebook'].metadata.kernelspec.name,
                     path=cwd,
                     env=kernel_env,
-                    need_refill=True,
+                    need_refill=notebook_path,
                 )
             )
 
             notebook_html = notebook_html_dict.pop(kernel_id, None)
-            if notebook_html is not None:
-                self.write(notebook_html)
+            if notebook_html is not None and notebook_html[0] == notebook_path:
+                self.write(notebook_html[1])
                 self.flush()
         else:
             # All heated kernel used, instead of waitting,
