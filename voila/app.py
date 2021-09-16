@@ -409,6 +409,11 @@ class Voila(Application):
             parent=self
         )
 
+        # we create a config manager that load both the serverconfig and nbconfig (classical notebook)
+        read_config_path = [os.path.join(p, 'serverconfig') for p in jupyter_config_path()]
+        read_config_path += [os.path.join(p, 'nbconfig') for p in jupyter_config_path()]
+        self.config_manager = ConfigManager(parent=self, read_config_path=read_config_path)
+        self.contents_manager = LargeFileManager(parent=self)
         self.kernel_manager = self.voila_configuration.multi_kernel_manager_class(
             parent=self,
             connection_dir=self.connection_dir,
@@ -420,19 +425,22 @@ class Voila(Application):
                 'comm_info_request',
                 'kernel_info_request',
                 'shutdown_request'
-            ]
+            ],
+            voila_configuration=self.voila_configuration,
+            traitlet_config=self.config,
+            notebook_path=os.path.relpath(self.notebook_path, self.root_dir),
+            template_paths= self.template_paths,
+            config_manager= self.config_manager,
+            contents_manager=self.contents_manager,
         )
 
         jenv_opt = {"autoescape": True}  # we might want extra options via cmd line like notebook server
         env = jinja2.Environment(loader=jinja2.FileSystemLoader(self.template_paths), extensions=['jinja2.ext.i18n'], **jenv_opt)
         nbui = gettext.translation('nbui', localedir=os.path.join(ROOT, 'i18n'), fallback=True)
         env.install_gettext_translations(nbui, newstyle=False)
-        self.contents_manager = LargeFileManager(parent=self)
+        
 
-        # we create a config manager that load both the serverconfig and nbconfig (classical notebook)
-        read_config_path = [os.path.join(p, 'serverconfig') for p in jupyter_config_path()]
-        read_config_path += [os.path.join(p, 'nbconfig') for p in jupyter_config_path()]
-        self.config_manager = ConfigManager(parent=self, read_config_path=read_config_path)
+
 
         # default server_url to base_url
         self.server_url = self.server_url or self.base_url

@@ -11,6 +11,7 @@ import asyncio
 import os
 import sys
 import traceback
+from typing import Dict
 
 import tornado.web
 
@@ -29,7 +30,6 @@ from .execute import VoilaExecutor, strip_code_cell_warnings
 from .exporter import VoilaExporter
 from .paths import collect_template_paths
 
-
 class VoilaHandler(JupyterHandler):
 
     def initialize(self, **kwargs):
@@ -39,6 +39,7 @@ class VoilaHandler(JupyterHandler):
         self.voila_configuration = kwargs['voila_configuration']
         # we want to avoid starting multiple kernels due to template mistakes
         self.kernel_started = False
+        self.notebook_html = {}
 
     @tornado.web.authenticated
     async def get(self, path=None):
@@ -130,7 +131,6 @@ class VoilaHandler(JupyterHandler):
             extra_resources = extra_resources.to_dict()
         if extra_resources:
             recursive_update(resources, extra_resources)
-
         self.exporter = VoilaExporter(
             template_paths=self.template_paths,
             template_name=template_name,
@@ -160,6 +160,21 @@ class VoilaHandler(JupyterHandler):
         self.set_header('Pragma', 'no-cache')
         self.set_header('Expires', '0')
         # render notebook in snippets, and flush them out to the browser can render progresssively
+        notebook_html_dict :Dict = self.kernel_manager.notebook_html
+
+        if len(notebook_html_dict) > 0:
+            print('im in this case')
+            kernel_id: str = await ensure_async(self.kernel_manager.start_kernel(
+                kernel_name=notebook.metadata.kernelspec.name,
+                path=self.cwd,
+                env=self.kernel_env,
+            ))
+            notebook_html = notebook_html_dict.get(kernel_id, None)
+            if notebook_html is not None:
+                self.write(notebook_html)
+                self.flush()
+                return
+    
         async for html_snippet, resources in self.exporter.generate_from_notebook_node(notebook, resources=resources, extra_context=extra_context):
             self.write(html_snippet)
             self.flush()  # we may not want to consider not flushing after each snippet, but add an explicit flush function to the jinja context
@@ -172,11 +187,12 @@ class VoilaHandler(JupyterHandler):
     async def _jinja_kernel_start(self, nb):
         assert not self.kernel_started, "kernel was already started"
 
-        kernel_id = await ensure_async(self.kernel_manager.start_kernel(
+        kernel_id: str = await ensure_async(self.kernel_manager.start_kernel(
            kernel_name=nb.metadata.kernelspec.name,
            path=self.cwd,
            env=self.kernel_env,
         ))
+
         km = await ensure_async(self.kernel_manager.get_kernel(kernel_id))
 
         self.executor = VoilaExecutor(nb, km=km, config=self.traitlet_config,
@@ -194,6 +210,7 @@ class VoilaHandler(JupyterHandler):
         return kernel_id
 
     async def _jinja_notebook_execute(self, nb, kernel_id):
+        print('\033[91m' + '_jinja_notebook_execute' + '\033[0m',)
         result = await self.executor.async_execute(cleanup_kc=False)
         # we modify the notebook in place, since the nb variable cannot be reassigned it seems in jinja2
         # e.g. if we do {% with nb = notebook_execute(nb, kernel_id) %}, the base template/blocks will not
@@ -204,6 +221,7 @@ class VoilaHandler(JupyterHandler):
 
     async def _jinja_cell_generator(self, nb, kernel_id):
         """Generator that will execute a single notebook cell at a time"""
+        print('\033[91m' + '_jinja_cell_generator in handle'  '\033[0m',)
         nb, resources = ClearOutputPreprocessor().preprocess(nb, {'metadata': {'path': self.cwd}})
         for cell_idx, input_cell in enumerate(nb.cells):
             try:

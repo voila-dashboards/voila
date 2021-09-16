@@ -93,7 +93,8 @@ class VoilaConfiguration(traitlets.config.Configurable):
 
     multi_kernel_manager_class = Type(
         config=True,
-        default_value='jupyter_server.services.kernels.kernelmanager.AsyncMappingKernelManager',
+        # default_value='jupyter_server.services.kernels.kernelmanager.AsyncMappingKernelManager',
+        default_value='voila.voila_kernel_manager.VoilaKernelManager',
         klass='jupyter_client.multikernelmanager.MultiKernelManager',
         help="""The kernel manager class. This is useful to specify a different kernel manager,
         for example a kernel manager with support for pooling.
