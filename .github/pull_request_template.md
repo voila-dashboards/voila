@@ -2,7 +2,7 @@
 Thanks for contributing to Voilà!
 Please fill out the following items to submit a pull request.
 See the contributing guidelines for more information:
-https://github.com/voila-dashboards/voila/blob/master/CONTRIBUTING.md
+https://github.com/voila-dashboards/voila/blob/main/CONTRIBUTING.md
 -->
 
 ## References
