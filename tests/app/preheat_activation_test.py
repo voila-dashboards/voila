@@ -84,15 +84,15 @@ async def test_request_with_theme_parameter(http_server_client, base_url):
     We sent request with theme parameter, preheat kernel should
     be used if requested theme is same as theme used for prerendered.
     """
-    wait = NOTEBOOK_EXECUTION_TIME + 1
-
-    url = f'{base_url}?voila-theme=light'
-    time, _ = await send_request(sc=http_server_client, url=url, wait=wait)
-    assert time < 0.5
+    wait = NOTEBOOK_EXECUTION_TIME + 2
 
     url = f'{base_url}?voila-theme=dark'
     time, _ = await send_request(sc=http_server_client, url=url, wait=wait)
     assert time > 0.5
+
+    url = f'{base_url}?voila-theme=light'
+    time, _ = await send_request(sc=http_server_client, url=url, wait=wait)
+    assert time < 0.5
 
 
 async def test_request_with_template_parameter(http_server_client, base_url):
@@ -100,7 +100,7 @@ async def test_request_with_template_parameter(http_server_client, base_url):
     We sent request with theme parameter, preheat kernel should
     be used if requested theme is same as theme used for prerendered.
     """
-    wait = NOTEBOOK_EXECUTION_TIME + 1
+    wait = NOTEBOOK_EXECUTION_TIME + 2
 
     url = f'{base_url}?voila-template=lab'
     time, _ = await send_request(sc=http_server_client, url=url, wait=wait)
