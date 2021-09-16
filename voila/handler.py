@@ -29,6 +29,7 @@ from ._version import __version__
 from .execute import VoilaExecutor, strip_code_cell_warnings
 from .exporter import VoilaExporter
 from .paths import collect_template_paths
+from .notebook_renderer import NotebookRenderer
 
 class VoilaHandler(JupyterHandler):
 
@@ -39,7 +40,17 @@ class VoilaHandler(JupyterHandler):
         self.voila_configuration = kwargs['voila_configuration']
         # we want to avoid starting multiple kernels due to template mistakes
         self.kernel_started = False
-
+        self.gen = NotebookRenderer(
+            voila_configuration=self.voila_configuration,
+            traitlet_config=self.traitlet_config,
+            notebook_path=self.notebook_path,
+            template_paths=self.template_paths,
+            config_manager=self.config_manager,
+            contents_manager=self.contents_manager,
+            kernel_manager=self.kernel_manager,
+            kernel_spec_manager=self.kernel_spec_manager,
+        )
+        
     @tornado.web.authenticated
     async def get(self, path=None):
         # if the handler got a notebook_path argument, always serve that

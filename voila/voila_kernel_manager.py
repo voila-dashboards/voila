@@ -1,5 +1,5 @@
 from hotpot_km.mapping import PooledMappingKernelManager
-from .notebook_renderer import GenerateNotebook
+from .notebook_renderer import NotebookRenderer
 from typing import Union
 
 class VoilaKernelManager(PooledMappingKernelManager):
@@ -33,7 +33,7 @@ class VoilaKernelManager(PooledMappingKernelManager):
         """Run any configured initialization code in the kernel"""
         kernel_id = await kernel_id_future
         self.log.info("Initializing kernel: %s", kernel_id)
-        gen = GenerateNotebook(
+        gen = NotebookRenderer(
             voila_configuration=self.voila_configuration,
             traitlet_config=self.traitlet_config,
             notebook_path=self.notebook_path,
@@ -42,9 +42,8 @@ class VoilaKernelManager(PooledMappingKernelManager):
             contents_manager=self.contents_manager,
             kernel_manager=self,
             kernel_spec_manager=self._kernel_spec_manager,
-            kernel_id=kernel_id
         )
-        await gen.generate()
+        await gen.generate(kernel_id)
         self.notebook_html[kernel_id] = gen.html
         self.log.info("Initialized kernel: %s", kernel_id)
         return kernel_id
