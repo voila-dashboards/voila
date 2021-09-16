@@ -24,10 +24,10 @@ from .notebook_renderer import NotebookRenderer
 
 class VoilaHandler(JupyterHandler):
     def initialize(self, **kwargs):
-        self.notebook_path = kwargs.pop("notebook_path", [])  # should it be []
-        self.template_paths = kwargs.pop("template_paths", [])
-        self.traitlet_config = kwargs.pop("config", None)
-        self.voila_configuration = kwargs["voila_configuration"]
+        self.notebook_path = kwargs.pop('notebook_path', [])  # should it be []
+        self.template_paths = kwargs.pop('template_paths', [])
+        self.traitlet_config = kwargs.pop('config', None)
+        self.voila_configuration = kwargs['voila_configuration']
         # we want to avoid starting multiple kernels due to template mistakes
         self.kernel_started = False
 
@@ -45,16 +45,16 @@ class VoilaHandler(JupyterHandler):
 
         # Adding request uri to kernel env
         kernel_env = os.environ.copy()
-        kernel_env["SCRIPT_NAME"] = self.request.path
+        kernel_env['SCRIPT_NAME'] = self.request.path
         kernel_env[
-            "PATH_INFO"
-        ] = ""  # would be /foo/bar if voila.ipynb/foo/bar was supported
-        kernel_env["QUERY_STRING"] = str(self.request.query)
-        kernel_env["SERVER_SOFTWARE"] = "voila/{}".format(__version__)
-        kernel_env["SERVER_PROTOCOL"] = str(self.request.version)
+            'PATH_INFO'
+        ] = ''  # would be /foo/bar if voila.ipynb/foo/bar was supported
+        kernel_env['QUERY_STRING'] = str(self.request.query)
+        kernel_env['SERVER_SOFTWARE'] = 'voila/{}'.format(__version__)
+        kernel_env['SERVER_PROTOCOL'] = str(self.request.version)
         host, port = split_host_and_port(self.request.host.lower())
-        kernel_env["SERVER_PORT"] = str(port) if port else ""
-        kernel_env["SERVER_NAME"] = host
+        kernel_env['SERVER_PORT'] = str(port) if port else ''
+        kernel_env['SERVER_NAME'] = host
 
         # Add HTTP Headers as env vars following rfc3875#section-4.1.18
         if len(self.voila_configuration.http_header_envs) > 0:
@@ -69,10 +69,10 @@ class VoilaHandler(JupyterHandler):
         theme_arg = self.get_argument("voila-theme", None)
 
         # Compose reply
-        self.set_header("Content-Type", "text/html")
-        self.set_header("Cache-Control", "no-cache, no-store, must-revalidate")
-        self.set_header("Pragma", "no-cache")
-        self.set_header("Expires", "0")
+        self.set_header('Content-Type', 'text/html')
+        self.set_header('Cache-Control', 'no-cache, no-store, must-revalidate')
+        self.set_header('Pragma', 'no-cache')
+        self.set_header('Expires', '0')
         # render notebook in snippets, and flush them out to the browser can render progresssively
         notebook_html_dict: Dict = self.kernel_manager.notebook_html
         notebook_data: Dict = self.kernel_manager.notebook_data.get(notebook_path, {})
@@ -86,7 +86,7 @@ class VoilaHandler(JupyterHandler):
         ):
             kernel_id: str = await ensure_async(
                 self.kernel_manager.start_kernel(
-                    kernel_name=notebook_data["notebook"].metadata.kernelspec.name,
+                    kernel_name=notebook_data['notebook'].metadata.kernelspec.name,
                     path=cwd,
                     env=kernel_env,
                     need_refill=True,
@@ -119,7 +119,7 @@ class VoilaHandler(JupyterHandler):
                 can be used in a template to give feedback to a user
                 """
 
-                self.write("<script>voila_heartbeat()</script>\n")
+                self.write('<script>voila_heartbeat()</script>\n')
                 self.flush()
 
             kernel_id = await ensure_async(
@@ -142,7 +142,7 @@ class VoilaHandler(JupyterHandler):
             self.flush()
 
     def redirect_to_file(self, path):
-        self.redirect(url_path_join(self.base_url, "voila", "files", path))
+        self.redirect(url_path_join(self.base_url, 'voila', 'files', path))
 
     def should_use_rendered_notebook(
         self,
@@ -155,15 +155,15 @@ class VoilaHandler(JupyterHandler):
         if len(notebook_html) == 0 or len(notebook_data) == 0:
             return False
 
-        rendered_template = notebook_data.get("template")
-        rendered_theme = notebook_data.get("theme")
+        rendered_template = notebook_data.get('template')
+        rendered_theme = notebook_data.get('theme')
         if template_name is not None and template_name != rendered_template:
             return False
         if theme is not None and rendered_theme != theme:
             return False
 
         args_list = [
-            key for key in request_args if key not in ["voila-template", "voila-theme"]
+            key for key in request_args if key not in ['voila-template', 'voila-theme']
         ]
         if len(args_list) > 0:
             return False

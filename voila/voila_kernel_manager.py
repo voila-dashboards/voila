@@ -1,3 +1,13 @@
+#############################################################################
+# Copyright (c) 2021, Voilà Contributors                                    #
+# Copyright (c) 2021, QuantStack                                            #
+#                                                                           #
+# Distributed under the terms of the BSD 3-Clause License.                  #
+#                                                                           #
+# The full license is in the file LICENSE, distributed with this software.  #
+#############################################################################
+
+
 import asyncio
 import os
 from typing import Any, Awaitable, Coroutine, Type, TypeVar, Union
@@ -8,7 +18,7 @@ from nbclient.util import ensure_async
 
 from .notebook_renderer import NotebookRenderer
 
-T = TypeVar("T")
+T = TypeVar('T')
 
 
 async def wait_before(delay: float, aw : Awaitable) -> Awaitable:
@@ -28,7 +38,7 @@ def voila_kernel_manager_factory(base_class: Type[T], preheat_kernel: Bool) -> T
             def start_kernel(
                 self, kernel_name: Union[str, None] = None, **kwargs
             ) -> str:
-                kwargs.pop("need_refill", False)
+                kwargs.pop('need_refill', False)
                 return super().start_kernel(kernel_name=kernel_name, **kwargs)
 
         return NormalKernelManager
@@ -36,25 +46,27 @@ def voila_kernel_manager_factory(base_class: Type[T], preheat_kernel: Bool) -> T
     else:
 
         class VoilaKernelManager(base_class):
+            """ This class adds pooling heated kernels and pre-rendered notebook
+            feature to a normal kernel manager. The 'pooling heated kernels'
+            part is heavily inspired from `hotpot_km`(https://github.com/voila-dashboards/hotpot_km) library.
+            """
 
             kernel_pools_size = Dict(
-                {"python3": 3},
+                {'python3': 3},
                 config=True,
-                help="""Configuration for VoilaKernelManager.
-                """,
+                help='Mapping from kernel name to the number of started kernels to keep on standby.'
             )
 
             fill_delay = Float(
                 1,
                 config=True,
-                help="Wait time before re-filling the pool after a kernel is used",
+                help='Wait time before re-filling the pool after a kernel is used',
             )
 
             kernel_env_variables = Dict(
                 {},
                 config=True,
-                help="""Configuration for VoilaKernelManager.
-                """,
+                help='Environnement variables used to start kernel.'
             )
 
             def __init__(self, **kwargs):
@@ -70,13 +82,13 @@ def voila_kernel_manager_factory(base_class: Type[T], preheat_kernel: Bool) -> T
             async def start_kernel(
                 self, kernel_name: Union[str, None] = None, **kwargs
             ) -> str:
-                need_refill = kwargs.pop("need_refill", False)
+                need_refill = kwargs.pop('need_refill', False)
                 if kernel_name is None:
                     kernel_name = self.default_kernel_name
 
                 if need_refill and len(self._pools.get(kernel_name, ())) > 0:
                     kernel_id = await self._pop_pooled_kernel(kernel_name, **kwargs)
-                    self.log.info("Using pre-heated kernel: %s", kernel_id)
+                    self.log.info('Using pre-heated kernel: %s', kernel_id)
                     self.fill_if_needed(delay=None, kernel_name=kernel_name, **kwargs)
                 else:
                     kernel_id = await super().start_kernel(
@@ -107,17 +119,17 @@ def voila_kernel_manager_factory(base_class: Type[T], preheat_kernel: Bool) -> T
                 pool = self._pools.get(kernel_name, [])
                 self._pools[kernel_name] = pool
                 notebook_path = self.parent.notebook_path
-                if "path" not in kwargs:
-                    kwargs["path"] = (
+                if 'path' not in kwargs:
+                    kwargs['path'] = (
                         os.path.dirname(notebook_path)
                         if notebook_path is not None
                         else self.parent.root_dir
                     )
-                kernel_env = kwargs.get("env", {})
+                kernel_env = kwargs.get('env', {})
                 for key in self.kernel_env_variables:
                     if key not in kernel_env:
                         kernel_env[key] = self.kernel_env_variables[key]
-                kwargs["env"] = kernel_env
+                kwargs['env'] = kernel_env
 
                 for _ in range(target - len(pool)):
                     fut = super().start_kernel(kernel_name=kernel_name, **kwargs)
@@ -173,12 +185,12 @@ def voila_kernel_manager_factory(base_class: Type[T], preheat_kernel: Bool) -> T
                     kernel_id, kernel_future
                 )
                 self.notebook_data[gen.notebook_path] = {
-                    "notebook": gen.notebook,
-                    "template": gen.template_name,
-                    "theme": gen.theme,
+                    'notebook': gen.notebook,
+                    'template': gen.template_name,
+                    'theme': gen.theme,
                 }
 
-                self.log.info(f"Pre-headted kernel: %s", kernel_id)
+                self.log.info(f'Pre-headted kernel: %s', kernel_id)
                 return kernel_id
 
             async def cull_kernel_if_idle(self, kernel_id: str):

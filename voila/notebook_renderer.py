@@ -1,3 +1,13 @@
+#############################################################################
+# Copyright (c) 2021, Voilà Contributors                                    #
+# Copyright (c) 2021, QuantStack                                            #
+#                                                                           #
+# Distributed under the terms of the BSD 3-Clause License.                  #
+#                                                                           #
+# The full license is in the file LICENSE, distributed with this software.  #
+#############################################################################
+
+
 import asyncio
 import os
 import sys
@@ -21,16 +31,16 @@ from .paths import collect_template_paths
 class NotebookRenderer(LoggingConfigurable):
     def __init__(self, **kwargs):
         super().__init__()
-        self.root_dir = kwargs.get("root_dir", [])
-        self.notebook_path = kwargs.get("notebook_path", [])  # should it be []
-        self.template_paths = kwargs.get("template_paths", [])
-        self.traitlet_config = kwargs.get("config", None)
-        self.voila_configuration = kwargs.get("voila_configuration")
-        self.config_manager = kwargs.get("config_manager")
-        self.contents_manager = kwargs.get("contents_manager")
-        self.kernel_spec_manager = kwargs.get("kernel_spec_manager")
-        self.default_kernel_name = "python3"
-        self.base_url = kwargs.get("base_url")
+        self.root_dir = kwargs.get('root_dir', [])
+        self.notebook_path = kwargs.get('notebook_path', [])  # should it be []
+        self.template_paths = kwargs.get('template_paths', [])
+        self.traitlet_config = kwargs.get('config', None)
+        self.voila_configuration = kwargs.get('voila_configuration')
+        self.config_manager = kwargs.get('config_manager')
+        self.contents_manager = kwargs.get('contents_manager')
+        self.kernel_spec_manager = kwargs.get('kernel_spec_manager')
+        self.default_kernel_name = 'python3'
+        self.base_url = kwargs.get('base_url')
         self.kernel_started = False
 
     async def initialize(self, **kwargs):
@@ -39,13 +49,13 @@ class NotebookRenderer(LoggingConfigurable):
         if self.voila_configuration.enable_nbextensions:
             # generate a list of nbextensions that are enabled for the classical notebook
             # a template can use that to load classical notebook extensions, but does not have to
-            notebook_config = self.config_manager.get("notebook")
+            notebook_config = self.config_manager.get('notebook')
             # except for the widget extension itself, since Voilà has its own
-            load_extensions = notebook_config.get("load_extensions", {})
-            if "jupyter-js-widgets/extension" in load_extensions:
-                load_extensions["jupyter-js-widgets/extension"] = False
-            if "voila/extension" in load_extensions:
-                load_extensions["voila/extension"] = False
+            load_extensions = notebook_config.get('load_extensions', {})
+            if 'jupyter-js-widgets/extension' in load_extensions:
+                load_extensions['jupyter-js-widgets/extension'] = False
+            if 'voila/extension' in load_extensions:
+                load_extensions['voila/extension'] = False
             nbextensions = [
                 name for name, enabled in load_extensions.items() if enabled
             ]
@@ -65,41 +75,41 @@ class NotebookRenderer(LoggingConfigurable):
         # input parameter
         template_override = None
         if (
-            "voila" in self.notebook.metadata
-            and self.voila_configuration.allow_template_override in ["YES", "NOTEBOOK"]
+            'voila' in self.notebook.metadata
+            and self.voila_configuration.allow_template_override in ['YES', 'NOTEBOOK']
         ):
-            template_override = self.notebook.metadata["voila"].get("template")
+            template_override = self.notebook.metadata['voila'].get('template')
 
-        if self.voila_configuration.allow_template_override == "YES":
-            template_arg = kwargs.get("template", None)
+        if self.voila_configuration.allow_template_override == 'YES':
+            template_arg = kwargs.get('template', None)
             template_override = (
                 template_arg if template_arg is not None else template_override
             )
         if template_override:
             self.template_paths = collect_template_paths(
-                ["voila", "nbconvert"], template_override
+                ['voila', 'nbconvert'], template_override
             )
         self.template_name = template_override or self.voila_configuration.template
 
         theme_override = self.voila_configuration.theme
         if (
-            "voila" in self.notebook.metadata
-            and self.voila_configuration.allow_theme_override in ["YES", "NOTEBOOK"]
+            'voila' in self.notebook.metadata
+            and self.voila_configuration.allow_theme_override in ['YES', 'NOTEBOOK']
         ):
-            theme_override = self.notebook.metadata["voila"].get(
-                "theme", theme_override
+            theme_override = self.notebook.metadata['voila'].get(
+                'theme', theme_override
             )
-        if self.voila_configuration.allow_theme_override == "YES":
-            theme_arg = kwargs.get("theme", None)
+        if self.voila_configuration.allow_theme_override == 'YES':
+            theme_arg = kwargs.get('theme', None)
             theme_override = theme_arg if theme_arg is not None else theme_override
         self.theme = theme_override
         # render notebook to html
         self.resources = {
-            "base_url": "/",
-            "nbextensions": nbextensions,
-            "theme": self.theme,
-            "template": self.template_name,
-            "metadata": {"name": notebook_name},
+            'base_url': '/',
+            'nbextensions': nbextensions,
+            'theme': self.theme,
+            'template': self.template_name,
+            'metadata': {'name': notebook_name},
         }
 
         # include potential extra resources
@@ -109,7 +119,7 @@ class NotebookRenderer(LoggingConfigurable):
         # This seems to only happy with the notebook server and traitlets 5
         # Note that we use string checking for backward compatibility
 
-        if "DeferredConfigString" in str(type(extra_resources)):
+        if 'DeferredConfigString' in str(type(extra_resources)):
             from .configuration import VoilaConfiguration
 
             extra_resources = VoilaConfiguration.resources.from_string(extra_resources)
@@ -145,9 +155,9 @@ class NotebookRenderer(LoggingConfigurable):
             return self._jinja_cell_generator(nb, kernel_id, timeout_callback)
 
         extra_context = {
-            "kernel_start": inner_kernel_start,
-            "cell_generator": inner_cell_generator,
-            "notebook_execute": self._jinja_notebook_execute,
+            'kernel_start': inner_kernel_start,
+            'cell_generator': inner_cell_generator,
+            'notebook_execute': self._jinja_notebook_execute,
         }
 
         return self.exporter.generate_from_notebook_node(
@@ -160,14 +170,14 @@ class NotebookRenderer(LoggingConfigurable):
         kernel_future=None,
         path: Union[str, None] = None,
     ):
-        html = ""
+        html = ''
         # render notebook in snippets, and flush them out to the browser can render progresssively
         async for html_snippet, _ in self.generate_html(kernel_id, kernel_future):
             html += html_snippet
         return html
 
     async def _jinja_kernel_start(self, nb, kernel_id, kernel_future):
-        assert not self.kernel_started, "kernel was already started"
+        assert not self.kernel_started, 'kernel was already started'
         km = await ensure_async(kernel_future)
         self.executor = VoilaExecutor(
             nb,
@@ -199,7 +209,7 @@ class NotebookRenderer(LoggingConfigurable):
     async def _jinja_cell_generator(self, nb, kernel_id, timeout_callback):
         """Generator that will execute a single notebook cell at a time"""
         nb, _ = ClearOutputPreprocessor().preprocess(
-            nb, {"metadata": {"path": self.cwd}}
+            nb, {'metadata': {'path': self.cwd}}
         )
         for cell_idx, input_cell in enumerate(nb.cells):
             try:
@@ -227,7 +237,7 @@ class NotebookRenderer(LoggingConfigurable):
                 break
             except CellExecutionError:
                 self.log.exception(
-                    "Error at server while executing cell: %r", input_cell
+                    'Error at server while executing cell: %r', input_cell
                 )
                 if self.executor.should_strip_error():
                     strip_code_cell_warnings(input_cell)
@@ -236,15 +246,15 @@ class NotebookRenderer(LoggingConfigurable):
                 break
             except Exception as e:
                 self.log.exception(
-                    "Error at server while executing cell: %r", input_cell
+                    'Error at server while executing cell: %r', input_cell
                 )
                 output_cell = nbformat.v4.new_code_cell()
                 if self.executor.should_strip_error():
                     output_cell.outputs = [
                         {
-                            "output_type": "stream",
-                            "name": "stderr",
-                            "text": "An exception occurred at the server (not the notebook). {}".format(
+                            'output_type': 'stream',
+                            'name': 'stderr',
+                            'text': 'An exception occurred at the server (not the notebook). {}'.format(
                                 self.executor.cell_error_instruction
                             ),
                         }
@@ -252,9 +262,9 @@ class NotebookRenderer(LoggingConfigurable):
                 else:
                     output_cell.outputs = [
                         {
-                            "ename": type(e).__name__,
-                            "evalue": str(e),
-                            "traceback": traceback.format_exception(*sys.exc_info()),
+                            'ename': type(e).__name__,
+                            'evalue': str(e),
+                            'traceback': traceback.format_exception(*sys.exc_info()),
                         }
                     ]
             finally:
@@ -263,11 +273,11 @@ class NotebookRenderer(LoggingConfigurable):
     async def load_notebook(self, path):
 
         model = await ensure_async(self.contents_manager.get(path=path))
-        if "content" not in model:
-            raise tornado.web.HTTPError(404, "file not found")
-        __, extension = os.path.splitext(model.get("path", ""))
-        if model.get("type") == "notebook":
-            notebook = model["content"]
+        if 'content' not in model:
+            raise tornado.web.HTTPError(404, 'file not found')
+        __, extension = os.path.splitext(model.get('path', ''))
+        if model.get('type') == 'notebook':
+            notebook = model['content']
             notebook = await self.fix_notebook(notebook)
             return notebook
         elif extension in self.voila_configuration.extension_language_mapping:
@@ -282,33 +292,33 @@ class NotebookRenderer(LoggingConfigurable):
         """
 
         # Fetch kernel name from the notebook metadata
-        if "kernelspec" not in notebook.metadata:
+        if 'kernelspec' not in notebook.metadata:
             notebook.metadata.kernelspec = nbformat.NotebookNode()
         kernelspec = notebook.metadata.kernelspec
-        kernel_name = kernelspec.get("name", self.default_kernel_name)
+        kernel_name = kernelspec.get('name', self.default_kernel_name)
         # We use `maybe_future` to support RemoteKernelSpecManager
         all_kernel_specs = await ensure_async(self.kernel_spec_manager.get_all_specs())
         # Find a spec matching the language if the kernel name does not exist in the kernelspecs
         if kernel_name not in all_kernel_specs:
             missing_kernel_name = kernel_name
             language = kernelspec.get(
-                "language", notebook.metadata.get("language_info", {}).get("name", "")
+                'language', notebook.metadata.get('language_info', {}).get('name', '')
             )
             kernel_name = await self.find_kernel_name_for_language(
                 language.lower(), kernel_specs=all_kernel_specs
             )
             self.log.warning(
-                "Could not find a kernel named %r, will use  %r",
+                'Could not find a kernel named %r, will use  %r',
                 missing_kernel_name,
                 kernel_name,
             )
         # We make sure the notebook's kernelspec is correct
         notebook.metadata.kernelspec.name = kernel_name
         notebook.metadata.kernelspec.display_name = all_kernel_specs[kernel_name][
-            "spec"
-        ]["display_name"]
-        notebook.metadata.kernelspec.language = all_kernel_specs[kernel_name]["spec"][
-            "language"
+            'spec'
+        ]['display_name']
+        notebook.metadata.kernelspec.language = all_kernel_specs[kernel_name]['spec'][
+            'language'
         ]
         return notebook
 
@@ -320,13 +330,13 @@ class NotebookRenderer(LoggingConfigurable):
         spec = all_kernel_specs[kernel_name]
         notebook = nbformat.v4.new_notebook(
             metadata={
-                "kernelspec": {
-                    "display_name": spec["spec"]["display_name"],
-                    "language": spec["spec"]["language"],
-                    "name": kernel_name,
+                'kernelspec': {
+                    'display_name': spec['spec']['display_name'],
+                    'language': spec['spec']['language'],
+                    'name': kernel_name,
                 }
             },
-            cells=[nbformat.v4.new_code_cell(model["content"])],
+            cells=[nbformat.v4.new_code_cell(model['content'])],
         )
         return notebook
 
@@ -342,13 +352,13 @@ class NotebookRenderer(LoggingConfigurable):
         matches = [
             name
             for name, kernel in kernel_specs.items()
-            if kernel["spec"]["language"].lower() == kernel_language.lower()
+            if kernel['spec']['language'].lower() == kernel_language.lower()
         ]
         if matches:
             # Sort by display name to get the same kernel each time.
-            matches.sort(key=lambda name: kernel_specs[name]["spec"]["display_name"])
+            matches.sort(key=lambda name: kernel_specs[name]['spec']['display_name'])
             return matches[0]
         else:
             raise tornado.web.HTTPError(
-                500, "No Jupyter kernel for language %r found" % kernel_language
+                500, 'No Jupyter kernel for language %r found' % kernel_language
             )

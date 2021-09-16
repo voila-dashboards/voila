@@ -8,7 +8,7 @@
 #############################################################################
 
 import os
-from ._version import __version__
+
 
 
 def get_server_root_dir(settings):
