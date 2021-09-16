@@ -80,13 +80,13 @@ Make sure the `dist/` folder is empty.
 Commit the changes, create a new release tag, and update the `stable` branch (for Binder), where `x.y.z` denotes the new version:
 
 ```bash
-git checkout master
+git checkout main
 git add voila/_version.py environment.yml
 git commit -m "Release x.y.z"
 git tag x.y.z
 git checkout stable
-git reset --hard master
-git push origin master stable x.y.z
+git reset --hard main
+git push origin main stable x.y.z
 ```
 
 ### Making a new release of @voila-dashboards/jupyterlab-preview
