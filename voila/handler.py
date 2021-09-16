@@ -40,6 +40,7 @@ class VoilaHandler(JupyterHandler):
         self.template_paths = kwargs.pop("template_paths", [])
         self.traitlet_config = kwargs.pop("config", None)
         self.voila_configuration = kwargs["voila_configuration"]
+        self.notebook_renderer_factory = kwargs["notebook_renderer_factory"]
         # we want to avoid starting multiple kernels due to template mistakes
         self.kernel_started = False
         self.gen = NotebookRenderer(
@@ -160,9 +161,9 @@ class VoilaHandler(JupyterHandler):
                 NotebookNode, None
             ] = self.kernel_manager.notebook_model.get(notebook_path, None)
             # If we have a heated kernel in pool, use it
-            print('in this case', len(notebook_html_dict))
+            print("in this case", len(notebook_html_dict))
             if len(notebook_html_dict) > 0:
-                
+
                 kernel_id: str = await ensure_async(
                     self.kernel_manager.start_kernel(
                         kernel_name=notebook_model.metadata.kernelspec.name,
@@ -177,57 +178,54 @@ class VoilaHandler(JupyterHandler):
             else:
                 # All heated kernel used, instead of waitting,
                 # start a normal kernel
-                gen = NotebookRenderer(
-                    voila_configuration=self.voila_configuration,
-                    traitlet_config=self.traitlet_config,
-                    notebook_path=self.notebook_path,
-                    template_paths=self.template_paths,
-                    config_manager=self.config_manager,
-                    contents_manager=self.contents_manager,
-                    kernel_manager=self.kernel_manager,
-                    kernel_spec_manager=self.kernel_spec_manager,
-                )
+                gen = self.notebook_renderer_factory
                 await gen.initialize()
+
                 def time_out():
                     self.write("<script>voila_heartbeat()</script>\n")
                     self.flush()
-                    
-                kernel_id = await ensure_async((self.kernel_manager.start_kernel(
-                    kernel_name= gen.notebook.metadata.kernelspec.name,
-                    path=cwd,
-                    env=kernel_env,
-                    need_refill=False
-                )))
+
+                kernel_id = await ensure_async(
+                    (
+                        self.kernel_manager.start_kernel(
+                            kernel_name=gen.notebook.metadata.kernelspec.name,
+                            path=cwd,
+                            env=kernel_env,
+                            need_refill=False,
+                        )
+                    )
+                )
                 kernel_future = self.kernel_manager.get_kernel(kernel_id)
-                async for html_snippet, resources in gen.generate_html(kernel_id, kernel_future, time_out ):
+                async for html_snippet, resources in gen.generate_html(
+                    kernel_id, kernel_future, time_out
+                ):
                     self.write(html_snippet)
                     self.flush()
                     # we may not want to consider not flusing after each snippet, but add an explicit flush function to the jinja context
                     # yield  # give control back to tornado's IO loop, so it can handle static files or other requests
-                self.flush()            
+                self.flush()
         else:
-            gen = NotebookRenderer(
-                voila_configuration=self.voila_configuration,
-                traitlet_config=self.traitlet_config,
-                notebook_path=self.notebook_path,
-                template_paths=self.template_paths,
-                config_manager=self.config_manager,
-                contents_manager=self.contents_manager,
-                kernel_manager=self.kernel_manager,
-                kernel_spec_manager=self.kernel_spec_manager,
-            )
+            gen = self.notebook_renderer_factory
             await gen.initialize()
+
             def time_out():
                 self.write("<script>voila_heartbeat()</script>\n")
                 self.flush()
-            kernel_id = await ensure_async((self.kernel_manager.start_kernel(
-                    kernel_name= gen.notebook.metadata.kernelspec.name,
-                    path=cwd,
-                    env=kernel_env,
-                )))
+
+            kernel_id = await ensure_async(
+                (
+                    self.kernel_manager.start_kernel(
+                        kernel_name=gen.notebook.metadata.kernelspec.name,
+                        path=cwd,
+                        env=kernel_env,
+                    )
+                )
+            )
             kernel_future = self.kernel_manager.get_kernel(kernel_id)
 
-            async for html_snippet, resources in gen.generate_html(kernel_id, kernel_future, time_out ):
+            async for html_snippet, resources in gen.generate_html(
+                kernel_id, kernel_future, time_out
+            ):
                 self.write(html_snippet)
                 self.flush()
                 # we may not want to consider not flusing after each snippet, but add an explicit flush function to the jinja context

@@ -23,10 +23,9 @@ from .execute import VoilaExecutor, strip_code_cell_warnings
 from traitlets.config.configurable import LoggingConfigurable
 
 
-
 class NotebookRenderer(LoggingConfigurable):
     def __init__(self, **kwargs):
-        
+
         super().__init__(**kwargs)
         self.notebook_path = kwargs.get("notebook_path", [])  # should it be []
         self.template_paths = kwargs.get("template_paths", [])
@@ -34,11 +33,9 @@ class NotebookRenderer(LoggingConfigurable):
         self.voila_configuration = kwargs.get("voila_configuration")
         self.config_manager = kwargs.get("config_manager")
         self.contents_manager = kwargs.get("contents_manager")
-        self.kernel_manager = kwargs.get("kernel_manager")
         self.kernel_spec_manager = kwargs.get("kernel_spec_manager")
-        self.default_kernel_name = kwargs.get("kernel_spec_manager")
-        self.base_url = "/"
-        self.html = ""
+        self.default_kernel_name = "python3"
+        self.base_url = kwargs.get("base_url")
         self.kernel_started = False
 
     async def initialize(self):
@@ -133,7 +130,7 @@ class NotebookRenderer(LoggingConfigurable):
     def generate_html(
         self,
         kernel_id: Union[str, None] = None,
-        kernel_future = None,
+        kernel_future=None,
         timeout_callback: Union[Callable, None] = None,
     ):
         async def inner_kernel_start(nb):
@@ -154,34 +151,19 @@ class NotebookRenderer(LoggingConfigurable):
     async def generate_html_str(
         self,
         kernel_id: Union[str, None] = None,
-        kernel_future = None,
+        kernel_future=None,
         path: Union[str, None] = None,
     ):
+        html = ""
         # render notebook in snippets, and flush them out to the browser can render progresssively
-        async for html_snippet, resources in self.generate_html(kernel_id, kernel_future):
-            self.html += html_snippet
+        async for html_snippet, resources in self.generate_html(
+            kernel_id, kernel_future
+        ):
+            html += html_snippet
+        return html
 
     async def _jinja_kernel_start(self, nb, kernel_id, kernel_future):
         assert not self.kernel_started, "kernel was already started"
-        # if kernel_id is not None:
-        #     km = await ensure_async(self.kernel_manager.get_kernel(kernel_id))
-        # else:
-        #     if isinstance(self.kernel_manager, VoilaKernelManager):
-        #         kernel_id: str = await ensure_async((self.kernel_manager.start_kernel(
-        #             kernel_name=nb.metadata.kernelspec.name,
-        #             path=self.cwd,
-        #             env=kernel_env,
-        #             need_refill=False
-        #         )))
-        #     else:
-        #         kernel_id: str = await ensure_async(
-        #             self.kernel_manager.start_kernel(
-        #                 kernel_name=nb.metadata.kernelspec.name,
-        #                 path=self.cwd,
-        #                 env=kernel_env,
-        #             )
-        #         )
-        #     km = await ensure_async(self.kernel_manager.get_kernel(kernel_id))
         km = await ensure_async(kernel_future)
         self.executor = VoilaExecutor(
             nb,
@@ -201,29 +183,6 @@ class NotebookRenderer(LoggingConfigurable):
         ###
         self.kernel_started = True
         return kernel_id
-
-    # async def _jinja_kernel_start(self, nb):
-    #     kernel_id = self.kernel_id
-    #     km = await ensure_async(self.kernel_manager.get_kernel(kernel_id))
-
-    #     self.executor = VoilaExecutor(
-    #         nb,
-    #         km=km,
-    #         config=self.traitlet_config,
-    #         show_tracebacks=self.voila_configuration.show_tracebacks,
-    #     )
-
-    #     ###
-    #     # start kernel client
-    #     self.executor.kc = km.client()
-    #     await ensure_async(self.executor.kc.start_channels())
-    #     await ensure_async(
-    #         self.executor.kc.wait_for_ready(timeout=self.executor.startup_timeout)
-    #     )
-    #     self.executor.kc.allow_stdin = False
-    #     ###
-
-    #     return kernel_id
 
     async def _jinja_notebook_execute(self, nb, kernel_id):
         print(

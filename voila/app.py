@@ -60,7 +60,7 @@ from .configuration import VoilaConfiguration
 from .execute import VoilaExecutor
 from .exporter import VoilaExporter
 from .shutdown_kernel_handler import VoilaShutdownKernelHandler
-
+from .notebook_renderer import NotebookRenderer
 _kernel_id_regex = r"(?P<kernel_id>\w+-\w+-\w+-\w+-\w+)"
 
 
@@ -414,6 +414,17 @@ class Voila(Application):
         read_config_path += [os.path.join(p, 'nbconfig') for p in jupyter_config_path()]
         self.config_manager = ConfigManager(parent=self, read_config_path=read_config_path)
         self.contents_manager = LargeFileManager(parent=self)
+
+        notebook_renderer_factory = lambda : NotebookRenderer(
+            voila_configuration=self.voila_configuration,
+            traitlet_config=self.config,
+            notebook_path=self.notebook_path,
+            template_paths=self.template_paths,
+            config_manager=self.config_manager,
+            contents_manager=self.contents_manager,
+            base_url=self.base_url,
+            kernel_spec_manager=self.kernel_spec_manager,
+        )
         self.kernel_manager = self.voila_configuration.multi_kernel_manager_class(
             parent=self,
             connection_dir=self.connection_dir,
@@ -426,12 +437,7 @@ class Voila(Application):
                 'kernel_info_request',
                 'shutdown_request'
             ],
-            voila_configuration=self.voila_configuration,
-            traitlet_config=self.config,
-            notebook_path=os.path.relpath(self.notebook_path, self.root_dir),
-            template_paths= self.template_paths,
-            config_manager= self.config_manager,
-            contents_manager=self.contents_manager,
+            notebook_renderer_factory=notebook_renderer_factory,
         )
 
         jenv_opt = {"autoescape": True}  # we might want extra options via cmd line like notebook server
@@ -517,7 +523,8 @@ class Voila(Application):
                     'notebook_path': os.path.relpath(self.notebook_path, self.root_dir),
                     'template_paths': self.template_paths,
                     'config': self.config,
-                    'voila_configuration': self.voila_configuration
+                    'voila_configuration': self.voila_configuration,
+                    'notebook_renderer_factory': notebook_renderer_factory
                 }
             ))
         else:
@@ -531,7 +538,8 @@ class Voila(Application):
                  {
                      'template_paths': self.template_paths,
                      'config': self.config,
-                     'voila_configuration': self.voila_configuration
+                     'voila_configuration': self.voila_configuration,
+                     'notebook_renderer_factory': notebook_renderer_factory
                  }),
             ])
 
