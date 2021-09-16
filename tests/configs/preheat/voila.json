@@ -4,7 +4,10 @@
   },
   "VoilaKernelManager": {
     "kernel_pools_size": {
-      "python3": 2
+      "default": {
+        "kernel": "python3",
+        "pool_size": 2
+      }
     },
     "fill_delay": 0,
     "kernel_env_variables": {

@@ -96,7 +96,6 @@ class VoilaHandler(JupyterHandler):
                     need_refill=notebook_path,
                 )
             )
-
             notebook_html = notebook_html_dict.pop(kernel_id, None)
             if notebook_html is not None and notebook_html[0] == notebook_path:
                 self.write(notebook_html[1])

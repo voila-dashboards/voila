@@ -94,8 +94,10 @@ def voila_kernel_manager_factory(base_class: Type[T], preheat_kernel: Bool) -> T
                 self.notebook_data: tDict = {}
                 self.notebook_html: tDict = {}
                 self._pools: tDict[str, Union[str, Coroutine[str]]] = {}
-                self.notebook_path = self.parent.notebook_path
                 self.root_dir = self.parent.root_dir
+                self.notebook_path = os.path.relpath(
+                        self.parent.notebook_path, self.root_dir
+                    )  
                 if self.notebook_path is not None:
                     self.fill_if_needed(delay=0, notebook_name=self.notebook_path)
                 else:
@@ -242,14 +244,9 @@ def voila_kernel_manager_factory(base_class: Type[T], preheat_kernel: Bool) -> T
                                 )
 
             async def _initialize(
-                self, kernel_id_future: str, notebook_path: str = None
-            ) -> str:
+                self, kernel_id_future: str, notebook_path: str) -> str:
                 """Run any configured initialization code in the kernel"""
                 kernel_id = await kernel_id_future
-                if self.notebook_path is not None:
-                    notebook_path = os.path.relpath(
-                        self.notebook_path, self.parent.root_dir
-                    )
                 gen = self._notebook_renderer_factory(notebook_path)
                 await gen.initialize()
 
@@ -285,6 +282,7 @@ def voila_kernel_manager_factory(base_class: Type[T], preheat_kernel: Bool) -> T
                 self.log.info(
                     'Pre-heated %s kernel for notebook %s', heated_count, notebook_path
                 )
+
                 return kernel_id
 
             async def cull_kernel_if_idle(self, kernel_id: str):
