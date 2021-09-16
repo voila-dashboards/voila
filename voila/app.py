@@ -61,6 +61,8 @@ from .execute import VoilaExecutor
 from .exporter import VoilaExporter
 from .shutdown_kernel_handler import VoilaShutdownKernelHandler
 from .notebook_renderer import NotebookRenderer
+from .voila_kernel_manager_class import voila_kernel_manager_factory
+
 _kernel_id_regex = r"(?P<kernel_id>\w+-\w+-\w+-\w+-\w+)"
 
 
@@ -425,7 +427,7 @@ class Voila(Application):
             base_url=self.base_url,
             kernel_spec_manager=self.kernel_spec_manager,
         )
-        self.kernel_manager = self.voila_configuration.multi_kernel_manager_class(
+        self.kernel_manager = voila_kernel_manager_factory()(
             parent=self,
             connection_dir=self.connection_dir,
             kernel_spec_manager=self.kernel_spec_manager,

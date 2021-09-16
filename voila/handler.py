@@ -178,7 +178,7 @@ class VoilaHandler(JupyterHandler):
             else:
                 # All heated kernel used, instead of waitting,
                 # start a normal kernel
-                gen = self.notebook_renderer_factory
+                gen = self.notebook_renderer_factory()
                 await gen.initialize()
 
                 def time_out():
@@ -205,7 +205,7 @@ class VoilaHandler(JupyterHandler):
                     # yield  # give control back to tornado's IO loop, so it can handle static files or other requests
                 self.flush()
         else:
-            gen = self.notebook_renderer_factory
+            gen = self.notebook_renderer_factory()
             await gen.initialize()
 
             def time_out():
