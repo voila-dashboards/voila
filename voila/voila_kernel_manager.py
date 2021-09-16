@@ -1,42 +1,48 @@
+import asyncio
+import os
+from typing import Any, Callable, Coroutine
+from typing import Dict as tDict
+from typing import Type, TypeVar, Union
 
 from jupyter_server.services import config
+from traitlets.traitlets import Bool, Dict, Float, Integer, Unicode
+
 from .notebook_renderer import NotebookRenderer
-from typing import  Any, Callable, Union, Coroutine, TypeVar, Type
-from typing import Dict as tDict
-from traitlets.traitlets import Bool, Unicode, Dict, Float, Integer
-import asyncio
 
+T = TypeVar("T")
 
-T = TypeVar('T')
 
 async def wait_before(delay, aw):
     await asyncio.sleep(delay)
     return await aw
 
 
-def voila_kernel_manager_factory(base_class : Type[T], preheat_kernel : Bool, notebook_renderer_factory : Callable) -> T:
-
+def voila_kernel_manager_factory(base_class: Type[T], preheat_kernel: Bool) -> T:
     if not preheat_kernel:
+
         class NormalKernelManager(base_class):
             def __init__(self, **kwargs) -> None:
                 super().__init__(**kwargs)
                 self.notebook_model: tDict = {}
                 self.notebook_html: tDict = {}
- 
-            def start_kernel(self, kernel_name: Union[str, None]=None,
-            **kwargs) -> str:
-                kwargs.pop('need_refill', False)
+
+            def start_kernel(
+                self, kernel_name: Union[str, None] = None, **kwargs
+            ) -> str:
+                kwargs.pop("need_refill", False)
                 return super().start_kernel(kernel_name=kernel_name, **kwargs)
+
         return NormalKernelManager
 
     else:
+
         class VoilaKernelManager(base_class):
 
             kernel_pools_size = Dict(
-                { 'python3': 3},
+                {"python3": 3},
                 config=True,
                 help="""Configuration for VoilaKernelManager.
-                """
+                """,
             )
 
             fill_delay = Float(
@@ -45,9 +51,15 @@ def voila_kernel_manager_factory(base_class : Type[T], preheat_kernel : Bool, no
                 help="Wait time before re-filling the pool after a kernel is used",
             )
 
+            kernel_start_kwargs = Dict(
+                {},
+                config=True,
+                help="""Configuration for VoilaKernelManager.
+                """,
+            )
+
             def __init__(self, **kwargs):
-                
-                self.notebook_renderer_factory = notebook_renderer_factory
+
                 super().__init__(**kwargs)
                 self._wait_at_startup = True
                 self.notebook_model: tDict = {}
@@ -56,25 +68,35 @@ def voila_kernel_manager_factory(base_class : Type[T], preheat_kernel : Bool, no
                 for key in self.kernel_pools_size:
                     self.fill_if_needed(delay=0, kernel_name=key)
 
-            async def start_kernel(self, kernel_name: Union[str, None]=None,
-            **kwargs) -> str:
-                need_refill = kwargs.pop('need_refill', False)
+            async def start_kernel(
+                self, kernel_name: Union[str, None] = None, **kwargs
+            ) -> str:
+                need_refill = kwargs.pop("need_refill", False)
                 if kernel_name is None:
                     kernel_name = self.default_kernel_name
                 self.log.info("Starting kernel: %s", kernel_name)
 
                 if need_refill and len(self._pools.get(kernel_name, ())) > 0:
                     kernel_id = await self._pop_pooled_kernel(kernel_name, **kwargs)
-                    self.fill_if_needed(delay = None, kernel_name = kernel_name, **kwargs)
+                    self.fill_if_needed(delay=None, kernel_name=kernel_name, **kwargs)
                 else:
-                    kernel_id = await super().start_kernel(kernel_name=kernel_name, **kwargs)      
+                    kernel_id = await super().start_kernel(
+                        kernel_name=kernel_name, **kwargs
+                    )
                 return kernel_id
 
-            async def _pop_pooled_kernel(self, kernel_name: Union[str, None], **kwargs) -> Coroutine[Any, Any, str]:
+            async def _pop_pooled_kernel(
+                self, kernel_name: Union[str, None], **kwargs
+            ) -> Coroutine[Any, Any, str]:
                 fut = self._pools[kernel_name].pop(0)
                 return await fut
 
-            def fill_if_needed(self, delay: Union[float, None]=None, kernel_name: Union[str, None]=None, **kwargs)-> None:
+            def fill_if_needed(
+                self,
+                delay: Union[float, None] = None,
+                kernel_name: Union[str, None] = None,
+                **kwargs,
+            ) -> None:
                 """Start kernels until pool is full"""
                 delay = delay if delay is not None else self.fill_delay
                 try:
@@ -82,16 +104,24 @@ def voila_kernel_manager_factory(base_class : Type[T], preheat_kernel : Bool, no
                 except RuntimeError:
                     loop = asyncio.new_event_loop()
                     asyncio.set_event_loop(loop)
-                target =  self.kernel_pools_size.get(kernel_name, 0)
+                target = self.kernel_pools_size.get(kernel_name, 0)
                 pool = self._pools.get(kernel_name, [])
                 self._pools[kernel_name] = pool
+                notebook_path = self.parent.notebook_path
+                if "path" not in kwargs:
+                    kwargs["path"] = (
+                        os.path.dirname(notebook_path)
+                        if notebook_path is not None
+                        else self.parent.root_dir
+                    )
+                print('path', notebook_path, os.path.dirname(notebook_path), 'end')
                 for _ in range(target - len(pool)):
                     fut = super().start_kernel(kernel_name=kernel_name, **kwargs)
                     # Start the work on the loop immediately, so it is ready when needed:
                     task = loop.create_task(wait_before(delay, self._initialize(fut)))
                     pool.append(task)
 
-            async def restart_kernel(self, kernel_id: str, **kwargs)-> None:
+            async def restart_kernel(self, kernel_id: str, **kwargs) -> None:
                 await super().restart_kernel(kernel_id, **kwargs)
                 id_future = asyncio.Future()
                 id_future.set_result(kernel_id)
@@ -129,11 +159,18 @@ def voila_kernel_manager_factory(base_class : Type[T], preheat_kernel : Bool, no
                     pass
                 self._discarded = []
 
-            async def _initialize(self, kernel_id_future: str)->str:
+            async def _initialize(self, kernel_id_future: str) -> str:
                 """Run any configured initialization code in the kernel"""
                 kernel_id = await kernel_id_future
                 self.log.info("Initializing kernel: %s", kernel_id)
-                gen = self.notebook_renderer_factory()
+
+                if self.parent.notebook_path is None:
+                    self.log.info(
+                        f"Initialized kernel: length {len(self.notebook_html)}"
+                    )
+                    return kernel_id
+
+                gen = self.notebook_renderer_factory(self.parent.notebook_path)
                 await gen.initialize()
                 kernel_future = self.get_kernel(kernel_id)
                 self.notebook_html[kernel_id] = await gen.generate_html_str(
@@ -143,9 +180,7 @@ def voila_kernel_manager_factory(base_class : Type[T], preheat_kernel : Bool, no
                 self.notebook_model[gen.notebook_path] = gen.notebook
 
                 self.log.info(f"Initialized kernel: length {len(self.notebook_html)}")
-                self.initialized_kernel_id = kernel_id
                 return kernel_id
-
 
             async def cull_kernel_if_idle(self, kernel_id: str):
                 # Ensure we don't cull pooled kernels:
@@ -159,5 +194,19 @@ def voila_kernel_manager_factory(base_class : Type[T], preheat_kernel : Bool, no
                             pool.pop(i)
                 return await super().cull_kernel_if_idle(kernel_id)
 
-    return VoilaKernelManager
+            def notebook_renderer_factory(
+                self, notebook_path: Union[str, None] = None
+            ) -> NotebookRenderer:
 
+                return NotebookRenderer(
+                    voila_configuration=self.parent.voila_configuration,
+                    traitlet_config=self.parent.config,
+                    notebook_path=notebook_path,
+                    template_paths=self.parent.template_paths,
+                    config_manager=self.parent.config_manager,
+                    contents_manager=self.parent.contents_manager,
+                    base_url=self.parent.base_url,
+                    kernel_spec_manager=self.parent.kernel_spec_manager,
+                )
+
+    return VoilaKernelManager

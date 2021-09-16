@@ -26,7 +26,8 @@ from traitlets.config.configurable import LoggingConfigurable
 class NotebookRenderer(LoggingConfigurable):
     def __init__(self, **kwargs):
 
-        super().__init__(**kwargs)
+        super().__init__()
+        self.root_dir  = kwargs.get("root_dir", []) 
         self.notebook_path = kwargs.get("notebook_path", [])  # should it be []
         self.template_paths = kwargs.get("template_paths", [])
         self.traitlet_config = kwargs.get("config", None)
@@ -64,7 +65,7 @@ class NotebookRenderer(LoggingConfigurable):
             return
         self.cwd = os.path.dirname(notebook_path)
 
-        path, basename = os.path.split(notebook_path)
+        _, basename = os.path.split(notebook_path)
         notebook_name = os.path.splitext(basename)[0]
 
         # we can override the template via notebook metadata but not in
@@ -156,7 +157,7 @@ class NotebookRenderer(LoggingConfigurable):
     ):
         html = ""
         # render notebook in snippets, and flush them out to the browser can render progresssively
-        async for html_snippet, resources in self.generate_html(
+        async for html_snippet, _ in self.generate_html(
             kernel_id, kernel_future
         ):
             html += html_snippet
@@ -202,7 +203,7 @@ class NotebookRenderer(LoggingConfigurable):
             + str(self.voila_configuration.http_keep_alive_timeout)
             + "\033[0m",
         )
-        nb, resources = ClearOutputPreprocessor().preprocess(
+        nb, _ = ClearOutputPreprocessor().preprocess(
             nb, {"metadata": {"path": self.cwd}}
         )
         for cell_idx, input_cell in enumerate(nb.cells):
@@ -213,7 +214,7 @@ class NotebookRenderer(LoggingConfigurable):
                     )
                 )
                 while True:
-                    done, pending = await asyncio.wait(
+                    _, pending = await asyncio.wait(
                         {task}, timeout=self.voila_configuration.http_keep_alive_timeout
                     )
                     if pending:
@@ -222,8 +223,7 @@ class NotebookRenderer(LoggingConfigurable):
                         # can be used in a template to give feedback to a user
                         if timeout_callback is not None:
                             timeout_callback()
-                        # self.write("<script>voila_heartbeat()</script>\n")
-                        # self.flush()
+
                         continue
                     output_cell = await task
                     break
@@ -266,6 +266,7 @@ class NotebookRenderer(LoggingConfigurable):
                 yield output_cell
 
     async def load_notebook(self, path):
+        print('loading path', path)
         model = await ensure_async(self.contents_manager.get(path=path))
         if "content" not in model:
             raise tornado.web.HTTPError(404, "file not found")

@@ -39,7 +39,6 @@ class VoilaHandler(JupyterHandler):
         self.template_paths = kwargs.pop("template_paths", [])
         self.traitlet_config = kwargs.pop("config", None)
         self.voila_configuration = kwargs["voila_configuration"]
-        self.notebook_renderer_factory = kwargs["notebook_renderer_factory"]
         # we want to avoid starting multiple kernels due to template mistakes
         self.kernel_started = False
         self.gen = NotebookRenderer(
@@ -177,10 +176,24 @@ class VoilaHandler(JupyterHandler):
         else:
             # All heated kernel used, instead of waitting,
             # start a normal kernel
-            gen = self.notebook_renderer_factory()
+            gen = NotebookRenderer(
+                voila_configuration=self.voila_configuration,
+                traitlet_config=self.traitlet_config,
+                notebook_path=notebook_path,
+                template_paths=self.template_paths,
+                config_manager=self.config_manager,
+                contents_manager=self.contents_manager,
+                base_url=self.base_url,
+                kernel_spec_manager=self.kernel_spec_manager,
+            )
             await gen.initialize()
 
             def time_out():
+                """If not done within the timeout, we send a heartbeat
+                this is fundamentally to avoid browser/proxy read-timeouts, but
+                can be used in a template to give feedback to a user
+                """
+
                 self.write("<script>voila_heartbeat()</script>\n")
                 self.flush()
 
@@ -194,7 +207,7 @@ class VoilaHandler(JupyterHandler):
                 )
             )
             kernel_future = self.kernel_manager.get_kernel(kernel_id)
-            async for html_snippet, resources in gen.generate_html(
+            async for html_snippet, _ in gen.generate_html(
                 kernel_id, kernel_future, time_out
             ):
                 self.write(html_snippet)

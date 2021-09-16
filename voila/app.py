@@ -416,22 +416,11 @@ class Voila(Application):
         read_config_path += [os.path.join(p, 'nbconfig') for p in jupyter_config_path()]
         self.config_manager = ConfigManager(parent=self, read_config_path=read_config_path)
         self.contents_manager = LargeFileManager(parent=self)
-
-        notebook_renderer_factory = lambda : NotebookRenderer(
-            voila_configuration=self.voila_configuration,
-            traitlet_config=self.config,
-            notebook_path=self.notebook_path,
-            template_paths=self.template_paths,
-            config_manager=self.config_manager,
-            contents_manager=self.contents_manager,
-            base_url=self.base_url,
-            kernel_spec_manager=self.kernel_spec_manager,
-        )
-
+        
+        preheat_kernel = self.notebook_path is not None and self.voila_configuration.preheat_kernel
         kernel_manager_class = voila_kernel_manager_factory(
             self.voila_configuration.multi_kernel_manager_class,
-            self.voila_configuration.preheat_kernel,
-            notebook_renderer_factory
+            preheat_kernel
             )
         self.kernel_manager = kernel_manager_class(
             parent=self,
@@ -530,8 +519,7 @@ class Voila(Application):
                     'notebook_path': os.path.relpath(self.notebook_path, self.root_dir),
                     'template_paths': self.template_paths,
                     'config': self.config,
-                    'voila_configuration': self.voila_configuration,
-                    'notebook_renderer_factory': notebook_renderer_factory
+                    'voila_configuration': self.voila_configuration
                 }
             ))
         else:
@@ -545,8 +533,7 @@ class Voila(Application):
                  {
                      'template_paths': self.template_paths,
                      'config': self.config,
-                     'voila_configuration': self.voila_configuration,
-                     'notebook_renderer_factory': notebook_renderer_factory
+                     'voila_configuration': self.voila_configuration
                  }),
             ])
 
