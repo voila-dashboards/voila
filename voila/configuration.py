@@ -109,3 +109,10 @@ class VoilaConfiguration(traitlets.config.Configurable):
     Example: --VoilaConfiguration.http_header_envs="['X-CDSDASHBOARDS-JH-USER']"
     """,
     ).tag(config=True)
+
+    preheat_kernel = Bool(
+        False,
+        config=True,
+        help="""Configuration for VoilaKernelManager.
+        """
+    )

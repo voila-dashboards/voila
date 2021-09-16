@@ -61,7 +61,7 @@ from .execute import VoilaExecutor
 from .exporter import VoilaExporter
 from .shutdown_kernel_handler import VoilaShutdownKernelHandler
 from .notebook_renderer import NotebookRenderer
-from .voila_kernel_manager_class import voila_kernel_manager_factory
+from .voila_kernel_manager import voila_kernel_manager_factory
 
 _kernel_id_regex = r"(?P<kernel_id>\w+-\w+-\w+-\w+-\w+)"
 
@@ -427,7 +427,13 @@ class Voila(Application):
             base_url=self.base_url,
             kernel_spec_manager=self.kernel_spec_manager,
         )
-        self.kernel_manager = voila_kernel_manager_factory()(
+
+        kernel_manager_class = voila_kernel_manager_factory(
+            self.voila_configuration.multi_kernel_manager_class,
+            self.voila_configuration.preheat_kernel,
+            notebook_renderer_factory
+            )
+        self.kernel_manager = kernel_manager_class(
             parent=self,
             connection_dir=self.connection_dir,
             kernel_spec_manager=self.kernel_spec_manager,
@@ -438,8 +444,7 @@ class Voila(Application):
                 'comm_info_request',
                 'kernel_info_request',
                 'shutdown_request'
-            ],
-            notebook_renderer_factory=notebook_renderer_factory,
+            ]
         )
 
         jenv_opt = {"autoescape": True}  # we might want extra options via cmd line like notebook server

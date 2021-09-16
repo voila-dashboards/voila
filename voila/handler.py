@@ -12,7 +12,6 @@ import os
 import sys
 import traceback
 from typing import Dict, Union
-from voila.voila_kernel_manager import VoilaKernelManager
 from nbformat.notebooknode import NotebookNode
 
 import tornado.web
@@ -155,56 +154,29 @@ class VoilaHandler(JupyterHandler):
         self.set_header("Expires", "0")
         # render notebook in snippets, and flush them out to the browser can render progresssively
 
-        if isinstance(self.kernel_manager, VoilaKernelManager):
-            notebook_html_dict: Dict = self.kernel_manager.notebook_html
-            notebook_model: Union[
-                NotebookNode, None
-            ] = self.kernel_manager.notebook_model.get(notebook_path, None)
-            # If we have a heated kernel in pool, use it
-            print("in this case", len(notebook_html_dict))
-            if len(notebook_html_dict) > 0:
+        notebook_html_dict: Dict = self.kernel_manager.notebook_html
+        notebook_model: Union[
+            NotebookNode, None
+        ] = self.kernel_manager.notebook_model.get(notebook_path, None)
+        # If we have a heated kernel in pool, use it
+        if len(notebook_html_dict) > 0:
 
-                kernel_id: str = await ensure_async(
-                    self.kernel_manager.start_kernel(
-                        kernel_name=notebook_model.metadata.kernelspec.name,
-                        path=cwd,
-                        env=kernel_env,
-                    )
+            kernel_id: str = await ensure_async(
+                self.kernel_manager.start_kernel(
+                    kernel_name=notebook_model.metadata.kernelspec.name,
+                    path=cwd,
+                    env=kernel_env,
+                    need_refill=True,
                 )
-                notebook_html = notebook_html_dict.pop(kernel_id, None)
-                if notebook_html is not None:
-                    self.write(notebook_html)
-                    self.flush()
-            else:
-                # All heated kernel used, instead of waitting,
-                # start a normal kernel
-                gen = self.notebook_renderer_factory()
-                await gen.initialize()
+            )
 
-                def time_out():
-                    self.write("<script>voila_heartbeat()</script>\n")
-                    self.flush()
-
-                kernel_id = await ensure_async(
-                    (
-                        self.kernel_manager.start_kernel(
-                            kernel_name=gen.notebook.metadata.kernelspec.name,
-                            path=cwd,
-                            env=kernel_env,
-                            need_refill=False,
-                        )
-                    )
-                )
-                kernel_future = self.kernel_manager.get_kernel(kernel_id)
-                async for html_snippet, resources in gen.generate_html(
-                    kernel_id, kernel_future, time_out
-                ):
-                    self.write(html_snippet)
-                    self.flush()
-                    # we may not want to consider not flusing after each snippet, but add an explicit flush function to the jinja context
-                    # yield  # give control back to tornado's IO loop, so it can handle static files or other requests
+            notebook_html = notebook_html_dict.pop(kernel_id, None)
+            if notebook_html is not None:
+                self.write(notebook_html)
                 self.flush()
         else:
+            # All heated kernel used, instead of waitting,
+            # start a normal kernel
             gen = self.notebook_renderer_factory()
             await gen.initialize()
 
@@ -222,7 +194,6 @@ class VoilaHandler(JupyterHandler):
                 )
             )
             kernel_future = self.kernel_manager.get_kernel(kernel_id)
-
             async for html_snippet, resources in gen.generate_html(
                 kernel_id, kernel_future, time_out
             ):
