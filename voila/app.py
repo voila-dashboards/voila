@@ -131,6 +131,7 @@ class Voila(Application):
         'server_url': 'Voila.server_url',
         'enable_nbextensions': 'VoilaConfiguration.enable_nbextensions',
         'show_tracebacks': 'VoilaConfiguration.show_tracebacks',
+        'preheat_kernel': 'VoilaConfiguration.preheat_kernel',
     }
     classes = [
         VoilaConfiguration,

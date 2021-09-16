@@ -1,8 +1,7 @@
 import os
-
 import pytest
-
 import voila.app
+import asyncio
 
 BASE_DIR = os.path.dirname(__file__)
 
@@ -10,7 +9,6 @@ BASE_DIR = os.path.dirname(__file__)
 class VoilaTest(voila.app.Voila):
     def listen(self):
         pass  # the ioloop is taken care of by the pytest-tornado framework
-
 
 @pytest.fixture
 def voila_config():
@@ -33,11 +31,20 @@ def voila_args(voila_notebook, voila_args_extra, voila_config_file_paths_arg):
     debug_args = ['--VoilaTest.log_level=DEBUG'] if os.environ.get('VOILA_TEST_DEBUG', False) else []
     return [voila_notebook, voila_config_file_paths_arg] + voila_args_extra + debug_args
 
+@pytest.fixture(params=[False, True])
+def preheat_mode(request):
+    return request.param
 
 @pytest.fixture
-def voila_app(voila_args, voila_config):
+def preheat_config(preheat_mode):
+    if preheat_mode:
+        return '--preheat_kernel=True'
+    return '--preheat_kernel=False'
+    
+@pytest.fixture
+def voila_app( voila_args, voila_config, preheat_config):
     voila_app = VoilaTest.instance()
-    voila_app.initialize(voila_args + ['--no-browser'])
+    voila_app.initialize(voila_args + ['--no-browser', preheat_config])
     voila_config(voila_app)
     voila_app.start()
     yield voila_app
@@ -48,3 +55,10 @@ def voila_app(voila_args, voila_config):
 @pytest.fixture
 def app(voila_app):
     return voila_app.app
+
+@pytest.fixture
+def wait_for_kernel(preheat_mode):
+    async def inner():
+        if preheat_mode:
+            await asyncio.sleep(1)
+    return inner

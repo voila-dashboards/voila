@@ -174,6 +174,7 @@ def voila_kernel_manager_factory(base_class: Type[T], preheat_kernel: Bool) -> T
             async def _initialize(self, kernel_id_future: str) -> str:
                 """Run any configured initialization code in the kernel"""
                 kernel_id = await kernel_id_future
+                self.log.info(f'Started kernel: %s', kernel_id)
                 if self.parent.notebook_path is None:
                     return kernel_id
                 notebook_path = os.path.relpath(
