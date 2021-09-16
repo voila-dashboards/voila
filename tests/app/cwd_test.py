@@ -3,6 +3,7 @@ import pytest
 
 import os
 
+
 @pytest.fixture
 def voila_notebook(notebook_directory):
     return os.path.join(notebook_directory, 'cwd.ipynb')

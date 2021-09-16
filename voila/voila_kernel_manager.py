@@ -10,7 +10,7 @@
 
 import asyncio
 import os
-from typing import Any, Awaitable, Coroutine, Type, TypeVar, Union
+from typing import Awaitable, Coroutine, Type, TypeVar, Union
 from typing import Dict as tDict
 
 from traitlets.traitlets import Bool, Dict, Float
@@ -21,7 +21,7 @@ from .notebook_renderer import NotebookRenderer
 T = TypeVar('T')
 
 
-async def wait_before(delay: float, aw : Awaitable) -> Awaitable:
+async def wait_before(delay: float, aw: Awaitable) -> Awaitable:
     await asyncio.sleep(delay)
     return await aw
 
@@ -30,7 +30,7 @@ def voila_kernel_manager_factory(base_class: Type[T], preheat_kernel: Bool) -> T
     """
     Decorator used to make a normal kernel manager compatible with pre-heated
     kernel system.
-    - If `preheat_kernel` is `False`, only two properties 
+    - If `preheat_kernel` is `False`, only two properties
     `notebook_data` and `notebook_html` are added to keep `NotebookRenderer`
     working, the kernel manager will work as it is.
     - If `preheat_kernel` is `True`, the input class is transformed to
@@ -42,7 +42,7 @@ def voila_kernel_manager_factory(base_class: Type[T], preheat_kernel: Bool) -> T
 
     Returns:
         T: Decorated class
-    """    
+    """
     if not preheat_kernel:
 
         class NormalKernelManager(base_class):
@@ -54,10 +54,10 @@ def voila_kernel_manager_factory(base_class: Type[T], preheat_kernel: Bool) -> T
             def start_kernel(
                 self, kernel_name: Union[str, None] = None, **kwargs
             ) -> str:
-                """ Start a new kernel, because `NotebookRenderer` will call
-                this method with `need_refill` paramenter so it need to be 
+                """Start a new kernel, because `NotebookRenderer` will call
+                this method with `need_refill` paramenter so it need to be
                 removed before passing to the original `start_kernel`.
-                """            
+                """
                 kwargs.pop('need_refill', False)
                 return super().start_kernel(kernel_name=kernel_name, **kwargs)
 
@@ -66,7 +66,7 @@ def voila_kernel_manager_factory(base_class: Type[T], preheat_kernel: Bool) -> T
     else:
 
         class VoilaKernelManager(base_class):
-            """ This class adds pooling heated kernels and pre-rendered notebook
+            """This class adds pooling heated kernels and pre-rendered notebook
             feature to a normal kernel manager. The 'pooling heated kernels'
             part is heavily inspired from `hotpot_km`(https://github.com/voila-dashboards/hotpot_km) library.
             """
@@ -74,7 +74,7 @@ def voila_kernel_manager_factory(base_class: Type[T], preheat_kernel: Bool) -> T
             kernel_pools_size = Dict(
                 {'python3': 1},
                 config=True,
-                help='Mapping from kernel name to the number of started kernels to keep on standby.'
+                help='Mapping from kernel name to the number of started kernels to keep on standby.',
             )
 
             fill_delay = Float(
@@ -84,9 +84,7 @@ def voila_kernel_manager_factory(base_class: Type[T], preheat_kernel: Bool) -> T
             )
 
             kernel_env_variables = Dict(
-                {},
-                config=True,
-                help='Environnement variables used to start kernel.'
+                {}, config=True, help='Environnement variables used to start kernel.'
             )
 
             def __init__(self, **kwargs):
@@ -103,9 +101,9 @@ def voila_kernel_manager_factory(base_class: Type[T], preheat_kernel: Bool) -> T
             async def start_kernel(
                 self, kernel_name: Union[str, None] = None, **kwargs
             ) -> str:
-                """ Depend on `need_refill` flag, this method will pop a kernel from pool or start a new
+                """Depend on `need_refill` flag, this method will pop a kernel from pool or start a new
                 kernel.
-                """             
+                """
                 need_refill = kwargs.pop('need_refill', False)
                 if kernel_name is None:
                     kernel_name = self.default_kernel_name
@@ -131,7 +129,7 @@ def voila_kernel_manager_factory(base_class: Type[T], preheat_kernel: Bool) -> T
 
                 Returns:
                     str: Kernel id.
-                """            
+                """
                 fut = self._pools[kernel_name].pop(0)
                 return await fut
 
@@ -148,7 +146,7 @@ def voila_kernel_manager_factory(base_class: Type[T], preheat_kernel: Bool) -> T
                     starting refill kernel. Defaults to None.
                     - kernel_name (Union[str, None], optional): Name of kernel pool.
                     Defaults to None.
-                """                
+                """
                 delay = delay if delay is not None else self.fill_delay
                 try:
                     loop = asyncio.get_event_loop()
@@ -178,7 +176,7 @@ def voila_kernel_manager_factory(base_class: Type[T], preheat_kernel: Bool) -> T
                     pool.append(task)
 
             async def restart_kernel(self, kernel_id: str, **kwargs) -> None:
-                await ensure_async(super().restart_kernel(kernel_id, **kwargs)) 
+                await ensure_async(super().restart_kernel(kernel_id, **kwargs))
                 id_future = asyncio.Future()
                 id_future.set_result(kernel_id)
                 await self._initialize(id_future)
@@ -193,10 +191,12 @@ def voila_kernel_manager_factory(base_class: Type[T], preheat_kernel: Bool) -> T
                         continue
                     break
                 self.notebook_html.pop(kernel_id, None)
-                return await ensure_async(super().shutdown_kernel(kernel_id, *args, **kwargs)) 
+                return await ensure_async(
+                    super().shutdown_kernel(kernel_id, *args, **kwargs)
+                )
 
             async def shutdown_all(self, *args, **kwargs):
-                await ensure_async(super().shutdown_all(*args, **kwargs)) 
+                await ensure_async(super().shutdown_all(*args, **kwargs))
                 # Parent doesn't correctly add all created kernels until they have completed startup:
                 pools = self._pools
                 self._pools = {}
@@ -209,7 +209,9 @@ def voila_kernel_manager_factory(base_class: Type[T], preheat_kernel: Bool) -> T
                             pass
                         else:
                             if kid in self:
-                                await ensure_async(self.shutdown_kernel(kid, *args, **kwargs)) 
+                                await ensure_async(
+                                    self.shutdown_kernel(kid, *args, **kwargs)
+                                )
 
             async def _initialize(self, kernel_id_future: str) -> str:
                 """Run any configured initialization code in the kernel"""
@@ -235,13 +237,13 @@ def voila_kernel_manager_factory(base_class: Type[T], preheat_kernel: Bool) -> T
                     'theme': gen.theme,
                 }
 
-                self.log.info(f'Pre-headted kernel: %s', kernel_id)
+                self.log.info('Pre-headted kernel: %s', kernel_id)
                 return kernel_id
 
             async def cull_kernel_if_idle(self, kernel_id: str):
                 """Ensure we don't cull pooled kernels:
                 (this logic assumes the init time is shorter than the cull time)
-                """                
+                """
 
                 for pool in self._pools.values():
                     for i, f in enumerate(pool):
@@ -250,7 +252,7 @@ def voila_kernel_manager_factory(base_class: Type[T], preheat_kernel: Bool) -> T
                                 return
                         except Exception:
                             pool.pop(i)
-                return await ensure_async(super().cull_kernel_if_idle(kernel_id)) 
+                return await ensure_async(super().cull_kernel_if_idle(kernel_id))
 
             def _notebook_renderer_factory(
                 self, notebook_path: Union[str, None] = None
@@ -258,9 +260,9 @@ def voila_kernel_manager_factory(base_class: Type[T], preheat_kernel: Bool) -> T
                 """Helper function to create `NotebookRenderer` instance.
 
                 Args:
-                    - notebook_path (Union[str, None], optional): Path to the 
+                    - notebook_path (Union[str, None], optional): Path to the
                     notebook. Defaults to None.
-                """                
+                """
                 return NotebookRenderer(
                     voila_configuration=self.parent.voila_configuration,
                     traitlet_config=self.parent.config,

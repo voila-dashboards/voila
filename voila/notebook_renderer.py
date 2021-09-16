@@ -22,14 +22,13 @@ from nbclient.util import ensure_async
 from nbconvert.preprocessors import ClearOutputPreprocessor
 from traitlets.config.configurable import LoggingConfigurable
 
-from ._version import __version__
 from .execute import VoilaExecutor, strip_code_cell_warnings
 from .exporter import VoilaExporter
 from .paths import collect_template_paths
 
 
 class NotebookRenderer(LoggingConfigurable):
-    """Render the notebook into HTML string."""    
+    """Render the notebook into HTML string."""
 
     def __init__(self, **kwargs):
         super().__init__()
@@ -159,7 +158,7 @@ class NotebookRenderer(LoggingConfigurable):
         # These functions allow the start of a kernel and execution of the
         # notebook after (parts of) the template has been rendered and send
         # to the client to allow progressive rendering.
-        # Template should first call kernel_start, and then decide to use 
+        # Template should first call kernel_start, and then decide to use
         # notebook_executer cell_generator to implement progressive cell rendering
 
         extra_context = {
@@ -209,7 +208,7 @@ class NotebookRenderer(LoggingConfigurable):
     async def _jinja_notebook_execute(self, nb, kernel_id):
 
         result = await self.executor.async_execute(cleanup_kc=False)
-        # we modify the notebook in place, since the nb variable cannot be 
+        # we modify the notebook in place, since the nb variable cannot be
         # reassigned it seems in jinja2 e.g. if we do {% with nb = notebook_execute(nb, kernel_id) %}
         # ,the base template/blocks will not see the updated variable
         #  (it seems to be local to our block)

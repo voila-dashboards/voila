@@ -416,7 +416,6 @@ class Voila(Application):
         read_config_path += [os.path.join(p, 'nbconfig') for p in jupyter_config_path()]
         self.config_manager = ConfigManager(parent=self, read_config_path=read_config_path)
         self.contents_manager = LargeFileManager(parent=self)
-        
         preheat_kernel = self.notebook_path is not None and self.voila_configuration.preheat_kernel
         kernel_manager_class = voila_kernel_manager_factory(
             self.voila_configuration.multi_kernel_manager_class,
@@ -440,9 +439,6 @@ class Voila(Application):
         env = jinja2.Environment(loader=jinja2.FileSystemLoader(self.template_paths), extensions=['jinja2.ext.i18n'], **jenv_opt)
         nbui = gettext.translation('nbui', localedir=os.path.join(ROOT, 'i18n'), fallback=True)
         env.install_gettext_translations(nbui, newstyle=False)
-        
-
-
 
         # default server_url to base_url
         self.server_url = self.server_url or self.base_url

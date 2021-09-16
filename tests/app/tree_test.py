@@ -6,6 +6,7 @@ import pytest
 def preheat_mode():
     return False
 
+
 @pytest.fixture
 def voila_args(notebook_directory, voila_args_extra):
     return ['--VoilaTest.root_dir=%r' % notebook_directory, '--VoilaTest.log_level=DEBUG'] + voila_args_extra

@@ -77,7 +77,7 @@ class VoilaHandler(JupyterHandler):
         try:
             notebook_html_dict: Dict = self.kernel_manager.notebook_html
             notebook_data: Dict = self.kernel_manager.notebook_data.get(notebook_path, {})
-        except:
+        except Exception:
             # Extension mode
             notebook_html_dict = notebook_data = {}
         # If we have a heated kernel in pool, use it

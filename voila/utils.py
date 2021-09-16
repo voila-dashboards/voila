@@ -10,7 +10,6 @@
 import os
 
 
-
 def get_server_root_dir(settings):
     # notebook >= 5.0.0 has this in the settings
     if 'server_root_dir' in settings:

@@ -3,13 +3,16 @@ import time
 import asyncio
 import os
 
+
 @pytest.fixture
 def preheat_mode():
     return True
 
+
 @pytest.fixture
 def voila_notebook(notebook_directory):
     return os.path.join(notebook_directory, 'pre_heat.ipynb')
+
 
 NOTEBOOK_EXECUTION_TIME = 2
 

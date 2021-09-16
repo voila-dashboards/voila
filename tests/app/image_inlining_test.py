@@ -7,6 +7,7 @@ import os
 
 NOTEBOOK_PATH = 'images.ipynb'
 
+
 @pytest.fixture
 def voila_notebook(notebook_directory):
     return os.path.join(notebook_directory, NOTEBOOK_PATH)

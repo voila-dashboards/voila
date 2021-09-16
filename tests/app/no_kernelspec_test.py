@@ -1,5 +1,6 @@
 import pytest
-import os 
+import os
+
 
 NOTEBOOK_PATH = 'no_kernelspec.ipynb'
 
@@ -14,7 +15,7 @@ def non_existing_kernel_notebook(base_url, preheat_mode):
 @pytest.fixture
 def voila_args(notebook_directory, voila_args_extra, preheat_mode):
     if preheat_mode:
-        return [os.path.join(notebook_directory,NOTEBOOK_PATH)] + voila_args_extra
+        return [os.path.join(notebook_directory, NOTEBOOK_PATH)] + voila_args_extra
 
     return ['--VoilaTest.root_dir=%r' % notebook_directory] + voila_args_extra
 

@@ -16,7 +16,7 @@ def notebook_other_comms_path(base_url, preheat_mode):
 def voila_args(notebook_directory, voila_args_extra, preheat_mode):
     if preheat_mode:
         return [
-            os.path.join(notebook_directory,NOTEBOOK_PATH),
+            os.path.join(notebook_directory, NOTEBOOK_PATH),
             '--VoilaTest.log_level=DEBUG',
         ] + voila_args_extra
     return [
