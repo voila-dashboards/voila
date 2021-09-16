@@ -13,7 +13,8 @@ def voila_args_extra():
     return ['--VoilaExecutor.timeout=1', '--KernelManager.shutdown_wait_time=0.1']
 
 
-async def test_timeout(http_server_client, base_url):
+async def test_timeout(http_server_client, base_url, wait_for_kernel):
+    await wait_for_kernel()
     response = await http_server_client.fetch(base_url)
     html_text = response.body.decode('utf-8')
     assert 'Cell execution timed out' in html_text

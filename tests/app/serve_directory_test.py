@@ -4,6 +4,9 @@ import pytest
 
 TEST_XEUS_CLING = os.environ.get('VOILA_TEST_XEUS_CLING', '') == '1'
 
+@pytest.fixture
+def preheat_mode():
+    return False
 
 @pytest.fixture
 def voila_args(notebook_directory, voila_args_extra):

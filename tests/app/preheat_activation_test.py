@@ -1,16 +1,15 @@
 import pytest
 import time
 import asyncio
-
+import os
 
 @pytest.fixture
-def voila_args(notebook_directory, voila_args_extra):
-    return [
-        f'{notebook_directory}/pre_heat.ipynb',
-        '--VoilaTest.log_level=INFO',
-        '--VoilaConfiguration.preheat_kernel=true',
-    ] + voila_args_extra
+def preheat_mode():
+    return True
 
+@pytest.fixture
+def voila_notebook(notebook_directory):
+    return os.path.join(notebook_directory, 'pre_heat.ipynb')
 
 NOTEBOOK_EXECUTION_TIME = 2
 

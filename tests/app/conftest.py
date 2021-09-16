@@ -37,9 +37,8 @@ def preheat_mode(request):
 
 @pytest.fixture
 def preheat_config(preheat_mode):
-    if preheat_mode:
-        return '--preheat_kernel=True'
-    return '--preheat_kernel=False'
+    return f'--preheat_kernel={preheat_mode}'
+
     
 @pytest.fixture
 def voila_app( voila_args, voila_config, preheat_config):
@@ -58,7 +57,7 @@ def app(voila_app):
 
 @pytest.fixture
 def wait_for_kernel(preheat_mode):
-    async def inner():
+    async def inner(time=1):
         if preheat_mode:
-            await asyncio.sleep(1)
+            await asyncio.sleep(time)
     return inner

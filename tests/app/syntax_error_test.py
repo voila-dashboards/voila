@@ -1,13 +1,18 @@
 import pytest
 
+import os
+
+NOTEBOOK_PATH = 'syntax_error.ipynb'
+
 
 @pytest.fixture
-def voila_args(notebook_directory, voila_args_extra):
-    return ['--VoilaTest.root_dir=%r' % notebook_directory] + voila_args_extra
+def voila_notebook(notebook_directory):
+    return os.path.join(notebook_directory, NOTEBOOK_PATH)
 
 
-async def test_syntax_error(capsys, http_server_client, syntax_error_notebook_url):
-    response = await http_server_client.fetch(syntax_error_notebook_url)
+async def test_syntax_error(http_server_client, base_url, wait_for_kernel):
+    await wait_for_kernel()
+    response = await http_server_client.fetch(base_url)
     assert response.code == 200
     output = response.body.decode('utf-8')
     assert 'There was an error when executing cell' in output

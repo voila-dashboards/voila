@@ -12,12 +12,12 @@ def voila_config_file_paths_arg():
 
 
 @pytest.fixture
-def voila_args(notebook_directory, voila_args_extra, voila_config_file_paths_arg):
-    return [
-        f"{notebook_directory}/pre_heat.ipynb",
-        "--VoilaTest.log_level=INFO", voila_config_file_paths_arg
-    ] + voila_args_extra 
+def preheat_mode():
+    return True
 
+@pytest.fixture
+def voila_notebook(notebook_directory):
+    return os.path.join(notebook_directory, 'pre_heat.ipynb')
 
 NOTEBOOK_EXECUTION_TIME = 2
 NUMBER_PREHEATED_KERNEL = 2
@@ -42,8 +42,9 @@ async def test_refill_kernel_asynchronously(http_server_client, base_url):
         else:
             slow.append(time)
     
-    assert len(fast) == 7
-    assert len(slow) == 3
+    assert len(fast) > 1
+    assert len(slow) > 1
+    assert len(fast) + len(slow) == 5*NUMBER_PREHEATED_KERNEL
 
 
 async def test_env_variable_defined_in_kernel(http_server_client, base_url):
