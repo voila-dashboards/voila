@@ -29,6 +29,8 @@ from .paths import collect_template_paths
 
 
 class NotebookRenderer(LoggingConfigurable):
+    """Render the notebook into HTML string."""    
+
     def __init__(self, **kwargs):
         super().__init__()
         self.root_dir = kwargs.get('root_dir', [])
@@ -154,12 +156,19 @@ class NotebookRenderer(LoggingConfigurable):
         def inner_cell_generator(nb, kernel_id):
             return self._jinja_cell_generator(nb, kernel_id, timeout_callback)
 
+        # These functions allow the start of a kernel and execution of the
+        # notebook after (parts of) the template has been rendered and send
+        # to the client to allow progressive rendering.
+        # Template should first call kernel_start, and then decide to use 
+        # notebook_executer cell_generator to implement progressive cell rendering
+
         extra_context = {
             'kernel_start': inner_kernel_start,
             'cell_generator': inner_cell_generator,
             'notebook_execute': self._jinja_notebook_execute,
         }
-
+        # render notebook in snippets, then return an iterator so we can flush
+        # them out to the browser progressively.
         return self.exporter.generate_from_notebook_node(
             self.notebook, resources=self.resources, extra_context=extra_context
         )
@@ -168,10 +177,9 @@ class NotebookRenderer(LoggingConfigurable):
         self,
         kernel_id: Union[str, None] = None,
         kernel_future=None,
-        path: Union[str, None] = None,
     ):
+        """Generate the HTML version of notebook."""
         html = ''
-        # render notebook in snippets, and flush them out to the browser can render progresssively
         async for html_snippet, _ in self.generate_html(kernel_id, kernel_future):
             html += html_snippet
         return html
@@ -201,9 +209,10 @@ class NotebookRenderer(LoggingConfigurable):
     async def _jinja_notebook_execute(self, nb, kernel_id):
 
         result = await self.executor.async_execute(cleanup_kc=False)
-        # we modify the notebook in place, since the nb variable cannot be reassigned it seems in jinja2
-        # e.g. if we do {% with nb = notebook_execute(nb, kernel_id) %}, the base template/blocks will not
-        # see the updated variable (it seems to be local to our block)
+        # we modify the notebook in place, since the nb variable cannot be 
+        # reassigned it seems in jinja2 e.g. if we do {% with nb = notebook_execute(nb, kernel_id) %}
+        # ,the base template/blocks will not see the updated variable
+        #  (it seems to be local to our block)
         nb.cells = result.cells
 
     async def _jinja_cell_generator(self, nb, kernel_id, timeout_callback):

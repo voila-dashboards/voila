@@ -27,6 +27,22 @@ async def wait_before(delay: float, aw : Awaitable) -> Awaitable:
 
 
 def voila_kernel_manager_factory(base_class: Type[T], preheat_kernel: Bool) -> T:
+    """
+    Decorator used to make a normal kernel manager compatible with pre-heated
+    kernel system.
+    - If `preheat_kernel` is `False`, only two properties 
+    `notebook_data` and `notebook_html` are added to keep `NotebookRenderer`
+    working, the kernel manager will work as it is.
+    - If `preheat_kernel` is `True`, the input class is transformed to
+     `VoilaKernelManager` with all the functionalities.
+
+    Args:
+        - base_class (Type[T]): The kernel manager class
+        - preheat_kernel (Bool): Flag to decorate the input class
+
+    Returns:
+        T: Decorated class
+    """    
     if not preheat_kernel:
 
         class NormalKernelManager(base_class):
@@ -38,6 +54,10 @@ def voila_kernel_manager_factory(base_class: Type[T], preheat_kernel: Bool) -> T
             def start_kernel(
                 self, kernel_name: Union[str, None] = None, **kwargs
             ) -> str:
+                """ Start a new kernel, because `NotebookRenderer` will call
+                this method with `need_refill` paramenter so it need to be 
+                removed before passing to the original `start_kernel`.
+                """            
                 kwargs.pop('need_refill', False)
                 return super().start_kernel(kernel_name=kernel_name, **kwargs)
 
@@ -76,12 +96,16 @@ def voila_kernel_manager_factory(base_class: Type[T], preheat_kernel: Bool) -> T
                 self.notebook_data: tDict = {}
                 self.notebook_html: tDict = {}
                 self._pools: tDict[str, Union[str, Coroutine[str]]] = {}
+
                 for key in self.kernel_pools_size:
                     self.fill_if_needed(delay=0, kernel_name=key)
 
             async def start_kernel(
                 self, kernel_name: Union[str, None] = None, **kwargs
             ) -> str:
+                """ Depend on `need_refill` flag, this method will pop a kernel from pool or start a new
+                kernel.
+                """             
                 need_refill = kwargs.pop('need_refill', False)
                 if kernel_name is None:
                     kernel_name = self.default_kernel_name
@@ -98,7 +122,16 @@ def voila_kernel_manager_factory(base_class: Type[T], preheat_kernel: Bool) -> T
 
             async def _pop_pooled_kernel(
                 self, kernel_name: Union[str, None], **kwargs
-            ) -> Coroutine[Any, Any, str]:
+            ) -> str:
+                """Return a pre-heated kernel's id from pool
+
+                Args:
+                    -kernel_name (Union[str, None]): Name of kernel
+                    pool
+
+                Returns:
+                    str: Kernel id.
+                """            
                 fut = self._pools[kernel_name].pop(0)
                 return await fut
 
@@ -108,7 +141,14 @@ def voila_kernel_manager_factory(base_class: Type[T], preheat_kernel: Bool) -> T
                 kernel_name: Union[str, None] = None,
                 **kwargs,
             ) -> None:
-                """Start kernels until pool is full"""
+                """Start kernels until the pool is full
+
+                Args:
+                    - delay (Union[float, None], optional): Delay time before
+                    starting refill kernel. Defaults to None.
+                    - kernel_name (Union[str, None], optional): Name of kernel pool.
+                    Defaults to None.
+                """                
                 delay = delay if delay is not None else self.fill_delay
                 try:
                     loop = asyncio.get_event_loop()
@@ -199,8 +239,10 @@ def voila_kernel_manager_factory(base_class: Type[T], preheat_kernel: Bool) -> T
                 return kernel_id
 
             async def cull_kernel_if_idle(self, kernel_id: str):
-                # Ensure we don't cull pooled kernels:
-                # (this logic assumes the init time is shorter than the cull time)
+                """Ensure we don't cull pooled kernels:
+                (this logic assumes the init time is shorter than the cull time)
+                """                
+
                 for pool in self._pools.values():
                     for i, f in enumerate(pool):
                         try:
@@ -213,7 +255,12 @@ def voila_kernel_manager_factory(base_class: Type[T], preheat_kernel: Bool) -> T
             def _notebook_renderer_factory(
                 self, notebook_path: Union[str, None] = None
             ) -> NotebookRenderer:
+                """Helper function to create `NotebookRenderer` instance.
 
+                Args:
+                    - notebook_path (Union[str, None], optional): Path to the 
+                    notebook. Defaults to None.
+                """                
                 return NotebookRenderer(
                     voila_configuration=self.parent.voila_configuration,
                     traitlet_config=self.parent.config,
