@@ -1,0 +1,14 @@
+{
+  "VoilaConfiguration": {
+    "preheat_kernel": true
+  },
+  "VoilaKernelManager": {
+    "kernel_pools_size": {
+      "python3": 2
+    },
+    "fill_delay": 0,
+    "kernel_env_variables": {
+      "foo": "bar"
+    }
+  }
+}

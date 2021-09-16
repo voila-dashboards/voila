@@ -165,7 +165,6 @@ class VoilaHandler(JupyterHandler):
             return False
         if theme is not None and rendered_theme != theme:
             return False
-
         args_list = [
             key for key in request_args if key not in ['voila-template', 'voila-theme']
         ]

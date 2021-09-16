@@ -52,7 +52,7 @@ def voila_kernel_manager_factory(base_class: Type[T], preheat_kernel: Bool) -> T
             """
 
             kernel_pools_size = Dict(
-                {'python3': 3},
+                {'python3': 1},
                 config=True,
                 help='Mapping from kernel name to the number of started kernels to keep on standby.'
             )
@@ -167,8 +167,9 @@ def voila_kernel_manager_factory(base_class: Type[T], preheat_kernel: Bool) -> T
                             kid = await fut
                         except Exception:
                             pass
-                        if kid in self:
-                            await ensure_async(self.shutdown_kernel(kid, *args, **kwargs)) 
+                        else:
+                            if kid in self:
+                                await ensure_async(self.shutdown_kernel(kid, *args, **kwargs)) 
 
             async def _initialize(self, kernel_id_future: str) -> str:
                 """Run any configured initialization code in the kernel"""
