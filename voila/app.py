@@ -60,7 +60,6 @@ from .configuration import VoilaConfiguration
 from .execute import VoilaExecutor
 from .exporter import VoilaExporter
 from .shutdown_kernel_handler import VoilaShutdownKernelHandler
-from .notebook_renderer import NotebookRenderer
 from .voila_kernel_manager import voila_kernel_manager_factory
 
 _kernel_id_regex = r"(?P<kernel_id>\w+-\w+-\w+-\w+-\w+)"

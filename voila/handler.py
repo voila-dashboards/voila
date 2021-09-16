@@ -73,9 +73,13 @@ class VoilaHandler(JupyterHandler):
         self.set_header('Cache-Control', 'no-cache, no-store, must-revalidate')
         self.set_header('Pragma', 'no-cache')
         self.set_header('Expires', '0')
-        # render notebook in snippets, and flush them out to the browser can render progresssively
-        notebook_html_dict: Dict = self.kernel_manager.notebook_html
-        notebook_data: Dict = self.kernel_manager.notebook_data.get(notebook_path, {})
+
+        try:
+            notebook_html_dict: Dict = self.kernel_manager.notebook_html
+            notebook_data: Dict = self.kernel_manager.notebook_data.get(notebook_path, {})
+        except:
+            # Extension mode
+            notebook_html_dict = notebook_data = {}
         # If we have a heated kernel in pool, use it
         if self.should_use_rendered_notebook(
             notebook_html_dict,

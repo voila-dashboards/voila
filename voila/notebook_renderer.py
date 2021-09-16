@@ -30,11 +30,11 @@ from .paths import collect_template_paths
 
 class NotebookRenderer(LoggingConfigurable):
     def __init__(self, **kwargs):
-        super().__init__()
+        super().__init__(**kwargs)
         self.root_dir = kwargs.get('root_dir', [])
         self.notebook_path = kwargs.get('notebook_path', [])  # should it be []
         self.template_paths = kwargs.get('template_paths', [])
-        self.traitlet_config = kwargs.get('config', None)
+        self.traitlet_config = kwargs.get('traitlet_config', None)
         self.voila_configuration = kwargs.get('voila_configuration')
         self.config_manager = kwargs.get('config_manager')
         self.contents_manager = kwargs.get('contents_manager')
@@ -262,6 +262,7 @@ class NotebookRenderer(LoggingConfigurable):
                 else:
                     output_cell.outputs = [
                         {
+                            'output_type': 'error',
                             'ename': type(e).__name__,
                             'evalue': str(e),
                             'traceback': traceback.format_exception(*sys.exc_info()),
