@@ -2,7 +2,7 @@ import asyncio
 import os
 import sys
 import traceback
-from typing import Dict, Union
+from typing import Callable, Dict, Union
 from tornado.httputil import split_host_and_port
 from .exporter import VoilaExporter
 from .paths import collect_template_paths
@@ -23,8 +23,11 @@ from .execute import VoilaExecutor, strip_code_cell_warnings
 from traitlets.config.configurable import LoggingConfigurable
 
 
+
 class NotebookRenderer(LoggingConfigurable):
     def __init__(self, **kwargs):
+        
+        super().__init__(**kwargs)
         self.notebook_path = kwargs.get("notebook_path", [])  # should it be []
         self.template_paths = kwargs.get("template_paths", [])
         self.traitlet_config = kwargs.get("config", None)
@@ -33,19 +36,15 @@ class NotebookRenderer(LoggingConfigurable):
         self.contents_manager = kwargs.get("contents_manager")
         self.kernel_manager = kwargs.get("kernel_manager")
         self.kernel_spec_manager = kwargs.get("kernel_spec_manager")
+        self.default_kernel_name = kwargs.get("kernel_spec_manager")
         self.base_url = "/"
         self.html = ""
         self.kernel_started = False
 
-    async def generate(
-        self,
-        kernel_id: Union[str, None] = None,
-        kernel_env: Union[Dict, None] = None,
-        path: Union[str, None] = None,
-    ):
-        # if the handler got a notebook_path argument, always serve that
-        notebook_path = self.notebook_path or path
+    async def initialize(self):
 
+        notebook_path = self.notebook_path
+        print("notebook", notebook_path)
         if self.voila_configuration.enable_nbextensions:
             # generate a list of nbextensions that are enabled for the classical notebook
             # a template can use that to load classical notebook extensions, but does not have to
@@ -62,9 +61,9 @@ class NotebookRenderer(LoggingConfigurable):
         else:
             nbextensions = []
 
-        notebook = await self.load_notebook(notebook_path)
+        self.notebook = await self.load_notebook(notebook_path)
 
-        if not notebook:
+        if not self.notebook:
             return
         self.cwd = os.path.dirname(notebook_path)
 
@@ -75,10 +74,10 @@ class NotebookRenderer(LoggingConfigurable):
         # query parameter
         template_override = None
         if (
-            "voila" in notebook.metadata
+            "voila" in self.notebook.metadata
             and self.voila_configuration.allow_template_override in ["YES", "NOTEBOOK"]
         ):
-            template_override = notebook.metadata["voila"].get("template")
+            template_override = self.notebook.metadata["voila"].get("template")
         if template_override:
             self.template_paths = collect_template_paths(
                 ["voila", "nbconvert"], template_override
@@ -87,13 +86,13 @@ class NotebookRenderer(LoggingConfigurable):
 
         theme = self.voila_configuration.theme
         if (
-            "voila" in notebook.metadata
+            "voila" in self.notebook.metadata
             and self.voila_configuration.allow_theme_override in ["YES", "NOTEBOOK"]
         ):
-            theme = notebook.metadata["voila"].get("theme", theme)
+            theme = self.notebook.metadata["voila"].get("theme", theme)
 
         # render notebook to html
-        resources = {
+        self.resources = {
             "base_url": "/",
             "nbextensions": nbextensions,
             "theme": theme,
@@ -115,7 +114,8 @@ class NotebookRenderer(LoggingConfigurable):
         if not isinstance(extra_resources, dict):
             extra_resources = extra_resources.to_dict()
         if extra_resources:
-            recursive_update(resources, extra_resources)
+            recursive_update(self.resources, extra_resources)
+
         self.exporter = VoilaExporter(
             template_paths=self.template_paths,
             template_name=template_name,
@@ -130,41 +130,59 @@ class NotebookRenderer(LoggingConfigurable):
             self.exporter.exclude_output_prompt = True
             self.exporter.exclude_input_prompt = True
 
-        # These functions allow the start of a kernel and execution of the notebook after (parts of) the template
-        # has been rendered and send to the client to allow progressive rendering.
-        # Template should first call kernel_start, and then decide to use notebook_execute
-        # or cell_generator to implement progressive cell rendering
+    def generate_html(
+        self,
+        kernel_id: Union[str, None] = None,
+        kernel_future = None,
+        timeout_callback: Union[Callable, None] = None,
+    ):
+        async def inner_kernel_start(nb):
+            return await self._jinja_kernel_start(nb, kernel_id, kernel_future)
 
-        async def inner(nb):
-            return await self.test(nb, kernel_id, kernel_env)
+        def inner_cell_generator(nb, kernel_id):
+            return self._jinja_cell_generator(nb, kernel_id, timeout_callback)
 
         extra_context = {
-            "kernel_start": inner,
-            "cell_generator": self._jinja_cell_generator,
+            "kernel_start": inner_kernel_start,
+            "cell_generator": inner_cell_generator,
             "notebook_execute": self._jinja_notebook_execute,
         }
+        return self.exporter.generate_from_notebook_node(
+            self.notebook, resources=self.resources, extra_context=extra_context
+        )
 
+    async def generate_html_str(
+        self,
+        kernel_id: Union[str, None] = None,
+        kernel_future = None,
+        path: Union[str, None] = None,
+    ):
         # render notebook in snippets, and flush them out to the browser can render progresssively
-        async for html_snippet, resources in self.exporter.generate_from_notebook_node(
-            notebook, resources=resources, extra_context=extra_context
-        ):
+        async for html_snippet, resources in self.generate_html(kernel_id, kernel_future):
             self.html += html_snippet
 
-    async def test(self, nb, kernel_id, kernel_env):
+    async def _jinja_kernel_start(self, nb, kernel_id, kernel_future):
         assert not self.kernel_started, "kernel was already started"
-        print("received", kernel_id)
-        if kernel_id is not None:
-            km = await ensure_async(self.kernel_manager.get_kernel(kernel_id))
-        else:
-            kernel_id: str = await ensure_async(
-                self.kernel_manager.start_kernel(
-                    kernel_name=nb.metadata.kernelspec.name,
-                    path=self.cwd,
-                    env=kernel_env,
-                )
-            )
-            km = await ensure_async(self.kernel_manager.get_kernel(kernel_id))
-            
+        # if kernel_id is not None:
+        #     km = await ensure_async(self.kernel_manager.get_kernel(kernel_id))
+        # else:
+        #     if isinstance(self.kernel_manager, VoilaKernelManager):
+        #         kernel_id: str = await ensure_async((self.kernel_manager.start_kernel(
+        #             kernel_name=nb.metadata.kernelspec.name,
+        #             path=self.cwd,
+        #             env=kernel_env,
+        #             need_refill=False
+        #         )))
+        #     else:
+        #         kernel_id: str = await ensure_async(
+        #             self.kernel_manager.start_kernel(
+        #                 kernel_name=nb.metadata.kernelspec.name,
+        #                 path=self.cwd,
+        #                 env=kernel_env,
+        #             )
+        #         )
+        #     km = await ensure_async(self.kernel_manager.get_kernel(kernel_id))
+        km = await ensure_async(kernel_future)
         self.executor = VoilaExecutor(
             nb,
             km=km,
@@ -181,31 +199,31 @@ class NotebookRenderer(LoggingConfigurable):
         )
         self.executor.kc.allow_stdin = False
         ###
-
+        self.kernel_started = True
         return kernel_id
 
-    async def _jinja_kernel_start(self, nb):
-        kernel_id = self.kernel_id
-        km = await ensure_async(self.kernel_manager.get_kernel(kernel_id))
+    # async def _jinja_kernel_start(self, nb):
+    #     kernel_id = self.kernel_id
+    #     km = await ensure_async(self.kernel_manager.get_kernel(kernel_id))
 
-        self.executor = VoilaExecutor(
-            nb,
-            km=km,
-            config=self.traitlet_config,
-            show_tracebacks=self.voila_configuration.show_tracebacks,
-        )
+    #     self.executor = VoilaExecutor(
+    #         nb,
+    #         km=km,
+    #         config=self.traitlet_config,
+    #         show_tracebacks=self.voila_configuration.show_tracebacks,
+    #     )
 
-        ###
-        # start kernel client
-        self.executor.kc = km.client()
-        await ensure_async(self.executor.kc.start_channels())
-        await ensure_async(
-            self.executor.kc.wait_for_ready(timeout=self.executor.startup_timeout)
-        )
-        self.executor.kc.allow_stdin = False
-        ###
+    #     ###
+    #     # start kernel client
+    #     self.executor.kc = km.client()
+    #     await ensure_async(self.executor.kc.start_channels())
+    #     await ensure_async(
+    #         self.executor.kc.wait_for_ready(timeout=self.executor.startup_timeout)
+    #     )
+    #     self.executor.kc.allow_stdin = False
+    #     ###
 
-        return kernel_id
+    #     return kernel_id
 
     async def _jinja_notebook_execute(self, nb, kernel_id):
         print(
@@ -217,10 +235,13 @@ class NotebookRenderer(LoggingConfigurable):
         # see the updated variable (it seems to be local to our block)
         nb.cells = result.cells
 
-    async def _jinja_cell_generator(self, nb, kernel_id):
+    async def _jinja_cell_generator(self, nb, kernel_id, timeout_callback):
         """Generator that will execute a single notebook cell at a time"""
         print(
-            "\033[91m" + "_jinja_cell_generator" + "\033[0m",
+            "\033[91m"
+            + "_jinja_cell_generator "
+            + str(self.voila_configuration.http_keep_alive_timeout)
+            + "\033[0m",
         )
         nb, resources = ClearOutputPreprocessor().preprocess(
             nb, {"metadata": {"path": self.cwd}}
@@ -240,8 +261,10 @@ class NotebookRenderer(LoggingConfigurable):
                         # If not done within the timeout, we send a heartbeat
                         # this is fundamentally to avoid browser/proxy read-timeouts, but
                         # can be used in a template to give feedback to a user
-                        self.write("<script>voila_heartbeat()</script>\n")
-                        self.flush()
+                        if timeout_callback is not None:
+                            timeout_callback()
+                        # self.write("<script>voila_heartbeat()</script>\n")
+                        # self.flush()
                         continue
                     output_cell = await task
                     break
@@ -307,7 +330,7 @@ class NotebookRenderer(LoggingConfigurable):
         if "kernelspec" not in notebook.metadata:
             notebook.metadata.kernelspec = nbformat.NotebookNode()
         kernelspec = notebook.metadata.kernelspec
-        kernel_name = kernelspec.get("name", self.kernel_manager.default_kernel_name)
+        kernel_name = kernelspec.get("name", self.default_kernel_name)
         # We use `maybe_future` to support RemoteKernelSpecManager
         all_kernel_specs = await ensure_async(self.kernel_spec_manager.get_all_specs())
         # Find a spec matching the language if the kernel name does not exist in the kernelspecs
