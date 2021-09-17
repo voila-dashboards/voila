@@ -186,7 +186,6 @@ def voila_kernel_manager_factory(base_class: Type[T], preheat_kernel: Bool) -> T
                     default_config = self.kernel_pools_size.get('default', {})
                     kernel_name = default_config.get('kernel', 'python3')
                     kernel_size = default_config.get('pool_size', 1)
-                self.log.info(f'Pre-heat {kernel_name} kernel for {notebook_name}')
                 pool = self._pools.get(notebook_name, [])
                 self._pools[notebook_name] = pool
                 if 'path' not in kwargs:
@@ -201,14 +200,14 @@ def voila_kernel_manager_factory(base_class: Type[T], preheat_kernel: Bool) -> T
                         kernel_env[key] = self.kernel_env_variables[key]
                 kwargs['env'] = kernel_env
 
-                unheated = kernel_size
+                heated = len(pool)
 
                 def task_counter(tk):
-                    nonlocal unheated
-                    unheated -= 1
-                    if (unheated == 0):
+                    nonlocal heated
+                    heated += 1
+                    if (heated == kernel_size):
                         self.log.info(
-                            'Pre-heated %s kernel(s) for notebook %s', kernel_size, notebook_name
+                            'Kernel pool of %s is filled with %s kernel(s)', notebook_name, kernel_size
                         )
 
                 for _ in range(kernel_size - len(pool)):
