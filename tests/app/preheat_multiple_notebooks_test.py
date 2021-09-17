@@ -21,7 +21,7 @@ def preheat_mode():
 
 @pytest.fixture
 def voila_notebook(notebook_directory):
-    return os.path.join(notebook_directory, 'preheat', 'pre_heat.ipynb')
+    return os.path.join(notebook_directory, 'preheat')
 
 
 async def send_request(sc, url, wait=0):
@@ -33,23 +33,17 @@ async def send_request(sc, url, wait=0):
     return real_time, html_text
 
 
-async def test_refill_kernel_asynchronously(http_server_client, base_url):
+async def test_render_notebook_with_heated_kernel(http_server_client, base_url):
     await asyncio.sleep(NUMBER_PREHEATED_KERNEL*NOTEBOOK_EXECUTION_TIME + 1)
-    fast = []
-    slow = []
-    for i in range(5*NUMBER_PREHEATED_KERNEL):
-        time, _ = await send_request(sc=http_server_client, url=base_url)
-        if time < 0.5:
-            fast.append(time)
-        else:
-            slow.append(time)
+    time, text = await send_request(sc=http_server_client, url=f'{base_url}voila/render/pre_heat.ipynb')
 
-    assert len(fast) > 1
-    assert len(slow) > 1
-    assert len(fast) + len(slow) == 5*NUMBER_PREHEATED_KERNEL
+    assert 'hello world' in text
+    assert time < 0.5
 
 
-async def test_env_variable_defined_in_kernel(http_server_client, base_url):
+async def test_render_blacklisted_notebook_with_nornal_kernel(http_server_client, base_url):
     await asyncio.sleep(NUMBER_PREHEATED_KERNEL*NOTEBOOK_EXECUTION_TIME + 1)
-    _, text = await send_request(sc=http_server_client, url=base_url)
-    assert "bar" in text
+    time, text = await send_request(sc=http_server_client, url=f'{base_url}voila/render/blacklisted.ipynb')
+
+    assert 'hello world' in text
+    assert time > 0.5

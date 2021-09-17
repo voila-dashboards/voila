@@ -11,7 +11,7 @@ def preheat_mode():
 
 @pytest.fixture
 def voila_notebook(notebook_directory):
-    return os.path.join(notebook_directory, 'pre_heat.ipynb')
+    return os.path.join(notebook_directory, 'preheat', 'pre_heat.ipynb')
 
 
 NOTEBOOK_EXECUTION_TIME = 2

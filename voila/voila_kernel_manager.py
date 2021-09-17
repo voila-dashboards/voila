@@ -13,9 +13,9 @@ import os
 from typing import Awaitable, Coroutine, Type, TypeVar, Union
 from typing import Dict as tDict
 from pathlib import Path
-from traitlets.traitlets import Bool, Dict, Float
+from traitlets.traitlets import Bool, Dict, Float, List
 from nbclient.util import ensure_async
-
+import re
 from .notebook_renderer import NotebookRenderer
 
 T = TypeVar('T')
@@ -77,6 +77,10 @@ def voila_kernel_manager_factory(base_class: Type[T], preheat_kernel: Bool) -> T
                 help='Mapping from notebook name to the number of started kernels to keep on standby.',
             )
 
+            preheat_blacklist = List([],
+                                     config=True,
+                                     help='List of notebooks which do not use pre-heated kernel.')
+
             fill_delay = Float(
                 1,
                 config=True,
@@ -95,16 +99,18 @@ def voila_kernel_manager_factory(base_class: Type[T], preheat_kernel: Bool) -> T
                 self.notebook_html: tDict = {}
                 self._pools: tDict[str, Union[str, Coroutine[str]]] = {}
                 self.root_dir = self.parent.root_dir
-                self.notebook_path = os.path.relpath(
+                print(self.parent.notebook_path, self.root_dir)
+                if self.parent.notebook_path is not None:
+                    self.notebook_path = os.path.relpath(
                         self.parent.notebook_path, self.root_dir
-                    )  
-                if self.notebook_path is not None:
+                    )
                     self.fill_if_needed(delay=0, notebook_name=self.notebook_path)
                 else:
+                    self.notebook_path = None
                     all_notebooks = [
                         x.relative_to(self.root_dir)
                         for x in list(Path(self.root_dir).rglob('*.ipynb'))
-                        if '.ipynb_checkpoints' not in str(x)
+                        if self._notebook_filter(x)
                     ]
                     for nb in all_notebooks:
                         self.fill_if_needed(delay=0, notebook_name=str(nb))
@@ -125,7 +131,7 @@ def voila_kernel_manager_factory(base_class: Type[T], preheat_kernel: Bool) -> T
                     and len(self._pools.get(need_refill, ())) > 0
                 ):
                     kernel_id = await self._pop_pooled_kernel(need_refill, **kwargs)
-                    self.log.info('Using pre-heated kernel: %s', kernel_id)
+                    self.log.info('Using pre-heated kernel: %s for %s', kernel_id, need_refill)
                     self.fill_if_needed(delay=None, notebook_name=need_refill, **kwargs)
                 else:
                     kernel_id = await super().start_kernel(
@@ -195,6 +201,16 @@ def voila_kernel_manager_factory(base_class: Type[T], preheat_kernel: Bool) -> T
                         kernel_env[key] = self.kernel_env_variables[key]
                 kwargs['env'] = kernel_env
 
+                unheated = kernel_size
+
+                def task_counter(tk):
+                    nonlocal unheated
+                    unheated -= 1
+                    if (unheated == 0):
+                        self.log.info(
+                            'Pre-heated %s kernel(s) for notebook %s', kernel_size, notebook_name
+                        )
+
                 for _ in range(kernel_size - len(pool)):
                     fut = super().start_kernel(kernel_name=kernel_name, **kwargs)
                     # Start the work on the loop immediately, so it is ready when needed:
@@ -202,6 +218,7 @@ def voila_kernel_manager_factory(base_class: Type[T], preheat_kernel: Bool) -> T
                         wait_before(delay, self._initialize(fut, notebook_name))
                     )
                     pool.append(task)
+                    task.add_done_callback(task_counter)
 
             async def restart_kernel(self, kernel_id: str, **kwargs) -> None:
                 await ensure_async(super().restart_kernel(kernel_id, **kwargs))
@@ -244,7 +261,7 @@ def voila_kernel_manager_factory(base_class: Type[T], preheat_kernel: Bool) -> T
                                 )
 
             async def _initialize(
-                self, kernel_id_future: str, notebook_path: str) -> str:
+                    self, kernel_id_future: str, notebook_path: str) -> str:
                 """Run any configured initialization code in the kernel"""
                 kernel_id = await kernel_id_future
                 gen = self._notebook_renderer_factory(notebook_path)
@@ -272,17 +289,6 @@ def voila_kernel_manager_factory(base_class: Type[T], preheat_kernel: Bool) -> T
                     'template': gen.template_name,
                     'theme': gen.theme,
                 }
-                heated_count = len(
-                    [
-                        val
-                        for val in self.notebook_html.values()
-                        if val[0] == notebook_path
-                    ]
-                )
-                self.log.info(
-                    'Pre-heated %s kernel for notebook %s', heated_count, notebook_path
-                )
-
                 return kernel_id
 
             async def cull_kernel_if_idle(self, kernel_id: str):
@@ -318,5 +324,15 @@ def voila_kernel_manager_factory(base_class: Type[T], preheat_kernel: Bool) -> T
                     base_url=self.parent.base_url,
                     kernel_spec_manager=self.parent.kernel_spec_manager,
                 )
+
+            def _notebook_filter(self, nb_path: Path) -> bool:
+                nb_name = str(nb_path)
+                if '.ipynb_checkpoints' in nb_name:
+                    return False
+                for nb_pattern in self.preheat_blacklist:
+                    pattern = re.compile(nb_pattern)
+                    if (nb_pattern in nb_name) or bool(pattern.match(nb_name)):
+                        return False
+                return True
 
     return VoilaKernelManager

@@ -3,6 +3,7 @@
     "preheat_kernel": true
   },
   "VoilaKernelManager": {
+    "preheat_blacklist": ["blacklisted.ipynb"],
     "kernel_pools_size": {
       "default": {
         "kernel": "python3",
