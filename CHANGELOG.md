@@ -2,6 +2,27 @@
 
 <!-- <START NEW CHANGELOG ENTRY> -->
 
+## 0.2.14
+
+([Full Changelog](https://github.com/voila-dashboards/voila/compare/v0.2.13...797e9218ebb83cb17e2dda2043a3643cfe1c5a9f))
+
+### Bugs fixed
+
+- Cleanup executor resources after execution [#969](https://github.com/voila-dashboards/voila/pull/969) ([@martinRenou](https://github.com/martinRenou))
+- Send kernel shutdown request manually on beforeunload [#612](https://github.com/voila-dashboards/voila/pull/612) ([@jtpio](https://github.com/jtpio))
+
+### Maintenance and upkeep improvements
+
+- Rename to `main` [#968](https://github.com/voila-dashboards/voila/pull/968) ([@jtpio](https://github.com/jtpio))
+
+### Contributors to this release
+
+([GitHub contributors page for this release](https://github.com/voila-dashboards/voila/graphs/contributors?from=2021-09-15&to=2021-09-17&type=c))
+
+[@github-actions](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Agithub-actions+updated%3A2021-09-15..2021-09-17&type=Issues) | [@jtpio](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Ajtpio+updated%3A2021-09-15..2021-09-17&type=Issues) | [@maartenbreddels](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Amaartenbreddels+updated%3A2021-09-15..2021-09-17&type=Issues) | [@martinRenou](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3AmartinRenou+updated%3A2021-09-15..2021-09-17&type=Issues) | [@vidartf](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Avidartf+updated%3A2021-09-15..2021-09-17&type=Issues)
+
+<!-- <END NEW CHANGELOG ENTRY> -->
+
 ## 0.2.13
 
 ([Full Changelog](https://github.com/voila-dashboards/voila/compare/0.2.12...a8811ef618bdaad42b0bd205831cee3b167ad0c2))
@@ -27,8 +48,6 @@
 ([GitHub contributors page for this release](https://github.com/voila-dashboards/voila/graphs/contributors?from=2021-09-10&to=2021-09-15&type=c))
 
 [@github-actions](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Agithub-actions+updated%3A2021-09-10..2021-09-15&type=Issues) | [@jtpio](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Ajtpio+updated%3A2021-09-10..2021-09-15&type=Issues) | [@trungleduc](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Atrungleduc+updated%3A2021-09-10..2021-09-15&type=Issues)
-
-<!-- <END NEW CHANGELOG ENTRY> -->
 
 ## 0.2.12
 
