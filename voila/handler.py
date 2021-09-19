@@ -75,30 +75,28 @@ class VoilaHandler(JupyterHandler):
         self.set_header('Expires', '0')
 
         try:
-            notebook_html_dict: Dict = self.kernel_manager.notebook_html
-            notebook_data: Dict = self.kernel_manager.notebook_data.get(notebook_path, {})
+            current_notebook_data: Dict = self.kernel_manager.notebook_data.get(notebook_path, {})
         except AttributeError:
             # Extension mode
-            notebook_html_dict = notebook_data = {}
+            current_notebook_data = {}
         # If we have a heated kernel in pool, use it
         if self.should_use_rendered_notebook(
-            notebook_html_dict,
-            notebook_data,
+            current_notebook_data,
             template_arg,
             theme_arg,
             self.request.arguments,
         ):
             kernel_id: str = await ensure_async(
                 self.kernel_manager.start_kernel(
-                    kernel_name=notebook_data['notebook'].metadata.kernelspec.name,
+                    kernel_name=current_notebook_data['notebook'].metadata.kernelspec.name,
                     path=cwd,
                     env=kernel_env,
                     need_refill=notebook_path,
                 )
             )
-            notebook_html = notebook_html_dict.pop(kernel_id, None)
-            if notebook_html is not None and notebook_html[0] == notebook_path:
-                self.write(notebook_html[1])
+            notebook_html = current_notebook_data.get('html', {}).pop(kernel_id, None)
+            if notebook_html is not None:
+                self.write(notebook_html)
                 self.flush()
         else:
             # All heated kernel used, instead of waitting,
@@ -124,7 +122,7 @@ class VoilaHandler(JupyterHandler):
 
                 self.write('<script>voila_heartbeat()</script>\n')
                 self.flush()
-
+                
             kernel_id = await ensure_async(
                 (
                     self.kernel_manager.start_kernel(
@@ -149,15 +147,14 @@ class VoilaHandler(JupyterHandler):
 
     def should_use_rendered_notebook(
         self,
-        notebook_html: Dict,
         notebook_data: Dict,
         template_name: str,
         theme: str,
         request_args: Dict,
     ) -> Bool:
-        if len(notebook_html) == 0 or len(notebook_data) == 0:
-            return False
 
+        if len(notebook_data.get('html', {})) == 0:
+            return False
         rendered_template = notebook_data.get('template')
         rendered_theme = notebook_data.get('theme')
         if template_name is not None and template_name != rendered_template:

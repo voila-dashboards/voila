@@ -49,7 +49,6 @@ def voila_kernel_manager_factory(base_class: Type[T], preheat_kernel: Bool) -> T
             def __init__(self, **kwargs) -> None:
                 super().__init__(**kwargs)
                 self.notebook_data: tDict = {}
-                self.notebook_html: tDict = {}
 
             def start_kernel(
                 self, kernel_name: Union[str, None] = None, **kwargs
@@ -96,7 +95,6 @@ def voila_kernel_manager_factory(base_class: Type[T], preheat_kernel: Bool) -> T
                 super().__init__(**kwargs)
                 self._wait_at_startup = True
                 self.notebook_data: tDict = {}
-                self.notebook_html: tDict = {}
                 self._pools: tDict[str, Union[str, Coroutine[str]]] = {}
                 self.root_dir = self.parent.root_dir
                 print(self.parent.notebook_path, self.root_dir)
@@ -207,7 +205,7 @@ def voila_kernel_manager_factory(base_class: Type[T], preheat_kernel: Bool) -> T
                     heated += 1
                     if (heated == kernel_size):
                         self.log.info(
-                            'Kernel pool of %s is filled with %s kernel(s)', notebook_name, kernel_size
+                            'Kernel pool of %s is filled with %s kernel(s), %s', notebook_name, kernel_size, self.notebook_data[notebook_name]['html'].keys()
                         )
 
                 for _ in range(kernel_size - len(pool)):
@@ -221,7 +219,7 @@ def voila_kernel_manager_factory(base_class: Type[T], preheat_kernel: Bool) -> T
 
             async def restart_kernel(self, kernel_id: str, **kwargs) -> None:
                 await ensure_async(super().restart_kernel(kernel_id, **kwargs))
-                notebook_name = self.notebook_html.get(kernel_id, [None, ''])[0]
+                notebook_name = self._get_notebook_from_kernel(kernel_id)
                 id_future = asyncio.Future()
                 id_future.set_result(kernel_id)
                 if notebook_name is not None:
@@ -236,7 +234,9 @@ def voila_kernel_manager_factory(base_class: Type[T], preheat_kernel: Bool) -> T
                     else:
                         continue
                     break
-                self.notebook_html.pop(kernel_id, None)
+                notebook_name = self._get_notebook_from_kernel(kernel_id)
+                if notebook_name is not None:
+                    self.notebook_data[notebook_name]['html'].pop(kernel_id, None)
                 return await ensure_async(
                     super().shutdown_kernel(kernel_id, *args, **kwargs)
                 )
@@ -279,15 +279,19 @@ def voila_kernel_manager_factory(base_class: Type[T], preheat_kernel: Bool) -> T
                     )
                     return kernel_id
                 kernel_future = self.get_kernel(kernel_id)
-                self.notebook_html[kernel_id] = [
-                    notebook_path,
-                    await gen.generate_html_str(kernel_id, kernel_future),
-                ]
-                self.notebook_data[gen.notebook_path] = {
-                    'notebook': gen.notebook,
-                    'template': gen.template_name,
-                    'theme': gen.theme,
-                }
+                content = await gen.generate_html_str(kernel_id, kernel_future)
+                if gen.notebook_path in self.notebook_data:
+                    print('adding to', gen.notebook_path)
+                    
+                    self.notebook_data[gen.notebook_path]['html'][kernel_id] = content
+                else:
+                    print('create new for', gen.notebook_path)
+                    self.notebook_data[gen.notebook_path] = {
+                        'notebook': gen.notebook,
+                        'template': gen.template_name,
+                        'theme': gen.theme,
+                        'html': {kernel_id: content}
+                    }
                 return kernel_id
 
             async def cull_kernel_if_idle(self, kernel_id: str):
@@ -325,6 +329,15 @@ def voila_kernel_manager_factory(base_class: Type[T], preheat_kernel: Bool) -> T
                 )
 
             def _notebook_filter(self, nb_path: Path) -> bool:
+                """Helper to filter blacklisted notebooks.
+
+                Args:
+                    nb_path (Path): Path to notebook
+
+                Returns:
+                    bool: return `True` if notebook is not in `ipynb_checkpoints` folder or 
+                    is blacklisted, `False` otherwise.
+                """                
                 nb_name = str(nb_path)
                 if '.ipynb_checkpoints' in nb_name:
                     return False
@@ -333,5 +346,21 @@ def voila_kernel_manager_factory(base_class: Type[T], preheat_kernel: Bool) -> T
                     if (nb_pattern in nb_name) or bool(pattern.match(nb_name)):
                         return False
                 return True
+
+            def _get_notebook_from_kernel(self, kernel_id: str) -> Union[None, str]:
+                """Helper to get notebook name from heated kernel id.
+
+                Args:
+                    kernel_id (str): Kernel id
+
+                Returns:
+                    Union[None, str]: return associated notebook with kernel id.
+                    
+                """                
+                for name in self.notebook_data:
+                    for kid in self.notebook_data[name].get('html', {}).keys():
+                        if kid == kernel_id:
+                            return name
+                return None
 
     return VoilaKernelManager
