@@ -4,15 +4,17 @@
   },
   "VoilaKernelManager": {
     "preheat_blacklist": ["blacklisted.ipynb"],
-    "kernel_pools_size": {
+    "kernel_pools_config": {
       "default": {
-        "kernel": "python3",
-        "pool_size": 2
+        "pool_size": 1
+      },
+      "pre_heat.ipynb": {
+        "pool_size": 2,
+        "kernel_env_variables": {
+          "foo": "bar"
+        }
       }
     },
-    "fill_delay": 0,
-    "kernel_env_variables": {
-      "foo": "bar"
-    }
+    "fill_delay": 0
   }
 }

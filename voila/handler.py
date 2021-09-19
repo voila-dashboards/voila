@@ -122,7 +122,7 @@ class VoilaHandler(JupyterHandler):
 
                 self.write('<script>voila_heartbeat()</script>\n')
                 self.flush()
-                
+
             kernel_id = await ensure_async(
                 (
                     self.kernel_manager.start_kernel(
