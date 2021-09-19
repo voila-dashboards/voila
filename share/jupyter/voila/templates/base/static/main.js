@@ -54,7 +54,7 @@ require([window.voila_js_url || 'static/voila'], function(voila) {
             const xsrfToken = (matches && matches[1]) || '';
             window.addEventListener('beforeunload', function (e) {
                 const xhttp = new XMLHttpRequest();
-                xhttp.open("DELETE", `/api/kernels/${kernel.id}`, false);
+                xhttp.open("DELETE", `/api/kernels/${kernel.id}`, true);
                 xhttp.setRequestHeader('X-XSRFToken', xsrfToken);
                 xhttp.send();
                 kernel.dispose();
