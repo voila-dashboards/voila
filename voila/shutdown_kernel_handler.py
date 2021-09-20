@@ -3,7 +3,7 @@ from jupyter_server.base.handlers import APIHandler
 
 
 class VoilaShutdownKernelHandler(APIHandler):
-    """ Handler to shutdown kernel on page's `beforeunload` event.
+    """ Handler to shut down kernel on page's `beforeunload` event.
     """
 
     @tornado.web.authenticated

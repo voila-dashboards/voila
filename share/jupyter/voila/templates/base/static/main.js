@@ -53,10 +53,9 @@ require([window.voila_js_url || 'static/voila'], function(voila) {
             const matches = document.cookie.match('\\b_xsrf=([^;]*)\\b');
             const xsrfToken = (matches && matches[1]) || '';
             window.addEventListener('beforeunload', function (e) {
-                const xhttp = new XMLHttpRequest();
-                xhttp.open("DELETE", `/api/kernels/${kernel.id}`, true);
-                xhttp.setRequestHeader('X-XSRFToken', xsrfToken);
-                xhttp.send();
+                const data = new FormData();
+                data.append("_xsrf", xsrfToken);
+                window.navigator.sendBeacon(`/voila/api/shutdown/${kernel.id}`, data);
                 kernel.dispose();
             });
             await widgetManager.build_widgets();
