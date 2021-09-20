@@ -113,6 +113,12 @@ class VoilaConfiguration(traitlets.config.Configurable):
     preheat_kernel = Bool(
         False,
         config=True,
-        help="""Configuration for VoilaKernelManager.
+        help="""Flag to enable or disable pre-heat kernel option.
+        """
+    )
+    default_pool_size = Int(
+        1,
+        config=True,
+        help="""Size of pre-heated kernel pool for each notebook. Zero or negative number means disabled.
         """
     )

@@ -13,7 +13,7 @@ import os
 from typing import Awaitable, Coroutine, Type, TypeVar, Union
 from typing import Dict as tDict
 from pathlib import Path
-from traitlets.traitlets import Bool, Dict, Float, List
+from traitlets.traitlets import Dict, Float, List, default
 from nbclient.util import ensure_async
 import re
 from .notebook_renderer import NotebookRenderer
@@ -26,7 +26,7 @@ async def wait_before(delay: float, aw: Awaitable) -> Awaitable:
     return await aw
 
 
-def voila_kernel_manager_factory(base_class: Type[T], preheat_kernel: Bool) -> T:
+def voila_kernel_manager_factory(base_class: Type[T], preheat_kernel: bool, default_pool_size: int) -> T:
     """
     Decorator used to make a normal kernel manager compatible with pre-heated
     kernel system.
@@ -71,7 +71,6 @@ def voila_kernel_manager_factory(base_class: Type[T], preheat_kernel: Bool) -> T
             """
 
             kernel_pools_config = Dict(
-                {'default': {'pool_size': 1, 'kernel_env_variables': {}}},
                 config=True,
                 help='''Mapping from notebook name to the kernel configuration
                 like: number of started kernels to keep on standby, environment
@@ -87,6 +86,10 @@ def voila_kernel_manager_factory(base_class: Type[T], preheat_kernel: Bool) -> T
                 config=True,
                 help='Wait time before re-filling the pool after a kernel is used',
             )
+
+            @default('kernel_pools_config')
+            def _kernel_pools_config(self):
+                return {'default': {'pool_size': max(default_pool_size, 0), 'kernel_env_variables': {}}}
 
             def __init__(self, **kwargs):
 

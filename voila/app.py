@@ -132,6 +132,7 @@ class Voila(Application):
         'enable_nbextensions': 'VoilaConfiguration.enable_nbextensions',
         'show_tracebacks': 'VoilaConfiguration.show_tracebacks',
         'preheat_kernel': 'VoilaConfiguration.preheat_kernel',
+        'pool_size': 'VoilaConfiguration.default_pool_size'
     }
     classes = [
         VoilaConfiguration,
@@ -416,10 +417,12 @@ class Voila(Application):
         read_config_path += [os.path.join(p, 'nbconfig') for p in jupyter_config_path()]
         self.config_manager = ConfigManager(parent=self, read_config_path=read_config_path)
         self.contents_manager = LargeFileManager(parent=self)
-        preheat_kernel = self.voila_configuration.preheat_kernel
+        preheat_kernel: bool = self.voila_configuration.preheat_kernel
+        pool_size: int = self.voila_configuration.default_pool_size
         kernel_manager_class = voila_kernel_manager_factory(
             self.voila_configuration.multi_kernel_manager_class,
-            preheat_kernel
+            preheat_kernel,
+            pool_size
             )
         self.kernel_manager = kernel_manager_class(
             parent=self,
