@@ -52,10 +52,12 @@ require([window.voila_js_url || 'static/voila'], function(voila) {
             // it seems if we attach this to early, it will not be called
             const matches = document.cookie.match('\\b_xsrf=([^;]*)\\b');
             const xsrfToken = (matches && matches[1]) || '';
+            const  configData = JSON.parse(document.getElementById('jupyter-config-data').textContent);
+            const baseUrl = configData.baseUrl;
             window.addEventListener('beforeunload', function (e) {
                 const data = new FormData();
                 data.append("_xsrf", xsrfToken);
-                window.navigator.sendBeacon(`/voila/api/shutdown/${kernel.id}`, data);
+                window.navigator.sendBeacon(`${baseUrl}voila/api/shutdown/${kernel.id}`, data);
                 kernel.dispose();
             });
             await widgetManager.build_widgets();
