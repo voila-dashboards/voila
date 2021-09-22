@@ -1,7 +1,8 @@
 import re
 
 
-async def test_shutdown_handler(http_server_client, base_url):
+async def test_shutdown_handler(http_server_client, base_url, wait_for_kernel):
+    await wait_for_kernel()
     response = await http_server_client.fetch(base_url)
     html_text = response.body.decode('utf-8')
     pattern = r"""kernelId": ["']([0-9a-zA-Z-]+)["']"""
