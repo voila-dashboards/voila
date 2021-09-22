@@ -59,6 +59,7 @@ from .static_file_handler import MultiStaticFileHandler, TemplateStaticFileHandl
 from .configuration import VoilaConfiguration
 from .execute import VoilaExecutor
 from .exporter import VoilaExporter
+from .shutdown_kernel_handler import VoilaShutdownKernelHandler
 
 _kernel_id_regex = r"(?P<kernel_id>\w+-\w+-\w+-\w+-\w+)"
 
@@ -470,6 +471,7 @@ class Voila(Application):
                     'default_filename': 'index.html'
                 },
             ),
+            (url_path_join(self.server_url, r'/voila/api/shutdown/(.*)'), VoilaShutdownKernelHandler)
         ])
 
         # Serving notebook extensions
