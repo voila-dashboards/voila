@@ -8,5 +8,5 @@ dependencies:
   - scipy
   - ipympl
   - ipympl
-  - xleaflet=0.14.0
-  - xeus-cling=0.12.1
+  - xleaflet=0.16.0
+  - xeus-cling=0.13.0
