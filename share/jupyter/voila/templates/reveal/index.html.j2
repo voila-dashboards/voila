@@ -17,16 +17,6 @@
     <script src="{{ resources.jquery_url }}"></script>
   {%- endblock html_head_js_jquery -%}
 
-  {# html_head_css block is missing in the base reveal template #}
-  {# This can be moved outside of html_head_js as soon as we can require a version of nbconvert includes https://github.com/jupyter/nbconvert/pull/1620 #}
-  {%- block html_head_css -%}
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@^5/css/all.min.css" type="text/css" />
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@^5/css/v4-shims.min.css" type="text/css" />
-    {{ resources.include_css("static/materialcolors.css") }}
-    {{ resources.include_css("static/labvariables.css") }}
-    {# super() #}
-  {%- endblock html_head_css -%}
-
   {% block notebook_execute %}
     {%- set kernel_id = kernel_start(nb) -%}
     <script id="jupyter-config-data" type="application/json">
@@ -40,6 +30,14 @@
   {%- endblock notebook_execute -%}
 
 {%- endblock html_head_js -%}
+
+{%- block html_head_css -%}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@^5/css/all.min.css" type="text/css" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@^5/css/v4-shims.min.css" type="text/css" />
+  {{ resources.include_css("static/materialcolors.css") }}
+  {{ resources.include_css("static/labvariables.css") }}
+  {{ super() }}
+{%- endblock html_head_css -%}
 
 {% block body_header %}
   <body data-base-url="{{resources.base_url}}voila/">
