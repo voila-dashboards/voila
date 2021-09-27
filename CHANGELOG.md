@@ -8,7 +8,7 @@
 
 ### Bugs fixed
 
--  Use `sendBeacon` to send kernel shutdown request. [#972](https://github.com/voila-dashboards/voila/pull/972) ([@trungleduc](https://github.com/trungleduc))
+- Use `sendBeacon` to send kernel shutdown request. [#972](https://github.com/voila-dashboards/voila/pull/972) ([@trungleduc](https://github.com/trungleduc))
 
 ### Other merged PRs
 
