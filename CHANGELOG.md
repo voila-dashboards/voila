@@ -2,6 +2,26 @@
 
 <!-- <START NEW CHANGELOG ENTRY> -->
 
+## 0.2.25
+
+([Full Changelog](https://github.com/voila-dashboards/voila/compare/v0.2.14...8a488cf81e747b0767137267d7bebffaa2a4bbad))
+
+### Bugs fixed
+
+-  Use `sendBeacon` to send kernel shutdown request. [#972](https://github.com/voila-dashboards/voila/pull/972) ([@trungleduc](https://github.com/trungleduc))
+
+### Other merged PRs
+
+- Update to nbconvert 6.2 [#980](https://github.com/voila-dashboards/voila/pull/980) ([@SylvainCorlay](https://github.com/SylvainCorlay))
+
+### Contributors to this release
+
+([GitHub contributors page for this release](https://github.com/voila-dashboards/voila/graphs/contributors?from=2021-09-17&to=2021-09-25&type=c))
+
+[@github-actions](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Agithub-actions+updated%3A2021-09-17..2021-09-25&type=Issues) | [@jtpio](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Ajtpio+updated%3A2021-09-17..2021-09-25&type=Issues) | [@SylvainCorlay](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3ASylvainCorlay+updated%3A2021-09-17..2021-09-25&type=Issues) | [@trungleduc](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Atrungleduc+updated%3A2021-09-17..2021-09-25&type=Issues)
+
+<!-- <END NEW CHANGELOG ENTRY> -->
+
 ## 0.2.14
 
 ([Full Changelog](https://github.com/voila-dashboards/voila/compare/v0.2.13...797e9218ebb83cb17e2dda2043a3643cfe1c5a9f))
@@ -21,7 +41,6 @@
 
 [@github-actions](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Agithub-actions+updated%3A2021-09-15..2021-09-17&type=Issues) | [@jtpio](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Ajtpio+updated%3A2021-09-15..2021-09-17&type=Issues) | [@maartenbreddels](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Amaartenbreddels+updated%3A2021-09-15..2021-09-17&type=Issues) | [@martinRenou](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3AmartinRenou+updated%3A2021-09-15..2021-09-17&type=Issues) | [@vidartf](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Avidartf+updated%3A2021-09-15..2021-09-17&type=Issues)
 
-<!-- <END NEW CHANGELOG ENTRY> -->
 
 ## 0.2.13
 
