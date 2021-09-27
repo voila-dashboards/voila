@@ -2,7 +2,7 @@
 
 <!-- <START NEW CHANGELOG ENTRY> -->
 
-## 0.2.25
+## 0.2.15
 
 ([Full Changelog](https://github.com/voila-dashboards/voila/compare/v0.2.14...8a488cf81e747b0767137267d7bebffaa2a4bbad))
 
@@ -40,7 +40,6 @@
 ([GitHub contributors page for this release](https://github.com/voila-dashboards/voila/graphs/contributors?from=2021-09-15&to=2021-09-17&type=c))
 
 [@github-actions](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Agithub-actions+updated%3A2021-09-15..2021-09-17&type=Issues) | [@jtpio](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Ajtpio+updated%3A2021-09-15..2021-09-17&type=Issues) | [@maartenbreddels](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Amaartenbreddels+updated%3A2021-09-15..2021-09-17&type=Issues) | [@martinRenou](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3AmartinRenou+updated%3A2021-09-15..2021-09-17&type=Issues) | [@vidartf](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Avidartf+updated%3A2021-09-15..2021-09-17&type=Issues)
-
 
 ## 0.2.13
 
