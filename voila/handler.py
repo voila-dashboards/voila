@@ -229,7 +229,7 @@ class VoilaHandler(JupyterHandler):
                     self.executor.strip_code_cell_errors(input_cell)
                 output_cell = input_cell
                 break
-            except Exception as e:
+            except BaseException as e:
                 self.log.exception('Error at server while executing cell: %r', input_cell)
                 output_cell = nbformat.v4.new_code_cell()
                 if self.executor.should_strip_error():
