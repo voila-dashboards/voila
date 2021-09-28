@@ -1,0 +1,5 @@
+{
+  "load_extensions": {
+    "missing_module_widget/extension": true
+  }
+}

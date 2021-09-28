@@ -1,5 +1,10 @@
 {
   "extends": "./tsconfigbase",
-  "include": ["packages/**/*", "lint-staged.config.js", "ui-tests"],
+  "include": [
+    "packages/**/*",
+    "lint-staged.config.js",
+    "ui-tests",
+    "tests/widget_lib/missing_module_widget"
+  ],
   "types": ["jest"]
 }

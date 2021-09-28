@@ -1,0 +1,24 @@
+include README.md
+
+include pyproject.toml
+
+include tsconfig.json
+include package.json
+include webpack.config.js
+include missing_module_widget/labextension/*.tgz
+
+
+# Javascript files
+graft missing_module_widget/nbextension
+graft src
+graft css
+prune **/node_modules
+prune coverage
+prune lib
+
+# Patterns to exclude from any directory
+global-exclude *~
+global-exclude *.pyc
+global-exclude *.pyo
+global-exclude .git
+global-exclude .ipynb_checkpoints
