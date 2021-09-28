@@ -36,15 +36,14 @@ export class ExampleModel extends DOMWidgetModel {
 }
 
 export class ExampleView extends DOMWidgetView {
-  render() {
+  render(): void {
     this.el.classList.add('custom-widget');
-    console.log('trung');
-
+    throw new Error('Module not found');
     this.value_changed();
     this.model.on('change:value', this.value_changed, this);
   }
 
-  value_changed() {
+  value_changed(): void {
     this.el.textContent = this.model.get('value');
   }
 }
