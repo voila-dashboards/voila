@@ -24,3 +24,4 @@ coverage
 .vscode/
 
 ui-tests/playwright-report
+tests/widget_lib/**/extension.js

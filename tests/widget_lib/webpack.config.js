@@ -27,7 +27,7 @@ module.exports = [
     entry: './src/extension.ts',
     output: {
       filename: 'index.js',
-      path: path.resolve(__dirname, 'missing_module_widget', 'nbextension'),
+      path: path.resolve(__dirname, 'widget_lib', 'nbextension'),
       libraryTarget: 'amd',
       publicPath: ''
     },
@@ -40,7 +40,7 @@ module.exports = [
   },
 
   /**
-   * Embeddable missing_module_widget bundle
+   * Embeddable widget_lib bundle
    *
    * This bundle is almost identical to the notebook extension bundle. The only
    * difference is in the configuration of the webpack public path for the
@@ -55,9 +55,8 @@ module.exports = [
       filename: 'index.js',
       path: path.resolve(__dirname, 'dist'),
       libraryTarget: 'amd',
-      library: 'missing_module_widget',
-      publicPath:
-        'https://unpkg.com/missing_module_widget@' + version + '/dist/'
+      library: 'widget_lib',
+      publicPath: 'https://unpkg.com/widget_lib@' + version + '/dist/'
     },
     devtool: 'source-map',
     module: {
@@ -77,7 +76,7 @@ module.exports = [
     output: {
       filename: 'embed-bundle.js',
       path: path.resolve(__dirname, 'docs', 'source', '_static'),
-      library: 'missing_module_widget',
+      library: 'widget_lib',
       libraryTarget: 'amd'
     },
     module: {

@@ -44,4 +44,4 @@ ui-tests/jlab_root
 
 tests/widget_lib/**/docs
 tests/widget_lib/**/labextension
-tests/widget_lib/**/nbextension
+tests/widget_lib/**/nbextension/index.*

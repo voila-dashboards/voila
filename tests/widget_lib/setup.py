@@ -26,7 +26,7 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 
 
 # The name of the project
-name = 'missing_module_widget'
+name = 'widget_lib'
 
 # Get the version
 version = get_version(pjoin(name, '_version.py'))
@@ -48,10 +48,10 @@ package_data_spec = {
 
 
 data_files_spec = [
-    ('share/jupyter/nbextensions/missing_module_widget', 'missing_module_widget/nbextension', '**'),
-    ('share/jupyter/labextensions/missing_module_widget', 'missing_module_widget/labextension', '**'),
-    ('share/jupyter/labextensions/missing_module_widget', '.', 'install.json'),
-    ('etc/jupyter/nbconfig/notebook.d', '.', 'missing_module_widget.json'),
+    ('share/jupyter/nbextensions/widget_lib', 'widget_lib/nbextension', '**'),
+    ('share/jupyter/labextensions/widget_lib', 'widget_lib/labextension', '**'),
+    ('share/jupyter/labextensions/widget_lib', '.', 'install.json'),
+    ('etc/jupyter/nbconfig/notebook.d', '.', 'widget_lib.json'),
 ]
 
 
@@ -66,14 +66,14 @@ cmdclass['jsdeps'] = skip_if_exists(jstargets, npm_install)
 
 setup_args = dict(
     name            = name,
-    description     = 'A Bugged Widget',
+    description     = 'A custom Jupyter Widget library for testing Voila',
     version         = version,
     scripts         = glob(pjoin('scripts', '*')),
     cmdclass        = cmdclass,
     packages        = find_packages(),
-    author          = '',
+    author          = 'Trung Le',
     author_email    = '',
-    url             = 'https://github.com//missing_module_widget',
+    url             = 'https://github.com//widget_lib',
     license         = 'BSD',
     platforms       = "Linux, Mac OS X, Windows",
     keywords        = ['Jupyter', 'Widgets', 'IPython'],

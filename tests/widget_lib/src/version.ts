@@ -1,4 +1,4 @@
-// Copyright (c)
+// Copyright (c) Trung Le
 // Distributed under the terms of the Modified BSD License.
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment

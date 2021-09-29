@@ -1,15 +1,16 @@
-include README.md
+include LICENSE.txt
 
 include pyproject.toml
+
 
 include tsconfig.json
 include package.json
 include webpack.config.js
-include missing_module_widget/labextension/*.tgz
+include widget_lib/labextension/*.tgz
 
 
 # Javascript files
-graft missing_module_widget/nbextension
+graft widget_lib/nbextension
 graft src
 graft css
 prune **/node_modules

@@ -1,4 +1,4 @@
-// Copyright (c)
+// Copyright (c) Trung Le
 // Distributed under the terms of the Modified BSD License.
 
 import { Application, IPlugin } from '@phosphor/application';
@@ -11,7 +11,7 @@ import * as widgetExports from './widget';
 
 import { MODULE_NAME, MODULE_VERSION } from './version';
 
-const EXTENSION_ID = 'missing_module_widget:plugin';
+const EXTENSION_ID = 'widget_lib:plugin';
 
 /**
  * The example plugin.

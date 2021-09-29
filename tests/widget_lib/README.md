@@ -1,23 +1,23 @@
-# missing_module_widget
+# widget_lib
 
-[![Build Status](https://travis-ci.org//missing_module_widget.svg?branch=master)](https://travis-ci.org//missing_module_widget)
-[![codecov](https://codecov.io/gh//missing_module_widget/branch/master/graph/badge.svg)](https://codecov.io/gh//missing_module_widget)
+[![Build Status](https://travis-ci.org//widget_lib.svg?branch=master)](https://travis-ci.org//widget_lib)
+[![codecov](https://codecov.io/gh//widget_lib/branch/master/graph/badge.svg)](https://codecov.io/gh//widget_lib)
 
-A Bugged Widget
+A custom Jupyter Widget library for testing Voila
 
 ## Installation
 
 You can install using `pip`:
 
 ```bash
-pip install missing_module_widget
+pip install widget_lib
 ```
 
 If you are using Jupyter Notebook 5.2 or earlier, you may also need to enable
 the nbextension:
 
 ```bash
-jupyter nbextension enable --py [--sys-prefix|--user|--system] missing_module_widget
+jupyter nbextension enable --py [--sys-prefix|--user|--system] widget_lib
 ```
 
 ## Development Installation
@@ -25,8 +25,8 @@ jupyter nbextension enable --py [--sys-prefix|--user|--system] missing_module_wi
 Create a dev environment:
 
 ```bash
-conda create -n missing_module_widget-dev -c conda-forge nodejs yarn python jupyterlab
-conda activate missing_module_widget-dev
+conda create -n widget_lib-dev -c conda-forge nodejs yarn python jupyterlab
+conda activate widget_lib-dev
 ```
 
 Install the python. This will also build the TS package.
@@ -46,8 +46,8 @@ yarn run build
 For classic notebook, you need to run:
 
 ```
-jupyter nbextension install --sys-prefix --symlink --overwrite --py missing_module_widget
-jupyter nbextension enable --sys-prefix --py missing_module_widget
+jupyter nbextension install --sys-prefix --symlink --overwrite --py widget_lib
+jupyter nbextension enable --sys-prefix --py widget_lib
 ```
 
 Note that the `--symlink` flag doesn't work on Windows, so you will here have to run

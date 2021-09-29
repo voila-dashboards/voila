@@ -1,5 +1,0 @@
-{
-  "packageManager": "python",
-  "packageName": "missing_module_widget",
-  "uninstallInstructions": "Use your Python package manager (pip, conda, etc.) to uninstall the package missing_module_widget"
-}

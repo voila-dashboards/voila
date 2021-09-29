@@ -1,12 +1,11 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# Copyright (c) .
+# Copyright (c) Trung Le.
 # Distributed under the terms of the Modified BSD License.
 
 from .example import ExampleWidget
 from ._version import __version__, version_info
-
 
 def _jupyter_labextension_paths():
     """Called by Jupyter Lab Server to detect if it is a valid labextension and
@@ -22,7 +21,7 @@ def _jupyter_labextension_paths():
     """
     return [{
         'src': 'labextension',
-        'dest': 'missing_module_widget',
+        'dest': 'widget_lib',
     }]
 
 
@@ -45,6 +44,6 @@ def _jupyter_nbextension_paths():
     return [{
         'section': 'notebook',
         'src': 'nbextension',
-        'dest': 'missing_module_widget',
-        'require': 'missing_module_widget/extension'
+        'dest': 'widget_lib',
+        'require': 'widget_lib/extension'
     }]

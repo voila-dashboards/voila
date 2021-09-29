@@ -1,4 +1,4 @@
-// Copyright (c)
+// Copyright (c) Trung Le
 // Distributed under the terms of the Modified BSD License.
 
 import {
@@ -25,25 +25,26 @@ export class ExampleModel extends DOMWidgetModel {
 
   static serializers: ISerializers = {
     ...DOMWidgetModel.serializers
+    // Add any extra serializers here
   };
 
   static model_name = 'ExampleModel';
   static model_module = MODULE_NAME;
   static model_module_version = MODULE_VERSION;
-  static view_name = 'ExampleView';
-  static view_module = MODULE_NAME;
+  static view_name = 'ExampleView'; // Set to null if no view
+  static view_module = MODULE_NAME; // Set to null if no view
   static view_module_version = MODULE_VERSION;
 }
 
 export class ExampleView extends DOMWidgetView {
-  render(): void {
+  render() {
     this.el.classList.add('custom-widget');
-    throw new Error('Module not found');
+
     this.value_changed();
     this.model.on('change:value', this.value_changed, this);
   }
 
-  value_changed(): void {
+  value_changed() {
     this.el.textContent = this.model.get('value');
   }
 }

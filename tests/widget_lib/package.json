@@ -1,7 +1,7 @@
 {
-  "name": "missing_module_widget",
+  "name": "widget_lib",
   "version": "0.1.0",
-  "description": "A Bugged Widget",
+  "description": "A custom Jupyter Widget library for testing Voila",
   "keywords": [
     "jupyter",
     "jupyterlab",
@@ -13,8 +13,21 @@
     "dist/*.js",
     "css/*.css"
   ],
+  "homepage": "https://github.com//widget_lib",
+  "bugs": {
+    "url": "https://github.com//widget_lib/issues"
+  },
+  "license": "BSD-3-Clause",
+  "author": {
+    "name": "Trung Le",
+    "email": ""
+  },
   "main": "lib/index.js",
   "types": "./lib/index.d.ts",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com//widget_lib"
+  },
   "scripts": {
     "build": "yarn run build:lib && yarn run build:nbextension && yarn run build:labextension:dev",
     "build:prod": "yarn run build:lib && yarn run build:nbextension && yarn run build:labextension",
@@ -24,8 +37,8 @@
     "build:nbextension": "webpack",
     "clean": "yarn run clean:lib && yarn run clean:nbextension && yarn run clean:labextension",
     "clean:lib": "rimraf lib",
-    "clean:labextension": "rimraf missing_module_widget/labextension",
-    "clean:nbextension": "rimraf missing_module_widget/nbextension/static/index.js",
+    "clean:labextension": "rimraf widget_lib/labextension",
+    "clean:nbextension": "rimraf widget_lib/nbextension/static/index.js",
     "lint": "eslint . --ext .ts,.tsx --fix",
     "lint:check": "eslint . --ext .ts,.tsx",
     "prepack": "yarn run build:lib",
@@ -70,7 +83,7 @@
   },
   "jupyterlab": {
     "extension": "lib/plugin",
-    "outputDir": "missing_module_widget/labextension/",
+    "outputDir": "widget_lib/labextension/",
     "sharedPackages": {
       "@jupyter-widgets/base": {
         "bundled": false,
