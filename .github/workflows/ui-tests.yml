@@ -26,12 +26,8 @@ jobs:
           jupyter labextension develop . --overwrite
           cd ui-tests
           jlpm install --frozen-lockfile
-
-      - name: Launch Voila
-        run: |
-          cd ui-tests
-          # Mount a volume to overwrite the server configuration
-          jlpm start 2>&1 > /tmp/jupyterlab_server.log &
+          cd ../tests/widget_lib
+          pip install .
 
       - name: Install browser
         run: |
@@ -39,7 +35,31 @@ jobs:
           # Install only Chromium browser
           jlpm playwright install chromium
 
-      - name: Wait for JupyterLab
+      - name: Launch Voila stability test server
+        run: |
+          cd ui-tests
+          jlpm start-stability 2>&1 > /tmp/jupyterlab_server.log &          
+
+      - name: Wait for Voila
+        uses: ifaxity/wait-on-action@v1
+        with:
+          resource: http-get://localhost:8868/
+          timeout: 360000
+
+      - uses: iterative/setup-cml@v1
+      - name: Test-stability
+        shell: bash
+        run: |
+          cd ui-tests
+          jlpm run test-stability
+
+      - name: Launch Voila
+        run: |
+          cd ui-tests
+          # Mount a volume to overwrite the server configuration
+          jlpm start 2>&1 > /tmp/jupyterlab_server.log &
+
+      - name: Wait for Voila
         uses: ifaxity/wait-on-action@v1
         with:
           resource: http-get://localhost:8866/

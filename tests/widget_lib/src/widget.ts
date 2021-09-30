@@ -9,42 +9,64 @@ import {
 
 import { MODULE_NAME, MODULE_VERSION } from './version';
 
-export class ExampleModel extends DOMWidgetModel {
+export class RenderErrorModel extends DOMWidgetModel {
   defaults() {
     return {
       ...super.defaults(),
-      _model_name: ExampleModel.model_name,
-      _model_module: ExampleModel.model_module,
-      _model_module_version: ExampleModel.model_module_version,
-      _view_name: ExampleModel.view_name,
-      _view_module: ExampleModel.view_module,
-      _view_module_version: ExampleModel.view_module_version,
+      _model_name: RenderErrorModel.model_name,
+      _model_module: MODULE_NAME,
+      _model_module_version: MODULE_VERSION,
+      _view_name: RenderErrorModel.view_name,
+      _view_module: MODULE_NAME,
+      _view_module_version: MODULE_VERSION,
       value: 'Hello World'
     };
   }
 
   static serializers: ISerializers = {
     ...DOMWidgetModel.serializers
-    // Add any extra serializers here
   };
 
-  static model_name = 'ExampleModel';
-  static model_module = MODULE_NAME;
-  static model_module_version = MODULE_VERSION;
-  static view_name = 'ExampleView'; // Set to null if no view
-  static view_module = MODULE_NAME; // Set to null if no view
-  static view_module_version = MODULE_VERSION;
+  static model_name = 'RenderErrorModel';
+  static view_name = 'RenderErrorView';
 }
 
-export class ExampleView extends DOMWidgetView {
-  render() {
+export class RenderErrorView extends DOMWidgetView {
+  render(): void {
     this.el.classList.add('custom-widget');
+    throw Error('Failed to render widget');
+  }
+}
 
-    this.value_changed();
-    this.model.on('change:value', this.value_changed, this);
+export class ModuleErrorModel extends DOMWidgetModel {
+  defaults() {
+    return {
+      ...super.defaults(),
+      _model_name: ModuleErrorModel.model_name,
+      _model_module: MODULE_NAME,
+      _model_module_version: MODULE_VERSION,
+      _view_name: ModuleErrorModel.view_name,
+      _view_module: MODULE_NAME,
+      _view_module_version: MODULE_VERSION,
+      value: 'Hello World'
+    };
   }
 
-  value_changed() {
+  initialize(): void {
+    throw Error('Failed to initialize model.');
+  }
+
+  static serializers: ISerializers = {
+    ...DOMWidgetModel.serializers
+  };
+
+  static model_name = 'ModuleErrorModel';
+  static view_name = 'ModuleErrorView';
+}
+
+export class ModuleErrorView extends DOMWidgetView {
+  render(): void {
+    this.el.classList.add('custom-widget');
     this.el.textContent = this.model.get('value');
   }
 }
