@@ -21,6 +21,7 @@ from nbclient.exceptions import CellExecutionError
 from nbclient.util import ensure_async
 from nbconvert.preprocessors import ClearOutputPreprocessor
 from traitlets.config.configurable import LoggingConfigurable
+from fps_kernels.kernel_server.server import KernelServer, kernels, connect_channel
 
 from .execute import VoilaExecutor, strip_code_cell_warnings
 from .exporter import VoilaExporter
@@ -31,8 +32,9 @@ from .utils import ENV_VARIABLE
 class NotebookRenderer(LoggingConfigurable):
     """Render the notebook into HTML string."""
 
-    def __init__(self, **kwargs):
+    def __init__(self, is_fps, **kwargs):
         super().__init__()
+        self.is_fps = is_fps
         self.root_dir = kwargs.get('root_dir', [])
         self.notebook_path = kwargs.get('notebook_path', [])  # should it be []
         self.template_paths = kwargs.get('template_paths', [])
@@ -207,6 +209,24 @@ class NotebookRenderer(LoggingConfigurable):
     async def _jinja_kernel_start(self, nb, kernel_id, kernel_future):
         assert not self.kernel_started, 'kernel was already started'
         km = await ensure_async(kernel_future)
+        if self.is_fps:
+            connection_cfg = km.get_connection_info()
+            connection_cfg["key"] = connection_cfg["key"].decode()
+            kernel_server = KernelServer(connection_cfg=connection_cfg, write_connection_file=False)
+            kernel_server.last_activity = {
+                "date": "2021-09-29T15:21:51.913303Z",
+                "execution_state": "idle",
+            }
+            kernel_server.shell_channel = connect_channel("shell", connection_cfg)
+            kernel_server.iopub_channel = connect_channel("iopub", connection_cfg)
+            kernel_server.control_channel = connect_channel("control", connection_cfg)
+            asyncio.ensure_future(kernel_server.listen_shell())
+            asyncio.ensure_future(kernel_server.listen_iopub())
+            asyncio.ensure_future(kernel_server.listen_control())
+            kernels[kernel_id] = {
+                "name": nb.metadata.kernelspec.name,
+                "server": kernel_server,
+            }
         self.executor = VoilaExecutor(
             nb,
             km=km,

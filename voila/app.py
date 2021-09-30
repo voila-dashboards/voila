@@ -45,6 +45,9 @@ from jupyter_server.config_manager import recursive_update
 from jupyter_server.utils import url_path_join, run_sync
 from jupyter_server.services.config import ConfigManager
 
+from fps_uvicorn.cli import app as fps_app
+from fps_voila.routes import init_voila_handler
+
 from jupyter_client.kernelspec import KernelSpecManager
 
 from jupyter_core.paths import jupyter_config_path, jupyter_path
@@ -83,7 +86,8 @@ class Voila(Application):
             },
             _("Set the log level to logging.DEBUG, and show exception tracebacks in output.")
         ),
-        'no-browser': ({'Voila': {'open_browser': False}}, _('Don\'t open the notebook in a browser after startup.'))
+        'no-browser': ({'Voila': {'open_browser': False}}, _('Don\'t open the notebook in a browser after startup.')),
+        'fps': ({'Voila': {'fps': True}}, _('Use FPS instead of Jupyter Server.')),
     }
 
     description = Unicode(
@@ -201,6 +205,11 @@ class Voila(Application):
 
     ip = Unicode('localhost', config=True,
                  help=_("The IP address the notebook server will listen on."))
+
+    fps = Bool(False, config=True,
+               help=_("""Whether to user FPS for the server,
+               instead of Jupyter Server.
+               """))
 
     open_browser = Bool(True, config=True,
                         help=_("""Whether to open in a browser after starting.
@@ -447,105 +456,136 @@ class Voila(Application):
         # default server_url to base_url
         self.server_url = self.server_url or self.base_url
 
-        self.app = tornado.web.Application(
-            base_url=self.base_url,
-            server_url=self.server_url or self.base_url,
-            kernel_manager=self.kernel_manager,
-            kernel_spec_manager=self.kernel_spec_manager,
-            allow_remote_access=True,
-            autoreload=self.autoreload,
-            voila_jinja2_env=env,
-            jinja2_env=env,
-            static_path='/',
-            server_root_dir='/',
-            contents_manager=self.contents_manager,
-            config_manager=self.config_manager
-        )
-
-        self.app.settings.update(self.tornado_settings)
-
-        handlers = []
-
-        handlers.extend([
-            (url_path_join(self.server_url, r'/api/kernels/%s' % _kernel_id_regex), KernelHandler),
-            (url_path_join(self.server_url, r'/api/kernels/%s/channels' % _kernel_id_regex), ZMQChannelsHandler),
-            (
-                url_path_join(self.server_url, r'/voila/templates/(.*)'),
-                TemplateStaticFileHandler
-            ),
-            (
-                url_path_join(self.server_url, r'/voila/static/(.*)'),
-                MultiStaticFileHandler,
-                {
-                    'paths': self.static_paths,
-                    'default_filename': 'index.html'
-                },
-            ),
-            (url_path_join(self.server_url, r'/voila/api/shutdown/(.*)'), VoilaShutdownKernelHandler)
-        ])
-
-        if preheat_kernel:
-            handlers.append(
-                (
-                    url_path_join(self.server_url, r'/voila/query/%s' % _kernel_id_regex),
-                    QueryStringSocketHandler
-                )
+        if self.fps:
+            # pass options to FPS app
+            options = sys.argv[1:]
+            sys.argv = sys.argv[:1]
+            fps_options = [f"--fps_uvicorn.root_path={self.server_url}", f"--port={self.port}"]
+            for path in options:
+                if not path.startswith("--"):
+                    break
+            else:
+                path = "/"
+            sys.argv += fps_options + [f"--Voila.notebook_path={path}", "--authenticator.mode=noauth"]
+            init_voila_handler(
+                self.notebook_path,
+                self.template_paths,
+                self.config,
+                self.voila_configuration,
+                self.contents_manager,
+                self.base_url,
+                self.kernel_manager,#MultiKernelManager(),
+                self.kernel_spec_manager,
+                True,
+                self.autoreload,
+                env,
+                env,
+                '/',
+                '/',
+                self.config_manager,
+                self.static_paths,
             )
-        # Serving notebook extensions
-        if self.voila_configuration.enable_nbextensions:
+            fps_app()
+        else:
+            self.app = tornado.web.Application(
+                base_url=self.base_url,
+                server_url=self.server_url or self.base_url,
+                kernel_manager=self.kernel_manager,
+                kernel_spec_manager=self.kernel_spec_manager,
+                allow_remote_access=True,
+                autoreload=self.autoreload,
+                voila_jinja2_env=env,
+                jinja2_env=env,
+                static_path='/',
+                server_root_dir='/',
+                contents_manager=self.contents_manager,
+                config_manager=self.config_manager
+            )
+
+            self.app.settings.update(self.tornado_settings)
+
+            handlers = []
+
+            handlers.extend([
+                (url_path_join(self.server_url, r'/api/kernels/%s' % _kernel_id_regex), KernelHandler),
+                (url_path_join(self.server_url, r'/api/kernels/%s/channels' % _kernel_id_regex), ZMQChannelsHandler),
+                (
+                    url_path_join(self.server_url, r'/voila/templates/(.*)'),
+                    TemplateStaticFileHandler
+                ),
+                (
+                    url_path_join(self.server_url, r'/voila/static/(.*)'),
+                    MultiStaticFileHandler,
+                    {
+                        'paths': self.static_paths,
+                        'default_filename': 'index.html'
+                    },
+                ),
+                (url_path_join(self.server_url, r'/voila/api/shutdown/(.*)'), VoilaShutdownKernelHandler)
+            ])
+
+            if preheat_kernel:
+                handlers.append(
+                    (
+                        url_path_join(self.server_url, r'/voila/query/%s' % _kernel_id_regex),
+                        QueryStringSocketHandler
+                    )
+                )
+            # Serving notebook extensions
+            if self.voila_configuration.enable_nbextensions:
+                handlers.append(
+                    (
+                        url_path_join(self.server_url, r'/voila/nbextensions/(.*)'),
+                        FileFindHandler,
+                        {
+                            'path': self.nbextensions_path,
+                            'no_cache_paths': ['/'],  # don't cache anything in nbextensions
+                        },
+                    )
+                )
             handlers.append(
                 (
-                    url_path_join(self.server_url, r'/voila/nbextensions/(.*)'),
-                    FileFindHandler,
+                    url_path_join(self.server_url, r'/voila/files/(.*)'),
+                    WhiteListFileHandler,
                     {
-                        'path': self.nbextensions_path,
-                        'no_cache_paths': ['/'],  # don't cache anything in nbextensions
+                        'whitelist': self.voila_configuration.file_whitelist,
+                        'blacklist': self.voila_configuration.file_blacklist,
+                        'path': self.root_dir,
                     },
                 )
             )
-        handlers.append(
-            (
-                url_path_join(self.server_url, r'/voila/files/(.*)'),
-                WhiteListFileHandler,
-                {
-                    'whitelist': self.voila_configuration.file_whitelist,
-                    'blacklist': self.voila_configuration.file_blacklist,
-                    'path': self.root_dir,
-                },
-            )
-        )
 
-        tree_handler_conf = {
-            'voila_configuration': self.voila_configuration
-        }
-        if self.notebook_path:
-            handlers.append((
-                url_path_join(self.server_url, r'/(.*)'),
-                VoilaHandler,
-                {
-                    'notebook_path': os.path.relpath(self.notebook_path, self.root_dir),
-                    'template_paths': self.template_paths,
-                    'config': self.config,
-                    'voila_configuration': self.voila_configuration
-                }
-            ))
-        else:
-            self.log.debug('serving directory: %r', self.root_dir)
-            handlers.extend([
-                (self.server_url, VoilaTreeHandler, tree_handler_conf),
-                (url_path_join(self.server_url, r'/voila/tree' + path_regex),
-                 VoilaTreeHandler, tree_handler_conf),
-                (url_path_join(self.server_url, r'/voila/render/(.*)'),
-                 VoilaHandler,
-                 {
-                     'template_paths': self.template_paths,
-                     'config': self.config,
-                     'voila_configuration': self.voila_configuration
-                }),
-            ])
+            tree_handler_conf = {
+                'voila_configuration': self.voila_configuration
+            }
+            if self.notebook_path:
+                handlers.append((
+                    url_path_join(self.server_url, r'/(.*)'),
+                    VoilaHandler,
+                    {
+                        'notebook_path': os.path.relpath(self.notebook_path, self.root_dir),
+                        'template_paths': self.template_paths,
+                        'config': self.config,
+                        'voila_configuration': self.voila_configuration
+                    }
+                ))
+            else:
+                self.log.debug('serving directory: %r', self.root_dir)
+                handlers.extend([
+                    (self.server_url, VoilaTreeHandler, tree_handler_conf),
+                    (url_path_join(self.server_url, r'/voila/tree' + path_regex),
+                     VoilaTreeHandler, tree_handler_conf),
+                    (url_path_join(self.server_url, r'/voila/render/(.*)'),
+                     VoilaHandler,
+                     {
+                         'template_paths': self.template_paths,
+                         'config': self.config,
+                         'voila_configuration': self.voila_configuration
+                    }),
+                ])
 
-        self.app.add_handlers('.*$', handlers)
-        self.listen()
+            self.app.add_handlers('.*$', handlers)
+            self.listen()
 
     def stop(self):
         shutil.rmtree(self.connection_dir)
