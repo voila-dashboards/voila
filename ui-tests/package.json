@@ -7,8 +7,7 @@
     "start": "voila ../notebooks --no-browser",
     "start-stability": "voila ./notebooks --no-browser --enable_nbextensions=True --port 8868",
     "start:detached": "yarn run start-jlab&",
-    "test": "playwright test --project=render-and-benchmark",
-    "test-stability": "playwright test --project=stability-test",
+    "test": "playwright test",
     "test:debug": "PWDEBUG=1 playwright test",
     "test:report": "http-server ./playwright-report -a localhost -o",
     "test:update": "playwright test --update-snapshots"
