@@ -42,4 +42,3 @@ class ModuleImportError(DOMWidget):
     _view_name = Unicode('ModuleImportErrorView').tag(sync=True)
     _view_module = Unicode(module_name).tag(sync=True)
     _view_module_version = Unicode(module_version).tag(sync=True)
-
