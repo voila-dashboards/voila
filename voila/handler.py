@@ -73,34 +73,46 @@ class VoilaHandler(JupyterHandler):
         self.set_header('Cache-Control', 'no-cache, no-store, must-revalidate')
         self.set_header('Pragma', 'no-cache')
         self.set_header('Expires', '0')
+ 
+        current_notebook_data: Dict = self.kernel_manager.notebook_data.get(notebook_path, {})
+        pool_size = self.kernel_manager.get_pool_size(notebook_path)
 
-        try:
-            current_notebook_data: Dict = self.kernel_manager.notebook_data.get(notebook_path, {})
-        except AttributeError:
-            # Extension mode
-            current_notebook_data = {}
-        # If we have a heated kernel in pool, use it
+        # Check if the conditions for using pre-heated kernel are satisfied.
         if self.should_use_rendered_notebook(
             current_notebook_data,
+            pool_size,
             template_arg,
             theme_arg,
             self.request.arguments,
         ):
-            kernel_id: str = await ensure_async(
-                self.kernel_manager.start_kernel(
-                    kernel_name=current_notebook_data['notebook'].metadata.kernelspec.name,
-                    path=cwd,
-                    env=kernel_env,
-                    need_refill=notebook_path,
-                )
+            # Get the pre-rendered content of notebook, the result can be all rendered cells
+            # of the notebook or some rendred cells and a generator which can be used by this
+            # handler to continue rendering calls.
+            render_task, rendered_cache = await self.kernel_manager.get_rendered_notebook(
+                    notebook_name=notebook_path,
             )
-            notebook_html = current_notebook_data.get('html', {}).pop(kernel_id, None)
-            if notebook_html is not None:
-                self.write(notebook_html)
+
+            # Send rendered cell to frontend
+            if len(rendered_cache) > 0:
+                self.write(''.join(rendered_cache))
                 self.flush()
+
+            # Wait for current running cell finish and send this cell to
+            # frontend.
+            rendered, rendering = await render_task
+            if len(rendered) > len(rendered_cache):
+                html_snippet = ''.join(rendered[len(rendered_cache):])
+                self.write(html_snippet)
+                self.flush()
+
+            # Continue render cell from generator.
+            async for html_snippet, _ in rendering:
+                self.write(html_snippet)
+                self.flush()
+            self.flush()
+
         else:
-            # All heated kernel used, instead of waitting,
-            # start a normal kernel
+            # All kernels are used or pre-heated kernel is disabled, start a normal kernel.
             gen = NotebookRenderer(
                 voila_configuration=self.voila_configuration,
                 traitlet_config=self.traitlet_config,
@@ -133,7 +145,7 @@ class VoilaHandler(JupyterHandler):
                 )
             )
             kernel_future = self.kernel_manager.get_kernel(kernel_id)
-            async for html_snippet, _ in gen.generate_html(
+            async for html_snippet, _ in gen.generate_content_generator(
                 kernel_id, kernel_future, time_out
             ):
                 self.write(html_snippet)
@@ -148,13 +160,16 @@ class VoilaHandler(JupyterHandler):
     def should_use_rendered_notebook(
         self,
         notebook_data: Dict,
+        pool_size: int,
         template_name: str,
         theme: str,
         request_args: Dict,
     ) -> Bool:
-
-        if len(notebook_data.get('html', {})) == 0:
+        if pool_size == 0:
             return False
+        if len(notebook_data) == 0:
+            return False
+
         rendered_template = notebook_data.get('template')
         rendered_theme = notebook_data.get('theme')
         if template_name is not None and template_name != rendered_template:

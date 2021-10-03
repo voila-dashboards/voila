@@ -12,7 +12,7 @@ import asyncio
 import os
 import sys
 import traceback
-from typing import Callable, Union
+from typing import Callable, Generator, Tuple, Union, List
 
 import nbformat
 import tornado.web
@@ -43,6 +43,8 @@ class NotebookRenderer(LoggingConfigurable):
         self.default_kernel_name = 'python3'
         self.base_url = kwargs.get('base_url')
         self.kernel_started = False
+        self.stop_generator = False
+        self.rendered_cache: List[str] = []
 
     async def initialize(self, **kwargs):
 
@@ -143,12 +145,12 @@ class NotebookRenderer(LoggingConfigurable):
             self.exporter.exclude_output_prompt = True
             self.exporter.exclude_input_prompt = True
 
-    def generate_html(
+    def generate_content_generator(
         self,
         kernel_id: Union[str, None] = None,
         kernel_future=None,
         timeout_callback: Union[Callable, None] = None,
-    ):
+    ) -> Generator:
         async def inner_kernel_start(nb):
             return await self._jinja_kernel_start(nb, kernel_id, kernel_future)
 
@@ -172,14 +174,32 @@ class NotebookRenderer(LoggingConfigurable):
             self.notebook, resources=self.resources, extra_context=extra_context
         )
 
-    async def generate_html_str(
+    async def generate_content_hybrid(
         self,
         kernel_id: Union[str, None] = None,
         kernel_future=None,
-    ):
+    ) -> Tuple[List[str], Generator]:
+        """Generate the HTML version of notebook, this process can be stopped 
+        anytime by setting `elf.stop_generator=True`. The remaining cells can
+        be rendered after by using the returned generator.
+        """
+        rendered = []
+        generator = self.generate_content_generator(kernel_id, kernel_future)
+        async for html_snippet, _ in generator:
+            rendered.append(html_snippet)
+            if self.stop_generator:
+                break
+            self.rendered_cache.append(html_snippet)
+        return rendered, generator
+
+    async def generate_content_str(
+        self,
+        kernel_id: Union[str, None] = None,
+        kernel_future=None,
+    ) -> str:
         """Generate the HTML version of notebook."""
         html = ''
-        async for html_snippet, _ in self.generate_html(kernel_id, kernel_future):
+        async for html_snippet, _ in self.generate_content_generator(kernel_id, kernel_future):
             html += html_snippet
         return html
 
