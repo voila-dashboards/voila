@@ -96,7 +96,6 @@ class VoilaExporter(HTMLExporter):
                 'include_output_prompt': not self.exclude_output_prompt,
                 'no_prompt': self.exclude_input_prompt and self.exclude_output_prompt,
                 }
-
         async for output in self.template.generate_async(nb=nb_copy, resources=resources, **extra_context, static_url=self.static_url):
             yield (output, resources)
 

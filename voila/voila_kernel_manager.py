@@ -117,7 +117,7 @@ def voila_kernel_manager_factory(base_class: Type[T], preheat_kernel: bool, defa
                 after finishing the running cell. The results of this task
                 will contain the rendered cells and a generator for continuing
                 render the remaining cells. We need to return also
-                `renderer.rendered_cache` since it contains the rendered cells 
+                `renderer.rendered_cache` since it contains the rendered cells
                 before the moment we set `stop_generator` to `True`, so that
                 we can flush data immediately without waiting for running cell
                 to be finished.
@@ -131,8 +131,8 @@ def voila_kernel_manager_factory(base_class: Type[T], preheat_kernel: bool, defa
 
                 Returns:
                     Tuple[asyncio.Task, List[str]]:
-                    
-                """            
+
+                """
                 if notebook_name is None:
                     raise NameError('Notebook name must be provided!')
 

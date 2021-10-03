@@ -73,10 +73,14 @@ class VoilaHandler(JupyterHandler):
         self.set_header('Cache-Control', 'no-cache, no-store, must-revalidate')
         self.set_header('Pragma', 'no-cache')
         self.set_header('Expires', '0')
- 
-        current_notebook_data: Dict = self.kernel_manager.notebook_data.get(notebook_path, {})
-        pool_size = self.kernel_manager.get_pool_size(notebook_path)
 
+        try:
+            current_notebook_data: Dict = self.kernel_manager.notebook_data.get(notebook_path, {})
+            pool_size: int = self.kernel_manager.get_pool_size(notebook_path)
+        except AttributeError:
+            # For server extenstion case.
+            current_notebook_data = {}
+            pool_size = 0
         # Check if the conditions for using pre-heated kernel are satisfied.
         if self.should_use_rendered_notebook(
             current_notebook_data,
