@@ -2,6 +2,32 @@
 
 <!-- <START NEW CHANGELOG ENTRY> -->
 
+## 0.2.16
+
+([Full Changelog](https://github.com/voila-dashboards/voila/compare/0.2.15...9cfe989cd76bf029876bd908228b79650d6a274c))
+
+### Bugs fixed
+
+- Fix `post` function in log template [#983](https://github.com/voila-dashboards/voila/pull/983) ([@trungleduc](https://github.com/trungleduc))
+
+### Maintenance and upkeep improvements
+
+- Pin openssl to v1.1.1l [#987](https://github.com/voila-dashboards/voila/pull/987) ([@trungleduc](https://github.com/trungleduc))
+- 0.2.15 Release fixes [#981](https://github.com/voila-dashboards/voila/pull/981) ([@jtpio](https://github.com/jtpio))
+- Update reference screenshot for ipympl notebook [#978](https://github.com/voila-dashboards/voila/pull/978) ([@trungleduc](https://github.com/trungleduc))
+
+### Documentation improvements
+
+- Fix example code in `basics.ipynb` [#982](https://github.com/voila-dashboards/voila/pull/982) ([@jtpio](https://github.com/jtpio))
+
+### Contributors to this release
+
+([GitHub contributors page for this release](https://github.com/voila-dashboards/voila/graphs/contributors?from=2021-09-25&to=2021-10-04&type=c))
+
+[@github-actions](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Agithub-actions+updated%3A2021-09-25..2021-10-04&type=Issues) | [@jtpio](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Ajtpio+updated%3A2021-09-25..2021-10-04&type=Issues) | [@trungleduc](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Atrungleduc+updated%3A2021-09-25..2021-10-04&type=Issues)
+
+<!-- <END NEW CHANGELOG ENTRY> -->
+
 ## 0.2.15
 
 ([Full Changelog](https://github.com/voila-dashboards/voila/compare/v0.2.14...8a488cf81e747b0767137267d7bebffaa2a4bbad))
@@ -19,8 +45,6 @@
 ([GitHub contributors page for this release](https://github.com/voila-dashboards/voila/graphs/contributors?from=2021-09-17&to=2021-09-25&type=c))
 
 [@github-actions](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Agithub-actions+updated%3A2021-09-17..2021-09-25&type=Issues) | [@jtpio](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Ajtpio+updated%3A2021-09-17..2021-09-25&type=Issues) | [@SylvainCorlay](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3ASylvainCorlay+updated%3A2021-09-17..2021-09-25&type=Issues) | [@trungleduc](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Atrungleduc+updated%3A2021-09-17..2021-09-25&type=Issues)
-
-<!-- <END NEW CHANGELOG ENTRY> -->
 
 ## 0.2.14
 
