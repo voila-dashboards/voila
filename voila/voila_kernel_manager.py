@@ -227,6 +227,9 @@ def voila_kernel_manager_factory(base_class: Type[T], preheat_kernel: bool, defa
                     else:
                         continue
                     break
+                for value in self.notebook_data.values():
+                    if kernel_id in value['kernel_ids']:
+                        value['kernel_ids'].remove(kernel_id)
 
                 return await ensure_async(
                     super().shutdown_kernel(kernel_id, *args, **kwargs)
@@ -237,6 +240,10 @@ def voila_kernel_manager_factory(base_class: Type[T], preheat_kernel: bool, defa
                 # Parent doesn't correctly add all created kernels until they have completed startup:
                 pools = self._pools
                 self._pools = {}
+
+                for value in self.notebook_data.values():
+                    value['kernel_ids'] = set()
+
                 for pool in pools.values():
                     # The iteration gets confused if we don't copy pool
                     for task in tuple(pool):
@@ -276,7 +283,6 @@ def voila_kernel_manager_factory(base_class: Type[T], preheat_kernel: bool, defa
                 kernel_future = self.get_kernel(kernel_id)
 
                 task = asyncio.create_task(renderer.generate_content_hybrid(kernel_id, kernel_future))
-                task.add_done_callback(lambda _: print('end task for', kernel_id))
                 return {'task': task, 'renderer': renderer, 'kernel_id': kernel_id}
 
             async def cull_kernel_if_idle(self, kernel_id: str):
