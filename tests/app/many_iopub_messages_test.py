@@ -5,6 +5,10 @@ MAX_TIMEOUT_SECONDS = 240
 
 
 @pytest.fixture
+def preheat_mode():
+    return False
+
+@pytest.fixture
 def voila_args_extra():
     return [f'--VoilaExecutor.timeout={MAX_TIMEOUT_SECONDS}']
 
