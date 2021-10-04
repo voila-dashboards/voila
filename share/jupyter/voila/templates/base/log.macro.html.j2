@@ -6,13 +6,13 @@
     const _warn = console.warn;
     const _error = console.error;
 
-    function post(level, args) {
+    function post(payload) {
       try {
-        window.top.postMessage({ level: "debug", msg: ["[Voilà]:", ...args] });
+        window.top.postMessage(payload);
       } catch(err) {
         window.top.postMessage({ level: "debug", msg: ["[Voilà]:",
                                                        "Issue cloning object when posting log message, JSON stringify version is:",
-                                                       JSON.stringify(args)
+                                                       JSON.stringify(payload)
                                                        ] });
       }
     }
