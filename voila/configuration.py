@@ -94,6 +94,7 @@ class VoilaConfiguration(traitlets.config.Configurable):
     multi_kernel_manager_class = Type(
         config=True,
         default_value='jupyter_server.services.kernels.kernelmanager.AsyncMappingKernelManager',
+        # default_value='voila.voila_kernel_manager.VoilaKernelManager',
         klass='jupyter_client.multikernelmanager.MultiKernelManager',
         help="""The kernel manager class. This is useful to specify a different kernel manager,
         for example a kernel manager with support for pooling.
@@ -108,3 +109,16 @@ class VoilaConfiguration(traitlets.config.Configurable):
     Example: --VoilaConfiguration.http_header_envs="['X-CDSDASHBOARDS-JH-USER']"
     """,
     ).tag(config=True)
+
+    preheat_kernel = Bool(
+        False,
+        config=True,
+        help="""Flag to enable or disable pre-heat kernel option.
+        """
+    )
+    default_pool_size = Int(
+        1,
+        config=True,
+        help="""Size of pre-heated kernel pool for each notebook. Zero or negative number means disabled.
+        """
+    )

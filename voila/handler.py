@@ -7,33 +7,24 @@
 # The full license is in the file LICENSE, distributed with this software.  #
 #############################################################################
 
-import asyncio
+
 import os
-import sys
-import traceback
+from typing import Dict
 
 import tornado.web
-
 from jupyter_server.base.handlers import JupyterHandler
-from jupyter_server.config_manager import recursive_update
 from jupyter_server.utils import url_path_join
-import nbformat
-
-from nbconvert.preprocessors import ClearOutputPreprocessor
-from nbclient.exceptions import CellExecutionError
 from nbclient.util import ensure_async
 from tornado.httputil import split_host_and_port
+from traitlets.traitlets import Bool
 
 from ._version import __version__
-from .execute import VoilaExecutor, strip_code_cell_warnings
-from .exporter import VoilaExporter
-from .paths import collect_template_paths
+from .notebook_renderer import NotebookRenderer
 
 
 class VoilaHandler(JupyterHandler):
-
     def initialize(self, **kwargs):
-        self.notebook_path = kwargs.pop('notebook_path', [])    # should it be []
+        self.notebook_path = kwargs.pop('notebook_path', [])  # should it be []
         self.template_paths = kwargs.pop('template_paths', [])
         self.traitlet_config = kwargs.pop('config', None)
         self.voila_configuration = kwargs['voila_configuration']
@@ -44,294 +35,155 @@ class VoilaHandler(JupyterHandler):
     async def get(self, path=None):
         # if the handler got a notebook_path argument, always serve that
         notebook_path = self.notebook_path or path
-        if self.notebook_path and path:  # when we are in single notebook mode but have a path
+
+        if (
+            self.notebook_path and path
+        ):  # when we are in single notebook mode but have a path
             self.redirect_to_file(path)
             return
-
-        if self.voila_configuration.enable_nbextensions:
-            # generate a list of nbextensions that are enabled for the classical notebook
-            # a template can use that to load classical notebook extensions, but does not have to
-            notebook_config = self.config_manager.get('notebook')
-            # except for the widget extension itself, since Voilà has its own
-            load_extensions = notebook_config.get('load_extensions', {})
-            if 'jupyter-js-widgets/extension' in load_extensions:
-                load_extensions['jupyter-js-widgets/extension'] = False
-            if 'voila/extension' in load_extensions:
-                load_extensions['voila/extension'] = False
-            nbextensions = [name for name, enabled in load_extensions.items() if enabled]
-        else:
-            nbextensions = []
-
-        notebook = await self.load_notebook(notebook_path)
-        if not notebook:
-            return
-        self.cwd = os.path.dirname(notebook_path)
-
-        path, basename = os.path.split(notebook_path)
-        notebook_name = os.path.splitext(basename)[0]
+        cwd = os.path.dirname(notebook_path)
 
         # Adding request uri to kernel env
-        self.kernel_env = os.environ.copy()
-        self.kernel_env['SCRIPT_NAME'] = self.request.path
-        self.kernel_env['PATH_INFO'] = ''  # would be /foo/bar if voila.ipynb/foo/bar was supported
-        self.kernel_env['QUERY_STRING'] = str(self.request.query)
-        self.kernel_env['SERVER_SOFTWARE'] = 'voila/{}'.format(__version__)
-        self.kernel_env['SERVER_PROTOCOL'] = str(self.request.version)
+        kernel_env = os.environ.copy()
+        kernel_env['SCRIPT_NAME'] = self.request.path
+        kernel_env[
+            'PATH_INFO'
+        ] = ''  # would be /foo/bar if voila.ipynb/foo/bar was supported
+        kernel_env['QUERY_STRING'] = str(self.request.query)
+        kernel_env['SERVER_SOFTWARE'] = 'voila/{}'.format(__version__)
+        kernel_env['SERVER_PROTOCOL'] = str(self.request.version)
         host, port = split_host_and_port(self.request.host.lower())
-        self.kernel_env['SERVER_PORT'] = str(port) if port else ''
-        self.kernel_env['SERVER_NAME'] = host
+        kernel_env['SERVER_PORT'] = str(port) if port else ''
+        kernel_env['SERVER_NAME'] = host
 
         # Add HTTP Headers as env vars following rfc3875#section-4.1.18
         if len(self.voila_configuration.http_header_envs) > 0:
-            config_headers_lower = [header.lower() for header in self.voila_configuration.http_header_envs]
             for header_name in self.request.headers:
+                config_headers_lower = [header.lower() for header in self.voila_configuration.http_header_envs]
                 # Use case insensitive comparison of header names as per rfc2616#section-4.2
                 if header_name.lower() in config_headers_lower:
                     env_name = f'HTTP_{header_name.upper().replace("-", "_")}'
-                    self.kernel_env[env_name] = self.request.headers.get(header_name)
+                    kernel_env[env_name] = self.request.headers.get(header_name)
 
-        # we can override the template via notebook metadata or a query parameter
-        template_override = None
-        if 'voila' in notebook.metadata and self.voila_configuration.allow_template_override in ['YES', 'NOTEBOOK']:
-            template_override = notebook.metadata['voila'].get('template')
-        if self.voila_configuration.allow_template_override == 'YES':
-            template_override = self.get_argument("voila-template", template_override)
-        if template_override:
-            self.template_paths = collect_template_paths(['voila', 'nbconvert'], template_override)
-        template_name = template_override or self.voila_configuration.template
-
-        theme = self.voila_configuration.theme
-        if 'voila' in notebook.metadata and self.voila_configuration.allow_theme_override in ['YES', 'NOTEBOOK']:
-            theme = notebook.metadata['voila'].get('theme', theme)
-        if self.voila_configuration.allow_theme_override == 'YES':
-            theme = self.get_argument("voila-theme", theme)
-
-        # render notebook to html
-        resources = {
-            'base_url': self.base_url,
-            'nbextensions': nbextensions,
-            'theme': theme,
-            'template': template_name,
-            'metadata': {
-                'name': notebook_name
-            }
-        }
-
-        # include potential extra resources
-        extra_resources = self.voila_configuration.config.VoilaConfiguration.resources
-        # if no resources get configured from neither the CLI nor a config file,
-        # extra_resources is a traitlets.config.loader.LazyConfigValue object
-        # This seems to only happy with the notebook server and traitlets 5
-        # Note that we use string checking for backward compatibility
-        if 'DeferredConfigString' in str(type(extra_resources)):
-            from .configuration import VoilaConfiguration
-            extra_resources = VoilaConfiguration.resources.from_string(extra_resources)
-        if not isinstance(extra_resources, dict):
-            extra_resources = extra_resources.to_dict()
-        if extra_resources:
-            recursive_update(resources, extra_resources)
-
-        self.exporter = VoilaExporter(
-            template_paths=self.template_paths,
-            template_name=template_name,
-            config=self.traitlet_config,
-            contents_manager=self.contents_manager,  # for the image inlining
-            theme=theme,  # we now have the theme in two places
-            base_url=self.base_url,
-        )
-        if self.voila_configuration.strip_sources:
-            self.exporter.exclude_input = True
-            self.exporter.exclude_output_prompt = True
-            self.exporter.exclude_input_prompt = True
-
-        # These functions allow the start of a kernel and execution of the notebook after (parts of) the template
-        # has been rendered and send to the client to allow progressive rendering.
-        # Template should first call kernel_start, and then decide to use notebook_execute
-        # or cell_generator to implement progressive cell rendering
-        extra_context = {
-            'kernel_start': self._jinja_kernel_start,
-            'cell_generator': self._jinja_cell_generator,
-            'notebook_execute': self._jinja_notebook_execute,
-        }
+        template_arg = self.get_argument("voila-template", None)
+        theme_arg = self.get_argument("voila-theme", None)
 
         # Compose reply
         self.set_header('Content-Type', 'text/html')
         self.set_header('Cache-Control', 'no-cache, no-store, must-revalidate')
         self.set_header('Pragma', 'no-cache')
         self.set_header('Expires', '0')
-        # render notebook in snippets, and flush them out to the browser can render progresssively
-        async for html_snippet, resources in self.exporter.generate_from_notebook_node(notebook, resources=resources, extra_context=extra_context):
-            self.write(html_snippet)
-            self.flush()  # we may not want to consider not flushing after each snippet, but add an explicit flush function to the jinja context
-            # yield  # give control back to tornado's IO loop, so it can handle static files or other requests
-        self.flush()
+
+        try:
+            current_notebook_data: Dict = self.kernel_manager.notebook_data.get(notebook_path, {})
+            pool_size: int = self.kernel_manager.get_pool_size(notebook_path)
+        except AttributeError:
+            # For server extenstion case.
+            current_notebook_data = {}
+            pool_size = 0
+        # Check if the conditions for using pre-heated kernel are satisfied.
+        if self.should_use_rendered_notebook(
+            current_notebook_data,
+            pool_size,
+            template_arg,
+            theme_arg,
+            self.request.arguments,
+        ):
+            # Get the pre-rendered content of notebook, the result can be all rendered cells
+            # of the notebook or some rendred cells and a generator which can be used by this
+            # handler to continue rendering calls.
+            render_task, rendered_cache = await self.kernel_manager.get_rendered_notebook(
+                    notebook_name=notebook_path,
+            )
+
+            # Send rendered cell to frontend
+            if len(rendered_cache) > 0:
+                self.write(''.join(rendered_cache))
+                self.flush()
+
+            # Wait for current running cell finish and send this cell to
+            # frontend.
+            rendered, rendering = await render_task
+            if len(rendered) > len(rendered_cache):
+                html_snippet = ''.join(rendered[len(rendered_cache):])
+                self.write(html_snippet)
+                self.flush()
+
+            # Continue render cell from generator.
+            async for html_snippet, _ in rendering:
+                self.write(html_snippet)
+                self.flush()
+            self.flush()
+
+        else:
+            # All kernels are used or pre-heated kernel is disabled, start a normal kernel.
+            gen = NotebookRenderer(
+                voila_configuration=self.voila_configuration,
+                traitlet_config=self.traitlet_config,
+                notebook_path=notebook_path,
+                template_paths=self.template_paths,
+                config_manager=self.config_manager,
+                contents_manager=self.contents_manager,
+                base_url=self.base_url,
+                kernel_spec_manager=self.kernel_spec_manager,
+            )
+
+            await gen.initialize(template=template_arg, theme=theme_arg)
+
+            def time_out():
+                """If not done within the timeout, we send a heartbeat
+                this is fundamentally to avoid browser/proxy read-timeouts, but
+                can be used in a template to give feedback to a user
+                """
+
+                self.write('<script>voila_heartbeat()</script>\n')
+                self.flush()
+
+            kernel_id = await ensure_async(
+                (
+                    self.kernel_manager.start_kernel(
+                        kernel_name=gen.notebook.metadata.kernelspec.name,
+                        path=cwd,
+                        env=kernel_env,
+                    )
+                )
+            )
+            kernel_future = self.kernel_manager.get_kernel(kernel_id)
+            async for html_snippet, _ in gen.generate_content_generator(
+                kernel_id, kernel_future, time_out
+            ):
+                self.write(html_snippet)
+                self.flush()
+                # we may not want to consider not flusing after each snippet, but add an explicit flush function to the jinja context
+                # yield  # give control back to tornado's IO loop, so it can handle static files or other requests
+            self.flush()
 
     def redirect_to_file(self, path):
         self.redirect(url_path_join(self.base_url, 'voila', 'files', path))
 
-    async def _jinja_kernel_start(self, nb):
-        assert not self.kernel_started, "kernel was already started"
+    def should_use_rendered_notebook(
+        self,
+        notebook_data: Dict,
+        pool_size: int,
+        template_name: str,
+        theme: str,
+        request_args: Dict,
+    ) -> Bool:
+        if pool_size == 0:
+            return False
+        if len(notebook_data) == 0:
+            return False
 
-        kernel_id = await ensure_async(self.kernel_manager.start_kernel(
-           kernel_name=nb.metadata.kernelspec.name,
-           path=self.cwd,
-           env=self.kernel_env,
-        ))
-        km = await ensure_async(self.kernel_manager.get_kernel(kernel_id))
-
-        self.executor = VoilaExecutor(nb, km=km, config=self.traitlet_config,
-                                      show_tracebacks=self.voila_configuration.show_tracebacks)
-
-        ###
-        # start kernel client
-        self.executor.kc = km.client()
-        await ensure_async(self.executor.kc.start_channels())
-        await ensure_async(self.executor.kc.wait_for_ready(timeout=self.executor.startup_timeout))
-        self.executor.kc.allow_stdin = False
-        ###
-
-        self.kernel_started = True
-        return kernel_id
-
-    async def _jinja_notebook_execute(self, nb, kernel_id):
-        result = await self.executor.async_execute(cleanup_kc=False)
-        # we modify the notebook in place, since the nb variable cannot be reassigned it seems in jinja2
-        # e.g. if we do {% with nb = notebook_execute(nb, kernel_id) %}, the base template/blocks will not
-        # see the updated variable (it seems to be local to our block)
-        nb.cells = result.cells
-
-        await self._cleanup_resources()
-
-    async def _jinja_cell_generator(self, nb, kernel_id):
-        """Generator that will execute a single notebook cell at a time"""
-        nb, resources = ClearOutputPreprocessor().preprocess(nb, {'metadata': {'path': self.cwd}})
-        for cell_idx, input_cell in enumerate(nb.cells):
-            try:
-                task = asyncio.ensure_future(self.executor.execute_cell(input_cell, None, cell_idx, store_history=False))
-                while True:
-                    done, pending = await asyncio.wait({task}, timeout=self.voila_configuration.http_keep_alive_timeout)
-                    if pending:
-                        # If not done within the timeout, we send a heartbeat
-                        # this is fundamentally to avoid browser/proxy read-timeouts, but
-                        # can be used in a template to give feedback to a user
-                        self.write("<script>voila_heartbeat()</script>\n")
-                        self.flush()
-                        continue
-                    output_cell = await task
-                    break
-            except TimeoutError:
-                output_cell = input_cell
-                break
-            except CellExecutionError:
-                self.log.exception('Error at server while executing cell: %r', input_cell)
-                if self.executor.should_strip_error():
-                    strip_code_cell_warnings(input_cell)
-                    self.executor.strip_code_cell_errors(input_cell)
-                output_cell = input_cell
-                break
-            except Exception as e:
-                self.log.exception('Error at server while executing cell: %r', input_cell)
-                output_cell = nbformat.v4.new_code_cell()
-                if self.executor.should_strip_error():
-                    output_cell.outputs = [
-                        {
-                            "output_type": "stream",
-                            "name": "stderr",
-                            "text": "An exception occurred at the server (not the notebook). {}".format(self.executor.cell_error_instruction),
-                        }
-                    ]
-                else:
-                    output_cell.outputs = [
-                        {
-                            'output_type': 'error',
-                            'ename': type(e).__name__,
-                            'evalue': str(e),
-                            'traceback': traceback.format_exception(*sys.exc_info()),
-                        }
-                    ]
-            finally:
-                yield output_cell
-
-        await self._cleanup_resources()
-
-    async def _cleanup_resources(self):
-        await ensure_async(self.executor.km.cleanup_resources())
-        await ensure_async(self.executor.kc.stop_channels())
-
-    async def load_notebook(self, path):
-        model = await ensure_async(self.contents_manager.get(path=path))
-        if 'content' not in model:
-            raise tornado.web.HTTPError(404, 'file not found')
-        __, extension = os.path.splitext(model.get('path', ''))
-        if model.get('type') == 'notebook':
-            notebook = model['content']
-            notebook = await self.fix_notebook(notebook)
-            return notebook
-        elif extension in self.voila_configuration.extension_language_mapping:
-            language = self.voila_configuration.extension_language_mapping[extension]
-            notebook = await self.create_notebook(model, language=language)
-            return notebook
-        else:
-            self.redirect_to_file(path)
-            return None
-
-    async def fix_notebook(self, notebook):
-        """Returns a notebook object with a valid kernelspec.
-
-        In case the kernel is not found, we search for a matching kernel based on the language.
-        """
-
-        # Fetch kernel name from the notebook metadata
-        if 'kernelspec' not in notebook.metadata:
-            notebook.metadata.kernelspec = nbformat.NotebookNode()
-        kernelspec = notebook.metadata.kernelspec
-        kernel_name = kernelspec.get('name', self.kernel_manager.default_kernel_name)
-        # We use `maybe_future` to support RemoteKernelSpecManager
-        all_kernel_specs = await ensure_async(self.kernel_spec_manager.get_all_specs())
-        # Find a spec matching the language if the kernel name does not exist in the kernelspecs
-        if kernel_name not in all_kernel_specs:
-            missing_kernel_name = kernel_name
-            language = kernelspec.get('language', notebook.metadata.get('language_info', {}).get('name', ''))
-            kernel_name = await self.find_kernel_name_for_language(language.lower(), kernel_specs=all_kernel_specs)
-            self.log.warning('Could not find a kernel named %r, will use  %r', missing_kernel_name, kernel_name)
-        # We make sure the notebook's kernelspec is correct
-        notebook.metadata.kernelspec.name = kernel_name
-        notebook.metadata.kernelspec.display_name = all_kernel_specs[kernel_name]['spec']['display_name']
-        notebook.metadata.kernelspec.language = all_kernel_specs[kernel_name]['spec']['language']
-        return notebook
-
-    async def create_notebook(self, model, language):
-        all_kernel_specs = await ensure_async(self.kernel_spec_manager.get_all_specs())
-        kernel_name = await self.find_kernel_name_for_language(language, kernel_specs=all_kernel_specs)
-        spec = all_kernel_specs[kernel_name]
-        notebook = nbformat.v4.new_notebook(
-            metadata={
-                'kernelspec': {
-                    'display_name': spec['spec']['display_name'],
-                    'language': spec['spec']['language'],
-                    'name': kernel_name
-                }
-            },
-            cells=[nbformat.v4.new_code_cell(model['content'])],
-        )
-        return notebook
-
-    async def find_kernel_name_for_language(self, kernel_language, kernel_specs=None):
-        """Finds a best matching kernel name given a kernel language.
-
-        If multiple kernels matches are found, we try to return the same kernel name each time.
-        """
-        if kernel_language in self.voila_configuration.language_kernel_mapping:
-            return self.voila_configuration.language_kernel_mapping[kernel_language]
-        if kernel_specs is None:
-            kernel_specs = await ensure_async(self.kernel_spec_manager.get_all_specs())
-        matches = [
-            name for name, kernel in kernel_specs.items()
-            if kernel["spec"]["language"].lower() == kernel_language.lower()
+        rendered_template = notebook_data.get('template')
+        rendered_theme = notebook_data.get('theme')
+        if template_name is not None and template_name != rendered_template:
+            return False
+        if theme is not None and rendered_theme != theme:
+            return False
+        args_list = [
+            key for key in request_args if key not in ['voila-template', 'voila-theme']
         ]
-        if matches:
-            # Sort by display name to get the same kernel each time.
-            matches.sort(key=lambda name: kernel_specs[name]["spec"]["display_name"])
-            return matches[0]
-        else:
-            raise tornado.web.HTTPError(500, 'No Jupyter kernel for language %r found' % kernel_language)
+        if len(args_list) > 0:
+            return False
+
+        return True

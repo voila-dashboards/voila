@@ -21,7 +21,8 @@ def voila_config():
     return config
 
 
-async def test_template(http_server_client, base_url):
+async def test_template(http_server_client, base_url, wait_for_kernel):
+    await wait_for_kernel()
     response = await http_server_client.fetch(base_url)
     assert response.code == 200
     assert 'test_template.css' in response.body.decode('utf-8')

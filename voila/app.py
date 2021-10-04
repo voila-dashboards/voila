@@ -60,6 +60,7 @@ from .configuration import VoilaConfiguration
 from .execute import VoilaExecutor
 from .exporter import VoilaExporter
 from .shutdown_kernel_handler import VoilaShutdownKernelHandler
+from .voila_kernel_manager import voila_kernel_manager_factory
 
 _kernel_id_regex = r"(?P<kernel_id>\w+-\w+-\w+-\w+-\w+)"
 
@@ -130,6 +131,8 @@ class Voila(Application):
         'server_url': 'Voila.server_url',
         'enable_nbextensions': 'VoilaConfiguration.enable_nbextensions',
         'show_tracebacks': 'VoilaConfiguration.show_tracebacks',
+        'preheat_kernel': 'VoilaConfiguration.preheat_kernel',
+        'pool_size': 'VoilaConfiguration.default_pool_size'
     }
     classes = [
         VoilaConfiguration,
@@ -409,7 +412,19 @@ class Voila(Application):
             parent=self
         )
 
-        self.kernel_manager = self.voila_configuration.multi_kernel_manager_class(
+        # we create a config manager that load both the serverconfig and nbconfig (classical notebook)
+        read_config_path = [os.path.join(p, 'serverconfig') for p in jupyter_config_path()]
+        read_config_path += [os.path.join(p, 'nbconfig') for p in jupyter_config_path()]
+        self.config_manager = ConfigManager(parent=self, read_config_path=read_config_path)
+        self.contents_manager = LargeFileManager(parent=self)
+        preheat_kernel: bool = self.voila_configuration.preheat_kernel
+        pool_size: int = self.voila_configuration.default_pool_size
+        kernel_manager_class = voila_kernel_manager_factory(
+            self.voila_configuration.multi_kernel_manager_class,
+            preheat_kernel,
+            pool_size
+            )
+        self.kernel_manager = kernel_manager_class(
             parent=self,
             connection_dir=self.connection_dir,
             kernel_spec_manager=self.kernel_spec_manager,
@@ -427,12 +442,6 @@ class Voila(Application):
         env = jinja2.Environment(loader=jinja2.FileSystemLoader(self.template_paths), extensions=['jinja2.ext.i18n'], **jenv_opt)
         nbui = gettext.translation('nbui', localedir=os.path.join(ROOT, 'i18n'), fallback=True)
         env.install_gettext_translations(nbui, newstyle=False)
-        self.contents_manager = LargeFileManager(parent=self)
-
-        # we create a config manager that load both the serverconfig and nbconfig (classical notebook)
-        read_config_path = [os.path.join(p, 'serverconfig') for p in jupyter_config_path()]
-        read_config_path += [os.path.join(p, 'nbconfig') for p in jupyter_config_path()]
-        self.config_manager = ConfigManager(parent=self, read_config_path=read_config_path)
 
         # default server_url to base_url
         self.server_url = self.server_url or self.base_url

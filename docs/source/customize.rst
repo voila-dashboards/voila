@@ -313,6 +313,75 @@ There is also the ``MappingKernelManager.cull_busy`` and ``MappingKernelManager.
 
 For more information about these options, check out the `Jupyter Server <https://jupyter-server.readthedocs.io/en/latest/other/full-config.html#options>`_ documentation.
 
+Pre-heat kernels
+=================
+
+Since Voilà needs to start a new jupyter kernel and execute the requested notebook in this kernel for every connection, this would lead to a long waiting time before the widgets can be displayed in browser. 
+To reduce this waiting time, especially for the heavy notebooks, user can use the pre-heating kernel option of Voilà, this option will enable two features:
+
+- A pool of kernels is started for each notebook and kept in standby, then the notebook is executed in every kernel of its pool. When a new client requests a kernel, the pre-heated kernel in this pool is used and another kernel is started asynchronously to refill the pool.
+- The HTML version of notebook is rendered in each pre-heated kernel and stored, when a client connects to Voila, under some conditions, the cached HTML is served instead of re-rendering the notebook.
+
+The pre-heat kernel option works with any kernel manager, it is deactivated by default, re-activate it by setting `preheat_kernel = True`.  For example, with this command, for each notebook Voilà started with, a pool of 5 kernels is created and will be used for new connections.
+
+.. code-block:: bash
+
+    voila --preheat_kernel=True --pool_size=5
+
+If the pool size does not match the user's requirements, or some notebooks need to use environment variables..., additional settings are needed.  The easiest way to change these settings is to provide a file named `voila.json` in the same folder containing the notebooks. Settings for pre-heat kernel ( list of notebooks does not need pre-heated kernels, number of kernels in pool, refilling delay, environment variables for starting kernel...) can be set under the `VoilaKernelManager` class name.
+
+Here is an example of settings with explanations for pre-heat kernel option. 
+
+.. code-block:: python
+
+   # voila.json
+   {
+      "VoilaConfiguration": {
+         # Activate or deactivate preheat kernel option.
+         "preheat_kernel": true 
+      },
+      "VoilaKernelManager": {
+         # A list of notebook name or regex patterns to exclude notebooks from using preheat kernel.
+         "preheat_blacklist": [
+            "notebook-does-not-need-preheat.ipynb",
+            "^.*foo.*$",
+            ...
+         ], 
+         # Configuration for kernel pools
+         "kernel_pools_config": { 
+            # Setting for `voila.ipynb` notebook
+            "voila.ipynb": {
+               "pool_size": 3, # Size of pool
+               "kernel_env_variables": { # The environment variables used to start kernel for `voila.ipynb`
+                  "foo2": "bar2"
+               }
+            },
+            # Setting for `test/sub-voila.ipynb` notebook
+            "test/sub-voila.ipynb": {
+               "pool_size": 1
+            },
+            ...
+            # If a notebook does not have setting, it will use default setting
+            "default": {
+               "pool_size": 2,
+               "kernel_env_variables": {
+                  "foo": "bar"
+               }
+            },
+         },
+         # Delay time in second before filling the kernel pool.
+         "fill_delay": 0
+      }
+   }
+
+Notebook HTML will be pre-rendered with template and theme defined in VoilaConfiguration or in notebook metadata. The pre-heated kernel and cached HTML are used if these conditions are matched:
+
+- There is an available pre-heated kernel in the kernel pool.
+- If user overrides the template/theme with query string, it must match the template/theme used to pre-render the notebook.
+- There is no other query strings than `voila-theme` and `voila-template`.
+
+If the kernel pool is empty or the request does not match these conditions, Voila will fail back to start a normal kernel and render the notebook as usual.
+
 Hiding output and code cells based on cell tags
 ===============================================
 

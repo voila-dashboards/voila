@@ -2,7 +2,13 @@
 import os
 import pytest
 
+
 TEST_XEUS_CLING = os.environ.get('VOILA_TEST_XEUS_CLING', '') == '1'
+
+
+@pytest.fixture
+def preheat_mode():
+    return False
 
 
 @pytest.fixture
