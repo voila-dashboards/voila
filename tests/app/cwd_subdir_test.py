@@ -1,6 +1,5 @@
 # test serving a notebook
 import pytest
-import os
 
 NOTEBOOK_PATH = 'subdir/cwd_subdir.ipynb'
 

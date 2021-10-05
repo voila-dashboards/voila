@@ -1,6 +1,5 @@
 import pytest
 
-import os
 NOTEBOOK_PATH = 'syntax_error.ipynb'
 
 

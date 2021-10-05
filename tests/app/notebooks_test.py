@@ -1,6 +1,5 @@
 # simply tests if some notebooks execute
 import pytest
-import os
 
 NOTEBOOK_PATH = 'other_comms.ipynb'
 

@@ -1,5 +1,4 @@
 import pytest
-import os
 NOTEBOOK_PATH = 'cgi.ipynb'
 
 

@@ -1,5 +1,5 @@
 import pytest
-import os
+
 
 NOTEBOOK_PATH = 'no_metadata.ipynb'
 

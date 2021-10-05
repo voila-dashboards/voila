@@ -1,6 +1,4 @@
 import pytest
-import os
-
 NOTEBOOK_PATH = "non_existing_kernel.ipynb"
 
 
