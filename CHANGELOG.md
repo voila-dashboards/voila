@@ -2,6 +2,22 @@
 
 <!-- <START NEW CHANGELOG ENTRY> -->
 
+## 0.3.0a0
+
+([Full Changelog](https://github.com/voila-dashboards/voila/compare/v0.2.16...5b10cf6e8ecdf854b5fd6db92e26b944110f1840))
+
+### Enhancements made
+
+- Add pooling heated kernels and pre-rendered notebook [#936](https://github.com/voila-dashboards/voila/pull/936) ([@trungleduc](https://github.com/trungleduc))
+
+### Contributors to this release
+
+([GitHub contributors page for this release](https://github.com/voila-dashboards/voila/graphs/contributors?from=2021-10-04&to=2021-10-05&type=c))
+
+[@jtpio](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Ajtpio+updated%3A2021-10-04..2021-10-05&type=Issues) | [@trungleduc](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Atrungleduc+updated%3A2021-10-04..2021-10-05&type=Issues)
+
+<!-- <END NEW CHANGELOG ENTRY> -->
+
 ## 0.2.16
 
 ([Full Changelog](https://github.com/voila-dashboards/voila/compare/0.2.15...9cfe989cd76bf029876bd908228b79650d6a274c))
@@ -25,8 +41,6 @@
 ([GitHub contributors page for this release](https://github.com/voila-dashboards/voila/graphs/contributors?from=2021-09-25&to=2021-10-04&type=c))
 
 [@github-actions](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Agithub-actions+updated%3A2021-09-25..2021-10-04&type=Issues) | [@jtpio](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Ajtpio+updated%3A2021-09-25..2021-10-04&type=Issues) | [@trungleduc](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Atrungleduc+updated%3A2021-09-25..2021-10-04&type=Issues)
-
-<!-- <END NEW CHANGELOG ENTRY> -->
 
 ## 0.2.15
 
