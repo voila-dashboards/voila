@@ -66,7 +66,7 @@ def app(voila_app):
 @pytest.fixture
 def wait_for_kernel(preheat_mode):
     """Wait for kernel be heated in case of `preheat_mode = True`"""
-    async def inner(time=1):
+    async def inner(time=3):
         if preheat_mode:
             await asyncio.sleep(time)
     return inner

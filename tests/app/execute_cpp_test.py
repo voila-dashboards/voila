@@ -7,8 +7,6 @@ NOTEBOOK_PATH = 'print.xcpp'
 
 @pytest.fixture
 def cpp_file_url(base_url, preheat_mode):
-    if preheat_mode:
-        return base_url
     return base_url + f'voila/render/{NOTEBOOK_PATH}'
 
 
@@ -19,8 +17,6 @@ def voila_args_extra():
 
 @pytest.fixture
 def voila_args(notebook_directory, voila_args_extra, preheat_mode):
-    if preheat_mode:
-        return [os.path.join(notebook_directory, NOTEBOOK_PATH)] + voila_args_extra
     return ['--VoilaTest.root_dir=%r' % notebook_directory] + voila_args_extra
 
 
