@@ -108,7 +108,7 @@ class NotebookRenderer(LoggingConfigurable):
         self.theme = theme_override
         # render notebook to html
         self.resources = {
-            'base_url': '/',
+            'base_url': self.base_url,
             'nbextensions': nbextensions,
             'theme': self.theme,
             'template': self.template_name,
