@@ -8,6 +8,7 @@ NOTEBOOK_EXECUTION_TIME = 2
 NUMBER_PREHEATED_KERNEL = 2
 TIME_THRESHOLD = 1
 
+
 @pytest.fixture
 def voila_config_file_paths_arg():
     path = os.path.join(BASE_DIR, '..', 'configs', 'preheat')
