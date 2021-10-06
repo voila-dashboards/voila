@@ -2,7 +2,9 @@
   "VoilaKernelManager": {
     "preheat_blacklist": [
       "notebooks/autokill.ipynb",
-      "notebooks/many_iopub_messages.ipynb"
+      "notebooks/many_iopub_messages.ipynb",
+      "notebooks/sleep.ipynb",
+      "notebooks/sleep10seconds.ipynb"
     ]
   }
 }
