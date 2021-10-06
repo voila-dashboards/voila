@@ -15,6 +15,7 @@ def voila_notebook(notebook_directory):
 
 
 NOTEBOOK_EXECUTION_TIME = 2
+TIME_THRESHOLD = 1
 
 
 async def send_request(sc, url, wait=0):
@@ -40,13 +41,13 @@ async def test_request_before_kernel_heated(http_server_client, base_url):
 async def test_render_time_with_preheated_kernel(http_server_client, base_url):
     """
     We wait for kernel properly heated before sending request,
-    it should take under 0.5s to return result
+    it should take under `TIME_THRESHOLD` second to return result
     """
     time, text = await send_request(sc=http_server_client,
                                     url=base_url,
                                     wait=NOTEBOOK_EXECUTION_TIME + 2)
     assert 'hello world' in text
-    assert time < 0.5
+    assert time < TIME_THRESHOLD
 
 
 async def test_render_time_with_multiple_requests(http_server_client,
@@ -63,8 +64,8 @@ async def test_render_time_with_multiple_requests(http_server_client,
                                      wait=wait)
         time_list.append(time)
 
-    assert max(time_list) > 0.5  # Render time for a normal kernel
-    assert min(time_list) < 0.5  # Render time for a preheated kernel
+    assert max(time_list) > TIME_THRESHOLD  # Render time for a normal kernel
+    assert min(time_list) < TIME_THRESHOLD  # Render time for a preheated kernel
 
 
 async def test_request_with_query(http_server_client, base_url):
@@ -76,7 +77,7 @@ async def test_request_with_query(http_server_client, base_url):
     time, _ = await send_request(sc=http_server_client,
                                  url=url,
                                  wait=NOTEBOOK_EXECUTION_TIME + 1)
-    assert time > 0.5
+    assert time > TIME_THRESHOLD
 
 
 async def test_request_with_theme_parameter(http_server_client, base_url):
@@ -88,11 +89,11 @@ async def test_request_with_theme_parameter(http_server_client, base_url):
 
     url = f'{base_url}?voila-theme=dark'
     time, _ = await send_request(sc=http_server_client, url=url, wait=wait)
-    assert time > 0.5
+    assert time > TIME_THRESHOLD
 
     url = f'{base_url}?voila-theme=light'
     time, _ = await send_request(sc=http_server_client, url=url, wait=wait)
-    assert time < 0.5
+    assert time < TIME_THRESHOLD
 
 
 async def test_request_with_template_parameter(http_server_client, base_url):
@@ -104,4 +105,4 @@ async def test_request_with_template_parameter(http_server_client, base_url):
 
     url = f'{base_url}?voila-template=lab'
     time, _ = await send_request(sc=http_server_client, url=url, wait=wait)
-    assert time < 0.5
+    assert time < TIME_THRESHOLD
