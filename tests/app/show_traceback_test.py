@@ -22,9 +22,9 @@ def voila_args(notebook_directory, voila_args_extra, show_tracebacks):
 
 
 async def test_syntax_error(
-    http_server_client, notebook_show_traceback_path, show_tracebacks, wait_for_kernel
+    http_server_client, notebook_show_traceback_path, show_tracebacks
 ):
-    await wait_for_kernel()
+
     response = await http_server_client.fetch(notebook_show_traceback_path)
     assert response.code == 200
     output = response.body.decode('utf-8')

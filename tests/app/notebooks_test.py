@@ -18,9 +18,9 @@ def voila_args(notebook_directory, voila_args_extra):
 
 
 async def test_other_comms(
-    http_server_client, notebook_other_comms_path, wait_for_kernel
+    http_server_client, notebook_other_comms_path
 ):
-    await wait_for_kernel()
+
     response = await http_server_client.fetch(notebook_other_comms_path)
     html_text = response.body.decode('utf-8')
     assert 'This notebook executed' in html_text

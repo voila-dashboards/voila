@@ -18,9 +18,9 @@ def voila_args(notebook_directory, voila_args_extra):
 
 
 async def test_hello_world(
-    http_server_client, cwd_subdir_notebook_url, wait_for_kernel
+    http_server_client, cwd_subdir_notebook_url
 ):
-    await wait_for_kernel()
+
     response = await http_server_client.fetch(cwd_subdir_notebook_url)
     html_text = response.body.decode('utf-8')
     assert 'check for the cwd' in html_text

@@ -15,9 +15,9 @@ def voila_args(notebook_directory, voila_args_extra):
 
 
 async def test_non_existing_metadata(
-    http_server_client, non_existing_notebook_metadata, wait_for_kernel
+    http_server_client, non_existing_notebook_metadata
 ):
-    await wait_for_kernel()
+
     response = await http_server_client.fetch(non_existing_notebook_metadata)
     assert response.code == 200
     assert 'Executing without notebook metadata' in response.body.decode('utf-8')

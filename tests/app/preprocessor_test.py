@@ -13,8 +13,8 @@ def voila_args_extra():
     return ['--template=skip_template']
 
 
-async def test_markdown_preprocessor(http_server_client, base_url, wait_for_kernel):
-    await wait_for_kernel()
+async def test_markdown_preprocessor(http_server_client, base_url):
+
     response = await http_server_client.fetch(base_url)
     assert response.code == 200
     html_text = response.body.decode('utf-8')
