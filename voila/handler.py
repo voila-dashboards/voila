@@ -92,9 +92,12 @@ class VoilaHandler(JupyterHandler):
             # Get the pre-rendered content of notebook, the result can be all rendered cells
             # of the notebook or some rendred cells and a generator which can be used by this
             # handler to continue rendering calls.
-            render_task, rendered_cache = await self.kernel_manager.get_rendered_notebook(
+
+            render_task, rendered_cache, kernel_id = await self.kernel_manager.get_rendered_notebook(
                     notebook_name=notebook_path,
             )
+            for name, value in self.request.arguments.items():
+                self.kernel_manager.set_query_params(kernel_id, name, value)
 
             # Send rendered cell to frontend
             if len(rendered_cache) > 0:
@@ -180,10 +183,10 @@ class VoilaHandler(JupyterHandler):
             return False
         if theme is not None and rendered_theme != theme:
             return False
-        args_list = [
-            key for key in request_args if key not in ['voila-template', 'voila-theme']
-        ]
-        if len(args_list) > 0:
-            return False
+        # args_list = [
+        #     key for key in request_args if key not in ['voila-template', 'voila-theme']
+        # ]
+        # if len(args_list) > 0:
+        #     return False
 
         return True

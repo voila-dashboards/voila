@@ -93,6 +93,7 @@ def voila_kernel_manager_factory(base_class: Type[T], preheat_kernel: bool, defa
                 self.notebook_data: TypeDict = {}
                 self._pools: TypeDict[str, List[TypeDict]] = {}
                 self.root_dir = self.parent.root_dir
+                self._query_params = dict()
                 if self.parent.notebook_path is not None:
                     self.notebook_path = os.path.relpath(
                         self.parent.notebook_path, self.root_dir
@@ -143,11 +144,12 @@ def voila_kernel_manager_factory(base_class: Type[T], preheat_kernel: bool, defa
                 content = await pool_item
                 renderer: NotebookRenderer = content['renderer']
                 render_task: asyncio.Task = content['task']
+                kernel_id: str = content['kernel_id']
                 renderer.stop_generator = True
                 self.log.info('Using pre-heated kernel: %s for %s', 'kernel_id', notebook_name)
                 self.fill_if_needed(delay=None, notebook_name=notebook_name, **kwargs)
 
-                return render_task, renderer.rendered_cache
+                return render_task, renderer.rendered_cache, kernel_id
 
             def get_pool_size(self, notebook_name: str) -> int:
                 return len(self._pools.get(notebook_name, []))
@@ -284,7 +286,6 @@ def voila_kernel_manager_factory(base_class: Type[T], preheat_kernel: bool, defa
                     self.notebook_data[renderer.notebook_path]['kernel_ids'].add(kernel_id)
 
                 kernel_future = self.get_kernel(kernel_id)
-
                 task = asyncio.get_event_loop().create_task(renderer.generate_content_hybrid(kernel_id, kernel_future))
                 return {'task': task, 'renderer': renderer, 'kernel_id': kernel_id}
 
@@ -355,5 +356,17 @@ def voila_kernel_manager_factory(base_class: Type[T], preheat_kernel: bool, defa
                     if kernel_id in data['kernel_ids']:
                         return nb_name
                 return None
+
+            def get_query_params(self, kernel_id: str, variable_name: str) -> str:
+                return self._query_params.get(kernel_id, {}).get(variable_name, [None])
+
+            def set_query_params(self, kernel_id: str, variable_name: str, value: str) -> None:
+                if kernel_id not in self._query_params:
+                    self._query_params[kernel_id] = {variable_name: value}
+                else:
+                    self._query_params[kernel_id][variable_name] = value
+
+            def remove_query_params(self, kernel_id: str) -> None:
+                self._query_params.pop(kernel_id, None)
 
     return VoilaKernelManager

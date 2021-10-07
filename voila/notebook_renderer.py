@@ -222,6 +222,17 @@ class NotebookRenderer(LoggingConfigurable):
         )
         self.executor.kc.allow_stdin = False
         ###
+        await ensure_async(
+            self.executor.kc.execute(
+                f'''import os
+                \nos.environ["VOILA_KERNEL_ID"]="{kernel_id}"
+                \nos.environ["VOILA_PREHEAT"]= "{self.voila_configuration.preheat_kernel}"
+                \nos.environ["VOILA_BASE_URL"]="{self.base_url}"
+                ''',
+                store_history=False,
+            )
+        )
+
         self.kernel_started = True
         return kernel_id
 

@@ -61,6 +61,7 @@ from .execute import VoilaExecutor
 from .exporter import VoilaExporter
 from .shutdown_kernel_handler import VoilaShutdownKernelHandler
 from .voila_kernel_manager import voila_kernel_manager_factory
+from .query_parameters_handler import QueryParametersHandler
 
 _kernel_id_regex = r"(?P<kernel_id>\w+-\w+-\w+-\w+-\w+)"
 
@@ -423,7 +424,7 @@ class Voila(Application):
             self.voila_configuration.multi_kernel_manager_class,
             preheat_kernel,
             pool_size
-            )
+        )
         self.kernel_manager = kernel_manager_class(
             parent=self,
             connection_dir=self.connection_dir,
@@ -483,6 +484,16 @@ class Voila(Application):
             (url_path_join(self.server_url, r'/voila/api/shutdown/(.*)'), VoilaShutdownKernelHandler)
         ])
 
+        if preheat_kernel:
+            handlers.append(
+                (
+                    url_path_join(self.server_url, r'/voila/env/%s\/(?P<var_name>.*)' % _kernel_id_regex),
+                    QueryParametersHandler,
+                    {
+                        'kernel_manager': self.kernel_manager
+                    }
+                )
+            )
         # Serving notebook extensions
         if self.voila_configuration.enable_nbextensions:
             handlers.append(
@@ -533,7 +544,7 @@ class Voila(Application):
                      'template_paths': self.template_paths,
                      'config': self.config,
                      'voila_configuration': self.voila_configuration
-                 }),
+                }),
             ])
 
         self.app.add_handlers('.*$', handlers)
