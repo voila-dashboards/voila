@@ -11,8 +11,8 @@ def voila_args_extra(request):
     return [f'--template={request.param}']
 
 
-async def test_lists_extension(http_server_client, base_url, voila_app, wait_for_kernel):
-    await wait_for_kernel()
+async def test_lists_extension(http_server_client, base_url, voila_app):
+
     response = await http_server_client.fetch(base_url)
     assert response.code == 200
     html_text = response.body.decode('utf-8')

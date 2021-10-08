@@ -254,9 +254,12 @@ def voila_kernel_manager_factory(base_class: Type[T], preheat_kernel: bool, defa
                         else:
                             kid = result['kernel_id']
                             if kid in self:
-                                await ensure_async(
-                                    self.shutdown_kernel(kid, *args, **kwargs)
-                                )
+                                try:
+                                    await ensure_async(
+                                        self.shutdown_kernel(kid, *args, **kwargs)
+                                    )
+                                except RuntimeError:
+                                    pass  # Kernel is not running
 
             async def _initialize(
                     self, notebook_path: str, kernel_id: str = None, **kwargs) -> str:

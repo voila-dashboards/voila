@@ -1,7 +1,7 @@
 import os
 import pytest
 import voila.app
-import asyncio
+
 
 BASE_DIR = os.path.dirname(__file__)
 
@@ -33,13 +33,13 @@ def voila_args(voila_notebook, voila_args_extra, voila_config_file_paths_arg):
     return [voila_notebook, voila_config_file_paths_arg] + voila_args_extra + debug_args
 
 
-@pytest.fixture(params=[False, True])
-def preheat_mode(request):
+@pytest.fixture
+def preheat_mode():
     """Fixture used to activate/deactivate pre-heat kernel mode.
-    All tests will be executed in two modes automatically, override
-    this fixture in test file if you want to run only one mode.
+    Override this fixture in test file if you want to activate
+    preheat mode.
     """
-    return request.param
+    return False
 
 
 @pytest.fixture
@@ -61,12 +61,3 @@ def voila_app(voila_args, voila_config, preheat_config):
 @pytest.fixture
 def app(voila_app):
     return voila_app.app
-
-
-@pytest.fixture
-def wait_for_kernel(preheat_mode):
-    """Wait for kernel be heated in case of `preheat_mode = True`"""
-    async def inner(time=1):
-        if preheat_mode:
-            await asyncio.sleep(time)
-    return inner

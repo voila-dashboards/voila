@@ -1,6 +1,5 @@
 import pytest
 
-import os
 NOTEBOOK_PATH = 'syntax_error.ipynb'
 
 
@@ -10,19 +9,12 @@ def show_tracebacks(request):
 
 
 @pytest.fixture
-def notebook_show_traceback_path(base_url, preheat_mode):
-    if preheat_mode:
-        return base_url
+def notebook_show_traceback_path(base_url):
     return base_url + f'voila/render/{NOTEBOOK_PATH}'
 
 
 @pytest.fixture
-def voila_args(notebook_directory, voila_args_extra, show_tracebacks, preheat_mode):
-    if preheat_mode:
-        return [
-            os.path.join(notebook_directory, NOTEBOOK_PATH),
-            f'--VoilaConfiguration.show_tracebacks={show_tracebacks}',
-        ] + voila_args_extra
+def voila_args(notebook_directory, voila_args_extra, show_tracebacks):
     return [
         '--VoilaTest.root_dir=%r' % notebook_directory,
         f'--VoilaConfiguration.show_tracebacks={show_tracebacks}',
@@ -30,9 +22,9 @@ def voila_args(notebook_directory, voila_args_extra, show_tracebacks, preheat_mo
 
 
 async def test_syntax_error(
-    http_server_client, notebook_show_traceback_path, show_tracebacks, wait_for_kernel
+    http_server_client, notebook_show_traceback_path, show_tracebacks
 ):
-    await wait_for_kernel()
+
     response = await http_server_client.fetch(notebook_show_traceback_path)
     assert response.code == 200
     output = response.body.decode('utf-8')

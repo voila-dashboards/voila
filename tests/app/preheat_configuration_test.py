@@ -6,6 +6,7 @@ import os
 BASE_DIR = os.path.dirname(__file__)
 NOTEBOOK_EXECUTION_TIME = 2
 NUMBER_PREHEATED_KERNEL = 2
+TIME_THRESHOLD = 1
 
 
 @pytest.fixture
@@ -39,7 +40,7 @@ async def test_refill_kernel_asynchronously(http_server_client, base_url):
     slow = []
     for i in range(5*NUMBER_PREHEATED_KERNEL):
         time, _ = await send_request(sc=http_server_client, url=base_url)
-        if time < 0.5:
+        if time < TIME_THRESHOLD:
             fast.append(time)
         else:
             slow.append(time)
