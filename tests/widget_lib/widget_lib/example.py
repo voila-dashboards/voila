@@ -8,7 +8,7 @@
 TODO: Add module docstring
 """
 
-from ipywidgets import DOMWidget
+from ipywidgets import DOMWidget, Button
 from traitlets import Unicode
 from ._frontend import module_name, module_version
 
@@ -42,3 +42,7 @@ class ModuleImportError(DOMWidget):
     _view_name = Unicode('ModuleImportErrorView').tag(sync=True)
     _view_module = Unicode(module_name).tag(sync=True)
     _view_module_version = Unicode(module_version).tag(sync=True)
+
+
+class WrongVersion(Button):
+    _model_module_version = Unicode('0.0').tag(sync=True)

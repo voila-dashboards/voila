@@ -31,6 +31,20 @@ test.describe('Voila stability Tests', () => {
     );
     expect(await page.screenshot()).toMatchSnapshot(`${notebookName}.png`);
   });
+  test('Should render notebook with missing module in a box', async ({
+    page,
+    browserName
+  }, testInfo) => {
+    const notebookName = 'missing_module_inside_box';
+    await page.goto(`render/${notebookName}.ipynb`);
+    await page.waitForSelector('button');
+    await page.$('text=Typesetting math: 100%');
+    await page.waitForSelector('#MathJax_Message', { state: 'hidden' });
+    expect(errorLogs).toContain(
+      'Class ModuleImportErrorModel not found in module widget_lib@^0.1.0'
+    );
+    expect(await page.screenshot()).toMatchSnapshot(`${notebookName}.png`);
+  });
 
   test('Should render notebook with model error', async ({
     page,
@@ -55,6 +69,21 @@ test.describe('Voila stability Tests', () => {
     await page.$('text=Typesetting math: 100%');
     await page.waitForSelector('#MathJax_Message', { state: 'hidden' });
     expect(errorLogs).toContain('Error: Could not create view');
+    expect(await page.screenshot()).toMatchSnapshot(`${notebookName}.png`);
+  });
+
+  test('Should render notebook with semver error', async ({
+    page,
+    browserName
+  }, testInfo) => {
+    const notebookName = 'wrong_semver';
+    await page.goto(`render/${notebookName}.ipynb`);
+    await page.waitForSelector('button');
+    await page.$('text=Typesetting math: 100%');
+    await page.waitForSelector('#MathJax_Message', { state: 'hidden' });
+    expect(errorLogs).toContain(
+      'Error: Module @jupyter-widgets/controls, semver range 0.0 is not registered as a widget module'
+    );
     expect(await page.screenshot()).toMatchSnapshot(`${notebookName}.png`);
   });
 });

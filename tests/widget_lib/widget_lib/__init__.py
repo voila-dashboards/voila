@@ -1,13 +1,13 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# Copyright (c) Trung Le.
 # Distributed under the terms of the Modified BSD License.
 
-from .example import ModuleImportError, ViewRenderError, ModelInitializationError
+from .example import ModuleImportError, ViewRenderError, ModelInitializationError, WrongVersion
 from ._version import __version__, version_info  # noqa
 
-__all__ = ['ModuleImportError', 'ViewRenderError', 'ModelInitializationError']
+__all__ = ['ModuleImportError', 'ViewRenderError',
+           'ModelInitializationError', 'WrongVersion']
 
 
 def _jupyter_labextension_paths():
