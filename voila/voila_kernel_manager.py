@@ -287,6 +287,7 @@ def voila_kernel_manager_factory(base_class: Type[T], preheat_kernel: bool, defa
 
                 kernel_future = self.get_kernel(kernel_id)
                 task = asyncio.get_event_loop().create_task(renderer.generate_content_hybrid(kernel_id, kernel_future))
+                task.add_done_callback(lambda _: print('done', kernel_id))
                 return {'task': task, 'renderer': renderer, 'kernel_id': kernel_id}
 
             async def cull_kernel_if_idle(self, kernel_id: str):

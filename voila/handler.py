@@ -20,6 +20,7 @@ from traitlets.traitlets import Bool
 
 from ._version import __version__
 from .notebook_renderer import NotebookRenderer
+from .query_parameters_handler import QueryStringSocketHandler
 
 
 class VoilaHandler(JupyterHandler):
@@ -96,6 +97,8 @@ class VoilaHandler(JupyterHandler):
             render_task, rendered_cache, kernel_id = await self.kernel_manager.get_rendered_notebook(
                     notebook_name=notebook_path,
             )
+            
+            QueryStringSocketHandler.send_updates({'kernel_id': kernel_id, 'payload': str(self.request.query)})
             for name, value in self.request.arguments.items():
                 self.kernel_manager.set_query_params(kernel_id, name, value)
 
