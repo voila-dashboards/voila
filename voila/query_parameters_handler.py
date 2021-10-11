@@ -40,7 +40,7 @@ class QueryStringSocketHandler(WebSocketHandler):
     def send_updates(cls: 'QueryStringSocketHandler', msg: Dict) -> None:
         """Class method used to dispath the query string to the waiting
         notebook. This method is called in `VoilaHandler` when the query
-        string becomes available. 
+        string becomes available.
         If this method is called before the opening of websocket connection,
         `msg` is stored in `_cache0` and the message will be dispatched when
         a notebook with coresponding kernel id is connected.
@@ -48,7 +48,7 @@ class QueryStringSocketHandler(WebSocketHandler):
         Args:
             - msg (Dict): this dictionary contains the `kernel_id` to identify
             the waiting notebook and `payload` is the query string.
-        """        
+        """
         kernel_id = msg['kernel_id']
         payload = msg['payload']
         waiter = cls._waiters.get(kernel_id, None)
