@@ -21,6 +21,7 @@ from traitlets.traitlets import Bool
 from ._version import __version__
 from .notebook_renderer import NotebookRenderer
 from .query_parameters_handler import QueryStringSocketHandler
+from .utils import ENV_VARIABLE
 
 
 class VoilaHandler(JupyterHandler):
@@ -46,17 +47,16 @@ class VoilaHandler(JupyterHandler):
 
         # Adding request uri to kernel env
         kernel_env = os.environ.copy()
-        kernel_env['SCRIPT_NAME'] = self.request.path
+        kernel_env[ENV_VARIABLE.SCRIPT_NAME] = self.request.path
         kernel_env[
-            'PATH_INFO'
+            ENV_VARIABLE.PATH_INFO
         ] = ''  # would be /foo/bar if voila.ipynb/foo/bar was supported
-        kernel_env['QUERY_STRING'] = str(self.request.query)
-        kernel_env['SERVER_SOFTWARE'] = 'voila/{}'.format(__version__)
-        kernel_env['SERVER_PROTOCOL'] = str(self.request.version)
+        kernel_env[ENV_VARIABLE.QUERY_STRING] = str(self.request.query)
+        kernel_env[ENV_VARIABLE.SERVER_SOFTWARE] = 'voila/{}'.format(__version__)
+        kernel_env[ENV_VARIABLE.SERVER_PROTOCOL] = str(self.request.version)
         host, port = split_host_and_port(self.request.host.lower())
-        kernel_env['SERVER_PORT'] = str(port) if port else ''
-        kernel_env['SERVER_NAME'] = host
-
+        kernel_env[ENV_VARIABLE.SERVER_PORT] = str(port) if port else ''
+        kernel_env[ENV_VARIABLE.SERVER_NAME] = host
         # Add HTTP Headers as env vars following rfc3875#section-4.1.18
         if len(self.voila_configuration.http_header_envs) > 0:
             for header_name in self.request.headers:
@@ -145,6 +145,8 @@ class VoilaHandler(JupyterHandler):
                 self.write('<script>voila_heartbeat()</script>\n')
                 self.flush()
 
+            kernel_env[ENV_VARIABLE.VOILA_PREHEAT] = 'False'
+            kernel_env[ENV_VARIABLE.VOILA_BASE_URL] = self.base_url
             kernel_id = await ensure_async(
                 (
                     self.kernel_manager.start_kernel(
@@ -186,10 +188,5 @@ class VoilaHandler(JupyterHandler):
             return False
         if theme is not None and rendered_theme != theme:
             return False
-        # args_list = [
-        #     key for key in request_args if key not in ['voila-template', 'voila-theme']
-        # ]
-        # if len(args_list) > 0:
-        #     return False
 
         return True

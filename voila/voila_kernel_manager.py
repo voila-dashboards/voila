@@ -18,6 +18,7 @@ from traitlets.traitlets import Dict, Float, List, default
 from nbclient.util import ensure_async
 import re
 from .notebook_renderer import NotebookRenderer
+from .utils import ENV_VARIABLE
 
 T = TypeVar('T')
 
@@ -195,6 +196,8 @@ def voila_kernel_manager_factory(base_class: Type[T], preheat_kernel: bool, defa
                 for key in kernel_env_variables:
                     if key not in kernel_env:
                         kernel_env[key] = kernel_env_variables[key]
+                kernel_env[ENV_VARIABLE.VOILA_BASE_URL] = self.parent.base_url
+                kernel_env[ENV_VARIABLE.VOILA_PREHEAT] = 'True'
                 kwargs['env'] = kernel_env
 
                 heated = len(pool)
@@ -287,7 +290,6 @@ def voila_kernel_manager_factory(base_class: Type[T], preheat_kernel: bool, defa
 
                 kernel_future = self.get_kernel(kernel_id)
                 task = asyncio.get_event_loop().create_task(renderer.generate_content_hybrid(kernel_id, kernel_future))
-                task.add_done_callback(lambda _: print('done', kernel_id))
                 return {'task': task, 'renderer': renderer, 'kernel_id': kernel_id}
 
             async def cull_kernel_if_idle(self, kernel_id: str):

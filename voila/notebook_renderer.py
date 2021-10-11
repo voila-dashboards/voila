@@ -25,7 +25,7 @@ from traitlets.config.configurable import LoggingConfigurable
 from .execute import VoilaExecutor, strip_code_cell_warnings
 from .exporter import VoilaExporter
 from .paths import collect_template_paths
-
+from .utils import ENV_VARIABLE
 
 class NotebookRenderer(LoggingConfigurable):
     """Render the notebook into HTML string."""
@@ -225,9 +225,7 @@ class NotebookRenderer(LoggingConfigurable):
         await ensure_async(
             self.executor.kc.execute(
                 f'''import os
-                \nos.environ["VOILA_KERNEL_ID"]="{kernel_id}"
-                \nos.environ["VOILA_PREHEAT"]= "{self.voila_configuration.preheat_kernel}"
-                \nos.environ["VOILA_BASE_URL"]="{self.base_url}"
+                \nos.environ["{ENV_VARIABLE.VOILA_KERNEL_ID}"]="{kernel_id}"
                 ''',
                 store_history=False,
             )

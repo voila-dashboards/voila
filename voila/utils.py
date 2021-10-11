@@ -8,6 +8,25 @@
 #############################################################################
 
 import os
+import websockets
+from typing import Awaitable
+from enum import Enum
+
+
+class ENV_VARIABLE(str, Enum):
+
+    VOILA_PREHEAT = 'VOILA_PREHEAT'
+    VOILA_KERNEL_ID = 'VOILA_KERNEL_ID'
+    VOILA_BASE_URL = 'VOILA_BASE_URL'
+    VOILA_APP_IP = 'VOILA_APP_IP'
+    VOILA_APP_PORT = 'VOILA_APP_PORT'
+    SERVER_NAME = 'SERVER_NAME'
+    SERVER_PORT = 'SERVER_PORT'
+    SCRIPT_NAME = 'SCRIPT_NAME'
+    PATH_INFO = 'PATH_INFO'
+    QUERY_STRING = 'QUERY_STRING'
+    SERVER_SOFTWARE = 'SERVER_SOFTWARE'
+    SERVER_PROTOCOL = 'SERVER_PROTOCOL'
 
 
 def get_server_root_dir(settings):
@@ -24,3 +43,22 @@ def get_server_root_dir(settings):
         # collapse $HOME to ~
         root_dir = '~' + root_dir[len(home):]
     return root_dir
+
+
+async def get_user_query(url: str = None) -> Awaitable:
+    if url is None:
+        base_url = os.getenv(ENV_VARIABLE.VOILA_BASE_URL, '/')
+        server_ip = os.getenv(ENV_VARIABLE.VOILA_APP_IP, '127.0.0.1')
+        server_port = os.getenv(ENV_VARIABLE.VOILA_APP_PORT, '8866')
+        url = f'ws://{server_ip}:{server_port}{base_url}voila/query'
+
+    preheat_mode = os.getenv(ENV_VARIABLE.VOILA_PREHEAT, 'False')
+    kernel_id = os.getenv(ENV_VARIABLE.VOILA_KERNEL_ID)
+    ws_url = f'{url}/{kernel_id}'
+
+    if preheat_mode == 'True':
+        async with websockets.connect(ws_url) as websocket:
+            qs = await websocket.recv()
+    else:
+        qs = os.getenv(ENV_VARIABLE.QUERY_STRING)
+    return qs

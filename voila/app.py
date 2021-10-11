@@ -61,7 +61,7 @@ from .execute import VoilaExecutor
 from .exporter import VoilaExporter
 from .shutdown_kernel_handler import VoilaShutdownKernelHandler
 from .voila_kernel_manager import voila_kernel_manager_factory
-from .query_parameters_handler import QueryParametersHandler, QueryStringSocketHandler
+from .query_parameters_handler import QueryStringSocketHandler
 
 _kernel_id_regex = r"(?P<kernel_id>\w+-\w+-\w+-\w+-\w+)"
 
@@ -485,15 +485,6 @@ class Voila(Application):
         ])
 
         if preheat_kernel:
-            handlers.append(
-                (
-                    url_path_join(self.server_url, r'/voila/env/%s\/(?P<var_name>.*)' % _kernel_id_regex),
-                    QueryParametersHandler,
-                    {
-                        'kernel_manager': self.kernel_manager
-                    }
-                )
-            )
             handlers.append(
                 (
                     url_path_join(self.server_url, r'/voila/query/%s' % _kernel_id_regex),
