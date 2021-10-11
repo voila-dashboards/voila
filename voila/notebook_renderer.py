@@ -222,7 +222,8 @@ class NotebookRenderer(LoggingConfigurable):
             self.executor.kc.wait_for_ready(timeout=self.executor.startup_timeout)
         )
         self.executor.kc.allow_stdin = False
-        ###
+        # Set `VOILA_KERNEL_ID` environment variable, this variable help user can 
+        # identify which kernel the notebook use.
         await ensure_async(
             self.executor.kc.execute(
                 f'''import os
