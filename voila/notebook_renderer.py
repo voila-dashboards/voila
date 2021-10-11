@@ -27,6 +27,7 @@ from .exporter import VoilaExporter
 from .paths import collect_template_paths
 from .utils import ENV_VARIABLE
 
+
 class NotebookRenderer(LoggingConfigurable):
     """Render the notebook into HTML string."""
 

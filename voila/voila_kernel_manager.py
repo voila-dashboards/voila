@@ -94,7 +94,6 @@ def voila_kernel_manager_factory(base_class: Type[T], preheat_kernel: bool, defa
                 self.notebook_data: TypeDict = {}
                 self._pools: TypeDict[str, List[TypeDict]] = {}
                 self.root_dir = self.parent.root_dir
-                self._query_params = dict()
                 if self.parent.notebook_path is not None:
                     self.notebook_path = os.path.relpath(
                         self.parent.notebook_path, self.root_dir
@@ -359,17 +358,5 @@ def voila_kernel_manager_factory(base_class: Type[T], preheat_kernel: bool, defa
                     if kernel_id in data['kernel_ids']:
                         return nb_name
                 return None
-
-            def get_query_params(self, kernel_id: str, variable_name: str) -> str:
-                return self._query_params.get(kernel_id, {}).get(variable_name, [None])
-
-            def set_query_params(self, kernel_id: str, variable_name: str, value: str) -> None:
-                if kernel_id not in self._query_params:
-                    self._query_params[kernel_id] = {variable_name: value}
-                else:
-                    self._query_params[kernel_id][variable_name] = value
-
-            def remove_query_params(self, kernel_id: str) -> None:
-                self._query_params.pop(kernel_id, None)
 
     return VoilaKernelManager
