@@ -313,8 +313,8 @@ There is also the ``MappingKernelManager.cull_busy`` and ``MappingKernelManager.
 
 For more information about these options, check out the `Jupyter Server <https://jupyter-server.readthedocs.io/en/latest/other/full-config.html#options>`_ documentation.
 
-Preheat kernels
-=================
+Preheated kernels
+==================
 
 Since Voilà needs to start a new jupyter kernel and execute the requested notebook in this kernel for every connection, this would lead to a long waiting time before the widgets can be displayed in the browser. 
 To reduce this waiting time, especially for the heavy notebooks, users can activate the preheating kernel option of Voilà, this option will enable two features:
@@ -393,14 +393,14 @@ In normal mode, Voilà users can get the `query string` at run time through the 
    import os
    query_string = os.getenv('QUERY_STRING') 
 
-In preheating kernel mode, users can just replace the ``os.getenv`` call with the helper ``get_user_query`` from ``voila.utils``
+In preheating kernel mode, users can just replace the ``os.getenv`` call with the helper ``get_query_string`` from ``voila.utils``
 
 .. code-block:: python
 
-   from voila.utils import get_user_query
-   query_string = get_user_query()
+   from voila.utils import get_query_string
+   query_string = get_query_string()
 
-``get_user_query`` will pause the execution of the notebook in the preheated kernel at this cell and wait for an actual user to connect to Voilà, then ``get_user_query`` will return the URL `query string` and continue the execution of the remaining cells. 
+``get_query_string`` will pause the execution of the notebook in the preheated kernel at this cell and wait for an actual user to connect to Voilà, then ``get_query_string`` will return the URL `query string` and continue the execution of the remaining cells. 
 
 If the Voilà websocket handler is not started with the default protocol (`ws`), the default IP address (`127.0.0.1`) or the default port (`8866`), users need to provide these values through the environment variables ``VOILA_APP_PROTOCOL``, ``VOILA_APP_IP`` and ``VOILA_APP_PORT``. The easiest way is to set these variables in the `voila.json` configuration file, for example:
 

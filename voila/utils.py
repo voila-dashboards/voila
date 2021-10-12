@@ -49,19 +49,20 @@ def get_server_root_dir(settings):
     return root_dir
 
 
-async def _get_user_query(ws_url: str) -> Awaitable:
+async def _get_query_string(ws_url: str) -> Awaitable:
     async with websockets.connect(ws_url) as websocket:
         qs = await websocket.recv()
     return qs
 
 
-def get_user_query(url: str = None) -> str:
+def get_query_string(url: str = None) -> str:
     """Helper function to pause the execution of notebook and wait for
     the query string.
 
     Args:
         url (str, optional): Address to get user query string, if it is not
-        provided, `voila` will figure out from the environment variables. Defaults to None.
+        provided, `voila` will figure out from the environment variables.
+        Defaults to None.
 
     Returns: The query string provided by `QueryStringSocketHandler`.
     """
@@ -84,7 +85,7 @@ def get_user_query(url: str = None) -> str:
     def inner():
         nonlocal query_string
         loop = asyncio.new_event_loop()
-        query_string = loop.run_until_complete(_get_user_query(ws_url))
+        query_string = loop.run_until_complete(_get_query_string(ws_url))
 
     thread = threading.Thread(target=inner)
     try:
