@@ -384,7 +384,7 @@ If the kernel pool is empty or the request does not match these conditions, Voil
 Partially pre-render notebook
 ------------------------------
 
-To benefit the acceleration of preheating kernel mode, the notebooks need to be pre-rendered before users actually connect to Voilà. But in many real-world cases, the notebook requires some user-specific data to render correctly the widgets, which makes pre-rendering become impossible. To overcome this limit, Voilà offers a feature to treat the most used method for providing user data: the URL `query string`.
+To benefit the acceleration of preheating kernel mode, the notebooks need to be pre-rendered before users actually connect to Voilà. But in many real-world cases, the notebook requires some user-specific data to render correctly the widgets, which makes pre-rendering impossible. To overcome this limit, Voilà offers a feature to treat the most used method for providing user data: the URL `query string`.
 
 In normal mode, Voilà users can get the `query string` at run time through the ``QUERY_STRING`` environment variable:
 
@@ -400,9 +400,9 @@ In preheating kernel mode, users can just replace the ``os.getenv`` call with th
    from voila.utils import get_user_query
    query_string = get_user_query()
 
-``get_user_query`` will pause the execution of notebook in the preheated kernel at its cell and wait for an actual user connects to Voilà, then ``get_user_query`` will return the URL `query string` and continue the execution of remaining cells. 
+``get_user_query`` will pause the execution of the notebook in the preheated kernel at this cell and wait for an actual user to connect to Voilà, then ``get_user_query`` will return the URL `query string` and continue the execution of the remaining cells. 
 
-If Voilà websocket handler is not started at the default protocol (`ws`), the default IP address (`127.0.0.1`) or the default port (`8866`), users need to provide these values through the environment variables ``VOILA_APP_PROTOCOL``, ``VOILA_APP_IP`` and ``VOILA_APP_PORT``. The easiest way is to set these variables in `voila.json` configuration file, for example:
+If the Voilà websocket handler is not started with the default protocol (`ws`), the default IP address (`127.0.0.1`) or the default port (`8866`), users need to provide these values through the environment variables ``VOILA_APP_PROTOCOL``, ``VOILA_APP_IP`` and ``VOILA_APP_PORT``. The easiest way is to set these variables in the `voila.json` configuration file, for example:
 
 .. code-block:: python
 
