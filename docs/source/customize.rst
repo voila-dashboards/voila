@@ -398,17 +398,11 @@ In preheating kernel mode, users can just replace the ``os.getenv`` call with th
 .. code-block:: python
 
    from voila.utils import get_user_query
-   query_string = await get_user_query()
-
-or if you use the raw mode of ``xeus-python``:
-
-.. code-block:: python
-
-   query_string = asyncio.get_event_loop().run_until_complete(get_user_query())
+   query_string = get_user_query()
 
 ``get_user_query`` will pause the execution of notebook in the preheated kernel at its cell and wait for an actual user connects to Voilà, then ``get_user_query`` will return the URL `query string` and continue the execution of remaining cells. 
 
-If Voilà is not started at the default IP address (`127.0.0.1`) or the default port (`8866`), users need to provide these values through the environment variables ``VOILA_APP_IP`` and ``VOILA_APP_PORT``. The easiest way is to set these variables in `voila.json` configuration file, for example:
+If Voilà websocket handler is not started at the default protocol (`ws`), the default IP address (`127.0.0.1`) or the default port (`8866`), users need to provide these values through the environment variables ``VOILA_APP_PROTOCOL``, ``VOILA_APP_IP`` and ``VOILA_APP_PORT``. The easiest way is to set these variables in `voila.json` configuration file, for example:
 
 .. code-block:: python
 
@@ -420,7 +414,8 @@ If Voilà is not started at the default IP address (`127.0.0.1`) or the default 
             "foo.ipynb": {
                "kernel_env_variables": { 
                   "VOILA_APP_IP": "192.168.1.1",
-                  "VOILA_APP_PORT": "6789"
+                  "VOILA_APP_PORT": "6789",
+                  "VOILA_APP_PROTOCOL": "wss"
                }
             }
          },

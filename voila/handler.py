@@ -98,7 +98,7 @@ class VoilaHandler(JupyterHandler):
                     notebook_name=notebook_path,
             )
 
-            QueryStringSocketHandler.send_updates({'kernel_id': kernel_id, 'payload': str(self.request.query)})
+            QueryStringSocketHandler.send_updates({'kernel_id': kernel_id, 'payload': self.request.query})
             # Send rendered cell to frontend
             if len(rendered_cache) > 0:
                 self.write(''.join(rendered_cache))
