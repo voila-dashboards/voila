@@ -8,11 +8,11 @@
 
 ### Enhancements made
 
-- Add support  for query variables in preheat kernel mode [#999](https://github.com/voila-dashboards/voila/pull/999) ([@trungleduc](https://github.com/trungleduc))
+- Add support for query variables in preheated kernel mode [#999](https://github.com/voila-dashboards/voila/pull/999) ([@trungleduc](https://github.com/trungleduc))
 
 ### Maintenance and upkeep improvements
 
-- Simplify tests for preheat kernel mode [#996](https://github.com/voila-dashboards/voila/pull/996) ([@trungleduc](https://github.com/trungleduc))
+- Simplify tests for preheated kernel mode [#996](https://github.com/voila-dashboards/voila/pull/996) ([@trungleduc](https://github.com/trungleduc))
 - Allow for Jupyter Client 7 [#953](https://github.com/voila-dashboards/voila/pull/953) ([@jtpio](https://github.com/jtpio))
 
 ### Contributors to this release
