@@ -57,5 +57,5 @@ class QueryStringSocketHandler(WebSocketHandler):
                 waiter.write_message(payload)
             except Exception:
                 logging.error("Error sending message", exc_info=True)
-        else:
-            cls._cache[kernel_id] = payload
+
+        cls._cache[kernel_id] = payload
