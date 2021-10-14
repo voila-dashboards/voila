@@ -2,6 +2,27 @@
 
 <!-- <START NEW CHANGELOG ENTRY> -->
 
+## 0.3.0a2
+
+([Full Changelog](https://github.com/voila-dashboards/voila/compare/v0.3.0a1...a03f0af8a10183e5433870e8351b62d3d2e7006d))
+
+### Enhancements made
+
+- Add support  for query variables in preheat kernel mode [#999](https://github.com/voila-dashboards/voila/pull/999) ([@trungleduc](https://github.com/trungleduc))
+
+### Maintenance and upkeep improvements
+
+- Simplify tests for preheat kernel mode [#996](https://github.com/voila-dashboards/voila/pull/996) ([@trungleduc](https://github.com/trungleduc))
+- Allow for Jupyter Client 7 [#953](https://github.com/voila-dashboards/voila/pull/953) ([@jtpio](https://github.com/jtpio))
+
+### Contributors to this release
+
+([GitHub contributors page for this release](https://github.com/voila-dashboards/voila/graphs/contributors?from=2021-10-06&to=2021-10-14&type=c))
+
+[@github-actions](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Agithub-actions+updated%3A2021-10-06..2021-10-14&type=Issues) | [@jtpio](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Ajtpio+updated%3A2021-10-06..2021-10-14&type=Issues) | [@trungleduc](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Atrungleduc+updated%3A2021-10-06..2021-10-14&type=Issues)
+
+<!-- <END NEW CHANGELOG ENTRY> -->
+
 ## 0.3.0a1
 
 ([Full Changelog](https://github.com/voila-dashboards/voila/compare/v0.3.0a0...473e3a961783f808382f2bfa4ae9d5ca19a213a6))
@@ -19,8 +40,6 @@
 ([GitHub contributors page for this release](https://github.com/voila-dashboards/voila/graphs/contributors?from=2021-10-05&to=2021-10-06&type=c))
 
 [@github-actions](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Agithub-actions+updated%3A2021-10-05..2021-10-06&type=Issues) | [@jtpio](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Ajtpio+updated%3A2021-10-05..2021-10-06&type=Issues) | [@trungleduc](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Atrungleduc+updated%3A2021-10-05..2021-10-06&type=Issues)
-
-<!-- <END NEW CHANGELOG ENTRY> -->
 
 ## 0.3.0a0
 
