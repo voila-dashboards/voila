@@ -92,7 +92,7 @@ def bump(force, spec):
 
     # Make sure we have a valid version spec.
     if spec not in OPTIONS:
-        raise Exception(f"Version spec must be one of: {OPTIONS}")
+        raise ValueError(f"Version spec must be one of: {OPTIONS}")
 
     prev = get_version()
     is_final = not is_prerelease(prev)
