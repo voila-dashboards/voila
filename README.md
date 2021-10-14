@@ -74,7 +74,8 @@ Voilà can also be used as a Jupyter server extension, both with the
 To install the Jupyter server extension, run
 
 ```
-jupyter serverextension enable voila --sys-prefix
+jupyter serverextension enable voila
+jupyter server extension enable voila
 ```
 
 When running the Jupyter server, the Voilà app is accessible from the base url
