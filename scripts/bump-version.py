@@ -9,7 +9,7 @@ import click
 from jupyter_releaser.util import is_prerelease, get_version, run
 
 
-OPTIONS = ["major", "minor", "release", "build"]
+OPTIONS = ["major", "minor", "release", "build", "next"]
 
 
 def patch(force=False):
