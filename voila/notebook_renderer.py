@@ -25,6 +25,7 @@ from traitlets.config.configurable import LoggingConfigurable
 from .execute import VoilaExecutor, strip_code_cell_warnings
 from .exporter import VoilaExporter
 from .paths import collect_template_paths
+from .utils import ENV_VARIABLE
 
 
 class NotebookRenderer(LoggingConfigurable):
@@ -221,7 +222,18 @@ class NotebookRenderer(LoggingConfigurable):
             self.executor.kc.wait_for_ready(timeout=self.executor.startup_timeout)
         )
         self.executor.kc.allow_stdin = False
-        ###
+        # Set `VOILA_KERNEL_ID` environment variable, this variable help user can
+        # identify which kernel the notebook use.
+        if nb.metadata.kernelspec['language'] == 'python':
+            await ensure_async(
+                self.executor.kc.execute(
+                    f'''import os
+                    \nos.environ["{ENV_VARIABLE.VOILA_KERNEL_ID}"]="{kernel_id}"
+                    ''',
+                    store_history=False,
+                )
+            )
+
         self.kernel_started = True
         return kernel_id
 

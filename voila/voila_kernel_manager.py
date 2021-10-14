@@ -18,6 +18,7 @@ from traitlets.traitlets import Dict, Float, List, default
 from nbclient.util import ensure_async
 import re
 from .notebook_renderer import NotebookRenderer
+from .utils import ENV_VARIABLE
 
 T = TypeVar('T')
 
@@ -143,11 +144,12 @@ def voila_kernel_manager_factory(base_class: Type[T], preheat_kernel: bool, defa
                 content = await pool_item
                 renderer: NotebookRenderer = content['renderer']
                 render_task: asyncio.Task = content['task']
+                kernel_id: str = content['kernel_id']
                 renderer.stop_generator = True
                 self.log.info('Using pre-heated kernel: %s for %s', 'kernel_id', notebook_name)
                 self.fill_if_needed(delay=None, notebook_name=notebook_name, **kwargs)
 
-                return render_task, renderer.rendered_cache
+                return render_task, renderer.rendered_cache, kernel_id
 
             def get_pool_size(self, notebook_name: str) -> int:
                 return len(self._pools.get(notebook_name, []))
@@ -193,6 +195,8 @@ def voila_kernel_manager_factory(base_class: Type[T], preheat_kernel: bool, defa
                 for key in kernel_env_variables:
                     if key not in kernel_env:
                         kernel_env[key] = kernel_env_variables[key]
+                kernel_env[ENV_VARIABLE.VOILA_BASE_URL] = self.parent.base_url
+                kernel_env[ENV_VARIABLE.VOILA_PREHEAT] = 'True'
                 kwargs['env'] = kernel_env
 
                 heated = len(pool)
@@ -284,7 +288,6 @@ def voila_kernel_manager_factory(base_class: Type[T], preheat_kernel: bool, defa
                     self.notebook_data[renderer.notebook_path]['kernel_ids'].add(kernel_id)
 
                 kernel_future = self.get_kernel(kernel_id)
-
                 task = asyncio.get_event_loop().create_task(renderer.generate_content_hybrid(kernel_id, kernel_future))
                 return {'task': task, 'renderer': renderer, 'kernel_id': kernel_id}
 
