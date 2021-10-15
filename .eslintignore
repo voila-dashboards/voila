@@ -12,6 +12,7 @@ node_modules
 **/schemas
 **/themes
 **/templates
+**/widget_lib
 coverage
 *.map.js
 *.bundle.js

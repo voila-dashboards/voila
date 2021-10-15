@@ -46,6 +46,13 @@ jobs:
           resource: http-get://localhost:8868/
           timeout: 360000
 
+      - uses: iterative/setup-cml@v1
+      - name: Stability test
+        shell: bash
+        run: |
+          cd ui-tests
+          jlpm run test-stability
+
       - name: Launch Voila
         run: |
           cd ui-tests

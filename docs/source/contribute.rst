@@ -236,19 +236,20 @@ Install `Playwright` and `Chromium` browser:
    jlpm install --frozen-lockfile
    jlpm playwright install chromium
 
-Start `Voilà` server for snapshot and stability testing: 
+Start `Voilà` server and run the snapshot tests: 
 
 .. code-block:: bash
 
    # In ui-tests folder
    jlpm start
-   jlpm start-stability
+   jlpm test
 
-Finally, to run the tests:
+To run the stability tests:
 
 .. code-block:: bash
 
-   jlpm run test
+   jlpm start-stability
+   jlpm test-stability
 
 Editing templates
 =================
