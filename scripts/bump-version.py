@@ -9,7 +9,7 @@ import click
 from jupyter_releaser.util import is_prerelease, get_version, run
 
 
-OPTIONS = ["major", "minor", "release", "build"]
+OPTIONS = ["major", "minor", "release", "build", "patch", "next"]
 
 
 def patch(force=False):
@@ -35,10 +35,6 @@ def patch(force=False):
 
 def update(spec, force=False):
     prev = get_version()
-
-    # Make sure we have a valid version spec.
-    if spec not in OPTIONS:
-        raise Exception(f"Version spec must be one of: {OPTIONS}")
 
     is_final = not is_prerelease(prev)
 
@@ -93,6 +89,10 @@ def bump(force, spec):
     status = run("git status --porcelain").strip()
     if len(status) > 0:
         raise Exception("Must be in a clean git state with no untracked files")
+
+    # Make sure we have a valid version spec.
+    if spec not in OPTIONS:
+        raise ValueError(f"Version spec must be one of: {OPTIONS}")
 
     prev = get_version()
     is_final = not is_prerelease(prev)
