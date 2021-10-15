@@ -217,6 +217,39 @@ Finally, to run the tests:
 
    python -m pytest
 
+UI tests with `Playwright`
+==========================
+
+Install the test dependencies and the mock widgets:
+
+.. code-block:: bash
+
+   python -m pip install jupyterlab~=3.0 numpy bqplot matplotlib ipympl ipyvolume scipy
+   cd tests/widget_lib
+   pip install .
+
+Install `Playwright` and `Chromium` browser:
+
+.. code-block:: bash
+
+   cd ui-tests
+   jlpm install --frozen-lockfile
+   jlpm playwright install chromium
+
+Start `Voilà` server for snapshot and stability testing: 
+
+.. code-block:: bash
+
+   # In ui-tests folder
+   jlpm start
+   jlpm start-stability
+
+Finally, to run the tests:
+
+.. code-block:: bash
+
+   jlpm run test
+
 Editing templates
 =================
 
