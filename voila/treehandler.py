@@ -20,6 +20,7 @@ class VoilaTreeHandler(JupyterHandler):
     def initialize(self, **kwargs):
         self.voila_configuration = kwargs['voila_configuration']
         self.allowed_extensions = list(self.voila_configuration.extension_language_mapping.keys()) + ['.ipynb']
+        self.voila_token = kwargs.pop('token', u'')
 
     def get_template(self, name):
         """Return the jinja template object for a given name"""
@@ -48,6 +49,13 @@ class VoilaTreeHandler(JupyterHandler):
 
     @web.authenticated
     def get(self, path=''):
+
+        # Manage token
+        if self.voila_token:
+            token = self.get_argument("token", "")
+            if not token == self.voila_token:
+                raise web.HTTPError(404, 'you need a token to connect')
+
         cm = self.contents_manager
 
         if cm.dir_exists(path=path):
