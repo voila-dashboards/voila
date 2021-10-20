@@ -566,7 +566,7 @@ class Voila(Application):
         success = False
         for port in self.random_ports(self.port, self.port_retries+1):
             try:
-                self.app.listen(port)
+                self.app.listen(port,address=self.ip)
                 self.port = port
                 self.log.info('Voilà is running at:\n%s' % self.display_url)
             except socket.error as e:
