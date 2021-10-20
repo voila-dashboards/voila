@@ -59,10 +59,9 @@ jobs:
 
       - name: Check Release
         uses: jupyter-server/jupyter_releaser/.github/actions/check-release@v1
-        env:
-          RH_VERSION_SPEC: next
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
+          version_spec: next
 
       - name: Upload Distributions
         uses: actions/upload-artifact@v2
