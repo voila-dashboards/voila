@@ -190,7 +190,9 @@ def voila_kernel_manager_factory(base_class: Type[T], preheat_kernel: bool, defa
                         if notebook_name is not None
                         else self.root_dir
                     )
-                kernel_env = kwargs.get('env', {})
+                kernel_env = os.environ.copy()
+                kernel_env_arg = kwargs.get('env', {})
+                kernel_env.update(kernel_env_arg)
                 kernel_env_variables = self.kernel_pools_config.get(notebook_name, {}).get('kernel_env_variables', {})
                 for key in kernel_env_variables:
                     if key not in kernel_env:
