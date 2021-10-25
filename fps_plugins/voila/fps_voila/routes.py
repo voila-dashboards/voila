@@ -8,7 +8,7 @@ from voila.handler import _VoilaHandler, _get
 
 from mimetypes import guess_type
 from fastapi import APIRouter, Depends
-from fastapi.responses import RedirectResponse, HTMLResponse, Response
+from fastapi.responses import RedirectResponse, StreamingResponse, Response
 from fastapi.staticfiles import StaticFiles
 from fps.hooks import register_router  # type: ignore
 
@@ -22,15 +22,6 @@ class FPSVoilaHandler(_VoilaHandler):
 
     def redirect(self, url):
         return RedirectResponse(url)
-
-    def write(self, html):
-        self.html += [html]
-
-    def flush(self):
-        pass
-
-    def return_html(self):
-        return HTMLResponse("".join(self.html))
 
     def get_argument(self, name, default):
         if self.fps_arguments[name] is None:
@@ -85,7 +76,7 @@ async def get_root(voila_template: Optional[str] = None, voila_theme: Optional[s
     fps_voila_handler.fps_arguments["voila-template"] = voila_template
     fps_voila_handler.fps_arguments["voila-theme"] = voila_theme
     path = "" #voila_config.notebook_path or "/"
-    return await _get(fps_voila_handler, path)
+    return StreamingResponse(_get(fps_voila_handler, path))
 
 @router.get("/voila/static/{path}")
 def get_file1(path):

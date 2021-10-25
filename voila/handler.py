@@ -97,21 +97,18 @@ async def _get(self, path=None):
         QueryStringSocketHandler.send_updates({'kernel_id': kernel_id, 'payload': self.request.query})
         # Send rendered cell to frontend
         if len(rendered_cache) > 0:
-            self.write(''.join(rendered_cache))
-            self.flush()
+            yield ''.join(rendered_cache)
 
         # Wait for current running cell finish and send this cell to
         # frontend.
         rendered, rendering = await render_task
         if len(rendered) > len(rendered_cache):
             html_snippet = ''.join(rendered[len(rendered_cache):])
-            self.write(html_snippet)
-            self.flush()
+            yield html_snippet
 
         # Continue render cell from generator.
         async for html_snippet, _ in rendering:
-            self.write(html_snippet)
-            self.flush()
+            yield html_snippet
         self.flush()
 
     else:
@@ -136,8 +133,7 @@ async def _get(self, path=None):
             can be used in a template to give feedback to a user
             """
 
-            self.write('<script>voila_heartbeat()</script>\n')
-            self.flush()
+            yield '<script>voila_heartbeat()</script>\n'
 
         kernel_env[ENV_VARIABLE.VOILA_PREHEAT] = 'False'
         kernel_env[ENV_VARIABLE.VOILA_BASE_URL] = self.base_url
@@ -154,14 +150,9 @@ async def _get(self, path=None):
         async for html_snippet, _ in gen.generate_content_generator(
             kernel_id, kernel_future, time_out
         ):
-            self.write(html_snippet)
-            self.flush()
+            yield html_snippet
             # we may not want to consider not flusing after each snippet, but add an explicit flush function to the jinja context
             # yield  # give control back to tornado's IO loop, so it can handle static files or other requests
-        self.flush()
-
-    if self.is_fps:
-        return self.return_html()
 
 class _VoilaHandler:
     is_fps = False
@@ -203,4 +194,9 @@ class _VoilaHandler:
 class VoilaHandler(_VoilaHandler, JupyterHandler):
     @tornado.web.authenticated
     async def get(self, path=None):
-        return await _get(self, path=path)
+        it = _get(self, path=path)
+        async for html in it:
+            self.write(html)
+            self.flush()
+
+        return it
