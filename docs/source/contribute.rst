@@ -39,7 +39,7 @@ First, you need to fork the project. Then setup your environment:
 
    # install JS dependencies and build js assets
    cd voila
-   npm install
+   yarn install
 
    # install Voilà in editable mode
    python -m pip install -e .
