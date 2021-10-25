@@ -31,16 +31,15 @@ First, you need to fork the project. Then setup your environment:
 .. code-block:: bash
 
    # create a new conda environment
-   conda create -n voila -c conda-forge notebook nodejs
+   conda create -n voila -c conda-forge notebook jupyterlab nodejs yarn pip
    conda activate voila
 
    # download voila from your GitHub fork
    git clone https://github.com/<your-github-username>/voila.git
 
    # install JS dependencies and build js assets
-   cd voila/js
+   cd voila
    npm install
-   cd ..
 
    # install Voilà in editable mode
    python -m pip install -e .
