@@ -8,7 +8,7 @@ async def test_static_file_absolute_path(voila_app, app, base_url, http_server_c
     response_lab = await http_server_client.fetch(f'{base_url}voila/templates/lab/static/voila.js')
     assert response_lab.code == 200
     abspath = TemplateStaticFileHandler.get_absolute_path(None, 'lab/static/voila.js')
-    with open(abspath) as f:
+    with open(abspath, encoding='utf-8', errors='replace') as f:
         content = f.read()
     assert response_lab.body.decode('utf-8') == content
 
