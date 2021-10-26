@@ -484,6 +484,8 @@ class Voila(Application):
                 '/',
                 self.config_manager,
                 self.static_paths,
+                self.tornado_settings,
+                self.log,
             )
             fps_app()
         else:

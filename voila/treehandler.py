@@ -16,7 +16,50 @@ from jupyter_server.utils import url_path_join, url_escape
 from .utils import get_server_root_dir
 
 
-class VoilaTreeHandler(JupyterHandler):
+def _get(self, path=''):
+    cm = self.contents_manager
+
+    if cm.dir_exists(path=path):
+        if cm.is_hidden(path) and not cm.allow_hidden:
+            self.log.info("Refusing to serve hidden directory, via 404 Error")
+            raise web.HTTPError(404)
+        breadcrumbs = self.generate_breadcrumbs(path)
+        page_title = self.generate_page_title(path)
+        contents = cm.get(path)
+
+        def allowed_content(content):
+            if content['type'] in ['directory', 'notebook']:
+                return True
+            __, ext = os.path.splitext(content.get('path'))
+            return ext in self.allowed_extensions
+
+        contents['content'] = sorted(contents['content'], key=lambda i: i['name'])
+        contents['content'] = filter(allowed_content, contents['content'])
+        return self.write(self.render_template('tree.html',
+                   page_title=page_title,
+                   notebook_path=path,
+                   breadcrumbs=breadcrumbs,
+                   contents=contents,
+                   terminals_available=False,
+                   server_root=get_server_root_dir(self.settings)))
+    elif cm.file_exists(path):
+        # it's not a directory, we have redirecting to do
+        model = cm.get(path, content=False)
+        # redirect to /api/notebooks if it's a notebook, otherwise /api/files
+        service = 'notebooks' if model['type'] == 'notebook' else 'files'
+        url = url_path_join(
+            self.base_url, service, url_escape(path),
+        )
+        if not self.is_fps:
+            self.log.debug("Redirecting %s to %s", self.request.path, url)
+        return self.redirect(url)
+    else:
+        raise web.HTTPError(404)
+
+
+class _VoilaTreeHandler:
+    is_fps = False
+
     def initialize(self, **kwargs):
         self.voila_configuration = kwargs['voila_configuration']
         self.allowed_extensions = list(self.voila_configuration.extension_language_mapping.keys()) + ['.ipynb']
@@ -46,42 +89,8 @@ class VoilaTreeHandler(JupyterHandler):
         else:
             return 'Voilà Home'
 
+
+class VoilaTreeHandler(_VoilaTreeHandler, JupyterHandler):
     @web.authenticated
     def get(self, path=''):
-        cm = self.contents_manager
-
-        if cm.dir_exists(path=path):
-            if cm.is_hidden(path) and not cm.allow_hidden:
-                self.log.info("Refusing to serve hidden directory, via 404 Error")
-                raise web.HTTPError(404)
-            breadcrumbs = self.generate_breadcrumbs(path)
-            page_title = self.generate_page_title(path)
-            contents = cm.get(path)
-
-            def allowed_content(content):
-                if content['type'] in ['directory', 'notebook']:
-                    return True
-                __, ext = os.path.splitext(content.get('path'))
-                return ext in self.allowed_extensions
-
-            contents['content'] = sorted(contents['content'], key=lambda i: i['name'])
-            contents['content'] = filter(allowed_content, contents['content'])
-            self.write(self.render_template('tree.html',
-                       page_title=page_title,
-                       notebook_path=path,
-                       breadcrumbs=breadcrumbs,
-                       contents=contents,
-                       terminals_available=False,
-                       server_root=get_server_root_dir(self.settings)))
-        elif cm.file_exists(path):
-            # it's not a directory, we have redirecting to do
-            model = cm.get(path, content=False)
-            # redirect to /api/notebooks if it's a notebook, otherwise /api/files
-            service = 'notebooks' if model['type'] == 'notebook' else 'files'
-            url = url_path_join(
-                self.base_url, service, url_escape(path),
-            )
-            self.log.debug("Redirecting %s to %s", self.request.path, url)
-            self.redirect(url)
-        else:
-            raise web.HTTPError(404)
+        return _get(self, path=path)
