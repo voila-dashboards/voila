@@ -114,7 +114,7 @@ async def _get(self, path=None):
     else:
         # All kernels are used or pre-heated kernel is disabled, start a normal kernel.
         gen = NotebookRenderer(
-            self.is_fps,
+            is_fps=self.is_fps,
             voila_configuration=self.voila_configuration,
             traitlet_config=self.traitlet_config,
             notebook_path=notebook_path,

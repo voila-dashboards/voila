@@ -54,7 +54,11 @@ def _get(self, path=''):
             self.log.debug("Redirecting %s to %s", self.request.path, url)
         return self.redirect(url)
     else:
-        raise web.HTTPError(404)
+        if self.is_fps:
+            from fastapi import HTTPException
+            raise HTTPException(status_code=404, detail=f"{path} not found")
+        else:
+            raise web.HTTPError(404)
 
 
 class _VoilaTreeHandler:

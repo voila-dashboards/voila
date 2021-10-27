@@ -21,7 +21,6 @@ from nbclient.exceptions import CellExecutionError
 from nbclient.util import ensure_async
 from nbconvert.preprocessors import ClearOutputPreprocessor
 from traitlets.config.configurable import LoggingConfigurable
-from fps_kernels.kernel_server.server import KernelServer, kernels, connect_channel
 
 from .execute import VoilaExecutor, strip_code_cell_warnings
 from .exporter import VoilaExporter
@@ -32,9 +31,9 @@ from .utils import ENV_VARIABLE
 class NotebookRenderer(LoggingConfigurable):
     """Render the notebook into HTML string."""
 
-    def __init__(self, is_fps, **kwargs):
+    def __init__(self, **kwargs):
         super().__init__()
-        self.is_fps = is_fps
+        self.is_fps = kwargs.pop("is_fps", False)
         self.root_dir = kwargs.get('root_dir', [])
         self.notebook_path = kwargs.get('notebook_path', [])  # should it be []
         self.template_paths = kwargs.get('template_paths', [])
@@ -210,6 +209,7 @@ class NotebookRenderer(LoggingConfigurable):
         assert not self.kernel_started, 'kernel was already started'
         km = await ensure_async(kernel_future)
         if self.is_fps:
+            from fps_kernels.kernel_server.server import KernelServer, kernels, connect_channel
             connection_cfg = km.get_connection_info()
             connection_cfg["key"] = connection_cfg["key"].decode()
             kernel_server = KernelServer(connection_cfg=connection_cfg, write_connection_file=False)

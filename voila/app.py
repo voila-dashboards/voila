@@ -45,9 +45,6 @@ from jupyter_server.config_manager import recursive_update
 from jupyter_server.utils import url_path_join, run_sync
 from jupyter_server.services.config import ConfigManager
 
-from fps_uvicorn.cli import app as fps_app
-from fps_voila.routes import init_voila_handler
-
 from jupyter_client.kernelspec import KernelSpecManager
 
 from jupyter_core.paths import jupyter_config_path, jupyter_path
@@ -457,6 +454,9 @@ class Voila(Application):
         self.server_url = self.server_url or self.base_url
 
         if self.fps:
+            from fps_uvicorn.cli import app as fps_app
+            from fps_voila.routes import init_voila_handler
+
             # pass options to FPS app
             options = sys.argv[1:]
             sys.argv = sys.argv[:1]
@@ -486,6 +486,9 @@ class Voila(Application):
                 self.static_paths,
                 self.tornado_settings,
                 self.log,
+                self.voila_configuration.file_whitelist,
+                self.voila_configuration.file_blacklist,
+                self.root_dir,
             )
             fps_app()
         else:
