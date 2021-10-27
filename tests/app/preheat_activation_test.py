@@ -64,8 +64,7 @@ async def test_render_time_with_multiple_requests(http_server_client,
                                      wait=wait)
         time_list.append(time)
 
-    assert max(time_list) > TIME_THRESHOLD  # Render time for a normal kernel
-    assert min(time_list) < TIME_THRESHOLD  # Render time for a preheated kernel
+    assert time_list[1] > time_list[0]  # Render time for a normal kernel is bigger than a a preheated kernel
 
 
 async def test_request_with_query(http_server_client, base_url):

@@ -30,7 +30,7 @@ jobs:
 
     - name: Install Dependencies
       run: |
-        python -m pip install -U pip jupyterlab~=3.0 jupyter_packaging~=0.10
+        python -m pip install -U pip jupyterlab~=3.0 jupyter_packaging~=0.10 'nbclassic!=0.3.3'
 
     - name: Install the Voilà Preview JupyterLab extension
       run: |
