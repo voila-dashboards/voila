@@ -206,11 +206,11 @@ Enable the Jupyter server extension:
 
    jupyter server extension enable voila.server_extension --sys-prefix
 
-Running the tests locally also requires the `test_template` to be installed:
+Running the tests locally also requires the `test_template` and `skip_template` to be installed:
 
 .. code-block:: bash
 
-   python -m pip install ./tests/test_template
+   python -m pip install ./tests/test_template ./tests/skip_template
 
 Finally, to run the tests:
 
