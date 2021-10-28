@@ -2,6 +2,39 @@
 
 <!-- <START NEW CHANGELOG ENTRY> -->
 
+## 0.3.0b0
+
+([Full Changelog](https://github.com/voila-dashboards/voila/compare/v0.3.0a2...bbca9fe7aa41cca2eb5a57c2e88f997eb46d6b4c))
+
+### Enhancements made
+
+- Add reveal template to core [#932](https://github.com/voila-dashboards/voila/pull/932) ([@SylvainCorlay](https://github.com/SylvainCorlay))
+
+### Bugs fixed
+
+- Obey ip argument and only bind to given address. [#926](https://github.com/voila-dashboards/voila/pull/926) ([@adament](https://github.com/adament))
+
+### Maintenance and upkeep improvements
+
+- Fix failed tests on CI [#1014](https://github.com/voila-dashboards/voila/pull/1014) ([@trungleduc](https://github.com/trungleduc))
+- Enable tests on `Windows`  [#1013](https://github.com/voila-dashboards/voila/pull/1013) ([@trungleduc](https://github.com/trungleduc))
+- Pass version spec as a GitHub Actions input [#1007](https://github.com/voila-dashboards/voila/pull/1007) ([@jtpio](https://github.com/jtpio))
+- Add next to the bump script [#1002](https://github.com/voila-dashboards/voila/pull/1002) ([@jtpio](https://github.com/jtpio))
+
+### Documentation improvements
+
+- Update docs for testing [#1015](https://github.com/voila-dashboards/voila/pull/1015) ([@davidbrochart](https://github.com/davidbrochart))
+- Fix installation instructions [#1012](https://github.com/voila-dashboards/voila/pull/1012) ([@davidbrochart](https://github.com/davidbrochart))
+- Add a separate line for `jupyter server extension enable` in README [#1000](https://github.com/voila-dashboards/voila/pull/1000) ([@StanczakDominik](https://github.com/StanczakDominik))
+
+### Contributors to this release
+
+([GitHub contributors page for this release](https://github.com/voila-dashboards/voila/graphs/contributors?from=2021-10-14&to=2021-10-28&type=c))
+
+[@adament](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Aadament+updated%3A2021-10-14..2021-10-28&type=Issues) | [@davidbrochart](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Adavidbrochart+updated%3A2021-10-14..2021-10-28&type=Issues) | [@github-actions](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Agithub-actions+updated%3A2021-10-14..2021-10-28&type=Issues) | [@jtpio](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Ajtpio+updated%3A2021-10-14..2021-10-28&type=Issues) | [@martinRenou](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3AmartinRenou+updated%3A2021-10-14..2021-10-28&type=Issues) | [@StanczakDominik](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3AStanczakDominik+updated%3A2021-10-14..2021-10-28&type=Issues) | [@SylvainCorlay](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3ASylvainCorlay+updated%3A2021-10-14..2021-10-28&type=Issues) | [@trungleduc](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Atrungleduc+updated%3A2021-10-14..2021-10-28&type=Issues)
+
+<!-- <END NEW CHANGELOG ENTRY> -->
+
 ## 0.3.0a2
 
 ([Full Changelog](https://github.com/voila-dashboards/voila/compare/v0.3.0a1...a03f0af8a10183e5433870e8351b62d3d2e7006d))
@@ -20,8 +53,6 @@
 ([GitHub contributors page for this release](https://github.com/voila-dashboards/voila/graphs/contributors?from=2021-10-06&to=2021-10-14&type=c))
 
 [@github-actions](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Agithub-actions+updated%3A2021-10-06..2021-10-14&type=Issues) | [@jtpio](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Ajtpio+updated%3A2021-10-06..2021-10-14&type=Issues) | [@trungleduc](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Atrungleduc+updated%3A2021-10-06..2021-10-14&type=Issues)
-
-<!-- <END NEW CHANGELOG ENTRY> -->
 
 ## 0.3.0a1
 
