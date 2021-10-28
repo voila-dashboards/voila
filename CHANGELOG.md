@@ -17,7 +17,7 @@
 ### Maintenance and upkeep improvements
 
 - Fix failed tests on CI [#1014](https://github.com/voila-dashboards/voila/pull/1014) ([@trungleduc](https://github.com/trungleduc))
-- Enable tests on `Windows`  [#1013](https://github.com/voila-dashboards/voila/pull/1013) ([@trungleduc](https://github.com/trungleduc))
+- Enable tests on `Windows` [#1013](https://github.com/voila-dashboards/voila/pull/1013) ([@trungleduc](https://github.com/trungleduc))
 - Pass version spec as a GitHub Actions input [#1007](https://github.com/voila-dashboards/voila/pull/1007) ([@jtpio](https://github.com/jtpio))
 - Add next to the bump script [#1002](https://github.com/voila-dashboards/voila/pull/1002) ([@jtpio](https://github.com/jtpio))
 
