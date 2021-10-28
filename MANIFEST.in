@@ -8,6 +8,8 @@ include ts*.json
 
 graft voila/labextension
 
+recursive-include fps_plugins *.py
+
 # Javascript files
 graft src
 graft style

@@ -1,27 +1,34 @@
 import re
 import os
 from pathlib import Path
+from http import HTTPStatus
 from typing import Optional
 
 from voila.handler import _VoilaHandler, _get
 from voila.treehandler import _VoilaTreeHandler, _get as _get_tree
+from nbclient.util import ensure_async
 
 from mimetypes import guess_type
+from starlette.requests import Request
 from fastapi import APIRouter, Depends, HTTPException
 from fastapi.responses import RedirectResponse, StreamingResponse, HTMLResponse, Response
 from fastapi.staticfiles import StaticFiles
 from fps.hooks import register_router  # type: ignore
 
-from .config import get_voila_config
-
 
 class Config:
     pass
 
-CONFIG = Config()
+C = Config()
+
+class WhiteListFileHandler:
+    pass
+
+white_list_file_handler = WhiteListFileHandler()
 
 class FPSVoilaTreeHandler(_VoilaTreeHandler):
     is_fps = True
+    request = Config()
 
     def redirect(self, url):
         return RedirectResponse(url)
@@ -49,7 +56,11 @@ class FPSVoilaHandler(_VoilaHandler):
         return self.fps_arguments[name]
 
 
-def init_voila_handler(
+fps_voila_handler = FPSVoilaHandler()
+fps_voila_tree_handler = FPSVoilaTreeHandler()
+
+def init_fps(
+    *,
     notebook_path,
     template_paths,
     config,
@@ -72,19 +83,20 @@ def init_voila_handler(
     blacklist,
     root_dir,
 ):
-    global fps_voila_handler, fps_voila_tree_handler
+    white_list_file_handler.whitelist = whitelist
+    white_list_file_handler.blacklist = blacklist
+    white_list_file_handler.path = root_dir
 
-    CONFIG.whitelist = whitelist
-    CONFIG.blacklist = blacklist
-    CONFIG.root_dir = root_dir
+    kwargs = {
+        "template_paths": template_paths,
+        "traitlet_config": config,
+        "voila_configuration": voila_configuration,
+    }
+    if notebook_path:
+        kwargs["notebook_path"] = os.path.relpath(notebook_path, root_dir)
 
-    fps_voila_handler = FPSVoilaHandler()
-    fps_voila_handler.initialize(
-        notebook_path=notebook_path,
-        template_paths=template_paths,
-        traitlet_config=config,
-        voila_configuration=voila_configuration,
-    )
+    fps_voila_handler.initialize(**kwargs)
+    fps_voila_handler.root_dir = root_dir
     fps_voila_handler.contents_manager = contents_manager
     fps_voila_handler.base_url = base_url
     fps_voila_handler.kernel_manager = kernel_manager
@@ -98,7 +110,6 @@ def init_voila_handler(
     fps_voila_handler.config_manager = config_manager
     fps_voila_handler.static_paths = static_paths
 
-    fps_voila_tree_handler = FPSVoilaTreeHandler()
     fps_voila_tree_handler.initialize(
         voila_configuration=voila_configuration,
     )
@@ -110,63 +121,86 @@ def init_voila_handler(
     fps_voila_tree_handler.log = log
     settings["contents_manager"] = contents_manager
 
+    C.notebook_path = notebook_path
+    C.root_dir = root_dir
+
 
 router = APIRouter()
 
+@router.post("/voila/api/shutdown/{kernel_id}", status_code=204)
+async def shutdown_kernel(kernel_id):
+    await ensure_async(fps_voila_handler.kernel_manager.shutdown_kernel(kernel_id))
+    return Response(status_code=HTTPStatus.NO_CONTENT.value)
+
 @router.get("/notebooks/{path:path}")
-async def get_root(path, voila_template: Optional[str] = None, voila_theme: Optional[str] = None, voila_config=Depends(get_voila_config)):
+async def get_root(path, voila_template: Optional[str] = None, voila_theme: Optional[str] = None):
         return StreamingResponse(_get(fps_voila_handler, path))
 
-
 @router.get("/")
-async def get_root(voila_template: Optional[str] = None, voila_theme: Optional[str] = None, voila_config=Depends(get_voila_config)):
+async def get_root(request: Request, voila_template: Optional[str] = None, voila_theme: Optional[str] = None):
     fps_voila_handler.fps_arguments["voila-template"] = voila_template
     fps_voila_handler.fps_arguments["voila-theme"] = voila_theme
-    path = voila_config.notebook_path or "/"
+    path = fps_voila_handler.notebook_path or "/"
     if path == "/":
-        return _get_tree(fps_voila_tree_handler, "/")
+        if C.notebook_path:
+            raise HTTPException(status_code=404, detail="Not found")
+        else:
+            fps_voila_tree_handler.request.path = request.url.path
+            return _get_tree(fps_voila_tree_handler, "/")
     else:
         return StreamingResponse(_get(fps_voila_handler, ""))
 
-@router.get("/voila/render/{name}")
-async def get_path(name):
-    return _get_tree(fps_voila_tree_handler, name)
+@router.get("/voila/render/{path:path}")
+async def get_path(request: Request, path):
+    if C.notebook_path:
+        raise HTTPException(status_code=404, detail="Not found")
+    else:
+        return StreamingResponse(_get(fps_voila_handler, path))
 
 @router.get("/voila/tree{path:path}")
-async def get_tree(path):
-    return _get_tree(fps_voila_tree_handler, path)
+async def get_tree(request: Request, path):
+    if C.notebook_path:
+        raise HTTPException(status_code=404, detail="Not found")
+    else:
+        fps_voila_tree_handler.request.path = request.url.path
+        return _get_tree(fps_voila_tree_handler, path)
 
+# WhiteListFileHandler
 @router.get("/voila/files/{path:path}")
-def get_authorized_file(path):
-    whitelisted = any(re.fullmatch(pattern, path) for pattern in CONFIG.whitelist)
-    blacklisted = any(re.fullmatch(pattern, path) for pattern in CONFIG.blacklist)
+def get_whitelisted_file(path):
+    whitelisted = any(re.fullmatch(pattern, path) for pattern in white_list_file_handler.whitelist)
+    blacklisted = any(re.fullmatch(pattern, path) for pattern in white_list_file_handler.blacklist)
     if not whitelisted:
         raise HTTPException(status_code=403, detail="File not whitelisted")
     if blacklisted:
         raise HTTPException(status_code=403, detail="File blacklisted")
-    return _get_file(path)
+    return _get_file(path, in_dir=white_list_file_handler.path)
 
 @router.get("/voila/static/{path}")
 def get_static_file(path):
-    return _get_static_file(path)
+    return _get_file_in_dirs(path, fps_voila_handler.static_paths)
 
 @router.get("/voila/templates/lab/static/{path:path}")
 def get_template_static_file(path):
-    return _get_static_file(path)
+    return _get_file_in_dirs(path, fps_voila_handler.static_paths)
 
-def _get_static_file(path):
-    for i, static_path in enumerate(fps_voila_handler.static_paths):
-        file_path = Path(static_path) / path
-        if os.path.exists(file_path):
-            return _get_file(file_path)
+def _get_file_in_dirs(path, dirs):
+    for d in dirs:
+        p = Path(d) / path
+        if p .is_file():
+            return _get_file(p)
     else:
         raise HTTPException(status_code=404, detail="File not found")
 
-def _get_file(path):
-    if os.path.exists(path):
-        with open(path) as f:
+def _get_file(path: str, in_dir: Optional[str] = None):
+    if in_dir is None:
+        p = Path(path)
+    else:
+        p = Path(in_dir) / path
+    if p.is_file():
+        with open(p) as f:
             content = f.read()
-        content_type, _ = guess_type(path)
+        content_type, _ = guess_type(p)
         return Response(content, media_type=content_type)
     raise HTTPException(status_code=404, detail="File not found")
 

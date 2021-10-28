@@ -3,7 +3,7 @@ from fps.hooks import register_config, register_plugin_name  # type: ignore
 
 
 class VoilaConfig(PluginModel):
-    notebook_path: str = ""
+    pass
 
 
 def get_voila_config():

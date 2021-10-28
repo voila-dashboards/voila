@@ -12,7 +12,7 @@ import asyncio
 import os
 import sys
 import traceback
-from typing import Callable, Generator, Tuple, Union, List
+from typing import Generator, Tuple, Union, List
 
 import nbformat
 import tornado.web
@@ -151,13 +151,12 @@ class NotebookRenderer(LoggingConfigurable):
         self,
         kernel_id: Union[str, None] = None,
         kernel_future=None,
-        timeout_callback: Union[Callable, None] = None,
     ) -> Generator:
         async def inner_kernel_start(nb):
             return await self._jinja_kernel_start(nb, kernel_id, kernel_future)
 
         def inner_cell_generator(nb, kernel_id):
-            return self._jinja_cell_generator(nb, kernel_id, timeout_callback)
+            return self._jinja_cell_generator(nb, kernel_id)
 
         # These functions allow the start of a kernel and execution of the
         # notebook after (parts of) the template has been rendered and send
@@ -268,32 +267,16 @@ class NotebookRenderer(LoggingConfigurable):
 
         await self._cleanup_resources()
 
-    async def _jinja_cell_generator(self, nb, kernel_id, timeout_callback):
+    async def _jinja_cell_generator(self, nb, kernel_id):
         """Generator that will execute a single notebook cell at a time"""
         nb, _ = ClearOutputPreprocessor().preprocess(
             nb, {'metadata': {'path': self.cwd}}
         )
         for cell_idx, input_cell in enumerate(nb.cells):
             try:
-                task = asyncio.ensure_future(
-                    self.executor.execute_cell(
-                        input_cell, None, cell_idx, store_history=False
-                    )
+                output_cell = await self.executor.execute_cell(
+                    input_cell, None, cell_idx, store_history=False
                 )
-                while True:
-                    _, pending = await asyncio.wait(
-                        {task}, timeout=self.voila_configuration.http_keep_alive_timeout
-                    )
-                    if pending:
-                        # If not done within the timeout, we send a heartbeat
-                        # this is fundamentally to avoid browser/proxy read-timeouts, but
-                        # can be used in a template to give feedback to a user
-                        if timeout_callback is not None:
-                            timeout_callback()
-
-                        continue
-                    output_cell = await task
-                    break
             except TimeoutError:
                 output_cell = input_cell
                 break

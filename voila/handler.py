@@ -9,6 +9,7 @@
 
 
 import os
+import asyncio
 from typing import Dict
 
 import tornado.web
@@ -109,7 +110,6 @@ async def _get(self, path=None):
         # Continue render cell from generator.
         async for html_snippet, _ in rendering:
             yield html_snippet
-        self.flush()
 
     else:
         # All kernels are used or pre-heated kernel is disabled, start a normal kernel.
@@ -133,7 +133,7 @@ async def _get(self, path=None):
             can be used in a template to give feedback to a user
             """
 
-            yield '<script>voila_heartbeat()</script>\n'
+            return '<script>voila_heartbeat()</script>\n'
 
         kernel_env[ENV_VARIABLE.VOILA_PREHEAT] = 'False'
         kernel_env[ENV_VARIABLE.VOILA_BASE_URL] = self.base_url
@@ -147,12 +147,30 @@ async def _get(self, path=None):
             )
         )
         kernel_future = self.kernel_manager.get_kernel(kernel_id)
-        async for html_snippet, _ in gen.generate_content_generator(
-            kernel_id, kernel_future, time_out
-        ):
-            yield html_snippet
-            # we may not want to consider not flusing after each snippet, but add an explicit flush function to the jinja context
-            # yield  # give control back to tornado's IO loop, so it can handle static files or other requests
+        queue = asyncio.Queue()
+
+        async def put_html():
+            async for html_snippet, _ in gen.generate_content_generator(
+                kernel_id, kernel_future
+            ):
+                await queue.put(html_snippet)
+            await queue.put(None)
+
+        asyncio.ensure_future(put_html())
+
+        # If not done within the timeout, we send a heartbeat
+        # this is fundamentally to avoid browser/proxy read-timeouts, but
+        # can be used in a template to give feedback to a user
+        while True:
+            try:
+                html_snippet = await asyncio.wait_for(queue.get(), self.voila_configuration.http_keep_alive_timeout)
+            except asyncio.TimeoutError:
+                yield time_out()
+            else:
+                if html_snippet is None:
+                    break
+                yield html_snippet
+
 
 class _VoilaHandler:
     is_fps = False
@@ -190,6 +208,7 @@ class _VoilaHandler:
             return False
 
         return True
+
 
 class VoilaHandler(_VoilaHandler, JupyterHandler):
     @tornado.web.authenticated

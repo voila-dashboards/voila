@@ -36,12 +36,12 @@ def _get(self, path=''):
         contents['content'] = sorted(contents['content'], key=lambda i: i['name'])
         contents['content'] = filter(allowed_content, contents['content'])
         return self.write(self.render_template('tree.html',
-                   page_title=page_title,
-                   notebook_path=path,
-                   breadcrumbs=breadcrumbs,
-                   contents=contents,
-                   terminals_available=False,
-                   server_root=get_server_root_dir(self.settings)))
+                          page_title=page_title,
+                          notebook_path=path,
+                          breadcrumbs=breadcrumbs,
+                          contents=contents,
+                          terminals_available=False,
+                          server_root=get_server_root_dir(self.settings)))
     elif cm.file_exists(path):
         # it's not a directory, we have redirecting to do
         model = cm.get(path, content=False)
@@ -50,8 +50,7 @@ def _get(self, path=''):
         url = url_path_join(
             self.base_url, service, url_escape(path),
         )
-        if not self.is_fps:
-            self.log.debug("Redirecting %s to %s", self.request.path, url)
+        self.log.debug("Redirecting %s to %s", self.request.path, url)
         return self.redirect(url)
     else:
         if self.is_fps:

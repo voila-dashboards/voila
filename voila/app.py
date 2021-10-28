@@ -454,41 +454,39 @@ class Voila(Application):
         self.server_url = self.server_url or self.base_url
 
         if self.fps:
-            from fps_uvicorn.cli import app as fps_app
-            from fps_voila.routes import init_voila_handler
+            try:
+                from fps_uvicorn.cli import app as fps_app
+                from fps_voila.routes import init_fps
+            except Exception:
+                print("Please install fps_voila.")
+                sys.exit(1)
 
             # pass options to FPS app
-            options = sys.argv[1:]
             sys.argv = sys.argv[:1]
-            fps_options = [f"--fps_uvicorn.root_path={self.server_url}", f"--port={self.port}"]
-            for path in options:
-                if not path.startswith("--"):
-                    break
-            else:
-                path = "/"
-            sys.argv += fps_options + [f"--Voila.notebook_path={path}", "--authenticator.mode=noauth"]
-            init_voila_handler(
-                self.notebook_path,
-                self.template_paths,
-                self.config,
-                self.voila_configuration,
-                self.contents_manager,
-                self.base_url,
-                self.kernel_manager,#MultiKernelManager(),
-                self.kernel_spec_manager,
-                True,
-                self.autoreload,
-                env,
-                env,
-                '/',
-                '/',
-                self.config_manager,
-                self.static_paths,
-                self.tornado_settings,
-                self.log,
-                self.voila_configuration.file_whitelist,
-                self.voila_configuration.file_blacklist,
-                self.root_dir,
+            fps_options = [f"--fps_uvicorn.root_path={self.server_url}", f"--port={self.port}", "--authenticator.mode=noauth"]
+            sys.argv += fps_options
+            init_fps(
+                notebook_path=self.notebook_path,
+                template_paths=self.template_paths,
+                config=self.config,
+                voila_configuration=self.voila_configuration,
+                contents_manager=self.contents_manager,
+                base_url=self.base_url,
+                kernel_manager=self.kernel_manager,
+                kernel_spec_manager=self.kernel_spec_manager,
+                allow_remote_access=True,
+                autoreload=self.autoreload,
+                voila_jinja2_env=env,
+                jinja2_env=env,
+                static_path='/',
+                server_root_dir='/',
+                config_manager=self.config_manager,
+                static_paths=self.static_paths,
+                settings=self.tornado_settings,
+                log=self.log,
+                whitelist=self.voila_configuration.file_whitelist,
+                blacklist=self.voila_configuration.file_blacklist,
+                root_dir=self.root_dir,
             )
             fps_app()
         else:
