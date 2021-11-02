@@ -16,7 +16,11 @@ from jupyter_server.utils import url_path_join, url_escape
 from .utils import get_server_root_dir
 
 
-def _get(self, path=''):
+def _get(self: "_VoilaTreeHandler", path=''):
+    """Backend-agnostic logic of the GET method, used in the following handler classes:
+    - VoilaTreeHandler: the Tornado-specific handler.
+    - FPSVoilaTreeHandler: the FastAPI-specific handler.
+    """
     cm = self.contents_manager
 
     if cm.dir_exists(path=path):
@@ -61,6 +65,10 @@ def _get(self, path=''):
 
 
 class _VoilaTreeHandler:
+    """Backend-agnostic handler class, from which the following classes derive:
+    - VoilaTreeHandler: the Tornado-specific handler.
+    - FPSVoilaTreeHandler: the FastAPI-specific handler.
+    """
     is_fps = False
 
     def initialize(self, **kwargs):
@@ -94,6 +102,8 @@ class _VoilaTreeHandler:
 
 
 class VoilaTreeHandler(_VoilaTreeHandler, JupyterHandler):
+    """Tornado-specific handler.
+    """
     @web.authenticated
     def get(self, path=''):
         return _get(self, path=path)

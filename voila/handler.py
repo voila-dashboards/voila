@@ -25,7 +25,13 @@ from .query_parameters_handler import QueryStringSocketHandler
 from .utils import ENV_VARIABLE
 
 
-async def _get(self, path=None):
+async def _get(self: "_VoilaHandler", path=None):
+    """Backend-agnostic logic of the GET method, used in the following handler classes:
+    - VoilaHandler: the Tornado-specific handler.
+    - FPSVoilaHandler: the FastAPI-specific handler.
+
+    It is an async generator that generates HTML snippets as the notebook is executed.
+    """
     # if the handler got a notebook_path argument, always serve that
     notebook_path = self.notebook_path or path
 
@@ -173,6 +179,10 @@ async def _get(self, path=None):
 
 
 class _VoilaHandler:
+    """Backend-agnostic handler class, from which the following classes derive:
+    - VoilaHandler: the Tornado-specific handler.
+    - FPSVoilaHandler: the FastAPI-specific handler.
+    """
     is_fps = False
 
     def initialize(self, **kwargs):
@@ -211,6 +221,8 @@ class _VoilaHandler:
 
 
 class VoilaHandler(_VoilaHandler, JupyterHandler):
+    """Tornado-specific handler.
+    """
     @tornado.web.authenticated
     async def get(self, path=None):
         it = _get(self, path=path)
