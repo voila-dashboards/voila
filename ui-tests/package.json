@@ -5,11 +5,13 @@
   "private": true,
   "scripts": {
     "start": "voila ../notebooks --no-browser",
+    "start-fps": "voila ../notebooks --no-browser --fps --port=8867",
     "start:detached": "yarn run start-jlab&",
-    "test": "playwright test",
-    "test:debug": "PWDEBUG=1 playwright test",
+    "test": "playwright test --project voila",
+    "test-fps": "playwright test --project voila-fps",
+    "test:debug": "PWDEBUG=1 playwright test --project voila",
     "test:report": "http-server ./playwright-report -a localhost -o",
-    "test:update": "playwright test --update-snapshots"
+    "test:update": "playwright test --project voila --update-snapshots"
   },
   "author": "Project Jupyter",
   "license": "BSD-3-Clause",

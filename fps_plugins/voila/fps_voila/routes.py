@@ -44,6 +44,7 @@ class FPSVoilaTreeHandler(_VoilaTreeHandler):
 
 class FPSVoilaHandler(_VoilaHandler):
     is_fps = True
+    request = Config()
     fps_arguments = {}
     html = []
 
@@ -134,7 +135,11 @@ async def shutdown_kernel(kernel_id):
 
 @router.get("/notebooks/{path:path}")
 async def get_root(path, voila_template: Optional[str] = None, voila_theme: Optional[str] = None):
-        return StreamingResponse(_get(fps_voila_handler, path))
+    fps_voila_handler.request.query = request.query_params
+    fps_voila_handler.request.path = request.url.path
+    fps_voila_handler.request.host = f"{request.url.hostname}:{request.url.port}"
+    fps_voila_handler.request.headers = request.headers
+    return StreamingResponse(_get(fps_voila_handler, path))
 
 @router.get("/")
 async def get_root(request: Request, voila_template: Optional[str] = None, voila_theme: Optional[str] = None):
@@ -148,6 +153,10 @@ async def get_root(request: Request, voila_template: Optional[str] = None, voila
             fps_voila_tree_handler.request.path = request.url.path
             return _get_tree(fps_voila_tree_handler, "/")
     else:
+        fps_voila_handler.request.query = request.query_params
+        fps_voila_handler.request.path = request.url.path
+        fps_voila_handler.request.host = f"{request.url.hostname}:{request.url.port}"
+        fps_voila_handler.request.headers = request.headers
         return StreamingResponse(_get(fps_voila_handler, ""))
 
 @router.get("/voila/render/{path:path}")
@@ -155,6 +164,10 @@ async def get_path(request: Request, path):
     if C.notebook_path:
         raise HTTPException(status_code=404, detail="Not found")
     else:
+        fps_voila_handler.request.query = request.query_params
+        fps_voila_handler.request.path = request.url.path
+        fps_voila_handler.request.host = f"{request.url.hostname}:{request.url.port}"
+        fps_voila_handler.request.headers = request.headers
         return StreamingResponse(_get(fps_voila_handler, path))
 
 @router.get("/voila/tree{path:path}")

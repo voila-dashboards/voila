@@ -44,25 +44,25 @@ async def _get(self: "_VoilaHandler", path=None):
 
     # Adding request uri to kernel env
     kernel_env = os.environ.copy()
+    kernel_env[ENV_VARIABLE.SCRIPT_NAME] = self.request.path
+    kernel_env[
+        ENV_VARIABLE.PATH_INFO
+    ] = ''  # would be /foo/bar if voila.ipynb/foo/bar was supported
+    kernel_env[ENV_VARIABLE.QUERY_STRING] = str(self.request.query)
+    kernel_env[ENV_VARIABLE.SERVER_SOFTWARE] = 'voila/{}'.format(__version__)
+    host, port = split_host_and_port(self.request.host.lower())
+    kernel_env[ENV_VARIABLE.SERVER_PORT] = str(port) if port else ''
+    kernel_env[ENV_VARIABLE.SERVER_NAME] = host
+    # Add HTTP Headers as env vars following rfc3875#section-4.1.18
+    if len(self.voila_configuration.http_header_envs) > 0:
+        for header_name in self.request.headers:
+            config_headers_lower = [header.lower() for header in self.voila_configuration.http_header_envs]
+            # Use case insensitive comparison of header names as per rfc2616#section-4.2
+            if header_name.lower() in config_headers_lower:
+                env_name = f'HTTP_{header_name.upper().replace("-", "_")}'
+                kernel_env[env_name] = self.request.headers.get(header_name)
     if not self.is_fps:
-        kernel_env[ENV_VARIABLE.SCRIPT_NAME] = self.request.path
-        kernel_env[
-            ENV_VARIABLE.PATH_INFO
-        ] = ''  # would be /foo/bar if voila.ipynb/foo/bar was supported
-        kernel_env[ENV_VARIABLE.QUERY_STRING] = str(self.request.query)
-        kernel_env[ENV_VARIABLE.SERVER_SOFTWARE] = 'voila/{}'.format(__version__)
         kernel_env[ENV_VARIABLE.SERVER_PROTOCOL] = str(self.request.version)
-        host, port = split_host_and_port(self.request.host.lower())
-        kernel_env[ENV_VARIABLE.SERVER_PORT] = str(port) if port else ''
-        kernel_env[ENV_VARIABLE.SERVER_NAME] = host
-        # Add HTTP Headers as env vars following rfc3875#section-4.1.18
-        if len(self.voila_configuration.http_header_envs) > 0:
-            for header_name in self.request.headers:
-                config_headers_lower = [header.lower() for header in self.voila_configuration.http_header_envs]
-                # Use case insensitive comparison of header names as per rfc2616#section-4.2
-                if header_name.lower() in config_headers_lower:
-                    env_name = f'HTTP_{header_name.upper().replace("-", "_")}'
-                    kernel_env[env_name] = self.request.headers.get(header_name)
 
     template_arg = self.get_argument("voila-template", None)
     theme_arg = self.get_argument("voila-theme", None)
