@@ -167,4 +167,16 @@ test.describe('Voila performance Tests', () => {
     await page.waitForSelector('#MathJax_Message', { state: 'hidden' });
     expect(await page.screenshot()).toMatchSnapshot(`${notebookName}.png`);
   });
+  test('Render and benchmark reveal.ipynb', async ({
+    page,
+    browserName
+  }, testInfo) => {
+    const notebookName = 'reveal';
+    const testFunction = async () => {
+      await page.goto(`render/${notebookName}.ipynb`);
+      await page.waitForSelector('span[role="presentation"] >> text=x');
+    };
+    await addBenchmarkToTest(notebookName, testFunction, testInfo, browserName);
+    expect(await page.screenshot()).toMatchSnapshot(`${notebookName}.png`);
+  });
 });
