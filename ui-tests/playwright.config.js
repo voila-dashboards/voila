@@ -9,7 +9,7 @@ module.exports = {
       '@jupyterlab/galata/lib/benchmarkReporter',
       { outputFile: 'voila-benchmark.json' }
     ],
-    ['@playwright/test/lib/test/reporters/html']
+    ['html']
   ],
   use: {
     baseURL: 'http://localhost:8866/voila/',
