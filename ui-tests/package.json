@@ -7,7 +7,7 @@
     "start": "voila ../notebooks --no-browser",
     "start-fps": "voila ../notebooks --no-browser --fps --port=8867",
     "start:detached": "yarn run start-jlab&",
-    "test": "playwright test --project voila",
+    "test": "./copy_png && playwright test --project voila",
     "test-fps": "playwright test --project voila-fps",
     "test:debug": "PWDEBUG=1 playwright test --project voila",
     "test:report": "http-server ./playwright-report -a localhost -o",

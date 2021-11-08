@@ -6,6 +6,7 @@ from typing import Optional
 
 from voila.handler import _VoilaHandler, _get
 from voila.treehandler import _VoilaTreeHandler, _get as _get_tree
+from voila.paths import collect_static_paths
 from nbclient.util import ensure_async
 
 from mimetypes import guess_type
@@ -193,14 +194,22 @@ def get_whitelisted_file(path):
 def get_static_file(path):
     return _get_file_in_dirs(path, fps_voila_handler.static_paths)
 
-@router.get("/voila/templates/lab/static/{path:path}")
-def get_template_static_file(path):
-    return _get_file_in_dirs(path, fps_voila_handler.static_paths)
+@router.get("/voila/templates/{path:path}")
+def get_template_file(path):
+    template, static, relpath = os.path.normpath(path).split(os.path.sep, 2)
+    assert static == "static"
+    roots = collect_static_paths(["voila", "nbconvert"], template)
+    for root in roots:
+        abspath = os.path.abspath(os.path.join(root, relpath))
+        if os.path.exists(abspath):
+            return _get_file(abspath)
+            break
+    raise HTTPException(status_code=404, detail="File not found")
 
 def _get_file_in_dirs(path, dirs):
     for d in dirs:
         p = Path(d) / path
-        if p .is_file():
+        if p.is_file():
             return _get_file(p)
     else:
         raise HTTPException(status_code=404, detail="File not found")

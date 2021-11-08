@@ -1,0 +1,23 @@
+cd tests/voila.test.ts-snapshots
+
+cp basics-linux.png basics-voila-linux.png
+cp query-strings-linux.png query-strings-voila-linux.png
+cp multiple-widgets-linux.png multiple-widgets-voila-linux.png
+cp ipympl-linux.png ipympl-voila-linux.png
+cp reveal-linux.png reveal-voila-linux.png
+cp ipyvolume-linux.png ipyvolume-voila-linux.png
+cp bqplot-linux.png bqplot-voila-linux.png
+cp interactive-linux.png interactive-voila-linux.png
+cp gridspecLayout-linux.png gridspecLayout-voila-linux.png
+
+cp basics-linux.png basics-voila-fps-linux.png
+cp query-strings-linux.png query-strings-voila-fps-linux.png
+cp multiple-widgets-linux.png multiple-widgets-voila-fps-linux.png
+cp ipympl-linux.png ipympl-voila-fps-linux.png
+cp reveal-linux.png reveal-voila-fps-linux.png
+cp ipyvolume-linux.png ipyvolume-voila-fps-linux.png
+cp bqplot-linux.png bqplot-voila-fps-linux.png
+cp interactive-linux.png interactive-voila-fps-linux.png
+cp gridspecLayout-linux.png gridspecLayout-voila-fps-linux.png
+
+cd ../..
