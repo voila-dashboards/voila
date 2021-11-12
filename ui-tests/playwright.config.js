@@ -12,7 +12,7 @@ module.exports = {
         video: 'retain-on-failure'
       },
       // Try one retry as some tests are flaky
-      retries: 0,
+      retries: 1,
       workers: 2
     },
     {
@@ -25,7 +25,7 @@ module.exports = {
         video: 'retain-on-failure'
       },
       // Try one retry as some tests are flaky
-      retries: 0,
+      retries: 1,
       workers: 2
     }
   ],
