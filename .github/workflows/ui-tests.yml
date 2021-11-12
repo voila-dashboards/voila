@@ -125,6 +125,16 @@ jobs:
           path: |
             ui-tests/playwright-report
 
+      - name: Update snapshots
+        if: failure()
+        run: |
+          cd ui-tests
+          # remove previous snapshots from other browser
+          jlpm rimraf "tests/**/*-snapshots/*.png"
+          jlpm rimraf "stability_test/**/*-snapshots/*.png"
+          # generate new snapshots
+          jlpm run test:update --browser ${{ matrix.browser }}
+
       - name: Print JupyterLab logs
         if: always()
         run: |
