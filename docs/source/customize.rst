@@ -27,12 +27,12 @@ the following option:
 
 Or by passing in the query parameter ``voila-theme``, e.g. a URL like ``http://localhost:8867/voila/render/query-strings.ipynb?voila-theme=dark``.
 
-The theme can also set in the notebook metadata, under ``metadata/voila/theme`` by editing the notebook file manually, or using the metadata editor in for instance the classical notebook
+The theme can also be set in the notebook metadata, under ``metadata/voila/theme`` by editing the notebook file manually, or using the metadata editor in for instance the classical notebook
 
 .. image:: metadata-theme-classic.png
    :alt: Edit metadata
 
-System administrators who want to disable changing the theme, can pass ``--VoilaConfiguration.allow_theme_override=NO` or
+System administrators who want to disable changing the theme, can pass ``--VoilaConfiguration.allow_theme_override=NO`` or
 ``--VoilaConfiguration.allow_theme_override=NOTEBOOK`` to disable changing the theme completely, or only allow it from the notebook metadata.
 
 Currently, Voilà supports only **light** and **dark** themes.
@@ -330,7 +330,117 @@ The same parameters apply when using Voilà as a server extension:
 
 There is also the ``MappingKernelManager.cull_busy`` and ``MappingKernelManager.cull_connected`` options to cull busy kernels and kernels with an active connection.
 
-For more information about these options, check out the `Jupyter Server <https://jupyter-server.readthedocs.io/en/latest/config.html#options>`_ documentation.
+For more information about these options, check out the `Jupyter Server <https://jupyter-server.readthedocs.io/en/latest/other/full-config.html#options>`_ documentation.
+
+Preheated kernels
+==================
+
+Since Voilà needs to start a new jupyter kernel and execute the requested notebook in this kernel for every connection, this would lead to a long waiting time before the widgets can be displayed in the browser. 
+To reduce this waiting time, especially for the heavy notebooks, users can activate the preheating kernel option of Voilà, this option will enable two features:
+
+- A pool of kernels is started for each notebook and kept in standby, then the notebook is executed in every kernel of its pool. When a new client requests a kernel, the preheated kernel in this pool is used and another kernel is started asynchronously to refill the pool.
+- The HTML version of the notebook is rendered in each preheated kernel and stored, when a client connects to Voila, under some conditions, the cached HTML is served instead of re-rendering the notebook.
+
+The preheating kernel option works with any kernel manager, it is deactivated by default, re-activate it by setting `preheat_kernel = True`.  For example, with this command, for each notebook Voilà started with, a pool of 5 kernels is created and will be used for new connections.
+
+.. code-block:: bash
+
+    voila --preheat_kernel=True --pool_size=5
+
+If the pool size does not match the user's requirements, or some notebooks need to use environment variables..., additional settings are needed.  The easiest way to change these settings is to provide a file named `voila.json` in the same folder containing the notebooks. Settings for preheating kernel ( list of notebooks does not need preheated kernels, number of kernels in pool, refilling delay, environment variables for starting kernel...) can be set under the `VoilaKernelManager` class name.
+
+Here is an example of settings with explanations for preheating kernel option. 
+
+.. code-block:: python
+
+   # voila.json
+   {
+      "VoilaConfiguration": {
+         # Activate or deactivate preheat kernel option.
+         "preheat_kernel": true 
+      },
+      "VoilaKernelManager": {
+         # A list of notebook name or regex patterns to exclude notebooks from using preheat kernel.
+         "preheat_blacklist": [
+            "notebook-does-not-need-preheat.ipynb",
+            "^.*foo.*$",
+            ...
+         ], 
+         # Configuration for kernel pools
+         "kernel_pools_config": { 
+            # Setting for `voila.ipynb` notebook
+            "voila.ipynb": {
+               "pool_size": 3, # Size of pool
+               "kernel_env_variables": { # The environment variables used to start kernel for `voila.ipynb`
+                  "foo2": "bar2"
+               }
+            },
+            # Setting for `test/sub-voila.ipynb` notebook
+            "test/sub-voila.ipynb": {
+               "pool_size": 1
+            },
+            ...
+            # If a notebook does not have setting, it will use default setting
+            "default": {
+               "pool_size": 2,
+               "kernel_env_variables": {
+                  "foo": "bar"
+               }
+            },
+         },
+         # Delay time in second before filling the kernel pool.
+         "fill_delay": 0
+      }
+   }
+
+Notebook HTML will be pre-rendered with template and theme defined in VoilaConfiguration or notebook metadata. The preheated kernel and cached HTML are used if these conditions are matched:
+
+- There is an available preheated kernel in the kernel pool.
+- If user overrides the template/theme with query string, it must match the template/theme used to pre-render the notebook.
+
+If the kernel pool is empty or the request does not match these conditions, Voila will fail back to start a normal kernel and render the notebook as usual.
+
+Partially pre-render notebook
+------------------------------
+
+To benefit the acceleration of preheating kernel mode, the notebooks need to be pre-rendered before users actually connect to Voilà. But in many real-world cases, the notebook requires some user-specific data to render correctly the widgets, which makes pre-rendering impossible. To overcome this limit, Voilà offers a feature to treat the most used method for providing user data: the URL `query string`.
+
+In normal mode, Voilà users can get the `query string` at run time through the ``QUERY_STRING`` environment variable:
+
+.. code-block:: python
+
+   import os
+   query_string = os.getenv('QUERY_STRING') 
+
+In preheating kernel mode, users can just replace the ``os.getenv`` call with the helper ``get_query_string`` from ``voila.utils``
+
+.. code-block:: python
+
+   from voila.utils import get_query_string
+   query_string = get_query_string()
+
+``get_query_string`` will pause the execution of the notebook in the preheated kernel at this cell and wait for an actual user to connect to Voilà, then ``get_query_string`` will return the URL `query string` and continue the execution of the remaining cells. 
+
+If the Voilà websocket handler is not started with the default protocol (`ws`), the default IP address (`127.0.0.1`) or the default port (`8866`), users need to provide these values through the environment variables ``VOILA_APP_PROTOCOL``, ``VOILA_APP_IP`` and ``VOILA_APP_PORT``. The easiest way is to set these variables in the `voila.json` configuration file, for example:
+
+.. code-block:: python
+
+   # voila.json
+   {
+      ...
+      "VoilaKernelManager": {
+         "kernel_pools_config": { 
+            "foo.ipynb": {
+               "kernel_env_variables": { 
+                  "VOILA_APP_IP": "192.168.1.1",
+                  "VOILA_APP_PORT": "6789",
+                  "VOILA_APP_PROTOCOL": "wss"
+               }
+            }
+         },
+      ...
+      }
+   }
 
 Hiding output and code cells based on cell tags
 ===============================================
@@ -347,3 +457,14 @@ To hide both the code cell and the output cell (if any) for every cell that has 
 
 You can use any tag you want but be sure to use the same tag name in the Voilà command.
 And please note that this functionality will only hide the cells in Voilà but will not prevent them from being executed.
+
+Cell execution timeouts
+=======================
+
+By default, Voilà does not have an execution timeout, meaning there is no limit for how long it takes for Voilà to execute and render your notebook.  If you have potentially long-running cells, you may wish to set a cell execution timeout so that users of your dashboard will get an error if it takes longer than expected to execute the notebook.  For example:
+
+.. code-block:: bash
+
+    voila --VoilaExecutor.timeout=30 your_notebook.ipynb
+
+With this setting, if any cell takes longer than 30 seconds to run, a ``TimeoutError`` will be raised.  You can further customize this behavior using the ``VoilaExecutor.timeout_func`` and ``VoilaExecutor.interrupt_on_timeout`` options.

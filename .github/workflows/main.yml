@@ -3,10 +3,10 @@ name: Tests
 on:
   push:
     branches:
-    - master
+    - '*'
   pull_request:
     branches:
-    - master
+    - '*'
   schedule:
   - cron: "0 2 * * 1-5"  # run on weekdays at 2:00am UTC
 
@@ -18,20 +18,20 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-latest, macos-latest]
-        python_version: [3.6, 3.7, 3.8]
+        python_version: [3.6, 3.7, 3.8, 3.9]
 
     steps:
     - uses: actions/checkout@v2
 
     - name: Setup mamba
-      uses: goanpeca/setup-miniconda@v1
+      uses: conda-incubator/setup-miniconda@v2
       with:
         mamba-version: "*"
         channels: conda-forge
 
     - name: Create the conda environment
       shell: bash -l {0}
-      run: mamba install -q python=${{ matrix.python_version }} pip jupyterlab_pygments==0.1.0 pytest-cov nodejs flake8 ipywidgets matplotlib xeus-cling traitlets=4.3.3
+      run: mamba install -q python=${{ matrix.python_version }} pip jupyterlab_pygments==0.1.0 pytest-cov nodejs flake8 ipywidgets matplotlib xeus-cling openssl=1.1.1l
 
     - name: Install dependencies
       shell: bash -l {0}
@@ -55,9 +55,8 @@ jobs:
       run: |
         pip install "traitlets>=4,<5"
         VOILA_TEST_DEBUG=1 VOILA_TEST_XEUS_CLING=1 py.test tests/ --async-test-timeout=240
-        VOILA_TEST_DEBUG=1 VOILA_TEST_XEUS_CLING=1 py.test tests/ --async-test-timeout=240
         voila --help  # Making sure we can run `voila --help`
-        # tests if voila sends a 'heartbeat' to avoid proxies from closing an appearently stale connection
+        # tests if voila sends a 'heartbeat' to avoid proxies from closing an apparently stale connection
         # Note that wget is the only easily available software that has a read-timeout
         voila tests/notebooks/sleep10seconds.ipynb --port=8878 --VoilaConfiguration.http_keep_alive_timeout=2 &
         sleep 2
@@ -67,3 +66,38 @@ jobs:
       shell: bash -l {0}
       run: |
         python -m flake8 voila tests setup.py
+
+  test-win:
+
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [windows-latest]
+        python-version: ['3.7', '3.8', '3.9']
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: ${{ matrix.python-version }}
+          
+      - uses: actions/setup-node@v2
+        with:
+          node-version: '16'
+      
+      - name: Install dependencies
+        run: |
+          python -m pip install ".[test]"
+          cd tests/test_template
+          pip install .
+          cd ../skip_template
+          pip install .
+
+      - name: Run test
+        run: |
+          set VOILA_TEST_DEBUG=1
+          set VOILA_TEST_XEUS_CLING=1
+          py.test tests/ --async-test-timeout=240

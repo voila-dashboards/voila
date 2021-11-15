@@ -12,6 +12,7 @@ def voila_args_extra():
 
 
 async def test_no_strip_sources(http_server_client, base_url):
+
     response = await http_server_client.fetch(base_url)
     assert response.code == 200
     html_text = response.body.decode('utf-8')

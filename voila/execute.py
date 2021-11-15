@@ -11,7 +11,7 @@ from nbconvert.preprocessors import ClearOutputPreprocessor
 from nbclient.exceptions import CellExecutionError
 from nbclient import NotebookClient
 
-from traitlets import Unicode
+from traitlets import Bool, Unicode
 
 
 def strip_code_cell_warnings(cell):
@@ -32,7 +32,7 @@ def strip_code_cell_warnings(cell):
 class VoilaExecutor(NotebookClient):
     """Execute, but respect the output widget behaviour"""
     cell_error_instruction = Unicode(
-        'Please run Voilà with --debug to see the error message.',
+        'Please run Voilà with --show_tracebacks=True or --debug to see the error message, or configure VoilaConfiguration.show_tracebacks.',
         config=True,
         help=(
             'instruction given to user to debug cell errors'
@@ -46,6 +46,10 @@ class VoilaExecutor(NotebookClient):
             'instruction given to user to continue execution on timeout'
         )
     )
+
+    show_tracebacks = Bool(False, config=True, help=(
+        'Whether to send tracebacks to clients on exceptions.'
+    ))
 
     def execute(self, nb, resources, km=None):
         try:
@@ -77,7 +81,7 @@ class VoilaExecutor(NotebookClient):
 
     def should_strip_error(self):
         """Return True if errors should be stripped from the Notebook, False otherwise, depending on the current config."""
-        return 'Voila' not in self.config or not self.config['Voila'].get('show_tracebacks', False)
+        return not self.show_tracebacks
 
     def strip_notebook_errors(self, nb):
         """Strip error messages and traceback from a Notebook."""

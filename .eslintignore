@@ -1,0 +1,26 @@
+lint-staged.config.js
+.eslintrc.js
+
+node_modules
+**/build
+**/lib
+**/node_modules
+**/mock_packages
+**/static
+**/labextension
+**/typings
+**/schemas
+**/themes
+**/templates
+coverage
+*.map.js
+*.bundle.js
+
+# jetbrains IDE stuff
+.idea/
+
+# ms IDE stuff
+.history/
+.vscode/
+
+ui-tests/playwright-report

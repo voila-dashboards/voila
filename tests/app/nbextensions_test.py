@@ -1,4 +1,4 @@
-# tests programmatic config of template sytem
+# tests programmatic config of template system
 import pytest
 
 import os
@@ -23,6 +23,7 @@ def voila_config_file_paths_arg():
 
 
 async def test_lists_extension(http_server_client, base_url):
+
     response = await http_server_client.fetch(base_url)
     assert response.code == 200
     html_text = response.body.decode('utf-8')

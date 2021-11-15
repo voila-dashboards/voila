@@ -38,7 +38,6 @@ from traitlets.config.application import Application
 from traitlets.config.loader import Config
 from traitlets import Unicode, Integer, Bool, Dict, List, Any, default
 
-from jupyter_server.services.kernels.kernelmanager import AsyncMappingKernelManager
 from jupyter_server.services.kernels.handlers import KernelHandler, ZMQChannelsHandler
 from jupyter_server.services.contents.largefilemanager import LargeFileManager
 from jupyter_server.base.handlers import FileFindHandler, path_regex
@@ -60,6 +59,9 @@ from .static_file_handler import MultiStaticFileHandler, TemplateStaticFileHandl
 from .configuration import VoilaConfiguration
 from .execute import VoilaExecutor
 from .exporter import VoilaExporter
+from .shutdown_kernel_handler import VoilaShutdownKernelHandler
+from .voila_kernel_manager import voila_kernel_manager_factory
+from .query_parameters_handler import QueryStringSocketHandler
 
 _kernel_id_regex = r"(?P<kernel_id>\w+-\w+-\w+-\w+-\w+)"
 
@@ -75,7 +77,10 @@ class Voila(Application):
 
     flags = {
         'debug': (
-            {'Voila': {'log_level': logging.DEBUG, 'show_tracebacks': True}},
+            {
+                'Voila': {'log_level': logging.DEBUG},
+                'VoilaConfiguration': {'show_tracebacks': True},
+            },
             _("Set the log level to logging.DEBUG, and show exception tracebacks in output.")
         ),
         'no-browser': ({'Voila': {'open_browser': False}}, _('Don\'t open the notebook in a browser after startup.'))
@@ -125,7 +130,10 @@ class Voila(Application):
         'theme': 'VoilaConfiguration.theme',
         'base_url': 'Voila.base_url',
         'server_url': 'Voila.server_url',
-        'enable_nbextensions': 'VoilaConfiguration.enable_nbextensions'
+        'enable_nbextensions': 'VoilaConfiguration.enable_nbextensions',
+        'show_tracebacks': 'VoilaConfiguration.show_tracebacks',
+        'preheat_kernel': 'VoilaConfiguration.preheat_kernel',
+        'pool_size': 'VoilaConfiguration.default_pool_size'
     }
     classes = [
         VoilaConfiguration,
@@ -135,7 +143,7 @@ class Voila(Application):
     connection_dir_root = Unicode(
         config=True,
         help=_(
-            'Location of temporry connection files. Defaults '
+            'Location of temporary connection files. Defaults '
             'to system `tempfile.gettempdir()` value.'
         )
     )
@@ -186,10 +194,6 @@ class Voila(Application):
             'paths to static assets'
         )
     )
-
-    show_tracebacks = Bool(False, config=True, help=_(
-        'Whether to send tracebacks to clients on exceptions.'
-    ))
 
     port_retries = Integer(50, config=True,
                            help=_("The number of additional ports to try if the specified port is not available.")
@@ -342,7 +346,7 @@ class Voila(Application):
         asyncio implementation on Windows
         Pick the older SelectorEventLoopPolicy on Windows
         if the known-incompatible default policy is in use.
-        do this as early as possible to make it a low priority and overrideable
+        do this as early as possible to make it a low priority and overridable
         ref: https://github.com/tornadoweb/tornado/issues/2608
         FIXME: if/when tornado supports the defaults in asyncio,
                remove and bump tornado requirement for py38
@@ -427,7 +431,19 @@ class Voila(Application):
             parent=self
         )
 
-        self.kernel_manager = AsyncMappingKernelManager(
+        # we create a config manager that load both the serverconfig and nbconfig (classical notebook)
+        read_config_path = [os.path.join(p, 'serverconfig') for p in jupyter_config_path()]
+        read_config_path += [os.path.join(p, 'nbconfig') for p in jupyter_config_path()]
+        self.config_manager = ConfigManager(parent=self, read_config_path=read_config_path)
+        self.contents_manager = LargeFileManager(parent=self)
+        preheat_kernel: bool = self.voila_configuration.preheat_kernel
+        pool_size: int = self.voila_configuration.default_pool_size
+        kernel_manager_class = voila_kernel_manager_factory(
+            self.voila_configuration.multi_kernel_manager_class,
+            preheat_kernel,
+            pool_size
+        )
+        self.kernel_manager = kernel_manager_class(
             parent=self,
             connection_dir=self.connection_dir,
             kernel_spec_manager=self.kernel_spec_manager,
@@ -445,12 +461,6 @@ class Voila(Application):
         env = jinja2.Environment(loader=jinja2.FileSystemLoader(self.template_paths), extensions=['jinja2.ext.i18n'], **jenv_opt)
         nbui = gettext.translation('nbui', localedir=os.path.join(ROOT, 'i18n'), fallback=True)
         env.install_gettext_translations(nbui, newstyle=False)
-        self.contents_manager = LargeFileManager(parent=self)
-
-        # we create a config manager that load both the serverconfig and nbconfig (classical notebook)
-        read_config_path = [os.path.join(p, 'serverconfig') for p in jupyter_config_path()]
-        read_config_path += [os.path.join(p, 'nbconfig') for p in jupyter_config_path()]
-        self.config_manager = ConfigManager(parent=self, read_config_path=read_config_path)
 
         # default server_url to base_url
         self.server_url = self.server_url or self.base_url
@@ -489,8 +499,16 @@ class Voila(Application):
                     'default_filename': 'index.html'
                 },
             ),
+            (url_path_join(self.server_url, r'/voila/api/shutdown/(.*)'), VoilaShutdownKernelHandler)
         ])
 
+        if preheat_kernel:
+            handlers.append(
+                (
+                    url_path_join(self.server_url, r'/voila/query/%s' % _kernel_id_regex),
+                    QueryStringSocketHandler
+                )
+            )
         # Serving notebook extensions
         if self.voila_configuration.enable_nbextensions:
             handlers.append(
@@ -542,7 +560,7 @@ class Voila(Application):
                      'template_paths': self.template_paths,
                      'config': self.config,
                      'voila_configuration': self.voila_configuration
-                 }),
+                }),
             ])
 
         self.app.add_handlers('.*$', handlers)
@@ -564,9 +582,10 @@ class Voila(Application):
             yield max(1, port + random.randint(-2*n, 2*n))
 
     def listen(self):
+        success = False
         for port in self.random_ports(self.port, self.port_retries+1):
             try:
-                self.app.listen(port)
+                self.app.listen(port, self.ip)
                 self.port = port
                 self.log.info('Voilà is running at:\n%s' % self.display_url)
             except socket.error as e:

@@ -11,11 +11,11 @@
 Installing Voilà
 ================
 
-Voilà can be installed with the ``conda`` package manager
+Voilà can be installed with the ``mamba`` or ``conda`` package manager
 
 .. code-block:: bash
 
-   conda install -c conda-forge voila
+   mamba install -c conda-forge voila
 
 or from ``PyPI``:
 

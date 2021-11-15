@@ -1,0 +1,31 @@
+[build-system]
+requires = ["jupyter_packaging~=0.10", "jupyterlab~=3.0", "jupyter_core"]
+build-backend = "jupyter_packaging.build_api"
+
+[license]
+file="LICENSE"
+
+[tool.jupyter-packaging.options]
+skip-if-exists = ["voila/labextension/static/style.js"]
+ensured-targets = ["voila/labextension/static/style.js"]
+
+[tool.jupyter-packaging.builder]
+factory = "jupyter_packaging.npm_builder"
+
+[tool.jupyter-packaging.build-args]
+build_cmd = "build:prod"
+npm = ["jlpm"]
+
+[tool.jupyter-releaser]
+skip = ["check-links"]
+
+[tool.jupyter-releaser.hooks]
+before-bump-version = ["python -m pip install bump2version jupyterlab~=3.0"]
+before-build-npm = ["python -m pip install jupyterlab~=3.0", "jlpm clean", "jlpm build:prod"]
+before-build-python = ["jlpm clean"]
+
+[tool.jupyter-releaser.options]
+version-cmd = "python scripts/bump-version.py --force"
+
+[tool.check-manifest]
+ignore = [".binder/**", "docs/**", "notebooks/**", "packages/**", "share/**/*.js", "share/**/*.woff", "*.json", "*.gif", "yarn.lock", "environment.yml", "readthedocs.yml", ".*", "lint-staged.config.js", "scripts/**", "voila/labextension/**", "voila/static/**", "tests/**", "ui-tests/**"]

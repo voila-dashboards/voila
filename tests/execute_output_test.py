@@ -13,7 +13,7 @@ WIDGET_MIME_TYPE_STATE = 'application/vnd.jupyter.widget-state+json'
 
 
 # based on nbconvert.preprocessors.tests.test_execute.TestExecute
-# we cannot import it because pytest would then also execute thoses tests
+# we cannot import it because pytest would then also execute those tests
 def normalize_output(output):
     """
     Normalizes outputs for comparison.

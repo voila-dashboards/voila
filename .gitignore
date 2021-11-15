@@ -32,7 +32,12 @@ package-lock.json
 share/jupyter/voila/templates/base/static/*voila.js
 share/jupyter/voila/templates/base/static/*[woff|woff2|eot|svg]
 
-js/lib/
+lib
 
-packages/jupyterlab-voila/lib/
+voila/labextension
 tsconfig.tsbuildinfo
+
+ui-tests/playwright-report
+ui-tests/test-results
+ui-tests/benchmark-results
+ui-tests/jlab_root
