@@ -1,0 +1,19 @@
+{
+  "name": "voila-ui-tests",
+  "version": "1.0.0",
+  "description": "Voila UI Tests",
+  "private": true,
+  "scripts": {
+    "start": "voila ../notebooks --no-browser",
+    "start:detached": "yarn run start-jlab&",
+    "test": "playwright test",
+    "test:debug": "PWDEBUG=1 playwright test",
+    "test:report": "http-server ./playwright-report -a localhost -o",
+    "test:update": "playwright test --update-snapshots"
+  },
+  "author": "Project Jupyter",
+  "license": "BSD-3-Clause",
+  "dependencies": {
+    "@jupyterlab/galata": "~4.0.2"
+  }
+}

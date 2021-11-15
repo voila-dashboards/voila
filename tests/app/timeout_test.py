@@ -14,6 +14,7 @@ def voila_args_extra():
 
 
 async def test_timeout(http_server_client, base_url):
+
     response = await http_server_client.fetch(base_url)
     html_text = response.body.decode('utf-8')
     assert 'Cell execution timed out' in html_text

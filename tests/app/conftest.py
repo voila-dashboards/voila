@@ -1,8 +1,7 @@
 import os
-
 import pytest
-
 import voila.app
+
 
 BASE_DIR = os.path.dirname(__file__)
 
@@ -35,9 +34,23 @@ def voila_args(voila_notebook, voila_args_extra, voila_config_file_paths_arg):
 
 
 @pytest.fixture
-def voila_app(voila_args, voila_config):
+def preheat_mode():
+    """Fixture used to activate/deactivate pre-heat kernel mode.
+    Override this fixture in test file if you want to activate
+    preheat mode.
+    """
+    return False
+
+
+@pytest.fixture
+def preheat_config(preheat_mode):
+    return f'--preheat_kernel={preheat_mode}'
+
+
+@pytest.fixture
+def voila_app(voila_args, voila_config, preheat_config):
     voila_app = VoilaTest.instance()
-    voila_app.initialize(voila_args + ['--no-browser'])
+    voila_app.initialize(voila_args + ['--no-browser', preheat_config])
     voila_config(voila_app)
     voila_app.start()
     yield voila_app

@@ -21,13 +21,13 @@ callbacks to changes in Jupyter interactive widgets.
 
 ## Installation
 
-Voilà can be installed with the conda package manager
+Voilà can be installed with the mamba (or conda) package manager from conda-forge
 
 ```
-conda install -c conda-forge voila
+mamba install -c conda-forge voila
 ```
 
-or from pypi
+or from PyPI
 
 ```
 pip install voila
@@ -35,10 +35,15 @@ pip install voila
 
 ### JupyterLab preview extension
 
-Voilà provides a JupyterLab extension that displays a Voilà preview of your Notebook in a side-pane:
+Voilà provides a JupyterLab extension that displays a Voilà preview of your Notebook in a side-pane.
+
+Starting with JupyterLab 3.0, the extension is **automatically installed** after installing `voila`
+with `pip install voila`.
+
+If you would like to install the extension from source, run the following command.
 
 ```
-jupyter labextension install @jupyter-voila/jupyterlab-preview
+jupyter labextension install @voila-dashboards/jupyterlab-preview
 ```
 
 ## Usage
@@ -52,7 +57,7 @@ To serve a directory of jupyter notebooks, run `voila` with no argument.
 For example, to render the example notebook `bqplot.ipynb` from this repository with Voilà, you can first update your current environment with the requirements of this notebook (in this case in a [conda environment](https://docs.conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html) and render the notebook with
 
 ```
-conda env update -f environment.yml
+mamba env update -f environment.yml
 cd notebooks/
 voila bqplot.ipynb
 ```
@@ -69,7 +74,8 @@ Voilà can also be used as a Jupyter server extension, both with the
 To install the Jupyter server extension, run
 
 ```
-jupyter serverextension enable voila --sys-prefix
+jupyter serverextension enable voila
+jupyter server extension enable voila
 ```
 
 When running the Jupyter server, the Voilà app is accessible from the base url
@@ -86,6 +92,7 @@ https://voila.readthedocs.io/
 The following two examples show how a standalone Jupyter notebook can be turned into a separate app, from the command-line integration.
 
 ### Rendering a notebook including interactive widgets and rich mime-type rendering
+
 ![Voilà basics](voila-basics.gif)
 
 ### Rendering a notebook making use of a custom widget library ([bqplot](https://github.com/bloomberg/bqplot))
@@ -98,7 +105,7 @@ The sources of the Jupyter notebook can be displayed in a Voilà app if option `
 
 ![Voilà sources](voila-sources.gif)
 
-### Voilà dashboards with other language kernels**
+### Voilà dashboards with other language kernels\*\*
 
 Voilà is built upon Jupyter standard formats and protocols, and is agnostic to the programming language of the notebook. In this example, we present an example of a Voilà application powered by the C++ Jupyter kernel [xeus-cling](https://github.com/jupyter-xeus/xeus-cling), and the [xleaflet](https://github.com/jupyter-xeus/xleaflet) project.
 

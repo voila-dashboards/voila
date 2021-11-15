@@ -4,13 +4,21 @@
 {% from 'voila_setup.macro.html.j2' import voila_setup with context %}
 
 {%- block html_head_js -%}
+  {%- block html_head_js_requirejs -%}
+  <script
+    src="{{resources.base_url}}voila/static/require.min.js"
+    integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA="
+    crossorigin="anonymous">
+  </script>
+  {%- endblock html_head_js_requirejs -%}
 {%- block html_head_js_logs -%}
 {{ log.js() }}
 {%- endblock html_head_js_logs -%}
 {%- endblock html_head_js -%}
 
 {%- block html_head_css -%}
-<link rel="stylesheet" href="https://unpkg.com/font-awesome@4.5.0/css/font-awesome.min.css" type="text/css" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@^5/css/all.min.css" type="text/css" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@^5/css/v4-shims.min.css" type="text/css" />
 {{ super() }}
 {{ spinner.css() }}
   <style>
@@ -84,9 +92,12 @@ var voila_heartbeat = function() {
     el.style.display = 'unset'
   })();
 </script>
+{{ voila_setup(resources.base_url, resources.nbextensions) }}
 {{ super() }}
 {%- endblock body_footer -%}
 
+{%- block footer %}
 {% block footer_js %}
-{{ voila_setup(resources.base_url, resources.nbextensions) }}
 {% endblock footer_js %}
+</html>
+{%- endblock footer-%}

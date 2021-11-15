@@ -55,7 +55,7 @@ def collect_paths(
     # first find a list of the template 'hierarchy'
     template_names = _find_template_hierarchy(app_names, template_name, root_dirs)
 
-    # the order of the loop determintes the precedense of the template system
+    # the order of the loop determines the precedense of the template system
     # * first template_names, e.g. if we inherit from default template, we only
     #   want to find those files last
     for template_name in template_names:

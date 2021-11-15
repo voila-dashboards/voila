@@ -8,6 +8,7 @@ def voila_args_extra():
 
 
 async def test_template(http_server_client, base_url):
+
     response = await http_server_client.fetch(base_url)
     assert response.code == 200
     assert 'test_template.css' in response.body.decode('utf-8')

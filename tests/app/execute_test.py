@@ -12,6 +12,7 @@ except ImportError:
 
 
 async def test_hello_world(http_server_client, base_url):
+
     response = await http_server_client.fetch(base_url)
     assert response.code == 200
     html_text = response.body.decode('utf-8')
@@ -21,6 +22,7 @@ async def test_hello_world(http_server_client, base_url):
 
 
 async def test_no_execute_allowed(voila_app, app, http_server_client, base_url, http_server_port):
+
     assert voila_app.app is app
     response = (await http_server_client.fetch(base_url)).body.decode('utf-8')
     pattern = r"""kernelId": ["']([0-9a-zA-Z-]+)["']"""

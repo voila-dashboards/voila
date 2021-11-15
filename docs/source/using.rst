@@ -93,7 +93,7 @@ When Voilà is run on a notebook, the following steps occur:
 The example notebooks
 =====================
 
-The `notebooks directory <https://github.com/voila-dashboards/voila/tree/master/notebooks>`__
+The `notebooks directory <https://github.com/voila-dashboards/voila/tree/main/notebooks>`__
 contains a collection of Jupyter notebooks that can be rendered using Voilà:
 
 * **basics.ipynb** - a notebook with interactions requiring a roundtrip to the kernel.

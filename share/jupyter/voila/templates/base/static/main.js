@@ -11,14 +11,25 @@ require([window.voila_js_url || 'static/voila'], function(voila) {
     // requirejs doesn't like to be passed an async function, so create one inside
     (async function() {
         var kernel = await voila.connectKernel()
+        if (!kernel) {
+            return;
+        }
 
         const context = {
-            session: {
-                kernel,
+            sessionContext: {
+                session: {
+                    kernel,
+                    kernelChanged: {
+                        connect: () => {}
+                    },
+                },
+                statusChanged: {
+                    connect: () => {}
+                },
                 kernelChanged: {
                     connect: () => {}
                 },
-                statusChanged: {
+                connectionStatusChanged: {
                     connect: () => {}
                 },
             },
@@ -32,15 +43,21 @@ require([window.voila_js_url || 'static/voila'], function(voila) {
         };
 
         const rendermime = new voila.RenderMimeRegistry({
-            initialFactories: voila.standardRendererFactories
+            initialFactories: voila.extendedRendererFactories
         });
 
         var widgetManager = new voila.WidgetManager(context, rendermime, settings);
 
         async function init() {
             // it seems if we attach this to early, it will not be called
+            const matches = document.cookie.match('\\b_xsrf=([^;]*)\\b');
+            const xsrfToken = (matches && matches[1]) || '';
+            const configData = JSON.parse(document.getElementById('jupyter-config-data').textContent);
+            const baseUrl = configData.baseUrl;
             window.addEventListener('beforeunload', function (e) {
-                kernel.shutdown();
+                const data = new FormData();
+                data.append("_xsrf", xsrfToken);
+                window.navigator.sendBeacon(`${baseUrl}voila/api/shutdown/${kernel.id}`, data);
                 kernel.dispose();
             });
             await widgetManager.build_widgets();

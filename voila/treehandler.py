@@ -64,6 +64,7 @@ class VoilaTreeHandler(JupyterHandler):
                 __, ext = os.path.splitext(content.get('path'))
                 return ext in self.allowed_extensions
 
+            contents['content'] = sorted(contents['content'], key=lambda i: i['name'])
             contents['content'] = filter(allowed_content, contents['content'])
             self.write(self.render_template('tree.html',
                        page_title=page_title,

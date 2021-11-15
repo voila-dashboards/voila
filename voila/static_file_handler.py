@@ -24,7 +24,7 @@ class TemplateStaticFileHandler(tornado.web.StaticFileHandler):
     /my/prefix/jupyter/voila/templates/base/static/voila.js
     Meaning the url portion is not part of the real (absolute path)
 
-    For this sytem, we don't need to use the root, since this is handled in the
+    For this system, we don't need to use the root, since this is handled in the
     paths module.
     """
     def initialize(self):

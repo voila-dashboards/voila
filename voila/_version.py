@@ -7,9 +7,27 @@
 # The full license is in the file LICENSE, distributed with this software.  #
 #############################################################################
 
-version_info = (0, 2, 3, 'final', 0)
+# Copyright (c) Jupyter Development Team.
+# Distributed under the terms of the Modified BSD License.
 
-_specifier_ = {'alpha': 'a', 'beta': 'b', 'candidate': 'rc', 'final': ''}
+from collections import namedtuple
 
-__version__ = '%s.%s.%s%s' % (version_info[0], version_info[1], version_info[2],
-                              '' if version_info[3] == 'final' else _specifier_[version_info[3]] + str(version_info[4]))
+VersionInfo = namedtuple(
+    "VersionInfo", ["major", "minor", "micro", "releaselevel", "serial"]
+)
+
+# DO NOT EDIT THIS DIRECTLY!  It is managed by bumpversion
+version_info = VersionInfo(0, 3, 0, "beta", 0)
+
+_specifier_ = {"alpha": "a", "beta": "b", "candidate": "rc", "final": ""}
+
+__version__ = "{}.{}.{}{}".format(
+    version_info.major,
+    version_info.minor,
+    version_info.micro,
+    (
+        ""
+        if version_info.releaselevel == "final"
+        else _specifier_[version_info.releaselevel] + str(version_info.serial)
+    ),
+)
