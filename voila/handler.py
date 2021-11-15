@@ -126,6 +126,7 @@ class VoilaHandler(JupyterHandler):
         else:
             # All kernels are used or pre-heated kernel is disabled, start a normal kernel.
             gen = NotebookRenderer(
+                request_handler=self,
                 voila_configuration=self.voila_configuration,
                 traitlet_config=self.traitlet_config,
                 notebook_path=notebook_path,

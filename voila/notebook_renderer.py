@@ -33,6 +33,7 @@ class NotebookRenderer(LoggingConfigurable):
 
     def __init__(self, **kwargs):
         super().__init__()
+        self.request_handler = kwargs.get('requestHandler')
         self.root_dir = kwargs.get('root_dir', [])
         self.notebook_path = kwargs.get('notebook_path', [])  # should it be []
         self.template_paths = kwargs.get('template_paths', [])
@@ -80,7 +81,7 @@ class NotebookRenderer(LoggingConfigurable):
             #
             # Necessary inside of the handler if you need
             # to access the tornado request itself
-            self.prelaunch_hook(self,
+            self.prelaunch_hook(self.request_handler,
                                 notebook=self.notebook,
                                 cwd=self.cwd)
 
