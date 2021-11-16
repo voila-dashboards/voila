@@ -33,7 +33,7 @@ class NotebookRenderer(LoggingConfigurable):
 
     def __init__(self, **kwargs):
         super().__init__()
-        self.request_handler = kwargs.get('requestHandler')
+        self.request_handler = kwargs.get('request_handler')
         self.root_dir = kwargs.get('root_dir', [])
         self.notebook_path = kwargs.get('notebook_path', [])  # should it be []
         self.template_paths = kwargs.get('template_paths', [])
