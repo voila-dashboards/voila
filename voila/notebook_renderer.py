@@ -81,9 +81,11 @@ class NotebookRenderer(LoggingConfigurable):
             #
             # Necessary inside of the handler if you need
             # to access the tornado request itself
-            self.prelaunch_hook(self.request_handler,
-                                notebook=self.notebook,
-                                cwd=self.cwd)
+            returned_notebook = self.prelaunch_hook(self.request_handler,
+                                                    notebook=self.notebook,
+                                                    cwd=self.cwd)
+            if returned_notebook:
+                self.notebook = returned_notebook
 
         _, basename = os.path.split(notebook_path)
         notebook_name = os.path.splitext(basename)[0]

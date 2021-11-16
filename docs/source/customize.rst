@@ -217,9 +217,44 @@ The format of this hook should be:
 
    def hook(req: tornado.web.RequestHandler,
             notebook: nbformat.NotebookNode,
-            cwd: str):
+            cwd: str) -> Optional[nbformat.NotebookNode]:
+
+Here is an example of a custom `prelaunch-hook` to execute a notebook with `papermill`:
 
 
+.. code-block:: python
+
+    def parameterize_with_papermill(req, notebook, cwd):
+        import tornado
+
+        # Grab parameters
+        parameters = req.get_argument("parameters", {})
+
+        # try to convert to dict if not e.g. string/unicode
+        if not isinstance(parameters, dict):
+            try:
+                parameters = tornado.escape.json_decode(parameters)
+            except ValueError:
+                parameters = None
+
+        # if passed and a dict, use papermill to inject parameters
+        if parameters and isinstance(parameters, dict):
+            from papermill.parameterize import parameterize_notebook
+
+            # setup for papermill
+            # 
+            # these two blocks are done
+            # to avoid triggering errors
+            # in papermill's notebook
+            # loading logic
+            for cell in notebook.cells:
+                if 'tags' not in cell.metadata:
+                    cell.metadata.tags = []
+                if "papermill" not in notebook.metadata:
+                    notebook.metadata.papermill = {}
+
+            # Parameterize with papermill
+            return parameterize_notebook(notebook, parameters)
 
 
 Adding your own static files
