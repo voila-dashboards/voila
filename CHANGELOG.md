@@ -2,6 +2,28 @@
 
 <!-- <START NEW CHANGELOG ENTRY> -->
 
+## 0.3.0rc0
+
+([Full Changelog](https://github.com/voila-dashboards/voila/compare/v0.3.0b0...c50271ce7dd848a47be85330091dae52994c4c03))
+
+### Maintenance and upkeep improvements
+
+- Update Galata [#1022](https://github.com/voila-dashboards/voila/pull/1022) ([@jtpio](https://github.com/jtpio))
+- Add UI test for the reveal notebook [#1021](https://github.com/voila-dashboards/voila/pull/1021) ([@jtpio](https://github.com/jtpio))
+
+### Other merged PRs
+
+- Bump jquery-ui from 1.12.1 to 1.13.0 [#1024](https://github.com/voila-dashboards/voila/pull/1024) ([@dependabot](https://github.com/dependabot))
+- Bump tmpl from 1.0.4 to 1.0.5 [#1023](https://github.com/voila-dashboards/voila/pull/1023) ([@dependabot](https://github.com/dependabot))
+
+### Contributors to this release
+
+([GitHub contributors page for this release](https://github.com/voila-dashboards/voila/graphs/contributors?from=2021-10-28&to=2021-11-17&type=c))
+
+[@dependabot](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Adependabot+updated%3A2021-10-28..2021-11-17&type=Issues) | [@github-actions](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Agithub-actions+updated%3A2021-10-28..2021-11-17&type=Issues) | [@jtpio](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Ajtpio+updated%3A2021-10-28..2021-11-17&type=Issues) | [@trungleduc](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Atrungleduc+updated%3A2021-10-28..2021-11-17&type=Issues)
+
+<!-- <END NEW CHANGELOG ENTRY> -->
+
 ## 0.3.0b0
 
 ([Full Changelog](https://github.com/voila-dashboards/voila/compare/v0.3.0a2...bbca9fe7aa41cca2eb5a57c2e88f997eb46d6b4c))
@@ -32,8 +54,6 @@
 ([GitHub contributors page for this release](https://github.com/voila-dashboards/voila/graphs/contributors?from=2021-10-14&to=2021-10-28&type=c))
 
 [@adament](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Aadament+updated%3A2021-10-14..2021-10-28&type=Issues) | [@davidbrochart](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Adavidbrochart+updated%3A2021-10-14..2021-10-28&type=Issues) | [@github-actions](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Agithub-actions+updated%3A2021-10-14..2021-10-28&type=Issues) | [@jtpio](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Ajtpio+updated%3A2021-10-14..2021-10-28&type=Issues) | [@martinRenou](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3AmartinRenou+updated%3A2021-10-14..2021-10-28&type=Issues) | [@StanczakDominik](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3AStanczakDominik+updated%3A2021-10-14..2021-10-28&type=Issues) | [@SylvainCorlay](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3ASylvainCorlay+updated%3A2021-10-14..2021-10-28&type=Issues) | [@trungleduc](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Atrungleduc+updated%3A2021-10-14..2021-10-28&type=Issues)
-
-<!-- <END NEW CHANGELOG ENTRY> -->
 
 ## 0.3.0a2
 
