@@ -15,7 +15,7 @@ def voila_notebook(notebook_directory):
 
 
 NOTEBOOK_EXECUTION_TIME = 2
-TIME_THRESHOLD = 1
+TIME_THRESHOLD = NOTEBOOK_EXECUTION_TIME
 
 
 async def send_request(sc, url, wait=0):

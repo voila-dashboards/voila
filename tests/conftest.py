@@ -3,6 +3,7 @@ import os
 
 import pytest
 
+import time
 
 BASE_DIR = os.path.dirname(__file__)
 
@@ -30,3 +31,9 @@ def syntax_error_notebook_url(base_url):
 @pytest.fixture
 def voila_notebook(notebook_directory):
     return os.path.join(notebook_directory, 'print.ipynb')
+
+
+@pytest.fixture(autouse=True)
+def sleep_between_tests():
+    yield
+    time.sleep(1)
