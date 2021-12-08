@@ -40,6 +40,7 @@ async def test_render_notebook_with_heated_kernel(http_server_client, base_url):
 
     assert 'hello world' in text
     assert time < TIME_THRESHOLD
+    await asyncio.sleep(NOTEBOOK_EXECUTION_TIME + 1)
 
 
 async def test_render_blacklisted_notebook_with_nornal_kernel(http_server_client, base_url):
@@ -48,3 +49,4 @@ async def test_render_blacklisted_notebook_with_nornal_kernel(http_server_client
 
     assert 'hello world' in text
     assert time > TIME_THRESHOLD
+    await asyncio.sleep(NOTEBOOK_EXECUTION_TIME + 1)

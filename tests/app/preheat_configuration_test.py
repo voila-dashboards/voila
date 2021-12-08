@@ -4,7 +4,7 @@ import asyncio
 import os
 
 BASE_DIR = os.path.dirname(__file__)
-NOTEBOOK_EXECUTION_TIME = 2
+NOTEBOOK_EXECUTION_TIME = 3
 NUMBER_PREHEATED_KERNEL = 2
 TIME_THRESHOLD = 1
 
@@ -48,9 +48,11 @@ async def test_refill_kernel_asynchronously(http_server_client, base_url):
     assert len(fast) > 1
     assert len(slow) > 1
     assert len(fast) + len(slow) == 5*NUMBER_PREHEATED_KERNEL
+    await asyncio.sleep(NOTEBOOK_EXECUTION_TIME + 1)
 
 
 async def test_env_variable_defined_in_kernel(http_server_client, base_url):
     await asyncio.sleep(NUMBER_PREHEATED_KERNEL*NOTEBOOK_EXECUTION_TIME + 1)
     _, text = await send_request(sc=http_server_client, url=base_url)
     assert "bar" in text
+    await asyncio.sleep(NOTEBOOK_EXECUTION_TIME + 1)
