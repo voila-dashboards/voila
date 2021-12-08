@@ -36,6 +36,7 @@ async def test_request_before_kernel_heated(http_server_client, base_url):
     time, text = await send_request(sc=http_server_client, url=base_url)
     assert 'hello world' in text
     assert time > NOTEBOOK_EXECUTION_TIME
+    await asyncio.sleep(NOTEBOOK_EXECUTION_TIME + 1)
 
 
 async def test_render_time_with_preheated_kernel(http_server_client, base_url):
@@ -48,6 +49,7 @@ async def test_render_time_with_preheated_kernel(http_server_client, base_url):
                                     wait=NOTEBOOK_EXECUTION_TIME + 2)
     assert 'hello world' in text
     assert time < TIME_THRESHOLD
+    await asyncio.sleep(NOTEBOOK_EXECUTION_TIME + 1)
 
 
 async def test_render_time_with_multiple_requests(http_server_client,
@@ -65,6 +67,7 @@ async def test_render_time_with_multiple_requests(http_server_client,
         time_list.append(time)
 
     assert time_list[1] > time_list[0]  # Render time for a normal kernel is bigger than a a preheated kernel
+    await asyncio.sleep(NOTEBOOK_EXECUTION_TIME + 1)
 
 
 async def test_request_with_query(http_server_client, base_url):
@@ -77,6 +80,7 @@ async def test_request_with_query(http_server_client, base_url):
                                  url=url,
                                  wait=NOTEBOOK_EXECUTION_TIME + 1)
     assert time < TIME_THRESHOLD
+    await asyncio.sleep(NOTEBOOK_EXECUTION_TIME + 1)
 
 
 async def test_request_with_theme_parameter(http_server_client, base_url):

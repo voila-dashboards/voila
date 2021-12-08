@@ -146,7 +146,7 @@ def voila_kernel_manager_factory(base_class: Type[T], preheat_kernel: bool, defa
                 render_task: asyncio.Task = content['task']
                 kernel_id: str = content['kernel_id']
                 renderer.stop_generator = True
-                self.log.info('Using pre-heated kernel: %s for %s', 'kernel_id', notebook_name)
+                self.log.info('Using pre-heated kernel: %s for %s', kernel_id, notebook_name)
                 self.fill_if_needed(delay=None, notebook_name=notebook_name, **kwargs)
 
                 return render_task, renderer.rendered_cache, kernel_id
