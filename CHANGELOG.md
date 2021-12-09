@@ -8,7 +8,7 @@
 
 ### Enhancements made
 
-- Add support  for query variables in preheat kernel mode [#999](https://github.com/voila-dashboards/voila/pull/999) ([@trungleduc](https://github.com/trungleduc))
+- Add support for query variables in preheat kernel mode [#999](https://github.com/voila-dashboards/voila/pull/999) ([@trungleduc](https://github.com/trungleduc))
 - Add pooling heated kernels and pre-rendered notebook [#936](https://github.com/voila-dashboards/voila/pull/936) ([@trungleduc](https://github.com/trungleduc))
 - Add reveal template to core [#932](https://github.com/voila-dashboards/voila/pull/932) ([@SylvainCorlay](https://github.com/SylvainCorlay))
 
@@ -25,7 +25,7 @@
 - Update Galata [#1022](https://github.com/voila-dashboards/voila/pull/1022) ([@jtpio](https://github.com/jtpio))
 - Add UI test for the reveal notebook [#1021](https://github.com/voila-dashboards/voila/pull/1021) ([@jtpio](https://github.com/jtpio))
 - Fix failed tests on CI [#1014](https://github.com/voila-dashboards/voila/pull/1014) ([@trungleduc](https://github.com/trungleduc))
-- Enable tests on `Windows`  [#1013](https://github.com/voila-dashboards/voila/pull/1013) ([@trungleduc](https://github.com/trungleduc))
+- Enable tests on `Windows` [#1013](https://github.com/voila-dashboards/voila/pull/1013) ([@trungleduc](https://github.com/trungleduc))
 - Pass version spec as a GitHub Actions input [#1007](https://github.com/voila-dashboards/voila/pull/1007) ([@jtpio](https://github.com/jtpio))
 - Add next to the bump script [#1002](https://github.com/voila-dashboards/voila/pull/1002) ([@jtpio](https://github.com/jtpio))
 - Simplify tests for preheat kernel mode [#996](https://github.com/voila-dashboards/voila/pull/996) ([@trungleduc](https://github.com/trungleduc))
