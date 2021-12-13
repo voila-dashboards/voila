@@ -18,7 +18,7 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-latest, macos-latest]
-        python_version: [3.6, 3.7, 3.8, 3.9]
+        python_version: ['3.7', '3.8', '3.9', '3.10']
 
     steps:
     - uses: actions/checkout@v2
@@ -44,7 +44,6 @@ jobs:
         (cd tests/skip_template; pip install .)
 
     - name: Run tests (with traitlets 5)
-      if: matrix.python_version != '3.6'
       shell: bash -l {0}
       run: |
         pip install "traitlets>=5.0.3,<6"
@@ -76,7 +75,7 @@ jobs:
       fail-fast: false
       matrix:
         os: [windows-latest]
-        python-version: ['3.7', '3.8', '3.9']
+        python-version: ['3.7', '3.8', '3.9', '3.10']
     steps:
       - uses: actions/checkout@v2
 
