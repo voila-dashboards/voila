@@ -21,32 +21,30 @@ jobs:
     steps:
     - name: Checkout
       uses: actions/checkout@v2
-    - name: Install node
-      uses: actions/setup-node@v1
-      with:
-       node-version: '14.x'
-    - name: Install Python
-      uses: actions/setup-python@v2
-      with:
-        python-version: '3.9'
-        architecture: 'x64'
+    
+    - name: Base Setup
+      uses: jupyterlab/maintainer-tools/.github/actions/base-setup@v1
+
     - name: Install dependencies
       run: |
-        python -m pip install --upgrade pip wheel
         python -m pip install setuptools jupyter_packaging~=0.10 "jupyterlab>=3,<4" build
+
     - name: Build pypi distributions
       run: |
         python -m build
+
     - name: Build npm distributions
       run: |
         pushd packages/jupyterlab-preview
         npm pack
         popd
         cp packages/*/*.tgz dist
+
     - name: Build checksum file
       run: |
         cd dist
         sha256sum * | tee SHA256SUMS
+
     - name: Upload distributions
       uses: actions/upload-artifact@v2
       with:
