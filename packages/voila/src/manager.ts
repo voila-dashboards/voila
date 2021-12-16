@@ -111,8 +111,9 @@ export class WidgetManager extends JupyterLabManager {
         const model = await this.get_model(model_id);
         const widgetel = document.createElement('div');
         viewtag.parentElement.insertBefore(widgetel, viewtag);
+        const view = await this.create_view(model);
         // TODO: fix typing
-        await this.display_model(undefined as any, model, {
+        await this.display_view(undefined as any, view, {
           el: widgetel
         });
       } catch (error) {
@@ -131,7 +132,7 @@ export class WidgetManager extends JupyterLabManager {
 
   async display_view(msg: any, view: any, options: any): Promise<Widget> {
     if (options.el) {
-      LuminoWidget.Widget.attach(view.pWidget, options.el);
+      LuminoWidget.Widget.attach(view.luminoWidget, options.el);
     }
     if (view.el) {
       view.el.setAttribute('data-voila-jupyter-widget', '');
