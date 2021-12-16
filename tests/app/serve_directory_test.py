@@ -13,7 +13,7 @@ def preheat_mode():
 
 @pytest.fixture
 def voila_args(notebook_directory, voila_args_extra):
-    return ['--VoilaTest.root_dir=%r' % notebook_directory, '--VoilaTest.log_level=DEBUG'] + voila_args_extra
+    return ['--VoilaTest.root_dir=%r' % notebook_directory] + voila_args_extra
 
 
 async def test_print(http_server_client, print_notebook_url):

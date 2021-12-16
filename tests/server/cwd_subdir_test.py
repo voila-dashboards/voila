@@ -10,7 +10,7 @@ def cwd_subdir_notebook_url(base_url):
 
 @pytest.fixture
 def voila_args(notebook_directory, voila_args_extra):
-    return ['--VoilaTest.root_dir=%r' % notebook_directory, '--VoilaTest.log_level=DEBUG'] + voila_args_extra
+    return ['--VoilaTest.root_dir=%r' % notebook_directory] + voila_args_extra
 
 
 async def test_hello_world(http_server_client, cwd_subdir_notebook_url):
