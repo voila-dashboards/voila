@@ -105,9 +105,7 @@ test.describe('Voila performance Tests', () => {
     const notebookName = 'ipympl';
     const testFunction = async () => {
       await page.goto(`render/${notebookName}.ipynb`);
-      await page.waitForSelector(
-        'div.jupyter-widgets.jupyter-matplotlib-canvas-container canvas'
-      );
+      await page.waitForSelector('div.jupyter-matplotlib-figure');
     };
     await addBenchmarkToTest(notebookName, testFunction, testInfo, browserName);
     expect(await page.screenshot()).toMatchSnapshot(`${notebookName}.png`);
