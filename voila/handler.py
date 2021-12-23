@@ -8,6 +8,7 @@
 #############################################################################
 
 
+import asyncio
 import os
 from typing import Dict
 
@@ -33,8 +34,7 @@ class VoilaHandler(JupyterHandler):
         # we want to avoid starting multiple kernels due to template mistakes
         self.kernel_started = False
 
-    @tornado.web.authenticated
-    async def get(self, path=None):
+    async def get_generator(self, path=None):
         # if the handler got a notebook_path argument, always serve that
         notebook_path = self.notebook_path or path
 
@@ -101,22 +101,18 @@ class VoilaHandler(JupyterHandler):
             QueryStringSocketHandler.send_updates({'kernel_id': kernel_id, 'payload': self.request.query})
             # Send rendered cell to frontend
             if len(rendered_cache) > 0:
-                self.write(''.join(rendered_cache))
-                self.flush()
+                yield ''.join(rendered_cache)
 
             # Wait for current running cell finish and send this cell to
             # frontend.
             rendered, rendering = await render_task
             if len(rendered) > len(rendered_cache):
                 html_snippet = ''.join(rendered[len(rendered_cache):])
-                self.write(html_snippet)
-                self.flush()
+                yield html_snippet
 
             # Continue render cell from generator.
             async for html_snippet, _ in rendering:
-                self.write(html_snippet)
-                self.flush()
-            self.flush()
+                yield html_snippet
 
         else:
             # All kernels are used or pre-heated kernel is disabled, start a normal kernel.
@@ -139,8 +135,7 @@ class VoilaHandler(JupyterHandler):
                 can be used in a template to give feedback to a user
                 """
 
-                self.write('<script>voila_heartbeat()</script>\n')
-                self.flush()
+                return '<script>voila_heartbeat()</script>\n'
 
             kernel_env[ENV_VARIABLE.VOILA_PREHEAT] = 'False'
             kernel_env[ENV_VARIABLE.VOILA_BASE_URL] = self.base_url
@@ -154,13 +149,34 @@ class VoilaHandler(JupyterHandler):
                 )
             )
             kernel_future = self.kernel_manager.get_kernel(kernel_id)
-            async for html_snippet, _ in gen.generate_content_generator(
-                kernel_id, kernel_future, time_out
-            ):
-                self.write(html_snippet)
-                self.flush()
-                # we may not want to consider not flusing after each snippet, but add an explicit flush function to the jinja context
-                # yield  # give control back to tornado's IO loop, so it can handle static files or other requests
+            queue = asyncio.Queue()
+
+            async def put_html():
+                async for html_snippet, _ in gen.generate_content_generator(kernel_id, kernel_future):
+                    await queue.put(html_snippet)
+
+                await queue.put(None)
+
+            asyncio.ensure_future(put_html())
+
+            # If not done within the timeout, we send a heartbeat
+            # this is fundamentally to avoid browser/proxy read-timeouts, but
+            # can be used in a template to give feedback to a user
+            while True:
+                try:
+                    html_snippet = await asyncio.wait_for(queue.get(), self.voila_configuration.http_keep_alive_timeout)
+                except asyncio.TimeoutError:
+                    yield time_out()
+                else:
+                    if html_snippet is None:
+                        break
+                    yield html_snippet
+
+    @tornado.web.authenticated
+    async def get(self, path=None):
+        gen = self.get_generator(path=path)
+        async for html in gen:
+            self.write(html)
             self.flush()
 
     def redirect_to_file(self, path):
