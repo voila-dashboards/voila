@@ -35,9 +35,9 @@
 
 {%- block body_header -%}
 {% if resources.theme == 'dark' %}
-<body class="jp-Notebook theme-dark" data-base-url="{{resources.base_url}}voila/">
+<body class="jp-Notebook theme-dark" data-base-url="{{resources.base_url}}voila/" data-jp-theme-light="false" data-jp-theme-name="JupyterLab Dark">
 {% else %}
-<body class="jp-Notebook theme-light" data-base-url="{{resources.base_url}}voila/">
+<body class="jp-Notebook theme-light" data-base-url="{{resources.base_url}}voila/" data-jp-theme-light="true" data-jp-theme-name="JupyterLab Light">
 {% endif %}
 {{ spinner.html() }}
 <script>
