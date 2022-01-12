@@ -57,7 +57,7 @@ To serve a directory of jupyter notebooks, run `voila` with no argument.
 For example, to render the example notebook `bqplot.ipynb` from this repository with Voilà, you can first update your current environment with the requirements of this notebook (in this case in a [conda environment](https://docs.conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html) and render the notebook with
 
 ```
-mamba env update -f environment.yml
+mamba env update -f .binder/environment.yml
 cd notebooks/
 voila bqplot.ipynb
 ```
