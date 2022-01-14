@@ -85,11 +85,11 @@ var voila_heartbeat = function() {
 <script type="text/javascript">
   (function() {
     // remove the loading element
-    var el = document.getElementById("loading")
-    el.parentNode.removeChild(el)
+    var el = document.getElementById("loading");
+    el.parentNode.removeChild(el);
     // show the cell output
-    el = document.getElementById("rendered_cells")
-    el.style.display = 'unset'
+    el = document.getElementById("rendered_cells");
+    el.style.display = '';
   })();
 </script>
 {{ voila_setup(resources.base_url, resources.nbextensions) }}
