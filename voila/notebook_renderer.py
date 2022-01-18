@@ -212,14 +212,8 @@ class NotebookRenderer(LoggingConfigurable):
             show_tracebacks=self.voila_configuration.show_tracebacks,
         )
 
-        ###
-        # start kernel client
-        self.executor.kc = km.client()
-        await ensure_async(self.executor.kc.start_channels())
-        await ensure_async(
-            self.executor.kc.wait_for_ready(timeout=self.executor.startup_timeout)
-        )
-        self.executor.kc.allow_stdin = False
+        self.executor.kc = await self.executor.async_start_new_kernel_client()
+
         # Set `VOILA_KERNEL_ID` environment variable, this variable help user can
         # identify which kernel the notebook use.
         if nb.metadata.kernelspec['language'] == 'python':
