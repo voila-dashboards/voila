@@ -32,6 +32,12 @@ package-lock.json
 share/jupyter/voila/templates/base/static/*voila.js
 share/jupyter/voila/templates/base/static/*[woff|woff2|eot|svg]
 
+share/jupyter/voila/templates/classic/static/labvariables.css
+share/jupyter/voila/templates/classic/static/materialcolors.css
+
+share/jupyter/voila/templates/reveal/static/labvariables.css
+share/jupyter/voila/templates/reveal/static/materialcolors.css
+
 lib
 
 voila/labextension

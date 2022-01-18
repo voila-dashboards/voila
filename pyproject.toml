@@ -28,4 +28,13 @@ before-build-python = ["jlpm clean"]
 version-cmd = "python scripts/bump-version.py --force"
 
 [tool.check-manifest]
-ignore = [".binder/**", "docs/**", "notebooks/**", "packages/**", "share/**/*.js", "share/**/*.woff", "*.json", "*.gif", "yarn.lock", "environment.yml", "readthedocs.yml", ".*", "lint-staged.config.js", "scripts/**", "voila/labextension/**", "voila/static/**", "tests/**", "ui-tests/**"]
+ignore = [
+    ".binder/**", "docs/**", "notebooks/**",
+    "packages/**",
+    "share/**/*.js", "share/**/*.woff", "share/**/*.css",
+    "*.json", "*.gif", "yarn.lock",
+    "environment.yml", "readthedocs.yml", ".*",
+    "lint-staged.config.js", "scripts/**",
+    "voila/labextension/**", "voila/static/**",
+    "tests/**", "ui-tests/**",
+]
