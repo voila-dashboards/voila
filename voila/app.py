@@ -6,7 +6,6 @@
 #                                                                           #
 # The full license is in the file LICENSE, distributed with this software.  #
 #############################################################################
-
 import gettext
 import io
 import sys
@@ -62,6 +61,7 @@ from .exporter import VoilaExporter
 from .shutdown_kernel_handler import VoilaShutdownKernelHandler
 from .voila_kernel_manager import voila_kernel_manager_factory
 from .query_parameters_handler import QueryStringSocketHandler
+from .utils import create_include_assets_functions
 
 _kernel_id_regex = r"(?P<kernel_id>\w+-\w+-\w+-\w+-\w+)"
 
@@ -618,9 +618,15 @@ class Voila(Application):
             #     url = url_concat(url, {'token': self.token})
             url = url_path_join(self.connection_url, uri)
 
+            include_assets_functions = create_include_assets_functions(self.voila_configuration.template, url)
+
             jinja2_env = self.app.settings['jinja2_env']
             template = jinja2_env.get_template('browser-open.html')
-            fh.write(template.render(open_url=url, base_url=url))
+            fh.write(template.render(
+                open_url=url, base_url=url,
+                theme=self.voila_configuration.theme,
+                **include_assets_functions
+            ))
 
         def target():
             return browser.open(urljoin('file:', pathname2url(open_file)), new=self.webbrowser_open_new)

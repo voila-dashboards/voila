@@ -1,0 +1,13 @@
+{%- extends 'voila/templates/base/page.html' -%}
+
+{% block stylesheets %}
+{% if theme == 'dark' %}
+    {{ include_css("static/index.css") }}
+    {{ include_css("static/theme-dark.css") }}
+{% elif theme == 'light'  %}
+    {{ include_css("static/index.css") }}
+    {{ include_css("static/theme-light.css") }}
+{% else %}
+<!-- TODO: Use custom css from theme labextension -->
+{% endif %}
+{% endblock %}
