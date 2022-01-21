@@ -19,7 +19,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          python -m pip install --upgrade jupyterlab~=3.0 numpy bqplot matplotlib ipympl ipyvolume scipy
+          python -m pip install --upgrade jupyterlab~=3.0 numpy bqplot matplotlib ipympl=0.8.7 ipyvolume scipy
           python -m pip install ".[test]"
           jlpm
           jlpm build
