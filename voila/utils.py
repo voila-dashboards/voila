@@ -8,12 +8,17 @@
 #############################################################################
 
 import asyncio
+from functools import partial
 import os
 import threading
 from enum import Enum
 from typing import Awaitable
 
 import websockets
+
+import jinja2
+
+from .static_file_handler import TemplateStaticFileHandler
 
 
 class ENV_VARIABLE(str, Enum):
@@ -95,3 +100,34 @@ def get_query_string(url: str = None) -> str:
         asyncio.get_event_loop().stop()
 
     return query_string
+
+
+def make_url(template_name, base_url, path):
+    # similar to static_url, but does not assume the static prefix
+    settings = {
+        'static_url_prefix': f'{base_url}voila/templates/',
+        'static_path': None  # not used in TemplateStaticFileHandler.get_absolute_path
+    }
+    return TemplateStaticFileHandler.make_static_url(settings, f'{template_name}/{path}')
+
+
+def include_css(template_name, base_url, name):
+    code = f'<link rel="stylesheet" type="text/css" href="{make_url(template_name, base_url, name)}">'
+    return jinja2.Markup(code)
+
+
+def include_js(template_name, base_url, name):
+    code = f'<script src="{make_url(template_name, base_url, name)}"></script>'
+    return jinja2.Markup(code)
+
+
+def include_url(template_name, base_url, name):
+    return jinja2.Markup(make_url(template_name, base_url, name))
+
+
+def create_include_assets_functions(template_name, base_url):
+    return {
+        "include_css": partial(include_css, template_name, base_url),
+        "include_js": partial(include_js, template_name, base_url),
+        "include_url": partial(include_url, template_name, base_url)
+    }

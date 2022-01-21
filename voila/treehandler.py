@@ -13,7 +13,7 @@ from tornado import web
 from jupyter_server.base.handlers import JupyterHandler
 from jupyter_server.utils import url_path_join, url_escape
 
-from .utils import get_server_root_dir
+from .utils import get_server_root_dir, create_include_assets_functions
 
 
 class VoilaTreeHandler(JupyterHandler):
@@ -66,13 +66,18 @@ class VoilaTreeHandler(JupyterHandler):
 
             contents['content'] = sorted(contents['content'], key=lambda i: i['name'])
             contents['content'] = filter(allowed_content, contents['content'])
+
+            include_assets_functions = create_include_assets_functions(self.voila_configuration.template, self.base_url)
+
             self.write(self.render_template('tree.html',
                        page_title=page_title,
                        notebook_path=path,
                        breadcrumbs=breadcrumbs,
                        contents=contents,
                        terminals_available=False,
-                       server_root=get_server_root_dir(self.settings)))
+                       server_root=get_server_root_dir(self.settings),
+                       theme=self.voila_configuration.theme,
+                       **include_assets_functions))
         elif cm.file_exists(path):
             # it's not a directory, we have redirecting to do
             model = cm.get(path, content=False)
