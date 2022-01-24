@@ -127,7 +127,10 @@ class VoilaHandler(JupyterHandler):
                 kernel_spec_manager=self.kernel_spec_manager,
             )
 
-            await gen.initialize(template=template_arg, theme=theme_arg)
+            done = await gen.initialize(template=template_arg, theme=theme_arg)
+            if not done:
+                self.redirect_to_file(path)
+                return
 
             def time_out():
                 """If not done within the timeout, we send a heartbeat

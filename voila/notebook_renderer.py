@@ -12,7 +12,6 @@ import os
 import sys
 import traceback
 from typing import Generator, Tuple, Union, List
-
 import nbformat
 import tornado.web
 from jupyter_server.config_manager import recursive_update
@@ -46,8 +45,14 @@ class NotebookRenderer(LoggingConfigurable):
         self.stop_generator = False
         self.rendered_cache: List[str] = []
 
-    async def initialize(self, **kwargs):
+    async def initialize(self, **kwargs) -> bool:
+        """ Initialize the notebook generator, this method will
+        return `True` if the generator is initialized, return `False`
+        otherwise.
 
+        Returns:
+            Boolean: The flag to check if the generator is initialized.
+        """
         notebook_path = self.notebook_path
         if self.voila_configuration.enable_nbextensions:
             # generate a list of nbextensions that are enabled for the classical notebook
@@ -68,7 +73,7 @@ class NotebookRenderer(LoggingConfigurable):
         self.notebook = await self.load_notebook(notebook_path)
 
         if not self.notebook:
-            return
+            return False
         self.cwd = os.path.dirname(notebook_path)
 
         _, basename = os.path.split(notebook_path)
@@ -144,6 +149,8 @@ class NotebookRenderer(LoggingConfigurable):
             self.exporter.exclude_input = True
             self.exporter.exclude_output_prompt = True
             self.exporter.exclude_input_prompt = True
+
+        return True
 
     def generate_content_generator(
         self,
