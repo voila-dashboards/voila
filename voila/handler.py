@@ -11,6 +11,7 @@
 import asyncio
 import os
 from typing import Dict
+from pathlib import Path
 
 import tornado.web
 from jupyter_server.base.handlers import JupyterHandler
@@ -116,6 +117,18 @@ class VoilaHandler(JupyterHandler):
 
         else:
             # All kernels are used or pre-heated kernel is disabled, start a normal kernel.
+            supported_file_extensions = ['.ipynb']
+            supported_file_extensions.extend(
+                [
+                    x.lower()
+                    for x in self.voila_configuration.extension_language_mapping.keys()
+                ]
+            )
+            file_extenstion = Path(notebook_path).suffix.lower()
+            if file_extenstion not in supported_file_extensions:
+                self.redirect_to_file(path)
+                return
+
             gen = NotebookRenderer(
                 voila_configuration=self.voila_configuration,
                 traitlet_config=self.traitlet_config,
@@ -127,10 +140,7 @@ class VoilaHandler(JupyterHandler):
                 kernel_spec_manager=self.kernel_spec_manager,
             )
 
-            done = await gen.initialize(template=template_arg, theme=theme_arg)
-            if not done:
-                self.redirect_to_file(path)
-                return
+            await gen.initialize(template=template_arg, theme=theme_arg)
 
             def time_out():
                 """If not done within the timeout, we send a heartbeat
