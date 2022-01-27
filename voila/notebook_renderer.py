@@ -12,7 +12,6 @@ import os
 import sys
 import traceback
 from typing import Generator, Tuple, Union, List
-
 import nbformat
 import tornado.web
 from jupyter_server.config_manager import recursive_update
@@ -46,8 +45,9 @@ class NotebookRenderer(LoggingConfigurable):
         self.stop_generator = False
         self.rendered_cache: List[str] = []
 
-    async def initialize(self, **kwargs):
-
+    async def initialize(self, **kwargs) -> None:
+        """ Initialize the notebook generator.
+        """
         notebook_path = self.notebook_path
         if self.voila_configuration.enable_nbextensions:
             # generate a list of nbextensions that are enabled for the classical notebook
@@ -67,8 +67,6 @@ class NotebookRenderer(LoggingConfigurable):
 
         self.notebook = await self.load_notebook(notebook_path)
 
-        if not self.notebook:
-            return
         self.cwd = os.path.dirname(notebook_path)
 
         _, basename = os.path.split(notebook_path)
@@ -299,7 +297,7 @@ class NotebookRenderer(LoggingConfigurable):
 
         model = await ensure_async(self.contents_manager.get(path=path))
         if 'content' not in model:
-            raise tornado.web.HTTPError(404, 'file not found')
+            raise tornado.web.HTTPError(404, f'{path} can not be found')
         __, extension = os.path.splitext(model.get('path', ''))
         if model.get('type') == 'notebook':
             notebook = model['content']
@@ -309,6 +307,8 @@ class NotebookRenderer(LoggingConfigurable):
             language = self.voila_configuration.extension_language_mapping[extension]
             notebook = await self.create_notebook(model, language=language)
             return notebook
+        else:
+            raise tornado.web.HTTPError(500, f'Failed to load {path}')
 
     async def fix_notebook(self, notebook):
         """Returns a notebook object with a valid kernelspec.
