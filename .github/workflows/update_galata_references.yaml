@@ -1,0 +1,73 @@
+name: Update Galata References
+
+on:
+  issue_comment:
+    types: [created, edited]
+
+defaults:
+  run:
+    shell: bash -l {0}
+
+jobs:
+  update-reference-screenshots:
+    name: Update Galata References
+    if: ${{ github.event.issue.pull_request && contains(github.event.comment.body, 'update galata references') }}
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Checkout the branch from the PR that triggered the job
+        run: hub pr checkout ${{ github.event.issue.number }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade ".[test,visual-test]"
+          jlpm
+          jlpm build
+          jupyter labextension develop . --overwrite
+          cd ui-tests
+          jlpm install --frozen-lockfile
+
+      - name: Launch Voila
+        run: |
+          # Mount a volume to overwrite the server configuration
+          jlpm start 2>&1 > /tmp/voila_server.log &
+        working-directory: ui-tests
+
+      - name: Install browser
+        run: jlpm playwright install chromium
+        working-directory: ui-tests
+
+      - name: Wait for Voila
+        uses: ifaxity/wait-on-action@v1
+        with:
+          resource: http-get://localhost:8866/
+          timeout: 360000
+
+      - name: Generate updated Galata References
+        run: jlpm run test:update
+        working-directory: ui-tests
+
+      - name: Compress screenshots
+        run: |
+          sudo apt install optipng
+          optipng *.png
+        working-directory: ui-tests/tests/voila.test.ts-snapshots
+
+      - name: Commit reference images
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email 'github-actions[bot]@users.noreply.github.com'
+
+          git pull
+
+          git add ui-tests/tests/voila.test.ts-snapshots
+
+          git commit -m "Update Galata References"
+          git push
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

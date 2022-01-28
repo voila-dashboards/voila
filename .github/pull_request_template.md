@@ -19,7 +19,12 @@ https://github.com/voila-dashboards/voila/blob/main/CONTRIBUTING.md
 
 <!-- Describe any visual or user interaction changes and how they address the issue. -->
 
-<!-- For visual changes, include before and after screenshots here. -->
+<!--
+For visual changes, include before and after screenshots here.
+
+You will also need to update the reference screenshots for the Galata visual regression tests,
+you can do this automatically by commenting "Please update galata references" in the PR.
+-->
 
 ## Backwards-incompatible changes
 
