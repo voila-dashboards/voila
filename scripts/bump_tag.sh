@@ -1,7 +1,8 @@
 set -eux
 
-# Update the stable tag to point the latest release
+# Update the stable branch to point the latest release
 if [[ ${RH_DRY_RUN:=true} != 'true' ]]; then
-    git tag -f -a stable -m "Github Action release"
-    git push origin -f --tags
+    git checkout stable
+    git reset --hard origin/main
+    git push origin stable -f
 fi
