@@ -23,6 +23,7 @@ skip = ["check-links"]
 before-bump-version = ["python -m pip install bump2version jupyterlab~=3.0"]
 before-build-npm = ["python -m pip install jupyterlab~=3.0", "jlpm clean", "jlpm build:prod"]
 before-build-python = ["jlpm clean"]
+after-draft-release = "bash ./scripts/bump_tag.sh"
 
 [tool.jupyter-releaser.options]
 version-cmd = "python scripts/bump-version.py --force"
