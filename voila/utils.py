@@ -18,6 +18,10 @@ import websockets
 
 import jinja2
 
+from nbconvert.exporters.html import find_lab_theme
+
+from jupyterlab_server.themes_handler import ThemesHandler
+
 from .static_file_handler import TemplateStaticFileHandler
 
 
@@ -125,9 +129,24 @@ def include_url(template_name, base_url, name):
     return jinja2.Markup(make_url(template_name, base_url, name))
 
 
+def include_lab_theme(base_url, name):
+    # Try to find the theme with the given name, looking through the labextensions
+    theme_name, _ = find_lab_theme(name)
+
+    settings = {
+        'static_url_prefix': f'{base_url}voila/themes/',
+        'static_path': None  # not used in TemplateStaticFileHandler.get_absolute_path
+    }
+    url = ThemesHandler.make_static_url(settings, f'{theme_name}/index.css')
+
+    code = f'<link rel="stylesheet" type="text/css" href="{url}">'
+    return jinja2.Markup(code)
+
+
 def create_include_assets_functions(template_name, base_url):
     return {
         "include_css": partial(include_css, template_name, base_url),
         "include_js": partial(include_js, template_name, base_url),
-        "include_url": partial(include_url, template_name, base_url)
+        "include_url": partial(include_url, template_name, base_url),
+        "include_lab_theme": partial(include_lab_theme, base_url)
     }

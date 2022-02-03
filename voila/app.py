@@ -44,6 +44,8 @@ from jupyter_server.config_manager import recursive_update
 from jupyter_server.utils import url_path_join, run_sync
 from jupyter_server.services.config import ConfigManager
 
+from jupyterlab_server.themes_handler import ThemesHandler
+
 from jupyter_client.kernelspec import KernelSpecManager
 
 from jupyter_core.paths import jupyter_config_path, jupyter_path
@@ -479,6 +481,16 @@ class Voila(Application):
                 {
                     'paths': self.static_paths,
                     'default_filename': 'index.html'
+                },
+            ),
+            (
+                url_path_join(self.server_url, r'/voila/themes/(.*)'),
+                ThemesHandler,
+                {
+                    'themes_url': '/voila/themes',
+                    'path': '',
+                    'labextensions_path': jupyter_path('labextensions'),
+                    'no_cache_paths': ['/']
                 },
             ),
             (url_path_join(self.server_url, r'/voila/api/shutdown/(.*)'), VoilaShutdownKernelHandler)

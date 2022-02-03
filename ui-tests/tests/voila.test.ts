@@ -36,6 +36,44 @@ test.describe('Voila performance Tests', () => {
     expect(await page.screenshot()).toMatchSnapshot(`${notebookName}.png`);
   });
 
+  test('Render basics.ipynb with dark theme', async ({
+    page,
+    browserName
+  }, testInfo) => {
+    const notebookName = 'basics';
+    const testFunction = async () => {
+      await page.goto(`render/${notebookName}.ipynb?voila-theme=dark`);
+      // wait for the widgets to load
+      // await page.waitForSelector('.jupyter-widgets');
+      await page.waitForSelector('span[role="presentation"] >> text=x');
+    };
+    await addBenchmarkToTest(notebookName, testFunction, testInfo, browserName);
+
+    // wait for the final MathJax message to be hidden
+    await page.$('text=Typesetting math: 100%');
+    await page.waitForSelector('#MathJax_Message', { state: 'hidden' });
+    expect(await page.screenshot()).toMatchSnapshot(`${notebookName}-dark.png`);
+  });
+
+  test('Render basics.ipynb with miami theme', async ({
+    page,
+    browserName
+  }, testInfo) => {
+    const notebookName = 'basics';
+    const testFunction = async () => {
+      await page.goto(`render/${notebookName}.ipynb?voila-theme=jupyterlab_miami_nights`);
+      // wait for the widgets to load
+      // await page.waitForSelector('.jupyter-widgets');
+      await page.waitForSelector('span[role="presentation"] >> text=x');
+    };
+    await addBenchmarkToTest(notebookName, testFunction, testInfo, browserName);
+
+    // wait for the final MathJax message to be hidden
+    await page.$('text=Typesetting math: 100%');
+    await page.waitForSelector('#MathJax_Message', { state: 'hidden' });
+    expect(await page.screenshot()).toMatchSnapshot(`${notebookName}-miami.png`);
+  });
+
   test('Render and benchmark bqplot.ipynb', async ({
     page,
     browserName
