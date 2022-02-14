@@ -78,15 +78,15 @@
 
   <ul class="voila-notebooks">
     {% if breadcrumbs|length > 1: %}
-      <li><a href="{{ breadcrumbs[-2][0] }}"><i class="fa fa-folder"></i>..</a></li>
+      <li><a href="{{ breadcrumbs[-2][0] }}?{{ query }}"><i class="fa fa-folder"></i>..</a></li>
     {% endif %}
 
     {% for content in contents.content %}
       {% if content.type in ['notebook', 'file'] %}
-        <li><a href="{{ base_url }}voila/render/{{ content.path }}"><i class="fa fa-book"></i>{{content.name}}</a></li>
+        <li><a href="{{ base_url }}voila/render/{{ content.path }}?{{ query }}"><i class="fa fa-book"></i>{{content.name}}</a></li>
       {% endif %}
       {% if content.type == 'directory' %}
-        <li><a href="{{ base_url }}voila/tree/{{ content.path }}"><i class="fa fa-folder"></i>{{content.name}}</a></li>
+        <li><a href="{{ base_url }}voila/tree/{{ content.path }}?{{ query }}"><i class="fa fa-folder"></i>{{content.name}}</a></li>
       {% endif %}
     {% endfor %}
   </ul>

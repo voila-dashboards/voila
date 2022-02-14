@@ -24,7 +24,6 @@ the following option:
 
    voila <path-to-notebook> --theme=dark
 
-
 Or by passing in the query parameter ``voila-theme``, e.g. a URL like ``http://localhost:8867/voila/render/query-strings.ipynb?voila-theme=dark``.
 
 The theme can also be set in the notebook metadata, under ``metadata/voila/theme`` by editing the notebook file manually, or using the metadata editor in for instance the classical notebook
@@ -35,8 +34,15 @@ The theme can also be set in the notebook metadata, under ``metadata/voila/theme
 System administrators who want to disable changing the theme, can pass ``--VoilaConfiguration.allow_theme_override=NO`` or
 ``--VoilaConfiguration.allow_theme_override=NOTEBOOK`` to disable changing the theme completely, or only allow it from the notebook metadata.
 
-Currently, Voilà supports only **light** and **dark** themes.
+Like nbconvert, Voilà supports the **light** and **dark** themes by default, but you can also use custom JupyterLab themes:
 
+.. code-block:: bash
+
+   pip install jupyterlab_miami_nights
+   voila <path-to-notebook> --theme=jupyterlab_miami_nights
+
+.. warning::
+   Theme are specific to the "lab" template, they will not work for the "classic" template
 
 .. note::
    Changing the theme from the notebook metadata may change in the future if this features moves to nbconvert.

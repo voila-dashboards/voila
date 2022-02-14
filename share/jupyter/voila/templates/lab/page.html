@@ -8,6 +8,7 @@
     {{ include_css("static/index.css") }}
     {{ include_css("static/theme-light.css") }}
 {% else %}
-<!-- TODO: Use custom css from theme labextension -->
+    {{ include_css("static/index.css") }}
+    {{ include_lab_theme(theme) }}
 {% endif %}
 {% endblock %}
