@@ -97,10 +97,9 @@ export class VoilaPreview extends DocumentWidget<IFrame, INotebookModel> {
     const reloadButton = new ToolbarButton({
       icon: refreshIcon,
       tooltip: 'Reload Preview',
-      onClick: () => {
-        context.save().then(() => {
-          this.reload();
-        });
+      onClick: async () => {
+        await context.save();
+        this.reload();
       }
     });
 
