@@ -104,10 +104,7 @@ export class VoilaPreview extends DocumentWidget<IFrame, INotebookModel> {
     });
 
     const renderOnSaveCheckbox = ReactWidget.create(
-      <label
-        className="jp-VoilaPreview-renderOnSave"
-        style={{ display: 'flex', alignItems: 'center' }}
-      >
+      <label className="jp-VoilaPreview-renderOnSave">
         <input
           name="renderOnSave"
           type="checkbox"
