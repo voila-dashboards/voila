@@ -8,13 +8,13 @@
 
 ### Enhancements made
 
-- JupyterLab Voila preview extension: Automatically save Notebook before refreshing the preview    [#1094](https://github.com/voila-dashboards/voila/pull/1094) ([@legendb317](https://github.com/legendb317))
+- JupyterLab Voila preview extension: Automatically save Notebook before refreshing the preview [#1094](https://github.com/voila-dashboards/voila/pull/1094) ([@legendb317](https://github.com/legendb317))
 - Update JupyterLab extension logo [#1092](https://github.com/voila-dashboards/voila/pull/1092) ([@martinRenou](https://github.com/martinRenou))
 - Handle JupyterLab custom themes [#1089](https://github.com/voila-dashboards/voila/pull/1089) ([@martinRenou](https://github.com/martinRenou))
 
 ### Bugs fixed
 
-- Bump `css-loader` and `style-loader`` [#1096](https://github.com/voila-dashboards/voila/pull/1096) ([@trungleduc](https://github.com/trungleduc))
+- Bump `css-loader` and `style-loader` [#1096](https://github.com/voila-dashboards/voila/pull/1096) ([@trungleduc](https://github.com/trungleduc))
 
 ### Maintenance and upkeep improvements
 
