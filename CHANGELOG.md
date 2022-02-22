@@ -8,9 +8,9 @@
 
 ### Enhancements made
 
-- small fixes to jupyterlab voila extension   [#1094](https://github.com/voila-dashboards/voila/pull/1094) ([@legendb317](https://github.com/legendb317))
+- JupyterLab Voila preview extension: Automatically save Notebook before refreshing the preview    [#1094](https://github.com/voila-dashboards/voila/pull/1094) ([@legendb317](https://github.com/legendb317))
 - Update JupyterLab extension logo [#1092](https://github.com/voila-dashboards/voila/pull/1092) ([@martinRenou](https://github.com/martinRenou))
-- Lab theme handling [#1089](https://github.com/voila-dashboards/voila/pull/1089) ([@martinRenou](https://github.com/martinRenou))
+- Handle JupyterLab custom themes [#1089](https://github.com/voila-dashboards/voila/pull/1089) ([@martinRenou](https://github.com/martinRenou))
 
 ### Bugs fixed
 
@@ -28,7 +28,7 @@
 
 ([GitHub contributors page for this release](https://github.com/voila-dashboards/voila/graphs/contributors?from=2022-01-27&to=2022-02-22&type=c))
 
-[@dependabot](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Adependabot+updated%3A2022-01-27..2022-02-22&type=Issues) | [@github-actions](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Agithub-actions+updated%3A2022-01-27..2022-02-22&type=Issues) | [@jtpio](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Ajtpio+updated%3A2022-01-27..2022-02-22&type=Issues) | [@legendb317](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Alegendb317+updated%3A2022-01-27..2022-02-22&type=Issues) | [@martinRenou](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3AmartinRenou+updated%3A2022-01-27..2022-02-22&type=Issues) | [@trungleduc](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Atrungleduc+updated%3A2022-01-27..2022-02-22&type=Issues)
+[@jtpio](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Ajtpio+updated%3A2022-01-27..2022-02-22&type=Issues) | [@legendb317](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Alegendb317+updated%3A2022-01-27..2022-02-22&type=Issues) | [@martinRenou](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3AmartinRenou+updated%3A2022-01-27..2022-02-22&type=Issues) | [@trungleduc](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Atrungleduc+updated%3A2022-01-27..2022-02-22&type=Issues)
 
 <!-- <END NEW CHANGELOG ENTRY> -->
 
