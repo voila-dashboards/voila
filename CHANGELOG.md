@@ -2,6 +2,36 @@
 
 <!-- <START NEW CHANGELOG ENTRY> -->
 
+## 0.3.2
+
+([Full Changelog](https://github.com/voila-dashboards/voila/compare/@voila-dashboards/jupyterlab-preview@2.1.1...cb280f9f9225922f7d429c3b86f05071c10d44d6))
+
+### Enhancements made
+
+- JupyterLab Voila preview extension: Automatically save Notebook before refreshing the preview    [#1094](https://github.com/voila-dashboards/voila/pull/1094) ([@legendb317](https://github.com/legendb317))
+- Update JupyterLab extension logo [#1092](https://github.com/voila-dashboards/voila/pull/1092) ([@martinRenou](https://github.com/martinRenou))
+- Handle JupyterLab custom themes [#1089](https://github.com/voila-dashboards/voila/pull/1089) ([@martinRenou](https://github.com/martinRenou))
+
+### Bugs fixed
+
+- Bump `css-loader` and `style-loader`` [#1096](https://github.com/voila-dashboards/voila/pull/1096) ([@trungleduc](https://github.com/trungleduc))
+
+### Maintenance and upkeep improvements
+
+- Bump url-parse from 1.5.3 to 1.5.7 in /ui-tests [#1097](https://github.com/voila-dashboards/voila/pull/1097) ([@dependabot](https://github.com/dependabot))
+- Bump follow-redirects from 1.14.7 to 1.14.8 in /ui-tests [#1093](https://github.com/voila-dashboards/voila/pull/1093) ([@dependabot](https://github.com/dependabot))
+- Bump simple-get from 3.1.0 to 3.1.1 in /ui-tests [#1091](https://github.com/voila-dashboards/voila/pull/1091) ([@dependabot](https://github.com/dependabot))
+- Add script to automatically reset the `stable` branch on release [#1085](https://github.com/voila-dashboards/voila/pull/1085) ([@jtpio](https://github.com/jtpio))
+- Add bot for updating Galata references [#1083](https://github.com/voila-dashboards/voila/pull/1083) ([@martinRenou](https://github.com/martinRenou))
+
+### Contributors to this release
+
+([GitHub contributors page for this release](https://github.com/voila-dashboards/voila/graphs/contributors?from=2022-01-27&to=2022-02-22&type=c))
+
+[@jtpio](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Ajtpio+updated%3A2022-01-27..2022-02-22&type=Issues) | [@legendb317](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Alegendb317+updated%3A2022-01-27..2022-02-22&type=Issues) | [@martinRenou](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3AmartinRenou+updated%3A2022-01-27..2022-02-22&type=Issues) | [@trungleduc](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Atrungleduc+updated%3A2022-01-27..2022-02-22&type=Issues)
+
+<!-- <END NEW CHANGELOG ENTRY> -->
+
 ## 0.3.1
 
 ([Full Changelog](https://github.com/voila-dashboards/voila/compare/@voila-dashboards/jupyterlab-preview@2.1.0...f601d15476b015e9fa9ab96ce39617fda80e0858))
@@ -50,8 +80,6 @@
 ([GitHub contributors page for this release](https://github.com/voila-dashboards/voila/graphs/contributors?from=2021-12-09&to=2022-01-27&type=c))
 
 [@davidbrochart](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Adavidbrochart+updated%3A2021-12-09..2022-01-27&type=Issues) | [@dependabot](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Adependabot+updated%3A2021-12-09..2022-01-27&type=Issues) | [@github-actions](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Agithub-actions+updated%3A2021-12-09..2022-01-27&type=Issues) | [@jtpio](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Ajtpio+updated%3A2021-12-09..2022-01-27&type=Issues) | [@maartenbreddels](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Amaartenbreddels+updated%3A2021-12-09..2022-01-27&type=Issues) | [@martinRenou](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3AmartinRenou+updated%3A2021-12-09..2022-01-27&type=Issues) | [@trungleduc](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Atrungleduc+updated%3A2021-12-09..2022-01-27&type=Issues)
-
-<!-- <END NEW CHANGELOG ENTRY> -->
 
 ## 0.3.0
 
