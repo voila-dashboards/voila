@@ -97,7 +97,8 @@ export class VoilaPreview extends DocumentWidget<IFrame, INotebookModel> {
     const reloadButton = new ToolbarButton({
       icon: refreshIcon,
       tooltip: 'Reload Preview',
-      onClick: () => {
+      onClick: async () => {
+        await context.save();
         this.reload();
       }
     });
@@ -105,7 +106,6 @@ export class VoilaPreview extends DocumentWidget<IFrame, INotebookModel> {
     const renderOnSaveCheckbox = ReactWidget.create(
       <label className="jp-VoilaPreview-renderOnSave">
         <input
-          style={{ verticalAlign: 'middle' }}
           name="renderOnSave"
           type="checkbox"
           defaultChecked={renderOnSave}
