@@ -71,6 +71,11 @@ if (typeof window !== 'undefined' && typeof window.define !== 'undefined') {
 const WIDGET_MIMETYPE = 'application/vnd.jupyter.widget-view+json';
 
 /**
+ * Time (in ms) after which we consider the control comm target not responding.
+ */
+export const CONTROL_COMM_TIMEOUT = 4000;
+
+/**
  * A custom widget manager to render widgets with Voila
  */
 export class WidgetManager extends JupyterLabManager {
@@ -238,6 +243,12 @@ export class WidgetManager extends JupyterLabManager {
 
         // Send a states request msg
         initComm.send({ method: 'request_states' }, {});
+
+        // Reject if we didn't get a response in time
+        setTimeout(
+          () => reject('Control comm did not respond in time'),
+          CONTROL_COMM_TIMEOUT
+        );
       });
     } catch (error) {
       console.warn(
