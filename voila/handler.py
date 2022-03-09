@@ -23,7 +23,7 @@ from traitlets.traitlets import Bool
 from ._version import __version__
 from .notebook_renderer import NotebookRenderer
 from .query_parameters_handler import QueryStringSocketHandler
-from .utils import ENV_VARIABLE
+from .utils import ENV_VARIABLE, create_include_assets_functions
 
 
 class VoilaHandler(JupyterHandler):
@@ -191,6 +191,30 @@ class VoilaHandler(JupyterHandler):
         async for html in gen:
             self.write(html)
             self.flush()
+
+    def render_template(self, name, **ns):
+        template_arg = (
+            self.get_argument("voila-template", self.voila_configuration.template)
+            if self.voila_configuration.allow_template_override == "YES"
+            else self.voila_configuration.template
+        )
+        theme_arg = (
+            self.get_argument("voila-theme", self.voila_configuration.theme)
+            if self.voila_configuration.allow_theme_override == "YES"
+            else self.voila_configuration.theme
+        )
+
+        ns = {
+            **ns,
+            **self.template_namespace,
+            **create_include_assets_functions(
+                template_arg, self.base_url
+            ),
+            "theme": theme_arg
+        }
+
+        template = self.get_template(name)
+        return template.render(**ns)
 
     def redirect_to_file(self, path):
         self.redirect(url_path_join(self.base_url, 'voila', 'files', path))
