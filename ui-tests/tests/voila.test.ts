@@ -161,6 +161,27 @@ test.describe('Voila performance Tests', () => {
     );
   });
 
+  test('Render 404 error', async ({ page }) => {
+    await page.goto('/voila/render/unknown.ipynb');
+    await page.waitForSelector('.voila-error');
+
+    expect(await page.screenshot()).toMatchSnapshot('404.png');
+  });
+
+  test('Render 404 error with classic template', async ({ page }) => {
+    await page.goto('/voila/render/unknown.ipynb?voila-template=classic');
+    await page.waitForSelector('.voila-error');
+
+    expect(await page.screenshot()).toMatchSnapshot('404-classic.png');
+  });
+
+  test('Render 404 error with dark theme', async ({ page }) => {
+    await page.goto('/voila/render/unknown.ipynb?voila-theme=dark');
+    await page.waitForSelector('.voila-error');
+
+    expect(await page.screenshot()).toMatchSnapshot('404-dark.png');
+  });
+
   test('Render and benchmark bqplot.ipynb', async ({
     page,
     browserName
