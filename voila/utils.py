@@ -13,6 +13,7 @@ import os
 import threading
 from enum import Enum
 from typing import Awaitable
+import json
 
 import websockets
 
@@ -58,10 +59,53 @@ def get_server_root_dir(settings):
     return root_dir
 
 
-async def _get_query_string(ws_url: str) -> Awaitable:
+async def _get_request_info(ws_url: str) -> Awaitable:
     async with websockets.connect(ws_url) as websocket:
-        qs = await websocket.recv()
-    return qs
+        ri = await websocket.recv()
+    return ri
+
+
+def wait_for_request(url: str = None) -> str:
+    """Helper function to pause the execution of notebook and wait for
+    the pre-heated kernel to be used and all request info is added to
+    the environment.
+
+    Args:
+        url (str, optional): Address to get request info, if it is not
+        provided, `voila` will figure out from the environment variables.
+        Defaults to None.
+
+    """
+
+    preheat_mode = os.getenv(ENV_VARIABLE.VOILA_PREHEAT, 'False')
+    if preheat_mode == 'False':
+        return
+
+    request_info = None
+    if url is None:
+        protocol = os.getenv(ENV_VARIABLE.VOILA_APP_PROTOCOL, 'ws')
+        server_ip = os.getenv(ENV_VARIABLE.VOILA_APP_IP, '127.0.0.1')
+        server_port = os.getenv(ENV_VARIABLE.VOILA_APP_PORT, '8866')
+        base_url = os.getenv(ENV_VARIABLE.VOILA_BASE_URL, '/')
+        url = f'{protocol}://{server_ip}:{server_port}{base_url}voila/query'
+
+    kernel_id = os.getenv(ENV_VARIABLE.VOILA_KERNEL_ID)
+    ws_url = f'{url}/{kernel_id}'
+
+    def inner():
+        nonlocal request_info
+        loop = asyncio.new_event_loop()
+        request_info = loop.run_until_complete(_get_request_info(ws_url))
+
+    thread = threading.Thread(target=inner)
+    try:
+        thread.start()
+        thread.join()
+    except (KeyboardInterrupt, SystemExit):
+        asyncio.get_event_loop().stop()
+
+    for k, v in json.loads(request_info).items():
+        os.environ[k] = v
 
 
 def get_query_string(url: str = None) -> str:
@@ -76,34 +120,8 @@ def get_query_string(url: str = None) -> str:
     Returns: The query string provided by `QueryStringSocketHandler`.
     """
 
-    preheat_mode = os.getenv(ENV_VARIABLE.VOILA_PREHEAT, 'False')
-    if preheat_mode == 'False':
-        return os.getenv(ENV_VARIABLE.QUERY_STRING)
-
-    query_string = None
-    if url is None:
-        protocol = os.getenv(ENV_VARIABLE.VOILA_APP_PROTOCOL, 'ws')
-        server_ip = os.getenv(ENV_VARIABLE.VOILA_APP_IP, '127.0.0.1')
-        server_port = os.getenv(ENV_VARIABLE.VOILA_APP_PORT, '8866')
-        base_url = os.getenv(ENV_VARIABLE.VOILA_BASE_URL, '/')
-        url = f'{protocol}://{server_ip}:{server_port}{base_url}voila/query'
-
-    kernel_id = os.getenv(ENV_VARIABLE.VOILA_KERNEL_ID)
-    ws_url = f'{url}/{kernel_id}'
-
-    def inner():
-        nonlocal query_string
-        loop = asyncio.new_event_loop()
-        query_string = loop.run_until_complete(_get_query_string(ws_url))
-
-    thread = threading.Thread(target=inner)
-    try:
-        thread.start()
-        thread.join()
-    except (KeyboardInterrupt, SystemExit):
-        asyncio.get_event_loop().stop()
-
-    return query_string
+    wait_for_request(url)
+    return os.getenv(ENV_VARIABLE.QUERY_STRING)
 
 
 def make_url(template_name, base_url, path):
