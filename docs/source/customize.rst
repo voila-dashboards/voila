@@ -399,16 +399,16 @@ In normal mode, Voilà users can get the `query string` at run time through the 
    import os
    query_string = os.getenv('QUERY_STRING') 
 
-In preheating kernel mode, users can just replace the ``os.getenv`` call with the helper ``get_query_string`` from ``voila.utils``
+In preheating kernel mode, users can prepend with ``wait_for_request`` from ``voila.utils``
 
 .. code-block:: python
 
-   from voila.utils import get_query_string
-   query_string = get_query_string()
+   import os
+   from voila.utils import wait_for_request
+   wait_for_request()
+   query_string = os.getenv('QUERY_STRING')
 
-``get_query_string`` will pause the execution of the notebook in the preheated kernel at this cell and wait for an actual user to connect to Voilà, then ``get_query_string`` will return the URL `query string` and continue the execution of the remaining cells. 
-
-For all request info, ``wait_for_request`` can be called. When it returns ``os.getenv`` has all request info like in on-demand kernels.
+``wait_for_request`` will pause the execution of the notebook in the preheated kernel at this cell and wait for an actual user to connect to Voilà, set the request info environment variables and then continue the execution of the remaining cells.
 
 If the Voilà websocket handler is not started with the default protocol (`ws`), the default IP address (`127.0.0.1`) or the default port (`8866`), users need to provide these values through the environment variables ``VOILA_APP_PROTOCOL``, ``VOILA_APP_IP`` and ``VOILA_APP_PORT``. The easiest way is to set these variables in the `voila.json` configuration file, for example:
 

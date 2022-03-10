@@ -108,22 +108,6 @@ def wait_for_request(url: str = None) -> str:
         os.environ[k] = v
 
 
-def get_query_string(url: str = None) -> str:
-    """Helper function to pause the execution of notebook and wait for
-    the query string.
-
-    Args:
-        url (str, optional): Address to get user query string, if it is not
-        provided, `voila` will figure out from the environment variables.
-        Defaults to None.
-
-    Returns: The query string provided by `QueryStringSocketHandler`.
-    """
-
-    wait_for_request(url)
-    return os.getenv(ENV_VARIABLE.QUERY_STRING)
-
-
 def make_url(template_name, base_url, path):
     # similar to static_url, but does not assume the static prefix
     settings = {
