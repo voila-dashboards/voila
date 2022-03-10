@@ -150,7 +150,7 @@ class VoilaHandler(JupyterHandler):
 
                 return '<script>voila_heartbeat()</script>\n'
 
-            kernel_env = {**os.environ.copy(), **request_info}
+            kernel_env = {**os.environ, **request_info}
             kernel_env[ENV_VARIABLE.VOILA_PREHEAT] = 'False'
             kernel_env[ENV_VARIABLE.VOILA_BASE_URL] = self.base_url
             kernel_id = await ensure_async(
