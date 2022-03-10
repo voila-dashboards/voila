@@ -23,15 +23,48 @@ from traitlets.traitlets import Bool
 from ._version import __version__
 from .notebook_renderer import NotebookRenderer
 from .query_parameters_handler import QueryStringSocketHandler
-from .utils import ENV_VARIABLE
+from .utils import ENV_VARIABLE, create_include_assets_functions
 
 
-class VoilaHandler(JupyterHandler):
+class BaseVoilaHandler(JupyterHandler):
+
     def initialize(self, **kwargs):
+        self.voila_configuration = kwargs['voila_configuration']
+
+    def render_template(self, name, **ns):
+        """ Render the Voila HTML template, respecting the theme and nbconvert template.
+        """
+        template_arg = (
+            self.get_argument("voila-template", self.voila_configuration.template)
+            if self.voila_configuration.allow_template_override == "YES"
+            else self.voila_configuration.template
+        )
+        theme_arg = (
+            self.get_argument("voila-theme", self.voila_configuration.theme)
+            if self.voila_configuration.allow_theme_override == "YES"
+            else self.voila_configuration.theme
+        )
+
+        ns = {
+            **ns,
+            **self.template_namespace,
+            **create_include_assets_functions(
+                template_arg, self.base_url
+            ),
+            "theme": theme_arg
+        }
+
+        template = self.get_template(name)
+        return template.render(**ns)
+
+
+class VoilaHandler(BaseVoilaHandler):
+
+    def initialize(self, **kwargs):
+        super().initialize(**kwargs)
         self.notebook_path = kwargs.pop('notebook_path', [])  # should it be []
         self.template_paths = kwargs.pop('template_paths', [])
         self.traitlet_config = kwargs.pop('config', None)
-        self.voila_configuration = kwargs['voila_configuration']
         # we want to avoid starting multiple kernels due to template mistakes
         self.kernel_started = False
 
