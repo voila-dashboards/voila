@@ -2,6 +2,27 @@
 
 <!-- <START NEW CHANGELOG ENTRY> -->
 
+## 0.3.3
+
+([Full Changelog](https://github.com/voila-dashboards/voila/compare/@voila-dashboards/jupyterlab-preview@2.1.2...17ba0fdfd10b30c3dd72887d6aa08ef80ebfbc81))
+
+### Enhancements made
+
+- Add theme handling to error pages [#1108](https://github.com/voila-dashboards/voila/pull/1108) ([@martinRenou](https://github.com/martinRenou))
+- Add timeout on the control comm target [#1106](https://github.com/voila-dashboards/voila/pull/1106) ([@martinRenou](https://github.com/martinRenou))
+
+### Documentation improvements
+
+- Remove extra tick from the Changelog [#1099](https://github.com/voila-dashboards/voila/pull/1099) ([@martinRenou](https://github.com/martinRenou))
+
+### Contributors to this release
+
+([GitHub contributors page for this release](https://github.com/voila-dashboards/voila/graphs/contributors?from=2022-02-22&to=2022-03-11&type=c))
+
+[@github-actions](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Agithub-actions+updated%3A2022-02-22..2022-03-11&type=Issues) | [@martinRenou](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3AmartinRenou+updated%3A2022-02-22..2022-03-11&type=Issues) | [@trungleduc](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Atrungleduc+updated%3A2022-02-22..2022-03-11&type=Issues)
+
+<!-- <END NEW CHANGELOG ENTRY> -->
+
 ## 0.3.2
 
 ([Full Changelog](https://github.com/voila-dashboards/voila/compare/@voila-dashboards/jupyterlab-preview@2.1.1...cb280f9f9225922f7d429c3b86f05071c10d44d6))
@@ -29,8 +50,6 @@
 ([GitHub contributors page for this release](https://github.com/voila-dashboards/voila/graphs/contributors?from=2022-01-27&to=2022-02-22&type=c))
 
 [@jtpio](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Ajtpio+updated%3A2022-01-27..2022-02-22&type=Issues) | [@legendb317](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Alegendb317+updated%3A2022-01-27..2022-02-22&type=Issues) | [@martinRenou](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3AmartinRenou+updated%3A2022-01-27..2022-02-22&type=Issues) | [@trungleduc](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Atrungleduc+updated%3A2022-01-27..2022-02-22&type=Issues)
-
-<!-- <END NEW CHANGELOG ENTRY> -->
 
 ## 0.3.1
 
