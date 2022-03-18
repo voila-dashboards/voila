@@ -22,7 +22,7 @@ from traitlets.traitlets import Bool
 
 from ._version import __version__
 from .notebook_renderer import NotebookRenderer
-from .query_parameters_handler import QueryStringSocketHandler
+from .request_info_handler import RequestInfoSocketHandler
 from .utils import ENV_VARIABLE, create_include_assets_functions
 
 
@@ -80,17 +80,17 @@ class VoilaHandler(BaseVoilaHandler):
         cwd = os.path.dirname(notebook_path)
 
         # Adding request uri to kernel env
-        kernel_env = os.environ.copy()
-        kernel_env[ENV_VARIABLE.SCRIPT_NAME] = self.request.path
-        kernel_env[
+        request_info = dict()
+        request_info[ENV_VARIABLE.SCRIPT_NAME] = self.request.path
+        request_info[
             ENV_VARIABLE.PATH_INFO
         ] = ''  # would be /foo/bar if voila.ipynb/foo/bar was supported
-        kernel_env[ENV_VARIABLE.QUERY_STRING] = str(self.request.query)
-        kernel_env[ENV_VARIABLE.SERVER_SOFTWARE] = 'voila/{}'.format(__version__)
-        kernel_env[ENV_VARIABLE.SERVER_PROTOCOL] = str(self.request.version)
+        request_info[ENV_VARIABLE.QUERY_STRING] = str(self.request.query)
+        request_info[ENV_VARIABLE.SERVER_SOFTWARE] = 'voila/{}'.format(__version__)
+        request_info[ENV_VARIABLE.SERVER_PROTOCOL] = str(self.request.version)
         host, port = split_host_and_port(self.request.host.lower())
-        kernel_env[ENV_VARIABLE.SERVER_PORT] = str(port) if port else ''
-        kernel_env[ENV_VARIABLE.SERVER_NAME] = host
+        request_info[ENV_VARIABLE.SERVER_PORT] = str(port) if port else ''
+        request_info[ENV_VARIABLE.SERVER_NAME] = host
         # Add HTTP Headers as env vars following rfc3875#section-4.1.18
         if len(self.voila_configuration.http_header_envs) > 0:
             for header_name in self.request.headers:
@@ -98,7 +98,7 @@ class VoilaHandler(BaseVoilaHandler):
                 # Use case insensitive comparison of header names as per rfc2616#section-4.2
                 if header_name.lower() in config_headers_lower:
                     env_name = f'HTTP_{header_name.upper().replace("-", "_")}'
-                    kernel_env[env_name] = self.request.headers.get(header_name)
+                    request_info[env_name] = self.request.headers.get(header_name)
 
         template_arg = self.get_argument("voila-template", None)
         theme_arg = self.get_argument("voila-theme", None)
@@ -132,7 +132,7 @@ class VoilaHandler(BaseVoilaHandler):
                     notebook_name=notebook_path,
             )
 
-            QueryStringSocketHandler.send_updates({'kernel_id': kernel_id, 'payload': self.request.query})
+            RequestInfoSocketHandler.send_updates({'kernel_id': kernel_id, 'payload': request_info})
             # Send rendered cell to frontend
             if len(rendered_cache) > 0:
                 yield ''.join(rendered_cache)
@@ -183,6 +183,7 @@ class VoilaHandler(BaseVoilaHandler):
 
                 return '<script>voila_heartbeat()</script>\n'
 
+            kernel_env = {**os.environ, **request_info}
             kernel_env[ENV_VARIABLE.VOILA_PREHEAT] = 'False'
             kernel_env[ENV_VARIABLE.VOILA_BASE_URL] = self.base_url
             kernel_id = await ensure_async(

@@ -62,7 +62,7 @@ from .execute import VoilaExecutor
 from .exporter import VoilaExporter
 from .shutdown_kernel_handler import VoilaShutdownKernelHandler
 from .voila_kernel_manager import voila_kernel_manager_factory
-from .query_parameters_handler import QueryStringSocketHandler
+from .request_info_handler import RequestInfoSocketHandler
 from .utils import create_include_assets_functions
 
 _kernel_id_regex = r"(?P<kernel_id>\w+-\w+-\w+-\w+-\w+)"
@@ -500,7 +500,7 @@ class Voila(Application):
             handlers.append(
                 (
                     url_path_join(self.server_url, r'/voila/query/%s' % _kernel_id_regex),
-                    QueryStringSocketHandler
+                    RequestInfoSocketHandler
                 )
             )
         # Serving notebook extensions
