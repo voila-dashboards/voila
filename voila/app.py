@@ -50,8 +50,6 @@ from jupyter_client.kernelspec import KernelSpecManager
 
 from jupyter_core.paths import jupyter_config_path, jupyter_path
 
-from ipython_genutils.py3compat import getcwd
-
 from .paths import ROOT, STATIC_ROOT, collect_template_paths, collect_static_paths
 from .handler import VoilaHandler
 from .treehandler import VoilaTreeHandler
@@ -322,7 +320,7 @@ class Voila(Application):
         if self.notebook_path:
             return os.path.dirname(os.path.abspath(self.notebook_path))
         else:
-            return getcwd()
+            return os.getcwd()
 
     def _init_asyncio_patch(self):
         """set default asyncio policy to be compatible with tornado
