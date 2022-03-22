@@ -2,6 +2,28 @@
 
 <!-- <START NEW CHANGELOG ENTRY> -->
 
+## 0.3.4
+
+([Full Changelog](https://github.com/voila-dashboards/voila/compare/v0.3.3...9b5ba4844b49abcf2b16c2997f89647122100415))
+
+### Enhancements made
+
+- feat: make request info available in env for preheated kernels [#1109](https://github.com/voila-dashboards/voila/pull/1109) ([@mariobuikhuizen](https://github.com/mariobuikhuizen))
+
+### Maintenance and upkeep improvements
+
+- Fix ipywidgets 7.7 incompatibility issue [#1121](https://github.com/voila-dashboards/voila/pull/1121) ([@martinRenou](https://github.com/martinRenou))
+- Fix CI [#1118](https://github.com/voila-dashboards/voila/pull/1118) ([@trungleduc](https://github.com/trungleduc))
+- Bump url-parse from 1.5.7 to 1.5.10 in /ui-tests [#1103](https://github.com/voila-dashboards/voila/pull/1103) ([@dependabot](https://github.com/dependabot))
+
+### Contributors to this release
+
+([GitHub contributors page for this release](https://github.com/voila-dashboards/voila/graphs/contributors?from=2022-03-11&to=2022-03-22&type=c))
+
+[@dependabot](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Adependabot+updated%3A2022-03-11..2022-03-22&type=Issues) | [@github-actions](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Agithub-actions+updated%3A2022-03-11..2022-03-22&type=Issues) | [@maartenbreddels](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Amaartenbreddels+updated%3A2022-03-11..2022-03-22&type=Issues) | [@mariobuikhuizen](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Amariobuikhuizen+updated%3A2022-03-11..2022-03-22&type=Issues) | [@martinRenou](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3AmartinRenou+updated%3A2022-03-11..2022-03-22&type=Issues) | [@trungleduc](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Atrungleduc+updated%3A2022-03-11..2022-03-22&type=Issues)
+
+<!-- <END NEW CHANGELOG ENTRY> -->
+
 ## 0.3.3
 
 ([Full Changelog](https://github.com/voila-dashboards/voila/compare/@voila-dashboards/jupyterlab-preview@2.1.2...17ba0fdfd10b30c3dd72887d6aa08ef80ebfbc81))
@@ -20,8 +42,6 @@
 ([GitHub contributors page for this release](https://github.com/voila-dashboards/voila/graphs/contributors?from=2022-02-22&to=2022-03-11&type=c))
 
 [@github-actions](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Agithub-actions+updated%3A2022-02-22..2022-03-11&type=Issues) | [@martinRenou](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3AmartinRenou+updated%3A2022-02-22..2022-03-11&type=Issues) | [@trungleduc](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Atrungleduc+updated%3A2022-02-22..2022-03-11&type=Issues)
-
-<!-- <END NEW CHANGELOG ENTRY> -->
 
 ## 0.3.2
 
