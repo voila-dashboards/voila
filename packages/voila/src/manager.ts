@@ -379,7 +379,8 @@ export class WidgetManager extends JupyterLabManager {
             msg.buffers
           );
         }
-        if (msg.content.data.method === 'update') {
+        // filter out update messages that don't include the full widget state
+        if (msg.content.data.method === 'update' && msg.content.data.state._model_name) {
           resolve({ comm: comm, msg: msg });
         }
       });
