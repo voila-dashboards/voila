@@ -8,20 +8,17 @@
 #############################################################################
 
 import asyncio
-from functools import partial
+import json
 import os
 import threading
 from enum import Enum
-from typing import Awaitable
-import json
+from functools import partial
+from typing import Awaitable, Dict
 
 import websockets
-
-import jinja2
-
-from nbconvert.exporters.html import find_lab_theme
-
 from jupyterlab_server.themes_handler import ThemesHandler
+from markupsafe import Markup
+from nbconvert.exporters.html import find_lab_theme
 
 from .static_file_handler import TemplateStaticFileHandler
 
@@ -122,47 +119,49 @@ def get_query_string(url: str = None) -> str:
     return os.getenv(ENV_VARIABLE.QUERY_STRING)
 
 
-def make_url(template_name, base_url, path):
+def make_url(template_name: str, base_url: str, path: str) -> str:
     # similar to static_url, but does not assume the static prefix
     settings = {
         'static_url_prefix': f'{base_url}voila/templates/',
-        'static_path': None  # not used in TemplateStaticFileHandler.get_absolute_path
+        'static_path': None,  # not used in TemplateStaticFileHandler.get_absolute_path
     }
-    return TemplateStaticFileHandler.make_static_url(settings, f'{template_name}/{path}')
+    return TemplateStaticFileHandler.make_static_url(
+        settings, f'{template_name}/{path}'
+    )
 
 
-def include_css(template_name, base_url, name):
+def include_css(template_name: str, base_url: str, name: str) -> str:
     code = f'<link rel="stylesheet" type="text/css" href="{make_url(template_name, base_url, name)}">'
-    return jinja2.Markup(code)
+    return Markup(code)
 
 
-def include_js(template_name, base_url, name):
+def include_js(template_name: str, base_url: str, name: str) -> str:
     code = f'<script src="{make_url(template_name, base_url, name)}"></script>'
-    return jinja2.Markup(code)
+    return Markup(code)
 
 
-def include_url(template_name, base_url, name):
-    return jinja2.Markup(make_url(template_name, base_url, name))
+def include_url(template_name: str, base_url: str, name: str) -> str:
+    return Markup(make_url(template_name, base_url, name))
 
 
-def include_lab_theme(base_url, name):
+def include_lab_theme(base_url: str, name: str) -> str:
     # Try to find the theme with the given name, looking through the labextensions
     theme_name, _ = find_lab_theme(name)
 
     settings = {
         'static_url_prefix': f'{base_url}voila/themes/',
-        'static_path': None  # not used in TemplateStaticFileHandler.get_absolute_path
+        'static_path': None,  # not used in TemplateStaticFileHandler.get_absolute_path
     }
     url = ThemesHandler.make_static_url(settings, f'{theme_name}/index.css')
 
     code = f'<link rel="stylesheet" type="text/css" href="{url}">'
-    return jinja2.Markup(code)
+    return Markup(code)
 
 
-def create_include_assets_functions(template_name, base_url):
+def create_include_assets_functions(template_name: str, base_url: str) -> Dict:
     return {
-        "include_css": partial(include_css, template_name, base_url),
-        "include_js": partial(include_js, template_name, base_url),
-        "include_url": partial(include_url, template_name, base_url),
-        "include_lab_theme": partial(include_lab_theme, base_url)
+        'include_css': partial(include_css, template_name, base_url),
+        'include_js': partial(include_js, template_name, base_url),
+        'include_url': partial(include_url, template_name, base_url),
+        'include_lab_theme': partial(include_lab_theme, base_url),
     }

@@ -11,8 +11,10 @@ import mimetypes
 
 import traitlets
 from traitlets.config import Config
-
-from jinja2 import contextfilter
+try:
+    from jinja2 import pass_context
+except ImportError:
+    from jinja2 import contextfilter as pass_context
 
 from nbconvert.filters.markdown_mistune import IPythonRenderer, MarkdownWithMath
 from nbconvert.exporters.html import HTMLExporter
@@ -47,7 +49,7 @@ class VoilaExporter(HTMLExporter):
     # The voila exporter overrides the markdown renderer from the HTMLExporter
     # to inline images.
 
-    @contextfilter
+    @pass_context
     def markdown2html(self, context, source):
         cell = context['cell']
         attachments = cell.get('attachments', {})
