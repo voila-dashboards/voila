@@ -15,11 +15,12 @@ import { KernelConnection } from '@jupyterlab/services/lib/kernel/default';
 
 export async function connectKernel(
   baseUrl?: string,
-  kernelId?: string
+  kernelId?: string,
+  options?: Partial<ServerConnection.ISettings>
 ): Promise<Kernel.IKernelConnection | undefined> {
   baseUrl = baseUrl ?? PageConfig.getBaseUrl();
   kernelId = kernelId ?? PageConfig.getOption('kernelId');
-  const serverSettings = ServerConnection.makeSettings({ baseUrl });
+  const serverSettings = ServerConnection.makeSettings({ baseUrl, ...options });
 
   const model = await KernelAPI.getKernelModel(kernelId, serverSettings);
   if (!model) {
