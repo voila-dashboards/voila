@@ -2,6 +2,27 @@
 
 <!-- <START NEW CHANGELOG ENTRY> -->
 
+## 0.3.5
+
+([Full Changelog](https://github.com/voila-dashboards/voila/compare/v0.3.4...7166af78cc9eb95f5ab4fa7ee50d433db89412c0))
+
+### Enhancements made
+
+- feat: support all kernel ServerConnection options [#1129](https://github.com/voila-dashboards/voila/pull/1129) ([@maartenbreddels](https://github.com/maartenbreddels))
+
+### Maintenance and upkeep improvements
+
+- Fix `jinja2 3.1.0` compatibility issue [#1127](https://github.com/voila-dashboards/voila/pull/1127) ([@trungleduc](https://github.com/trungleduc))
+- Fix wait_for_request [#1125](https://github.com/voila-dashboards/voila/pull/1125) ([@trungleduc](https://github.com/trungleduc))
+
+### Contributors to this release
+
+([GitHub contributors page for this release](https://github.com/voila-dashboards/voila/graphs/contributors?from=2022-03-22&to=2022-03-29&type=c))
+
+[@github-actions](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Agithub-actions+updated%3A2022-03-22..2022-03-29&type=Issues) | [@maartenbreddels](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Amaartenbreddels+updated%3A2022-03-22..2022-03-29&type=Issues) | [@trungleduc](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Atrungleduc+updated%3A2022-03-22..2022-03-29&type=Issues)
+
+<!-- <END NEW CHANGELOG ENTRY> -->
+
 ## 0.3.4
 
 ([Full Changelog](https://github.com/voila-dashboards/voila/compare/v0.3.3...9b5ba4844b49abcf2b16c2997f89647122100415))
@@ -21,8 +42,6 @@
 ([GitHub contributors page for this release](https://github.com/voila-dashboards/voila/graphs/contributors?from=2022-03-11&to=2022-03-22&type=c))
 
 [@dependabot](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Adependabot+updated%3A2022-03-11..2022-03-22&type=Issues) | [@github-actions](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Agithub-actions+updated%3A2022-03-11..2022-03-22&type=Issues) | [@maartenbreddels](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Amaartenbreddels+updated%3A2022-03-11..2022-03-22&type=Issues) | [@mariobuikhuizen](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Amariobuikhuizen+updated%3A2022-03-11..2022-03-22&type=Issues) | [@martinRenou](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3AmartinRenou+updated%3A2022-03-11..2022-03-22&type=Issues) | [@trungleduc](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Atrungleduc+updated%3A2022-03-11..2022-03-22&type=Issues)
-
-<!-- <END NEW CHANGELOG ENTRY> -->
 
 ## 0.3.3
 
