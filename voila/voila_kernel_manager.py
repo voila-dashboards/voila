@@ -175,13 +175,16 @@ def voila_kernel_manager_factory(base_class: Type[T], preheat_kernel: bool, defa
                 except RuntimeError:
                     loop = asyncio.new_event_loop()
                     asyncio.set_event_loop(loop)
-                if notebook_name in self.kernel_pools_config:
-                    kernel_size = self.kernel_pools_config[notebook_name].get(
-                        'pool_size', 1
-                    )
-                else:
-                    default_config = self.kernel_pools_config.get('default', {})
-                    kernel_size = default_config.get('pool_size', 1)
+                default_config: dict = self.kernel_pools_config.get('default', {})
+                notebook_config: dict = self.kernel_pools_config.get(
+                    notebook_name, default_config
+                )
+                kernel_env_variables: dict = notebook_config.get(
+                    'kernel_env_variables', default_config.get('kernel_env_variables', {})
+                )
+                kernel_size: int = notebook_config.get(
+                    'pool_size', default_config.get('pool_size', 1)
+                )
                 pool = self._pools.get(notebook_name, [])
                 self._pools[notebook_name] = pool
                 if 'path' not in kwargs:
@@ -193,7 +196,7 @@ def voila_kernel_manager_factory(base_class: Type[T], preheat_kernel: bool, defa
                 kernel_env = os.environ.copy()
                 kernel_env_arg = kwargs.get('env', {})
                 kernel_env.update(kernel_env_arg)
-                kernel_env_variables = self.kernel_pools_config.get(notebook_name, {}).get('kernel_env_variables', {})
+
                 for key in kernel_env_variables:
                     if key not in kernel_env:
                         kernel_env[key] = kernel_env_variables[key]

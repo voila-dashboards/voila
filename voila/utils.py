@@ -11,6 +11,7 @@ import asyncio
 import json
 import os
 import threading
+import warnings
 from enum import Enum
 from functools import partial
 from typing import Awaitable, Dict
@@ -30,7 +31,8 @@ class ENV_VARIABLE(str, Enum):
     VOILA_BASE_URL = 'VOILA_BASE_URL'
     VOILA_APP_IP = 'VOILA_APP_IP'
     VOILA_APP_PORT = 'VOILA_APP_PORT'
-    VOILA_APP_PROTOCOL = 'VOILA_APP_PROTOCOL'
+    VOILA_WS_PROTOCOL = 'VOILA_WS_PROTOCOL'
+    VOILA_WS_BASE_URL = 'VOILA_WS_BASE_URL'
     SERVER_NAME = 'SERVER_NAME'
     SERVER_PORT = 'SERVER_PORT'
     SCRIPT_NAME = 'SCRIPT_NAME'
@@ -57,9 +59,14 @@ def get_server_root_dir(settings):
 
 
 async def _get_request_info(ws_url: str) -> Awaitable:
-    async with websockets.connect(ws_url) as websocket:
-        ri = await websocket.recv()
-    return ri
+    try:
+        async with websockets.connect(ws_url, open_timeout=5) as websocket:
+            ri = await websocket.recv()
+    except (TimeoutError, ConnectionRefusedError):
+        warnings.warn(f'Failed to connect to {ws_url}')
+        return None
+    else:
+        return ri
 
 
 def wait_for_request(url: str = None) -> str:
@@ -73,17 +80,16 @@ def wait_for_request(url: str = None) -> str:
         Defaults to None.
 
     """
-
     preheat_mode = os.getenv(ENV_VARIABLE.VOILA_PREHEAT, 'False')
     if preheat_mode == 'False':
         return
 
     request_info = None
     if url is None:
-        protocol = os.getenv(ENV_VARIABLE.VOILA_APP_PROTOCOL, 'ws')
+        protocol = os.getenv(ENV_VARIABLE.VOILA_WS_PROTOCOL, 'ws')
         server_ip = os.getenv(ENV_VARIABLE.VOILA_APP_IP, '127.0.0.1')
         server_port = os.getenv(ENV_VARIABLE.VOILA_APP_PORT, '8866')
-        base_url = os.getenv(ENV_VARIABLE.VOILA_BASE_URL, '/')
+        base_url = os.getenv(ENV_VARIABLE.VOILA_WS_BASE_URL, '/')
         url = f'{protocol}://{server_ip}:{server_port}{base_url}voila/query'
 
     kernel_id = os.getenv(ENV_VARIABLE.VOILA_KERNEL_ID)
@@ -101,8 +107,9 @@ def wait_for_request(url: str = None) -> str:
     except (KeyboardInterrupt, SystemExit):
         asyncio.get_event_loop().stop()
 
-    for k, v in json.loads(request_info).items():
-        os.environ[k] = v
+    if request_info is not None:
+        for k, v in json.loads(request_info).items():
+            os.environ[k] = v
 
 
 def get_query_string(url: str = None) -> str:
