@@ -5,7 +5,7 @@
   "private": true,
   "scripts": {
     "start": "voila ../notebooks --no-browser",
-    "start:detached": "yarn run start-jlab&",
+    "start:detached": "yarn run start&",
     "test": "playwright test",
     "test:debug": "PWDEBUG=1 playwright test",
     "test:report": "http-server ./playwright-report -a localhost -o",
