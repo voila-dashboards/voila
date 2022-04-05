@@ -4,4 +4,4 @@ channels:
   - conda
 dependencies:
   - sphinx
-  - sphinx_rtd_theme
+  - pydata-sphinx-theme
