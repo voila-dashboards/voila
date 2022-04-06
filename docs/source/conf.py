@@ -1,7 +1,4 @@
-import sys
 import os
-import shlex
-import sphinx_rtd_theme
 
 # Add dev disclaimer.
 _release = {}
@@ -17,16 +14,15 @@ if _release['version_info'][-1] == 'dev':
 
 on_rtd = os.environ.get('READTHEDOCS', None) == 'True'
 
-html_theme = "sphinx_rtd_theme"
-html_theme_path = [sphinx_rtd_theme.get_html_theme_path()]
-html_theme_options = {
-    # Toc options
-    'sticky_navigation': False,
-    'navigation_depth': 2,
-}
+html_theme = "pydata_sphinx_theme"
+html_theme_options = dict(
+    github_url='https://github.com/voila-dashboards/voila'
+)
+
 
 def setup(app):
     app.add_css_file("main_stylesheet.css")
+
 
 extensions = [
     'sphinx.ext.autodoc',
@@ -44,7 +40,7 @@ version = '.'.join(map(str, _release['version_info'][:2]))
 release = _release['__version__']
 language = None
 
-html_logo = 'jupyter-white.svg'
+html_logo = 'voila-logo.svg'
 
 exclude_patterns = []
 highlight_language = 'python'
