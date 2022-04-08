@@ -89,8 +89,10 @@ def wait_for_request(url: str = None) -> str:
         protocol = os.getenv(ENV_VARIABLE.VOILA_WS_PROTOCOL, 'ws')
         server_ip = os.getenv(ENV_VARIABLE.VOILA_APP_IP, '127.0.0.1')
         server_port = os.getenv(ENV_VARIABLE.VOILA_APP_PORT, '8866')
-        base_url = os.getenv(ENV_VARIABLE.VOILA_WS_BASE_URL, '/')
-        url = f'{protocol}://{server_ip}:{server_port}{base_url}voila/query'
+        # Use `VOILA_BASE_URL` if `VOILA_WS_BASE_URL` not specified.
+        base_url = os.getenv(ENV_VARIABLE.VOILA_BASE_URL, '/')
+        ws_base_url = os.getenv(ENV_VARIABLE.VOILA_WS_BASE_URL, base_url)
+        url = f'{protocol}://{server_ip}:{server_port}{ws_base_url}voila/query'
 
     kernel_id = os.getenv(ENV_VARIABLE.VOILA_KERNEL_ID)
     ws_url = f'{url}/{kernel_id}'
