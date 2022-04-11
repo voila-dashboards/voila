@@ -29,6 +29,7 @@ class ENV_VARIABLE(str, Enum):
     VOILA_PREHEAT = 'VOILA_PREHEAT'
     VOILA_KERNEL_ID = 'VOILA_KERNEL_ID'
     VOILA_BASE_URL = 'VOILA_BASE_URL'
+    VOILA_SERVER_URL = 'VOILA_SERVER_URL'
     VOILA_APP_IP = 'VOILA_APP_IP'
     VOILA_APP_PORT = 'VOILA_APP_PORT'
     VOILA_WS_PROTOCOL = 'VOILA_WS_PROTOCOL'
@@ -89,9 +90,9 @@ def wait_for_request(url: str = None) -> str:
         protocol = os.getenv(ENV_VARIABLE.VOILA_WS_PROTOCOL, 'ws')
         server_ip = os.getenv(ENV_VARIABLE.VOILA_APP_IP, '127.0.0.1')
         server_port = os.getenv(ENV_VARIABLE.VOILA_APP_PORT, '8866')
-        # Use `VOILA_BASE_URL` if `VOILA_WS_BASE_URL` not specified.
-        base_url = os.getenv(ENV_VARIABLE.VOILA_BASE_URL, '/')
-        ws_base_url = os.getenv(ENV_VARIABLE.VOILA_WS_BASE_URL, base_url)
+        server_url = os.getenv(ENV_VARIABLE.VOILA_SERVER_URL, '/')
+        # Use `VOILA_SERVER_URL` if `VOILA_WS_BASE_URL` not specified.
+        ws_base_url = os.getenv(ENV_VARIABLE.VOILA_WS_BASE_URL, server_url)
         url = f'{protocol}://{server_ip}:{server_port}{ws_base_url}voila/query'
 
     kernel_id = os.getenv(ENV_VARIABLE.VOILA_KERNEL_ID)
