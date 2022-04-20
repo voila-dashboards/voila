@@ -409,6 +409,9 @@ class Voila(Application):
         self.log.info('Storing connection files in %s.' % self.connection_dir)
         self.log.info('Serving static files from %s.' % self.static_root)
 
+        # default server_url to base_url
+        self.server_url = self.server_url or self.base_url
+
         self.kernel_spec_manager = KernelSpecManager(
             parent=self
         )
@@ -443,9 +446,6 @@ class Voila(Application):
         env = jinja2.Environment(loader=jinja2.FileSystemLoader(self.template_paths), extensions=['jinja2.ext.i18n'], **jenv_opt)
         nbui = gettext.translation('nbui', localedir=os.path.join(ROOT, 'i18n'), fallback=True)
         env.install_gettext_translations(nbui, newstyle=False)
-
-        # default server_url to base_url
-        self.server_url = self.server_url or self.base_url
 
         self.app = tornado.web.Application(
             base_url=self.base_url,
