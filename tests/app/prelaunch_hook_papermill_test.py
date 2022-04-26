@@ -3,7 +3,6 @@ import pytest
 
 import os
 
-from nbformat import NotebookNode
 from urllib.parse import quote_plus
 
 BASE_DIR = os.path.dirname(__file__)
@@ -34,7 +33,7 @@ def voila_config():
             from papermill.parameterize import parameterize_notebook
 
             # setup for papermill
-            # 
+            #
             # these two blocks are done
             # to avoid triggering errors
             # in papermill's notebook

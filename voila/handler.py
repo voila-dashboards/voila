@@ -67,7 +67,7 @@ class VoilaHandler(BaseVoilaHandler):
         self.traitlet_config = kwargs.pop('config', None)
         self.voila_configuration = kwargs['voila_configuration']
         self.prelaunch_hook = kwargs.get('prelaunch_hook', None)
-    
+
         # we want to avoid starting multiple kernels due to template mistakes
         self.kernel_started = False
 
@@ -96,7 +96,7 @@ class VoilaHandler(BaseVoilaHandler):
 
         request_info[ENV_VARIABLE.SERVER_PORT] = str(port) if port else ''
         request_info[ENV_VARIABLE.SERVER_NAME] = host
- 
+
         # Add HTTP Headers as env vars following rfc3875#section-4.1.18
         if len(self.voila_configuration.http_header_envs) > 0:
             for header_name in self.request.headers:
