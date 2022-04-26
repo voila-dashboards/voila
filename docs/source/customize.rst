@@ -24,7 +24,6 @@ the following option:
 
    voila <path-to-notebook> --theme=dark
 
-
 Or by passing in the query parameter ``voila-theme``, e.g. a URL like ``http://localhost:8867/voila/render/query-strings.ipynb?voila-theme=dark``.
 
 The theme can also be set in the notebook metadata, under ``metadata/voila/theme`` by editing the notebook file manually, or using the metadata editor in for instance the classical notebook
@@ -35,8 +34,15 @@ The theme can also be set in the notebook metadata, under ``metadata/voila/theme
 System administrators who want to disable changing the theme, can pass ``--VoilaConfiguration.allow_theme_override=NO`` or
 ``--VoilaConfiguration.allow_theme_override=NOTEBOOK`` to disable changing the theme completely, or only allow it from the notebook metadata.
 
-Currently, Voilà supports only **light** and **dark** themes.
+Like nbconvert, Voilà supports the **light** and **dark** themes by default, but you can also use custom JupyterLab themes:
 
+.. code-block:: bash
+
+   pip install jupyterlab_miami_nights
+   voila <path-to-notebook> --theme=jupyterlab_miami_nights
+
+.. warning::
+   Theme are specific to the "lab" template, they will not work for the "classic" template
 
 .. note::
    Changing the theme from the notebook metadata may change in the future if this features moves to nbconvert.
@@ -447,16 +453,18 @@ In normal mode, Voilà users can get the `query string` at run time through the 
    import os
    query_string = os.getenv('QUERY_STRING') 
 
-In preheating kernel mode, users can just replace the ``os.getenv`` call with the helper ``get_query_string`` from ``voila.utils``
+In preheating kernel mode, users can prepend with ``wait_for_request`` from ``voila.utils``
 
 .. code-block:: python
 
-   from voila.utils import get_query_string
-   query_string = get_query_string()
+   import os
+   from voila.utils import wait_for_request
+   wait_for_request()
+   query_string = os.getenv('QUERY_STRING')
 
-``get_query_string`` will pause the execution of the notebook in the preheated kernel at this cell and wait for an actual user to connect to Voilà, then ``get_query_string`` will return the URL `query string` and continue the execution of the remaining cells. 
+``wait_for_request`` will pause the execution of the notebook in the preheated kernel at this cell and wait for an actual user to connect to Voilà, set the request info environment variables and then continue the execution of the remaining cells.
 
-If the Voilà websocket handler is not started with the default protocol (`ws`), the default IP address (`127.0.0.1`) or the default port (`8866`), users need to provide these values through the environment variables ``VOILA_APP_PROTOCOL``, ``VOILA_APP_IP`` and ``VOILA_APP_PORT``. The easiest way is to set these variables in the `voila.json` configuration file, for example:
+If the Voilà websocket handler is not started with the default protocol (`ws`), the default IP address (`127.0.0.1`) the default port (`8866`) or with url suffix, users need to provide these values through the environment variables ``VOILA_WS_PROTOCOL``, ``VOILA_APP_IP``, ``VOILA_APP_PORT`` and ``VOILA_WS_BASE_URL``. The easiest way is to set these variables in the `voila.json` configuration file, for example:
 
 .. code-block:: python
 
@@ -469,7 +477,7 @@ If the Voilà websocket handler is not started with the default protocol (`ws`),
                "kernel_env_variables": { 
                   "VOILA_APP_IP": "192.168.1.1",
                   "VOILA_APP_PORT": "6789",
-                  "VOILA_APP_PROTOCOL": "wss"
+                  "VOILA_WS_PROTOCOL": "wss"
                }
             }
          },

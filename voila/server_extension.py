@@ -15,6 +15,8 @@ from jinja2 import Environment, FileSystemLoader
 from jupyter_server.utils import url_path_join
 from jupyter_server.base.handlers import path_regex, FileFindHandler
 
+from jupyterlab_server.themes_handler import ThemesHandler
+
 from .paths import ROOT, collect_template_paths, collect_static_paths, jupyter_path
 from .handler import VoilaHandler
 from .treehandler import VoilaTreeHandler
@@ -67,6 +69,16 @@ def _load_jupyter_server_extension(server_app):
         (url_path_join(base_url, '/voila'), VoilaTreeHandler, tree_handler_conf),
         (url_path_join(base_url, '/voila/tree' + path_regex), VoilaTreeHandler, tree_handler_conf),
         (url_path_join(base_url, '/voila/templates/(.*)'), TemplateStaticFileHandler),
+        (
+            url_path_join(base_url, r'/voila/themes/(.*)'),
+            ThemesHandler,
+            {
+                'themes_url': '/voila/themes',
+                'path': '',
+                'labextensions_path': jupyter_path('labextensions'),
+                'no_cache_paths': ['/']
+            },
+        ),
         (url_path_join(base_url, '/voila/static/(.*)'), MultiStaticFileHandler, {'paths': static_paths}),
         (url_path_join(base_url, r'/voila/api/shutdown/(.*)'), VoilaShutdownKernelHandler),
         (

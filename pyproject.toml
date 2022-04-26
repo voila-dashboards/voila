@@ -23,9 +23,19 @@ skip = ["check-links"]
 before-bump-version = ["python -m pip install bump2version jupyterlab~=3.0"]
 before-build-npm = ["python -m pip install jupyterlab~=3.0", "jlpm clean", "jlpm build:prod"]
 before-build-python = ["jlpm clean"]
+after-draft-release = "bash ./scripts/reset-stable.sh"
 
 [tool.jupyter-releaser.options]
 version-cmd = "python scripts/bump-version.py --force"
 
 [tool.check-manifest]
-ignore = [".binder/**", "docs/**", "notebooks/**", "packages/**", "share/**/*.js", "share/**/*.woff", "*.json", "*.gif", "yarn.lock", "environment.yml", "readthedocs.yml", ".*", "lint-staged.config.js", "scripts/**", "voila/labextension/**", "voila/static/**", "tests/**", "ui-tests/**"]
+ignore = [
+    ".binder/**", "docs/**", "notebooks/**",
+    "packages/**",
+    "share/**/*.js", "share/**/*.woff", "share/**/*.css",
+    "*.json", "*.gif", "yarn.lock",
+    "environment.yml", "readthedocs.yml", ".*",
+    "lint-staged.config.js", "scripts/**",
+    "voila/labextension/**", "voila/static/**",
+    "tests/**", "ui-tests/**",
+]

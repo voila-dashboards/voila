@@ -60,7 +60,7 @@ jobs:
 
             // Find any comment already made by the bot.
             const botComments = comments.filter(comment => comment.user.id === 41898282)
-            const botComment = botComments.find(cm => !cm.body.includes('Try it on binder') )
+            const botComment = botComments.find(cm => !cm.body.includes('Launch a Binder') )
             if (botComment) {
               await github.issues.updateComment({
                 owner: context.repo.owner,

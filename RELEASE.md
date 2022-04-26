@@ -81,7 +81,7 @@ Commit the changes, create a new release tag, and update the `stable` branch (fo
 
 ```bash
 git checkout main
-git add voila/_version.py environment.yml
+git add voila/_version.py
 git commit -m "Release x.y.z"
 git tag x.y.z
 git checkout stable

@@ -12,7 +12,7 @@ module.exports = {
     ['html']
   ],
   use: {
-    baseURL: 'http://localhost:8866/voila/',
+    baseURL: 'http://localhost:8866',
     video: 'retain-on-failure'
   },
   // Try one retry as some tests are flaky

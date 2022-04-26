@@ -11,8 +11,7 @@ def notebook_cgi_path(base_url):
 def voila_args(notebook_directory, voila_args_extra):
 
     return [
-        '--VoilaTest.root_dir=%r' % notebook_directory,
-        '--VoilaTest.log_level=DEBUG'
+        '--VoilaTest.root_dir=%r' % notebook_directory
     ] + voila_args_extra
 
 

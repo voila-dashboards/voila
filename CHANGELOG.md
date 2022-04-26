@@ -2,89 +2,189 @@
 
 <!-- <START NEW CHANGELOG ENTRY> -->
 
-## 0.3.0b0
+## 0.3.5
 
-([Full Changelog](https://github.com/voila-dashboards/voila/compare/v0.3.0a2...bbca9fe7aa41cca2eb5a57c2e88f997eb46d6b4c))
+([Full Changelog](https://github.com/voila-dashboards/voila/compare/v0.3.4...7166af78cc9eb95f5ab4fa7ee50d433db89412c0))
 
 ### Enhancements made
 
+- feat: support all kernel ServerConnection options [#1129](https://github.com/voila-dashboards/voila/pull/1129) ([@maartenbreddels](https://github.com/maartenbreddels))
+
+### Maintenance and upkeep improvements
+
+- Fix `jinja2 3.1.0` compatibility issue [#1127](https://github.com/voila-dashboards/voila/pull/1127) ([@trungleduc](https://github.com/trungleduc))
+- Fix wait_for_request [#1125](https://github.com/voila-dashboards/voila/pull/1125) ([@trungleduc](https://github.com/trungleduc))
+
+### Contributors to this release
+
+([GitHub contributors page for this release](https://github.com/voila-dashboards/voila/graphs/contributors?from=2022-03-22&to=2022-03-29&type=c))
+
+[@github-actions](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Agithub-actions+updated%3A2022-03-22..2022-03-29&type=Issues) | [@maartenbreddels](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Amaartenbreddels+updated%3A2022-03-22..2022-03-29&type=Issues) | [@trungleduc](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Atrungleduc+updated%3A2022-03-22..2022-03-29&type=Issues)
+
+<!-- <END NEW CHANGELOG ENTRY> -->
+
+## 0.3.4
+
+([Full Changelog](https://github.com/voila-dashboards/voila/compare/v0.3.3...9b5ba4844b49abcf2b16c2997f89647122100415))
+
+### Enhancements made
+
+- feat: make request info available in env for preheated kernels [#1109](https://github.com/voila-dashboards/voila/pull/1109) ([@mariobuikhuizen](https://github.com/mariobuikhuizen))
+
+### Maintenance and upkeep improvements
+
+- Fix ipywidgets 7.7 incompatibility issue [#1121](https://github.com/voila-dashboards/voila/pull/1121) ([@martinRenou](https://github.com/martinRenou))
+- Fix CI [#1118](https://github.com/voila-dashboards/voila/pull/1118) ([@trungleduc](https://github.com/trungleduc))
+- Bump url-parse from 1.5.7 to 1.5.10 in /ui-tests [#1103](https://github.com/voila-dashboards/voila/pull/1103) ([@dependabot](https://github.com/dependabot))
+
+### Contributors to this release
+
+([GitHub contributors page for this release](https://github.com/voila-dashboards/voila/graphs/contributors?from=2022-03-11&to=2022-03-22&type=c))
+
+[@dependabot](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Adependabot+updated%3A2022-03-11..2022-03-22&type=Issues) | [@github-actions](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Agithub-actions+updated%3A2022-03-11..2022-03-22&type=Issues) | [@maartenbreddels](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Amaartenbreddels+updated%3A2022-03-11..2022-03-22&type=Issues) | [@mariobuikhuizen](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Amariobuikhuizen+updated%3A2022-03-11..2022-03-22&type=Issues) | [@martinRenou](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3AmartinRenou+updated%3A2022-03-11..2022-03-22&type=Issues) | [@trungleduc](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Atrungleduc+updated%3A2022-03-11..2022-03-22&type=Issues)
+
+## 0.3.3
+
+([Full Changelog](https://github.com/voila-dashboards/voila/compare/@voila-dashboards/jupyterlab-preview@2.1.2...17ba0fdfd10b30c3dd72887d6aa08ef80ebfbc81))
+
+### Enhancements made
+
+- Add theme handling to error pages [#1108](https://github.com/voila-dashboards/voila/pull/1108) ([@martinRenou](https://github.com/martinRenou))
+- Add timeout on the control comm target [#1106](https://github.com/voila-dashboards/voila/pull/1106) ([@martinRenou](https://github.com/martinRenou))
+
+### Documentation improvements
+
+- Remove extra tick from the Changelog [#1099](https://github.com/voila-dashboards/voila/pull/1099) ([@martinRenou](https://github.com/martinRenou))
+
+### Contributors to this release
+
+([GitHub contributors page for this release](https://github.com/voila-dashboards/voila/graphs/contributors?from=2022-02-22&to=2022-03-11&type=c))
+
+[@github-actions](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Agithub-actions+updated%3A2022-02-22..2022-03-11&type=Issues) | [@martinRenou](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3AmartinRenou+updated%3A2022-02-22..2022-03-11&type=Issues) | [@trungleduc](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Atrungleduc+updated%3A2022-02-22..2022-03-11&type=Issues)
+
+## 0.3.2
+
+([Full Changelog](https://github.com/voila-dashboards/voila/compare/@voila-dashboards/jupyterlab-preview@2.1.1...cb280f9f9225922f7d429c3b86f05071c10d44d6))
+
+### Enhancements made
+
+- JupyterLab Voila preview extension: Automatically save Notebook before refreshing the preview [#1094](https://github.com/voila-dashboards/voila/pull/1094) ([@legendb317](https://github.com/legendb317))
+- Update JupyterLab extension logo [#1092](https://github.com/voila-dashboards/voila/pull/1092) ([@martinRenou](https://github.com/martinRenou))
+- Handle JupyterLab custom themes [#1089](https://github.com/voila-dashboards/voila/pull/1089) ([@martinRenou](https://github.com/martinRenou))
+
+### Bugs fixed
+
+- Bump `css-loader` and `style-loader` [#1096](https://github.com/voila-dashboards/voila/pull/1096) ([@trungleduc](https://github.com/trungleduc))
+
+### Maintenance and upkeep improvements
+
+- Bump url-parse from 1.5.3 to 1.5.7 in /ui-tests [#1097](https://github.com/voila-dashboards/voila/pull/1097) ([@dependabot](https://github.com/dependabot))
+- Bump follow-redirects from 1.14.7 to 1.14.8 in /ui-tests [#1093](https://github.com/voila-dashboards/voila/pull/1093) ([@dependabot](https://github.com/dependabot))
+- Bump simple-get from 3.1.0 to 3.1.1 in /ui-tests [#1091](https://github.com/voila-dashboards/voila/pull/1091) ([@dependabot](https://github.com/dependabot))
+- Add script to automatically reset the `stable` branch on release [#1085](https://github.com/voila-dashboards/voila/pull/1085) ([@jtpio](https://github.com/jtpio))
+- Add bot for updating Galata references [#1083](https://github.com/voila-dashboards/voila/pull/1083) ([@martinRenou](https://github.com/martinRenou))
+
+### Contributors to this release
+
+([GitHub contributors page for this release](https://github.com/voila-dashboards/voila/graphs/contributors?from=2022-01-27&to=2022-02-22&type=c))
+
+[@jtpio](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Ajtpio+updated%3A2022-01-27..2022-02-22&type=Issues) | [@legendb317](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Alegendb317+updated%3A2022-01-27..2022-02-22&type=Issues) | [@martinRenou](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3AmartinRenou+updated%3A2022-01-27..2022-02-22&type=Issues) | [@trungleduc](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Atrungleduc+updated%3A2022-01-27..2022-02-22&type=Issues)
+
+## 0.3.1
+
+([Full Changelog](https://github.com/voila-dashboards/voila/compare/@voila-dashboards/jupyterlab-preview@2.1.0...f601d15476b015e9fa9ab96ce39617fda80e0858))
+
+### Enhancements made
+
+- Allow all lab templates to use the lab theme [#1064](https://github.com/voila-dashboards/voila/pull/1064) ([@martinRenou](https://github.com/martinRenou))
+- Fix element style display [#1058](https://github.com/voila-dashboards/voila/pull/1058) ([@martinRenou](https://github.com/martinRenou))
+- Add more Jinja macros [#1057](https://github.com/voila-dashboards/voila/pull/1057) ([@martinRenou](https://github.com/martinRenou))
+- Lab template: fix body tag [#1053](https://github.com/voila-dashboards/voila/pull/1053) ([@martinRenou](https://github.com/martinRenou))
+- Implement async generator based Voila get handler [#1025](https://github.com/voila-dashboards/voila/pull/1025) ([@davidbrochart](https://github.com/davidbrochart))
+- Feature: fetch all widgets in one single comm message using the control channel [#766](https://github.com/voila-dashboards/voila/pull/766) ([@maartenbreddels](https://github.com/maartenbreddels))
+
+### Bugs fixed
+
+- Fix file redirect error [#1073](https://github.com/voila-dashboards/voila/pull/1073) ([@trungleduc](https://github.com/trungleduc))
+- Lab template: fix body tag [#1053](https://github.com/voila-dashboards/voila/pull/1053) ([@martinRenou](https://github.com/martinRenou))
+
+### Maintenance and upkeep improvements
+
+- Bump node-fetch from 2.6.1 to 2.6.7 [#1079](https://github.com/voila-dashboards/voila/pull/1079) ([@dependabot](https://github.com/dependabot))
+- Bump node-fetch from 2.6.1 to 2.6.7 in /ui-tests [#1078](https://github.com/voila-dashboards/voila/pull/1078) ([@dependabot](https://github.com/dependabot))
+- Bump nanoid from 3.1.25 to 3.2.0 [#1070](https://github.com/voila-dashboards/voila/pull/1070) ([@dependabot](https://github.com/dependabot))
+- Bump nanoid from 3.1.25 to 3.2.0 in /ui-tests [#1069](https://github.com/voila-dashboards/voila/pull/1069) ([@dependabot](https://github.com/dependabot))
+- Bump trim-off-newlines from 1.0.1 to 1.0.3 [#1066](https://github.com/voila-dashboards/voila/pull/1066) ([@dependabot](https://github.com/dependabot))
+- Fix Binder badge PR comment being overwritten [#1065](https://github.com/voila-dashboards/voila/pull/1065) ([@jtpio](https://github.com/jtpio))
+- Automatically download labvariables CSS instead of shipping them [#1062](https://github.com/voila-dashboards/voila/pull/1062) ([@martinRenou](https://github.com/martinRenou))
+- Remove traitlets 4 test, add missing traitlets dependency and drop Python 3.6 support [#1060](https://github.com/voila-dashboards/voila/pull/1060) ([@martinRenou](https://github.com/martinRenou))
+- Bump follow-redirects from 1.14.3 to 1.14.7 in /ui-tests [#1059](https://github.com/voila-dashboards/voila/pull/1059) ([@dependabot](https://github.com/dependabot))
+- Try fixing UI tests [#1054](https://github.com/voila-dashboards/voila/pull/1054) ([@martinRenou](https://github.com/martinRenou))
+- UI-tests: Update ipympl screenshots [#1048](https://github.com/voila-dashboards/voila/pull/1048) ([@martinRenou](https://github.com/martinRenou))
+- Turn off debug mode and remove warnings for `many_iopub_messages_test.py` [#1045](https://github.com/voila-dashboards/voila/pull/1045) ([@trungleduc](https://github.com/trungleduc))
+- Use `maintainer-tools` base setup action, update Python versions on CI [#1043](https://github.com/voila-dashboards/voila/pull/1043) ([@jtpio](https://github.com/jtpio))
+- Use nbclient to create a new kernel client [#860](https://github.com/voila-dashboards/voila/pull/860) ([@davidbrochart](https://github.com/davidbrochart))
+
+### Documentation improvements
+
+- Fix environment.yml file location in the README [#1052](https://github.com/voila-dashboards/voila/pull/1052) ([@martinRenou](https://github.com/martinRenou))
+
+### Other merged PRs
+
+- Pin `ipympl` to `0.8.7` [#1068](https://github.com/voila-dashboards/voila/pull/1068) ([@trungleduc](https://github.com/trungleduc))
+
+### Contributors to this release
+
+([GitHub contributors page for this release](https://github.com/voila-dashboards/voila/graphs/contributors?from=2021-12-09&to=2022-01-27&type=c))
+
+[@davidbrochart](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Adavidbrochart+updated%3A2021-12-09..2022-01-27&type=Issues) | [@dependabot](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Adependabot+updated%3A2021-12-09..2022-01-27&type=Issues) | [@github-actions](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Agithub-actions+updated%3A2021-12-09..2022-01-27&type=Issues) | [@jtpio](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Ajtpio+updated%3A2021-12-09..2022-01-27&type=Issues) | [@maartenbreddels](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Amaartenbreddels+updated%3A2021-12-09..2022-01-27&type=Issues) | [@martinRenou](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3AmartinRenou+updated%3A2021-12-09..2022-01-27&type=Issues) | [@trungleduc](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Atrungleduc+updated%3A2021-12-09..2022-01-27&type=Issues)
+
+## 0.3.0
+
+([Full Changelog](https://github.com/voila-dashboards/voila/compare/v0.2.16...c18770880ab20e7f4eb8be9137a8bdb23ba8db53))
+
+### Enhancements made
+
+- Add support for query variables in preheat kernel mode [#999](https://github.com/voila-dashboards/voila/pull/999) ([@trungleduc](https://github.com/trungleduc))
+- Add pooling heated kernels and pre-rendered notebook [#936](https://github.com/voila-dashboards/voila/pull/936) ([@trungleduc](https://github.com/trungleduc))
 - Add reveal template to core [#932](https://github.com/voila-dashboards/voila/pull/932) ([@SylvainCorlay](https://github.com/SylvainCorlay))
 
 ### Bugs fixed
 
+- Fix wrong base_url [#993](https://github.com/voila-dashboards/voila/pull/993) ([@trungleduc](https://github.com/trungleduc))
 - Obey ip argument and only bind to given address. [#926](https://github.com/voila-dashboards/voila/pull/926) ([@adament](https://github.com/adament))
 
 ### Maintenance and upkeep improvements
 
+- Update tests on Windows [#1040](https://github.com/voila-dashboards/voila/pull/1040) ([@trungleduc](https://github.com/trungleduc))
+- Enforce labels on PRs [#1038](https://github.com/voila-dashboards/voila/pull/1038) ([@jtpio](https://github.com/jtpio))
+- Fix CI problem of preheated kernels tests [#1036](https://github.com/voila-dashboards/voila/pull/1036) ([@trungleduc](https://github.com/trungleduc))
+- Update Galata [#1022](https://github.com/voila-dashboards/voila/pull/1022) ([@jtpio](https://github.com/jtpio))
+- Add UI test for the reveal notebook [#1021](https://github.com/voila-dashboards/voila/pull/1021) ([@jtpio](https://github.com/jtpio))
 - Fix failed tests on CI [#1014](https://github.com/voila-dashboards/voila/pull/1014) ([@trungleduc](https://github.com/trungleduc))
 - Enable tests on `Windows` [#1013](https://github.com/voila-dashboards/voila/pull/1013) ([@trungleduc](https://github.com/trungleduc))
 - Pass version spec as a GitHub Actions input [#1007](https://github.com/voila-dashboards/voila/pull/1007) ([@jtpio](https://github.com/jtpio))
 - Add next to the bump script [#1002](https://github.com/voila-dashboards/voila/pull/1002) ([@jtpio](https://github.com/jtpio))
+- Simplify tests for preheat kernel mode [#996](https://github.com/voila-dashboards/voila/pull/996) ([@trungleduc](https://github.com/trungleduc))
+- Bot skips Binder badge comment [#995](https://github.com/voila-dashboards/voila/pull/995) ([@trungleduc](https://github.com/trungleduc))
+- Allow for Jupyter Client 7 [#953](https://github.com/voila-dashboards/voila/pull/953) ([@jtpio](https://github.com/jtpio))
 
-### Documentation improvements
-
+- Updating Heroku deploy instructions [#1037](https://github.com/voila-dashboards/voila/pull/1037) ([@fhightower](https://github.com/fhightower))
 - Update docs for testing [#1015](https://github.com/voila-dashboards/voila/pull/1015) ([@davidbrochart](https://github.com/davidbrochart))
 - Fix installation instructions [#1012](https://github.com/voila-dashboards/voila/pull/1012) ([@davidbrochart](https://github.com/davidbrochart))
 - Add a separate line for `jupyter server extension enable` in README [#1000](https://github.com/voila-dashboards/voila/pull/1000) ([@StanczakDominik](https://github.com/StanczakDominik))
 
-### Contributors to this release
+### Other merged PRs
 
-([GitHub contributors page for this release](https://github.com/voila-dashboards/voila/graphs/contributors?from=2021-10-14&to=2021-10-28&type=c))
-
-[@adament](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Aadament+updated%3A2021-10-14..2021-10-28&type=Issues) | [@davidbrochart](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Adavidbrochart+updated%3A2021-10-14..2021-10-28&type=Issues) | [@github-actions](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Agithub-actions+updated%3A2021-10-14..2021-10-28&type=Issues) | [@jtpio](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Ajtpio+updated%3A2021-10-14..2021-10-28&type=Issues) | [@martinRenou](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3AmartinRenou+updated%3A2021-10-14..2021-10-28&type=Issues) | [@StanczakDominik](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3AStanczakDominik+updated%3A2021-10-14..2021-10-28&type=Issues) | [@SylvainCorlay](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3ASylvainCorlay+updated%3A2021-10-14..2021-10-28&type=Issues) | [@trungleduc](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Atrungleduc+updated%3A2021-10-14..2021-10-28&type=Issues)
-
-<!-- <END NEW CHANGELOG ENTRY> -->
-
-## 0.3.0a2
-
-([Full Changelog](https://github.com/voila-dashboards/voila/compare/v0.3.0a1...a03f0af8a10183e5433870e8351b62d3d2e7006d))
-
-### Enhancements made
-
-- Add support for query variables in preheated kernel mode [#999](https://github.com/voila-dashboards/voila/pull/999) ([@trungleduc](https://github.com/trungleduc))
-
-### Maintenance and upkeep improvements
-
-- Simplify tests for preheated kernel mode [#996](https://github.com/voila-dashboards/voila/pull/996) ([@trungleduc](https://github.com/trungleduc))
-- Allow for Jupyter Client 7 [#953](https://github.com/voila-dashboards/voila/pull/953) ([@jtpio](https://github.com/jtpio))
+- Pin `ipykernel` to `5.5.5` in `traitlets` 4 tests [#1034](https://github.com/voila-dashboards/voila/pull/1034) ([@trungleduc](https://github.com/trungleduc))
+- Bump jquery-ui from 1.12.1 to 1.13.0 [#1024](https://github.com/voila-dashboards/voila/pull/1024) ([@dependabot](https://github.com/dependabot))
+- Bump tmpl from 1.0.4 to 1.0.5 [#1023](https://github.com/voila-dashboards/voila/pull/1023) ([@dependabot](https://github.com/dependabot))
 
 ### Contributors to this release
 
-([GitHub contributors page for this release](https://github.com/voila-dashboards/voila/graphs/contributors?from=2021-10-06&to=2021-10-14&type=c))
+([GitHub contributors page for this release](https://github.com/voila-dashboards/voila/graphs/contributors?from=2021-10-04&to=2021-12-09&type=c))
 
-[@github-actions](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Agithub-actions+updated%3A2021-10-06..2021-10-14&type=Issues) | [@jtpio](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Ajtpio+updated%3A2021-10-06..2021-10-14&type=Issues) | [@trungleduc](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Atrungleduc+updated%3A2021-10-06..2021-10-14&type=Issues)
-
-## 0.3.0a1
-
-([Full Changelog](https://github.com/voila-dashboards/voila/compare/v0.3.0a0...473e3a961783f808382f2bfa4ae9d5ca19a213a6))
-
-### Bugs fixed
-
-- Fix wrong base_url [#993](https://github.com/voila-dashboards/voila/pull/993) ([@trungleduc](https://github.com/trungleduc))
-
-### Maintenance and upkeep improvements
-
-- Bot skips Binder badge comment [#995](https://github.com/voila-dashboards/voila/pull/995) ([@trungleduc](https://github.com/trungleduc))
-
-### Contributors to this release
-
-([GitHub contributors page for this release](https://github.com/voila-dashboards/voila/graphs/contributors?from=2021-10-05&to=2021-10-06&type=c))
-
-[@github-actions](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Agithub-actions+updated%3A2021-10-05..2021-10-06&type=Issues) | [@jtpio](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Ajtpio+updated%3A2021-10-05..2021-10-06&type=Issues) | [@trungleduc](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Atrungleduc+updated%3A2021-10-05..2021-10-06&type=Issues)
-
-## 0.3.0a0
-
-([Full Changelog](https://github.com/voila-dashboards/voila/compare/v0.2.16...5b10cf6e8ecdf854b5fd6db92e26b944110f1840))
-
-### Enhancements made
-
-- Add pooling heated kernels and pre-rendered notebook [#936](https://github.com/voila-dashboards/voila/pull/936) ([@trungleduc](https://github.com/trungleduc))
-
-### Contributors to this release
-
-([GitHub contributors page for this release](https://github.com/voila-dashboards/voila/graphs/contributors?from=2021-10-04&to=2021-10-05&type=c))
-
-[@jtpio](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Ajtpio+updated%3A2021-10-04..2021-10-05&type=Issues) | [@trungleduc](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Atrungleduc+updated%3A2021-10-04..2021-10-05&type=Issues)
+[@adament](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Aadament+updated%3A2021-10-04..2021-12-09&type=Issues) | [@davidbrochart](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Adavidbrochart+updated%3A2021-10-04..2021-12-09&type=Issues) | [@dependabot](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Adependabot+updated%3A2021-10-04..2021-12-09&type=Issues) | [@github-actions](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Agithub-actions+updated%3A2021-10-04..2021-12-09&type=Issues) | [@jtpio](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Ajtpio+updated%3A2021-10-04..2021-12-09&type=Issues) | [@martinRenou](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3AmartinRenou+updated%3A2021-10-04..2021-12-09&type=Issues) | [@meeseeksmachine](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Ameeseeksmachine+updated%3A2021-10-04..2021-12-09&type=Issues) | [@StanczakDominik](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3AStanczakDominik+updated%3A2021-10-04..2021-12-09&type=Issues) | [@SylvainCorlay](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3ASylvainCorlay+updated%3A2021-10-04..2021-12-09&type=Issues) | [@trungleduc](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Atrungleduc+updated%3A2021-10-04..2021-12-09&type=Issues)
 
 ## 0.2.16
 

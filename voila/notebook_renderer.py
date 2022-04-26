@@ -8,12 +8,10 @@
 #############################################################################
 
 
-import asyncio
 import os
 import sys
 import traceback
-from typing import Callable, Generator, Tuple, Union, List
-
+from typing import Generator, Tuple, Union, List
 import nbformat
 import tornado.web
 from jupyter_server.config_manager import recursive_update
@@ -49,8 +47,9 @@ class NotebookRenderer(LoggingConfigurable):
         self.stop_generator = False
         self.rendered_cache: List[str] = []
 
-    async def initialize(self, **kwargs):
-
+    async def initialize(self, **kwargs) -> None:
+        """ Initialize the notebook generator.
+        """
         notebook_path = self.notebook_path
         if self.voila_configuration.enable_nbextensions:
             # generate a list of nbextensions that are enabled for the classical notebook
@@ -70,8 +69,6 @@ class NotebookRenderer(LoggingConfigurable):
 
         self.notebook = await self.load_notebook(notebook_path)
 
-        if not self.notebook:
-            return
         self.cwd = os.path.dirname(notebook_path)
 
         if self.prelaunch_hook:
@@ -165,13 +162,12 @@ class NotebookRenderer(LoggingConfigurable):
         self,
         kernel_id: Union[str, None] = None,
         kernel_future=None,
-        timeout_callback: Union[Callable, None] = None,
     ) -> Generator:
         async def inner_kernel_start(nb):
             return await self._jinja_kernel_start(nb, kernel_id, kernel_future)
 
         def inner_cell_generator(nb, kernel_id):
-            return self._jinja_cell_generator(nb, kernel_id, timeout_callback)
+            return self._jinja_cell_generator(nb, kernel_id)
 
         # These functions allow the start of a kernel and execution of the
         # notebook after (parts of) the template has been rendered and send
@@ -229,14 +225,8 @@ class NotebookRenderer(LoggingConfigurable):
             show_tracebacks=self.voila_configuration.show_tracebacks,
         )
 
-        ###
-        # start kernel client
-        self.executor.kc = km.client()
-        await ensure_async(self.executor.kc.start_channels())
-        await ensure_async(
-            self.executor.kc.wait_for_ready(timeout=self.executor.startup_timeout)
-        )
-        self.executor.kc.allow_stdin = False
+        self.executor.kc = await self.executor.async_start_new_kernel_client()
+
         # Set `VOILA_KERNEL_ID` environment variable, this variable help user can
         # identify which kernel the notebook use.
         if nb.metadata.kernelspec['language'] == 'python':
@@ -263,32 +253,16 @@ class NotebookRenderer(LoggingConfigurable):
 
         await self._cleanup_resources()
 
-    async def _jinja_cell_generator(self, nb, kernel_id, timeout_callback):
+    async def _jinja_cell_generator(self, nb, kernel_id):
         """Generator that will execute a single notebook cell at a time"""
         nb, _ = ClearOutputPreprocessor().preprocess(
             nb, {'metadata': {'path': self.cwd}}
         )
         for cell_idx, input_cell in enumerate(nb.cells):
             try:
-                task = asyncio.ensure_future(
-                    self.executor.execute_cell(
-                        input_cell, None, cell_idx, store_history=False
-                    )
+                output_cell = await self.executor.execute_cell(
+                    input_cell, None, cell_idx, store_history=False
                 )
-                while True:
-                    _, pending = await asyncio.wait(
-                        {task}, timeout=self.voila_configuration.http_keep_alive_timeout
-                    )
-                    if pending:
-                        # If not done within the timeout, we send a heartbeat
-                        # this is fundamentally to avoid browser/proxy read-timeouts, but
-                        # can be used in a template to give feedback to a user
-                        if timeout_callback is not None:
-                            timeout_callback()
-
-                        continue
-                    output_cell = await task
-                    break
             except TimeoutError:
                 output_cell = input_cell
                 break
@@ -338,7 +312,7 @@ class NotebookRenderer(LoggingConfigurable):
 
         model = await ensure_async(self.contents_manager.get(path=path))
         if 'content' not in model:
-            raise tornado.web.HTTPError(404, 'file not found')
+            raise tornado.web.HTTPError(404, f'{path} can not be found')
         __, extension = os.path.splitext(model.get('path', ''))
         if model.get('type') == 'notebook':
             notebook = model['content']
@@ -348,6 +322,8 @@ class NotebookRenderer(LoggingConfigurable):
             language = self.voila_configuration.extension_language_mapping[extension]
             notebook = await self.create_notebook(model, language=language)
             return notebook
+        else:
+            raise tornado.web.HTTPError(500, f'Failed to load {path}')
 
     async def fix_notebook(self, notebook):
         """Returns a notebook object with a valid kernelspec.

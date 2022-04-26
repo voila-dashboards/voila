@@ -11,9 +11,10 @@ import mimetypes
 
 import traitlets
 from traitlets.config import Config
-
-from jinja2 import contextfilter
-import jinja2
+try:
+    from jinja2 import pass_context
+except ImportError:
+    from jinja2 import contextfilter as pass_context
 
 from nbconvert.filters.markdown_mistune import IPythonRenderer, MarkdownWithMath
 from nbconvert.exporters.html import HTMLExporter
@@ -21,6 +22,7 @@ from nbconvert.exporters.templateexporter import TemplateExporter
 from nbconvert.filters.highlight import Highlight2HTML
 
 from .static_file_handler import TemplateStaticFileHandler
+from .utils import create_include_assets_functions
 
 
 class VoilaMarkdownRenderer(IPythonRenderer):
@@ -47,7 +49,7 @@ class VoilaExporter(HTMLExporter):
     # The voila exporter overrides the markdown renderer from the HTMLExporter
     # to inline images.
 
-    @contextfilter
+    @pass_context
     def markdown2html(self, context, source):
         cell = context['cell']
         attachments = cell.get('attachments', {})
@@ -120,26 +122,10 @@ class VoilaExporter(HTMLExporter):
         return TemplateStaticFileHandler.make_static_url(settings, f'{self.template_name}/static/{path}')
 
     def _init_resources(self, resources):
-        def make_url(path):
-            # similar to static_url, but does not assume the static prefix
-            settings = {
-                'static_url_prefix': f'{self.base_url}voila/templates/',
-                'static_path': None  # not used in TemplateStaticFileHandler.get_absolute_path
-            }
-            return TemplateStaticFileHandler.make_static_url(settings, f'{self.template_name}/{path}')
-
-        def include_css(name):
-            code = f'<link rel="stylesheet" type="text/css" href="{make_url(name)}">'
-            return jinja2.Markup(code)
-
-        def include_js(name):
-            code = f'<script src="{make_url(name)}"></script>'
-            return jinja2.Markup(code)
-
-        def include_url(name):
-            return jinja2.Markup(make_url(name))
         resources = super(VoilaExporter, self)._init_resources(resources)
-        resources['include_css'] = include_css
-        resources['include_js'] = include_js
-        resources['include_url'] = include_url
+
+        include_assets_functions = create_include_assets_functions(self.template_name, self.base_url)
+
+        resources.update(include_assets_functions)
+
         return resources

@@ -10,15 +10,16 @@ import os
 
 from tornado import web
 
-from jupyter_server.base.handlers import JupyterHandler
 from jupyter_server.utils import url_path_join, url_escape
 
 from .utils import get_server_root_dir
+from .handler import BaseVoilaHandler
 
 
-class VoilaTreeHandler(JupyterHandler):
+class VoilaTreeHandler(BaseVoilaHandler):
+
     def initialize(self, **kwargs):
-        self.voila_configuration = kwargs['voila_configuration']
+        super().initialize(**kwargs)
         self.allowed_extensions = list(self.voila_configuration.extension_language_mapping.keys()) + ['.ipynb']
 
     def get_template(self, name):
@@ -66,13 +67,17 @@ class VoilaTreeHandler(JupyterHandler):
 
             contents['content'] = sorted(contents['content'], key=lambda i: i['name'])
             contents['content'] = filter(allowed_content, contents['content'])
-            self.write(self.render_template('tree.html',
-                       page_title=page_title,
-                       notebook_path=path,
-                       breadcrumbs=breadcrumbs,
-                       contents=contents,
-                       terminals_available=False,
-                       server_root=get_server_root_dir(self.settings)))
+
+            self.write(self.render_template(
+                'tree.html',
+                page_title=page_title,
+                notebook_path=path,
+                breadcrumbs=breadcrumbs,
+                contents=contents,
+                terminals_available=False,
+                server_root=get_server_root_dir(self.settings),
+                query=self.request.query,
+            ))
         elif cm.file_exists(path):
             # it's not a directory, we have redirecting to do
             model = cm.get(path, content=False)

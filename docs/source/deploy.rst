@@ -108,25 +108,25 @@ High level instructions, specific to Voilà can be found below:
 
 1. Follow the steps of the official documentation to install the heroku
    cli and login on your machine.
-2. Add a file named runtime.txt to the project directory with the following
-   content:
+2. Add a file named runtime.txt to the project directory with a 
+   `valid Python runtime <https://devcenter.heroku.com/articles/python-support#supported-runtimes>`__:
 
    .. code:: text
 
-       python-3.7.3
+       python-3.9.9
 
 3. Add a file named Procfile to the project directory with the
    following content if you want to show all notebooks:
 
    .. code:: text
 
-       web: voila —-port=$PORT --no-browser
+       web: voila --port=$PORT --no-browser
 
    Or the following if you only want to show one notebook:
 
    .. code:: text
 
-       web: voila —-port=$PORT —-no-browser your_notebook.ipynb
+       web: voila --port=$PORT --no-browser your_notebook.ipynb
 
 4. Initialize your git repo and commit your code. At minimum you need to commit
    your notebooks, requirements.txt, runtime.txt, and the Procfile.

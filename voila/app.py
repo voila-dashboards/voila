@@ -6,7 +6,6 @@
 #                                                                           #
 # The full license is in the file LICENSE, distributed with this software.  #
 #############################################################################
-
 import gettext
 import io
 import sys
@@ -45,11 +44,11 @@ from jupyter_server.config_manager import recursive_update
 from jupyter_server.utils import url_path_join, run_sync
 from jupyter_server.services.config import ConfigManager
 
+from jupyterlab_server.themes_handler import ThemesHandler
+
 from jupyter_client.kernelspec import KernelSpecManager
 
 from jupyter_core.paths import jupyter_config_path, jupyter_path
-
-from ipython_genutils.py3compat import getcwd
 
 from .paths import ROOT, STATIC_ROOT, collect_template_paths, collect_static_paths
 from .handler import VoilaHandler
@@ -61,7 +60,8 @@ from .execute import VoilaExecutor
 from .exporter import VoilaExporter
 from .shutdown_kernel_handler import VoilaShutdownKernelHandler
 from .voila_kernel_manager import voila_kernel_manager_factory
-from .query_parameters_handler import QueryStringSocketHandler
+from .request_info_handler import RequestInfoSocketHandler
+from .utils import create_include_assets_functions
 
 _kernel_id_regex = r"(?P<kernel_id>\w+-\w+-\w+-\w+-\w+)"
 
@@ -338,7 +338,7 @@ class Voila(Application):
         if self.notebook_path:
             return os.path.dirname(os.path.abspath(self.notebook_path))
         else:
-            return getcwd()
+            return os.getcwd()
 
     def _init_asyncio_patch(self):
         """set default asyncio policy to be compatible with tornado
@@ -427,6 +427,9 @@ class Voila(Application):
         self.log.info('Storing connection files in %s.' % self.connection_dir)
         self.log.info('Serving static files from %s.' % self.static_root)
 
+        # default server_url to base_url
+        self.server_url = self.server_url or self.base_url
+
         self.kernel_spec_manager = KernelSpecManager(
             parent=self
         )
@@ -462,9 +465,6 @@ class Voila(Application):
         nbui = gettext.translation('nbui', localedir=os.path.join(ROOT, 'i18n'), fallback=True)
         env.install_gettext_translations(nbui, newstyle=False)
 
-        # default server_url to base_url
-        self.server_url = self.server_url or self.base_url
-
         self.app = tornado.web.Application(
             base_url=self.base_url,
             server_url=self.server_url or self.base_url,
@@ -499,6 +499,16 @@ class Voila(Application):
                     'default_filename': 'index.html'
                 },
             ),
+            (
+                url_path_join(self.server_url, r'/voila/themes/(.*)'),
+                ThemesHandler,
+                {
+                    'themes_url': '/voila/themes',
+                    'path': '',
+                    'labextensions_path': jupyter_path('labextensions'),
+                    'no_cache_paths': ['/']
+                },
+            ),
             (url_path_join(self.server_url, r'/voila/api/shutdown/(.*)'), VoilaShutdownKernelHandler)
         ])
 
@@ -506,7 +516,7 @@ class Voila(Application):
             handlers.append(
                 (
                     url_path_join(self.server_url, r'/voila/query/%s' % _kernel_id_regex),
-                    QueryStringSocketHandler
+                    RequestInfoSocketHandler
                 )
             )
         # Serving notebook extensions
@@ -637,9 +647,15 @@ class Voila(Application):
             #     url = url_concat(url, {'token': self.token})
             url = url_path_join(self.connection_url, uri)
 
+            include_assets_functions = create_include_assets_functions(self.voila_configuration.template, url)
+
             jinja2_env = self.app.settings['jinja2_env']
             template = jinja2_env.get_template('browser-open.html')
-            fh.write(template.render(open_url=url, base_url=url))
+            fh.write(template.render(
+                open_url=url, base_url=url,
+                theme=self.voila_configuration.theme,
+                **include_assets_functions
+            ))
 
         def target():
             return browser.open(urljoin('file:', pathname2url(open_file)), new=self.webbrowser_open_new)

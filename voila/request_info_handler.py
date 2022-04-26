@@ -3,8 +3,8 @@ import logging
 from typing import Dict
 
 
-class QueryStringSocketHandler(WebSocketHandler):
-    """A websocket handler used to provide the query string
+class RequestInfoSocketHandler(WebSocketHandler):
+    """A websocket handler used to provide the request info
     assocciated with kernel ids in preheat kernel mode.
 
     Class variables
@@ -12,7 +12,7 @@ class QueryStringSocketHandler(WebSocketHandler):
     - _waiters : A dictionary which holds the `websocket` connection
     assocciated with the kernel id.
 
-    - cache : A dictionary which holds the query string assocciated
+    - cache : A dictionary which holds the request info assocciated
     with the kernel id.
     """
     _waiters = dict()
@@ -26,28 +26,28 @@ class QueryStringSocketHandler(WebSocketHandler):
             kernel_id (str): Kernel id used by the notebook when it opens
             the websocket connection.
         """
-        QueryStringSocketHandler._waiters[kernel_id] = self
+        RequestInfoSocketHandler._waiters[kernel_id] = self
         if kernel_id in self._cache:
             self.write_message(self._cache[kernel_id])
 
     def on_close(self) -> None:
-        for k_id, waiter in QueryStringSocketHandler._waiters.items():
+        for k_id, waiter in RequestInfoSocketHandler._waiters.items():
             if waiter == self:
                 break
-        del QueryStringSocketHandler._waiters[k_id]
+        del RequestInfoSocketHandler._waiters[k_id]
 
     @classmethod
-    def send_updates(cls: 'QueryStringSocketHandler', msg: Dict) -> None:
-        """Class method used to dispath the query string to the waiting
-        notebook. This method is called in `VoilaHandler` when the query
-        string becomes available.
+    def send_updates(cls: 'RequestInfoSocketHandler', msg: Dict) -> None:
+        """Class method used to dispath the request info to the waiting
+        notebook. This method is called in `VoilaHandler` when the request
+        info becomes available.
         If this method is called before the opening of websocket connection,
         `msg` is stored in `_cache0` and the message will be dispatched when
         a notebook with coresponding kernel id is connected.
 
         Args:
             - msg (Dict): this dictionary contains the `kernel_id` to identify
-            the waiting notebook and `payload` is the query string.
+            the waiting notebook and `payload` is the request info.
         """
         kernel_id = msg['kernel_id']
         payload = msg['payload']

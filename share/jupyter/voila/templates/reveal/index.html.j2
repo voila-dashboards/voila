@@ -40,9 +40,13 @@
 {%- endblock html_head_css -%}
 
 {% block body_header %}
-  <body data-base-url="{{resources.base_url}}voila/">
-  <div class="reveal">
-  <div class="slides">
+{% if resources.theme == 'dark' %}
+<body class="jp-Notebook" data-base-url="{{resources.base_url}}voila/" data-jp-theme-light="false" data-jp-theme-name="JupyterLab Dark">
+{% else %}
+<body class="jp-Notebook" data-base-url="{{resources.base_url}}voila/" data-jp-theme-light="true" data-jp-theme-name="JupyterLab Light">
+{% endif %}
+<div class="reveal">
+<div class="slides">
 {% endblock body_header %}
 
 {% block footer_js %}
