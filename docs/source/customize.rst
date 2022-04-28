@@ -209,7 +209,6 @@ There is a Voilà template cookiecutter available to give you a running start.
 This cookiecutter contains some docker configuration for live reloading of your template changes to make development easier.
 Please refer to the `cookiecutter repo <https://github.com/voila-dashboards/voila-template-cookiecutter>`_ for more information on how to use the Voilà template cookiecutter.
 
-
 Accessing the tornado request (`prelaunch-hook`)
 ---------------------------------------------------
 
