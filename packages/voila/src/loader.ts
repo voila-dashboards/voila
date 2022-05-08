@@ -85,7 +85,8 @@ export function requireLoader(
         moduleName,
         moduleVersion
       );
-      conf.paths[moduleName] = packageRoot;
+      conf.paths[moduleName] = `${packageRoot}?`; // NOTE: the `?` is added to avoid require appending a .js
+
       require.undef(failedId);
       require.config(conf);
       return requirePromise([`${moduleName}`]).catch(err => {
