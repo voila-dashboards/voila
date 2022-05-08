@@ -41,6 +41,11 @@ function moduleNameToCDNUrl(moduleName: string, moduleVersion: string) {
     fileName = moduleName.substr(index + 1);
     packageName = moduleName.substr(0, index);
   }
+
+  if (moduleVersion.startsWith('~')) {
+    moduleVersion = moduleVersion.slice(1);
+  }
+
   return {
     packageRoot: `${cdn}${packageName}@${moduleVersion}`,
     pathGuess: `/dist/${fileName}`
