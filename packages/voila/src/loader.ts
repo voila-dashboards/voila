@@ -41,7 +41,10 @@ function moduleNameToCDNUrl(moduleName: string, moduleVersion: string) {
     fileName = moduleName.substr(index + 1);
     packageName = moduleName.substr(0, index);
   }
-  return `${cdn}${packageName}@${moduleVersion}/dist/${fileName}`;
+  return {
+    packageRoot: `${cdn}${packageName}@${moduleVersion}`,
+    pathGuess: `/dist/${fileName}`
+  };
 }
 
 /**
@@ -71,11 +74,26 @@ export function requireLoader(
         );
       }
       const conf: { paths: { [key: string]: string } } = { paths: {} };
-      conf.paths[moduleName] = moduleNameToCDNUrl(moduleName, moduleVersion);
+
+      // First, try to resolve with the CDN.
+      // For unpkg (the default), we just use the base
+      // package since unpkg will try to leverage
+      // the `main` or `browser` bundle in the
+      // extension's package.json
+
+      const { packageRoot, pathGuess } = moduleNameToCDNUrl(
+        moduleName,
+        moduleVersion
+      );
+      conf.paths[moduleName] = packageRoot;
       require.undef(failedId);
       require.config(conf);
-
-      return requirePromise([`${moduleName}`]);
+      return requirePromise([`${moduleName}`]).catch(err => {
+        // Next, if this also errors, we try the full path
+        conf.paths[moduleName] = `${packageRoot}${pathGuess}`;
+        require.undef(failedId);
+        require.config(conf);
+      });
     }
   });
 }
