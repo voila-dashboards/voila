@@ -81,22 +81,23 @@ export function requireLoader(
       const conf: { paths: { [key: string]: string } } = { paths: {} };
 
       // First, try to resolve with the CDN.
-      // For unpkg (the default), we just use the base
-      // package since unpkg will try to leverage
-      // the `main` or `browser` bundle in the
-      // extension's package.json
-
+      // We default to the previous behavior
+      // of trying for a full path. NOTE: in the
+      // future, we should let the CDN resolve itself
+      // based on the package.json contents (the next
+      // case below)
       const { packageRoot, pathGuess } = moduleNameToCDNUrl(
         moduleName,
         moduleVersion
       );
-      conf.paths[moduleName] = `${packageRoot}?`; // NOTE: the `?` is added to avoid require appending a .js
+      conf.paths[moduleName] = `${packageRoot}${pathGuess}`;
 
       require.undef(failedId);
       require.config(conf);
       return requirePromise([`${moduleName}`]).catch(err => {
-        // Next, if this also errors, we try the full path
-        conf.paths[moduleName] = `${packageRoot}${pathGuess}`;
+        // Next, if this also errors, we the root
+        // and let the CDN decide
+        conf.paths[moduleName] = `${packageRoot}?`; // NOTE: the `?` is added to avoid require appending a .js
         require.undef(failedId);
         require.config(conf);
       });
