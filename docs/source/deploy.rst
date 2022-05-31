@@ -113,20 +113,20 @@ High level instructions, specific to Voilà can be found below:
 
    .. code:: text
 
-       python-3.9.9
+       python-3.10.4
 
 3. Add a file named Procfile to the project directory with the
    following content if you want to show all notebooks:
 
    .. code:: text
 
-       web: voila --port=$PORT --no-browser
+       web: voila --port=$PORT --no-browser --Voila.ip=0.0.0.0
 
    Or the following if you only want to show one notebook:
 
    .. code:: text
 
-       web: voila --port=$PORT --no-browser your_notebook.ipynb
+       web: voila --port=$PORT --no-browser --Voila.ip=0.0.0.0 your_notebook.ipynb
 
 4. Initialize your git repo and commit your code. At minimum you need to commit
    your notebooks, requirements.txt, runtime.txt, and the Procfile.
