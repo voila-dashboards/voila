@@ -212,9 +212,13 @@ Please refer to the `cookiecutter repo <https://github.com/voila-dashboards/voil
 Accessing the tornado request (`prelaunch-hook`)
 ---------------------------------------------------
 
-Unfortunately it is not currently possible to use custom templates to access the tornado request object, which might be necessary in certain custom setups if you need
+Unfortunately, it is not currently possible to use custom templates to access the tornado request object, which might be necessary in certain custom setups if you need
 to check for authentication cookies or access details about the request headers, etc.
-Instead, you can leverage the `prelaunch-hook`, which lets you inject a function to inspect the notebook and request prior to executing them.
+Instead, you can leverage the `prelaunch-hook`, which lets you inject a function to inspect the notebook and the request prior to executing them.
+
+.. warning::
+   Because `prelaunch-hook` only runs after receiving a new request but before the notebook is executed, it is incompatible with
+   preheated kernels.
 
 The format of this hook should be:
 
@@ -223,6 +227,11 @@ The format of this hook should be:
    def hook(req: tornado.web.RequestHandler,
             notebook: nbformat.NotebookNode,
             cwd: str) -> Optional[nbformat.NotebookNode]:
+
+The first argument will be a reference to the tornado `RequetHandler`, with which you can inspect parameters, headers, etc.
+The second argument will be the `NotebookNode`, which you can mutate to e.g. inject cells or make other notebook-level modifications.
+The last argument is the current working directory should you need to mutate anything on disk.
+The return value of your hook function can either be `None`, or a `NotebookNode`.
 
 Here is an example of a custom `prelaunch-hook` to execute a notebook with `papermill`:
 
@@ -260,6 +269,28 @@ Here is an example of a custom `prelaunch-hook` to execute a notebook with `pape
 
             # Parameterize with papermill
             return parameterize_notebook(notebook, parameters)
+
+To add this to your `Voilà` application:
+
+.. code-block:: python
+
+    from voila.app import Voila
+    from voila.config import VoilaConfiguration
+
+    # customize config how you like
+    config = VoilaConfiguration()
+
+    # create a voila instance
+    app = Voila()
+
+    # set the config
+    app.voila_configuration = config
+
+    # set the prelaunch hook
+    app.prelaunch_hook = parameterize_with_papermill
+
+    # launch
+    app.start()
 
 
 Adding your own static files
@@ -376,7 +407,12 @@ Preheated kernels
 ==================
 
 Since Voilà needs to start a new jupyter kernel and execute the requested notebook in this kernel for every connection, this would lead to a long waiting time before the widgets can be displayed in the browser. 
-To reduce this waiting time, especially for the heavy notebooks, users can activate the preheating kernel option of Voilà, this option will enable two features:
+To reduce this waiting time, especially for the heavy notebooks, users can activate the preheating kernel option of Voilà.
+
+.. warning::
+   Because preheated kernels are not executed on request, this feature is incompatible with the `prelaunch-hook` functionality.
+
+This option will enable two features:
 
 - A pool of kernels is started for each notebook and kept in standby, then the notebook is executed in every kernel of its pool. When a new client requests a kernel, the preheated kernel in this pool is used and another kernel is started asynchronously to refill the pool.
 - The HTML version of the notebook is rendered in each preheated kernel and stored, when a client connects to Voila, under some conditions, the cached HTML is served instead of re-rendering the notebook.
@@ -444,6 +480,9 @@ Partially pre-render notebook
 ------------------------------
 
 To benefit the acceleration of preheating kernel mode, the notebooks need to be pre-rendered before users actually connect to Voilà. But in many real-world cases, the notebook requires some user-specific data to render correctly the widgets, which makes pre-rendering impossible. To overcome this limit, Voilà offers a feature to treat the most used method for providing user data: the URL `query string`.
+
+.. note::
+   For more advanced interaction with the tornado request object, see the `prelaunch-hook` feature.
 
 In normal mode, Voilà users can get the `query string` at run time through the ``QUERY_STRING`` environment variable:
 

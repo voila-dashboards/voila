@@ -35,7 +35,7 @@ import tornado.web
 
 from traitlets.config.application import Application
 from traitlets.config.loader import Config
-from traitlets import Unicode, Integer, Bool, Dict, List, Any, default
+from traitlets import Unicode, Integer, Bool, Dict, List, Callable, default
 
 from jupyter_server.services.kernels.handlers import KernelHandler, ZMQChannelsHandler
 from jupyter_server.services.contents.largefilemanager import LargeFileManager
@@ -239,8 +239,8 @@ class Voila(Application):
                                  cannot be determined reliably by the Jupyter notebook server (proxified
                                  or containerized setups for example)."""))
 
-    prelaunch_hook = Any(default_value=None, allow_none=True,
-                         help=_("""A function that is called prior to the launch of a new kernel instance
+    prelaunch_hook = Callable(default_value=None, allow_none=True,
+                              help=_("""A function that is called prior to the launch of a new kernel instance
                                    when a user visits the voila webpage. Used for custom user authorization
                                    or any other necessary pre-launch functions.
 
