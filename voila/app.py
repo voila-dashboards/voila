@@ -441,6 +441,10 @@ class Voila(Application):
         self.contents_manager = LargeFileManager(parent=self)
         preheat_kernel: bool = self.voila_configuration.preheat_kernel
         pool_size: int = self.voila_configuration.default_pool_size
+
+        if preheat_kernel and self.prelaunch_hook:
+            raise Exception("`preheat_kernel` and `prelaunch_hook` are incompatible")
+
         kernel_manager_class = voila_kernel_manager_factory(
             self.voila_configuration.multi_kernel_manager_class,
             preheat_kernel,
@@ -569,7 +573,8 @@ class Voila(Application):
                  {
                      'template_paths': self.template_paths,
                      'config': self.config,
-                     'voila_configuration': self.voila_configuration
+                     'voila_configuration': self.voila_configuration,
+                     'prelaunch_hook': self.prelaunch_hook
                 }),
             ])
 
