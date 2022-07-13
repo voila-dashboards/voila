@@ -94,9 +94,13 @@ def _load_jupyter_server_extension(server_app):
 
     # Serving notebook extensions
     if voila_configuration.enable_nbextensions:
-        # First look into 'nbextensions_path' configuration key (classic notebook)
-        # and fall back to default path for nbextensions (jupyter server).
-        if 'nbextensions_path' in web_app.settings:
+        # First check whether a custom nbextensions_path has been set in
+        # the VoilaConfiguration object, if not, then fall back to
+        # looking into 'nbextensions_path' configuration key (classic notebook)
+        # otherwise fall back to default path for nbextensions (jupyter server).
+        if voila_configuration.nbextensions_path:
+            nbextensions_path = voila_configuration.nbextensions_path
+        elif 'nbextensions_path' in web_app.settings:
             nbextensions_path = web_app.settings['nbextensions_path']
         else:
             nbextensions_path = jupyter_path('nbextensions')

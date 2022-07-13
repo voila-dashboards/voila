@@ -39,6 +39,7 @@ class VoilaConfiguration(traitlets.config.Configurable):
     theme = Unicode('light', config=True)
     strip_sources = Bool(True, config=True, help='Strip sources from rendered html')
     enable_nbextensions = Bool(False, config=True, help=('Set to True for Voilà to load notebook extensions'))
+    nbextensions_path = Unicode('', config=True, help='Set to override default path provided by Jupyter Server')
 
     file_whitelist = List(
         Unicode(),
