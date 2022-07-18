@@ -2,6 +2,37 @@
 
 <!-- <START NEW CHANGELOG ENTRY> -->
 
+## 0.3.6
+
+([Full Changelog](https://github.com/voila-dashboards/voila/compare/@voila-dashboards/jupyterlab-preview@2.1.5...0c3a46d3ecdf6cba10a220e78e2f7a2647baf3e6))
+
+### Enhancements made
+
+- adding nbextension path to voila config object [#1167](https://github.com/voila-dashboards/voila/pull/1167) ([@dharmaquark](https://github.com/dharmaquark))
+
+### Bugs fixed
+
+- Fix default VOILA_WS_BASE_URL value in preheating mode [#1141](https://github.com/voila-dashboards/voila/pull/1141) ([@vkaidalov-rft](https://github.com/vkaidalov-rft))
+
+### Maintenance and upkeep improvements
+
+- [tests] rerun failed tests 2 times in CI [#1150](https://github.com/voila-dashboards/voila/pull/1150) ([@timkpaine](https://github.com/timkpaine))
+- Fix UI-tests detached script [#1136](https://github.com/voila-dashboards/voila/pull/1136) ([@martinRenou](https://github.com/martinRenou))
+- Bump minimist from 1.2.5 to 1.2.6 in /ui-tests [#1135](https://github.com/voila-dashboards/voila/pull/1135) ([@dependabot](https://github.com/dependabot))
+
+### Documentation improvements
+
+- Update deploy to Heroku instructions [#1158](https://github.com/voila-dashboards/voila/pull/1158) ([@samharrison7](https://github.com/samharrison7))
+- Use pydata-sphinx-theme [#1139](https://github.com/voila-dashboards/voila/pull/1139) ([@martinRenou](https://github.com/martinRenou))
+
+### Contributors to this release
+
+([GitHub contributors page for this release](https://github.com/voila-dashboards/voila/graphs/contributors?from=2022-03-29&to=2022-07-18&type=c))
+
+[@dependabot](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Adependabot+updated%3A2022-03-29..2022-07-18&type=Issues) | [@dharmaquark](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Adharmaquark+updated%3A2022-03-29..2022-07-18&type=Issues) | [@github-actions](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Agithub-actions+updated%3A2022-03-29..2022-07-18&type=Issues) | [@martinRenou](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3AmartinRenou+updated%3A2022-03-29..2022-07-18&type=Issues) | [@samharrison7](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Asamharrison7+updated%3A2022-03-29..2022-07-18&type=Issues) | [@SylvainCorlay](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3ASylvainCorlay+updated%3A2022-03-29..2022-07-18&type=Issues) | [@timkpaine](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Atimkpaine+updated%3A2022-03-29..2022-07-18&type=Issues) | [@trungleduc](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Atrungleduc+updated%3A2022-03-29..2022-07-18&type=Issues) | [@vkaidalov-rft](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Avkaidalov-rft+updated%3A2022-03-29..2022-07-18&type=Issues)
+
+<!-- <END NEW CHANGELOG ENTRY> -->
+
 ## 0.3.5
 
 ([Full Changelog](https://github.com/voila-dashboards/voila/compare/v0.3.4...7166af78cc9eb95f5ab4fa7ee50d433db89412c0))
@@ -20,8 +51,6 @@
 ([GitHub contributors page for this release](https://github.com/voila-dashboards/voila/graphs/contributors?from=2022-03-22&to=2022-03-29&type=c))
 
 [@github-actions](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Agithub-actions+updated%3A2022-03-22..2022-03-29&type=Issues) | [@maartenbreddels](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Amaartenbreddels+updated%3A2022-03-22..2022-03-29&type=Issues) | [@trungleduc](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Atrungleduc+updated%3A2022-03-22..2022-03-29&type=Issues)
-
-<!-- <END NEW CHANGELOG ENTRY> -->
 
 ## 0.3.4
 
