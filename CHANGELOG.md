@@ -2,6 +2,45 @@
 
 <!-- <START NEW CHANGELOG ENTRY> -->
 
+## 0.3.6
+
+([Full Changelog](https://github.com/voila-dashboards/voila/compare/@voila-dashboards/jupyterlab-preview@2.1.5...e138bbf95eb119ae987699559b653371351300b6))
+
+### Enhancements made
+
+- adding nbextension path to voila config object [#1167](https://github.com/voila-dashboards/voila/pull/1167) ([@dharmaquark](https://github.com/dharmaquark))
+
+### Bugs fixed
+
+- The cling tests appear to hang on OSX [#1171](https://github.com/voila-dashboards/voila/pull/1171) ([@SylvainCorlay](https://github.com/SylvainCorlay))
+- Fix default VOILA_WS_BASE_URL value in preheating mode [#1141](https://github.com/voila-dashboards/voila/pull/1141) ([@vkaidalov-rft](https://github.com/vkaidalov-rft))
+
+### Maintenance and upkeep improvements
+
+- Bump jquery-ui from 1.13.1 to 1.13.2 [#1172](https://github.com/voila-dashboards/voila/pull/1172) ([@dependabot](https://github.com/dependabot))
+- Bump moment from 2.29.1 to 2.29.4 [#1166](https://github.com/voila-dashboards/voila/pull/1166) ([@dependabot](https://github.com/dependabot))
+- Bump moment from 2.29.1 to 2.29.4 in /ui-tests [#1165](https://github.com/voila-dashboards/voila/pull/1165) ([@dependabot](https://github.com/dependabot))
+- Bump parse-url from 6.0.0 to 6.0.2 [#1164](https://github.com/voila-dashboards/voila/pull/1164) ([@dependabot](https://github.com/dependabot))
+- Update jupyter_server [#1163](https://github.com/voila-dashboards/voila/pull/1163) ([@martinRenou](https://github.com/martinRenou))
+- Bump jpeg-js from 0.4.3 to 0.4.4 in /ui-tests [#1162](https://github.com/voila-dashboards/voila/pull/1162) ([@dependabot](https://github.com/dependabot))
+- Bump async from 2.6.3 to 2.6.4 in /ui-tests [#1151](https://github.com/voila-dashboards/voila/pull/1151) ([@dependabot](https://github.com/dependabot))
+- [tests] rerun failed tests 2 times in CI [#1150](https://github.com/voila-dashboards/voila/pull/1150) ([@timkpaine](https://github.com/timkpaine))
+- Fix UI-tests detached script [#1136](https://github.com/voila-dashboards/voila/pull/1136) ([@martinRenou](https://github.com/martinRenou))
+- Bump minimist from 1.2.5 to 1.2.6 in /ui-tests [#1135](https://github.com/voila-dashboards/voila/pull/1135) ([@dependabot](https://github.com/dependabot))
+
+### Documentation improvements
+
+- Update deploy to Heroku instructions [#1158](https://github.com/voila-dashboards/voila/pull/1158) ([@samharrison7](https://github.com/samharrison7))
+- Use pydata-sphinx-theme [#1139](https://github.com/voila-dashboards/voila/pull/1139) ([@martinRenou](https://github.com/martinRenou))
+
+### Contributors to this release
+
+([GitHub contributors page for this release](https://github.com/voila-dashboards/voila/graphs/contributors?from=2022-03-29&to=2022-07-18&type=c))
+
+[@dependabot](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Adependabot+updated%3A2022-03-29..2022-07-18&type=Issues) | [@dharmaquark](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Adharmaquark+updated%3A2022-03-29..2022-07-18&type=Issues) | [@github-actions](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Agithub-actions+updated%3A2022-03-29..2022-07-18&type=Issues) | [@martinRenou](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3AmartinRenou+updated%3A2022-03-29..2022-07-18&type=Issues) | [@samharrison7](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Asamharrison7+updated%3A2022-03-29..2022-07-18&type=Issues) | [@SylvainCorlay](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3ASylvainCorlay+updated%3A2022-03-29..2022-07-18&type=Issues) | [@timkpaine](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Atimkpaine+updated%3A2022-03-29..2022-07-18&type=Issues) | [@trungleduc](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Atrungleduc+updated%3A2022-03-29..2022-07-18&type=Issues) | [@vkaidalov-rft](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Avkaidalov-rft+updated%3A2022-03-29..2022-07-18&type=Issues)
+
+<!-- <END NEW CHANGELOG ENTRY> -->
+
 ## 0.3.5
 
 ([Full Changelog](https://github.com/voila-dashboards/voila/compare/v0.3.4...7166af78cc9eb95f5ab4fa7ee50d433db89412c0))
@@ -20,8 +59,6 @@
 ([GitHub contributors page for this release](https://github.com/voila-dashboards/voila/graphs/contributors?from=2022-03-22&to=2022-03-29&type=c))
 
 [@github-actions](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Agithub-actions+updated%3A2022-03-22..2022-03-29&type=Issues) | [@maartenbreddels](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Amaartenbreddels+updated%3A2022-03-22..2022-03-29&type=Issues) | [@trungleduc](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Atrungleduc+updated%3A2022-03-22..2022-03-29&type=Issues)
-
-<!-- <END NEW CHANGELOG ENTRY> -->
 
 ## 0.3.4
 
