@@ -123,3 +123,12 @@ class VoilaConfiguration(traitlets.config.Configurable):
         help="""Size of pre-heated kernel pool for each notebook. Zero or negative number means disabled.
         """
     )
+
+    default_kernel_env_variables = Dict(
+        {},
+        config=True,
+        help='''Default environmental variables for kernels
+        Example setting variables used by wait_for_request() with preheated kernels:
+        --VoilaConfiguration.default_kernel_env_variables='{"VOILA_WS_PROTOCOL": "wss", "VOILA_APP_PORT": "9000"}'
+        ''',
+    )

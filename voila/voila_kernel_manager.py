@@ -28,7 +28,12 @@ async def wait_before(delay: float, aw: Awaitable) -> Awaitable:
     return await aw
 
 
-def voila_kernel_manager_factory(base_class: Type[T], preheat_kernel: bool, default_pool_size: int) -> T:
+def voila_kernel_manager_factory(
+    base_class: Type[T],
+    preheat_kernel: bool,
+    default_pool_size: int,
+    default_kernel_env_variables: TypeDict[str, str],
+) -> T:
     """
     Decorator used to make a normal kernel manager compatible with pre-heated
     kernel system.
@@ -41,6 +46,10 @@ def voila_kernel_manager_factory(base_class: Type[T], preheat_kernel: bool, defa
     Args:
         - base_class (Type[T]): The kernel manager class
         - preheat_kernel (Bool): Flag to decorate the input class
+        - default_pool_size (int): Size of pre-heated kernel pool for each notebook.
+            Zero or negative number means disabled
+        - default_kernel_env_variables (dict[str, str]): Environmental variables to pass
+            to kernel by default.
 
     Returns:
         T: Decorated class
@@ -85,7 +94,12 @@ def voila_kernel_manager_factory(base_class: Type[T], preheat_kernel: bool, defa
 
             @default('kernel_pools_config')
             def _kernel_pools_config(self):
-                return {'default': {'pool_size': max(default_pool_size, 0), 'kernel_env_variables': {}}}
+                return {
+                    'default': {
+                        'pool_size': max(default_pool_size, 0),
+                        'kernel_env_variables': default_kernel_env_variables,
+                    }
+                }
 
             def __init__(self, **kwargs):
 

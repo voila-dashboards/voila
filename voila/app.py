@@ -20,6 +20,7 @@ import socket
 import webbrowser
 import errno
 import random
+from typing import Dict as TypeDict
 
 try:
     from urllib.parse import urljoin
@@ -426,10 +427,12 @@ class Voila(Application):
         self.contents_manager = LargeFileManager(parent=self)
         preheat_kernel: bool = self.voila_configuration.preheat_kernel
         pool_size: int = self.voila_configuration.default_pool_size
+        kernel_env_variables: TypeDict[str, str] = self.voila_configuration.default_kernel_env_variables
         kernel_manager_class = voila_kernel_manager_factory(
             self.voila_configuration.multi_kernel_manager_class,
             preheat_kernel,
-            pool_size
+            pool_size,
+            kernel_env_variables,
         )
         self.kernel_manager = kernel_manager_class(
             parent=self,
