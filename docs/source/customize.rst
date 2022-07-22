@@ -410,7 +410,7 @@ In preheating kernel mode, users can prepend with ``wait_for_request`` from ``vo
 
 ``wait_for_request`` will pause the execution of the notebook in the preheated kernel at this cell and wait for an actual user to connect to Voilà, set the request info environment variables and then continue the execution of the remaining cells.
 
-If the Voilà websocket handler is not started with the default protocol (`ws`), the default IP address (`127.0.0.1`) the default port (`8866`) or with url suffix, users need to provide these values through the environment variables ``VOILA_WS_PROTOCOL``, ``VOILA_APP_IP``, ``VOILA_APP_PORT`` and ``VOILA_WS_BASE_URL``. The easiest way is to set these variables in the `voila.json` configuration file, for example:
+If the Voilà websocket handler is not started with the default protocol (`ws`), the default IP address (`127.0.0.1`) the default port (`8866`) or with url suffix, users need to provide these values through the environment variables ``VOILA_WS_PROTOCOL``, ``VOILA_APP_IP``, ``VOILA_APP_PORT`` and ``VOILA_WS_BASE_URL``. One way to set these variables is in the `voila.json` configuration file, for example:
 
 .. code-block:: python
 
@@ -430,6 +430,12 @@ If the Voilà websocket handler is not started with the default protocol (`ws`),
       ...
       }
    }
+
+Additionally, you can set these with the command:
+
+.. code-block:: bash
+
+    voila --preheat_kernel=True --VoilaConfiguration.default_kernel_env_variables='{"VOILA_WS_PROTOCOL": "wss", "VOILA_APP_PORT": "9000"}'
 
 Hiding output and code cells based on cell tags
 ===============================================
