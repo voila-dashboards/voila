@@ -187,6 +187,7 @@ class VoilaHandler(BaseVoilaHandler):
             kernel_env[ENV_VARIABLE.VOILA_PREHEAT] = 'False'
             kernel_env[ENV_VARIABLE.VOILA_BASE_URL] = self.base_url
             kernel_env[ENV_VARIABLE.VOILA_SERVER_URL] = self.settings.get('server_url', '/')
+            kernel_env[ENV_VARIABLE.VOILA_APP_PORT] = str(port) if port else ''
             kernel_id = await ensure_async(
                 (
                     self.kernel_manager.start_kernel(
