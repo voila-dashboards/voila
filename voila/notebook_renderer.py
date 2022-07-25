@@ -31,6 +31,7 @@ class NotebookRenderer(LoggingConfigurable):
 
     def __init__(self, **kwargs):
         super().__init__()
+        self.request_handler = kwargs.get('request_handler')
         self.root_dir = kwargs.get('root_dir', [])
         self.notebook_path = kwargs.get('notebook_path', [])  # should it be []
         self.template_paths = kwargs.get('template_paths', [])
@@ -39,6 +40,7 @@ class NotebookRenderer(LoggingConfigurable):
         self.config_manager = kwargs.get('config_manager')
         self.contents_manager = kwargs.get('contents_manager')
         self.kernel_spec_manager = kwargs.get('kernel_spec_manager')
+        self.prelaunch_hook = kwargs.get('prelaunch_hook')
         self.default_kernel_name = 'python3'
         self.base_url = kwargs.get('base_url')
         self.kernel_started = False
@@ -68,6 +70,19 @@ class NotebookRenderer(LoggingConfigurable):
         self.notebook = await self.load_notebook(notebook_path)
 
         self.cwd = os.path.dirname(notebook_path)
+
+        if self.prelaunch_hook:
+            # Allow for preprocessing the notebook.
+            # Can be used to add auth, do custom formatting/standardization
+            # of the notebook, raise exceptions, etc
+            #
+            # Necessary inside of the handler if you need
+            # to access the tornado request itself
+            returned_notebook = self.prelaunch_hook(self.request_handler,
+                                                    notebook=self.notebook,
+                                                    cwd=self.cwd)
+            if returned_notebook:
+                self.notebook = returned_notebook
 
         _, basename = os.path.split(notebook_path)
         notebook_name = os.path.splitext(basename)[0]
