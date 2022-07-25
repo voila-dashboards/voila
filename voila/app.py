@@ -129,8 +129,9 @@ class Voila(Application):
         'server_url': 'Voila.server_url',
         'pool_size': 'VoilaConfiguration.default_pool_size',
         'enable_nbextensions': 'VoilaConfiguration.enable_nbextensions',
-        'preheat_kernel': 'VoilaConfiguration.preheat_kernel',
+        'nbextensions_path': 'VoilaConfiguration.nbextensions_path',
         'show_tracebacks': 'VoilaConfiguration.show_tracebacks',
+        'preheat_kernel': 'VoilaConfiguration.preheat_kernel',
         'strip_sources': 'VoilaConfiguration.strip_sources',
         'template': 'VoilaConfiguration.template',
         'theme': 'VoilaConfiguration.theme'
@@ -329,6 +330,8 @@ class Voila(Application):
     @property
     def nbextensions_path(self):
         """The path to look for Javascript notebook extensions"""
+        if self.voila_configuration.nbextensions_path:
+            return self.voila_configuration.nbextensions_path
         path = jupyter_path('nbextensions')
         # FIXME: remove IPython nbextensions path after a migration period
         try:
