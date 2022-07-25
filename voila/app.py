@@ -122,18 +122,18 @@ class Voila(Application):
         )
     )
     aliases = {
+        'autoreload': 'Voila.autoreload',
+        'base_url': 'Voila.base_url',
         'port': 'Voila.port',
         'static': 'Voila.static_root',
-        'strip_sources': 'VoilaConfiguration.strip_sources',
-        'autoreload': 'Voila.autoreload',
-        'template': 'VoilaConfiguration.template',
-        'theme': 'VoilaConfiguration.theme',
-        'base_url': 'Voila.base_url',
         'server_url': 'Voila.server_url',
+        'pool_size': 'VoilaConfiguration.default_pool_size',
         'enable_nbextensions': 'VoilaConfiguration.enable_nbextensions',
-        'show_tracebacks': 'VoilaConfiguration.show_tracebacks',
         'preheat_kernel': 'VoilaConfiguration.preheat_kernel',
-        'pool_size': 'VoilaConfiguration.default_pool_size'
+        'show_tracebacks': 'VoilaConfiguration.show_tracebacks',
+        'strip_sources': 'VoilaConfiguration.strip_sources',
+        'template': 'VoilaConfiguration.template',
+        'theme': 'VoilaConfiguration.theme'
     }
     classes = [
         VoilaConfiguration,
@@ -239,23 +239,29 @@ class Voila(Application):
                                  cannot be determined reliably by the Jupyter notebook server (proxified
                                  or containerized setups for example)."""))
 
-    prelaunch_hook = Callable(default_value=None, allow_none=True,
-                              help=_("""A function that is called prior to the launch of a new kernel instance
-                                   when a user visits the voila webpage. Used for custom user authorization
-                                   or any other necessary pre-launch functions.
+    prelaunch_hook = Callable(
+        default_value=None,
+        allow_none=True,
+        config=True,
+        help=_(
+            """A function that is called prior to the launch of a new kernel instance
+            when a user visits the voila webpage. Used for custom user authorization
+            or any other necessary pre-launch functions.
 
-                                   Should be of the form:
+            Should be of the form:
 
-                                   def hook(req: tornado.web.RequestHandler,
-                                            notebook: nbformat.NotebookNode,
-                                            cwd: str)
+            def hook(req: tornado.web.RequestHandler,
+                    notebook: nbformat.NotebookNode,
+                    cwd: str)
 
-                                   Although most customizations can leverage templates, if you need access
-                                   to the request object (e.g. to inspect cookies for authentication),
-                                   or to modify the notebook itself (e.g. to inject some custom structure,
-                                   althought much of this can be done by interacting with the kernel
-                                   in javascript) the prelaunch hook lets you do that.
-                                   """))
+            Although most customizations can leverage templates, if you need access
+            to the request object (e.g. to inspect cookies for authentication),
+            or to modify the notebook itself (e.g. to inject some custom structure,
+            althought much of this can be done by interacting with the kernel
+            in javascript) the prelaunch hook lets you do that.
+            """
+        ),
+    )
 
     @property
     def display_url(self):

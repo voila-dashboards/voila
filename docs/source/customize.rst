@@ -212,14 +212,14 @@ Please refer to the `cookiecutter repo <https://github.com/voila-dashboards/voil
 Accessing the tornado request (`prelaunch-hook`)
 ---------------------------------------------------
 
-Unfortunately, it is not currently possible to use custom templates to access the tornado request object, which might be necessary in certain custom setups if you need
-to check for authentication cookies or access details about the request headers, etc.
-Instead, you can leverage the `prelaunch-hook`, which lets you inject a function to inspect the notebook and the request prior to executing them.
+In certain custom setups when you need to access the tornado request object in order to check for authentication cookies, access details about the request headers, or modify the notebook before rendering. You can leverage the `prelaunch-hook`, which lets you inject a function to inspect the notebook and the request prior to executing them.
 
 .. warning::
    Because `prelaunch-hook` only runs after receiving a new request but before the notebook is executed, it is incompatible with
-   preheated kernels.
+   `preheated kernels`.
 
+Creating a hook function
+**************************
 The format of this hook should be:
 
 .. code-block:: python
@@ -228,13 +228,30 @@ The format of this hook should be:
             notebook: nbformat.NotebookNode,
             cwd: str) -> Optional[nbformat.NotebookNode]:
 
-The first argument will be a reference to the tornado `RequetHandler`, with which you can inspect parameters, headers, etc.
-The second argument will be the `NotebookNode`, which you can mutate to e.g. inject cells or make other notebook-level modifications.
-The last argument is the current working directory should you need to mutate anything on disk.
-The return value of your hook function can either be `None`, or a `NotebookNode`.
+- The first argument will be a reference to the tornado `RequetHandler`, with which you can inspect parameters, headers, etc.
+- The second argument will be the `NotebookNode`, which you can mutate to e.g. inject cells or make other notebook-level modifications.
+- The last argument is the current working directory should you need to mutate anything on disk.
+- The return value of your hook function can either be `None`, or a `NotebookNode`.
+
+Adding the hook function to Voilà
+***********************************
+There are two ways to add the hook function to Voila:
+
+- Using the `voila.py` configuration file:
+
+Here is an example of the configuration file. This file needs to be placed in the directory where you start Voilà.
+
+.. code-block:: python
+
+   def hook_function(req, notebook, cwd):
+      """Do your stuffs here"""
+      return notebook
+
+   c.Voila.prelaunch_hook = hook_function 
+
+- Start Voila from a python script:
 
 Here is an example of a custom `prelaunch-hook` to execute a notebook with `papermill`:
-
 
 .. code-block:: python
 
@@ -270,7 +287,7 @@ Here is an example of a custom `prelaunch-hook` to execute a notebook with `pape
             # Parameterize with papermill
             return parameterize_notebook(notebook, parameters)
 
-To add this to your `Voilà` application:
+To add this hook to your `Voilà` application:
 
 .. code-block:: python
 
