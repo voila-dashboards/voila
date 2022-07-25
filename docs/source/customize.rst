@@ -435,7 +435,7 @@ Additionally, you can set these with the command:
 
 .. code-block:: bash
 
-    voila --preheat_kernel=True --VoilaConfiguration.default_kernel_env_variables='{"VOILA_WS_PROTOCOL": "wss", "VOILA_APP_PORT": "9000"}'
+    voila --preheat_kernel=True --VoilaKernelManager.default_env_variables='{"VOILA_WS_PROTOCOL":"wss","VOILA_APP_IP":"192.168.1.1"}'
 
 Hiding output and code cells based on cell tags
 ===============================================

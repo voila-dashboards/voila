@@ -6,7 +6,7 @@ import pytest
 
 @pytest.fixture()
 def voila_args_extra():
-    return ['--VoilaConfiguration.default_kernel_env_variables={"FOO": "BAR"}']
+    return ['--VoilaKernelManager.default_env_variables={"FOO": "BAR"}']
 
 
 @pytest.fixture
