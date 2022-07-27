@@ -1228,21 +1228,21 @@
   resolved "https://registry.yarnpkg.com/@juggle/resize-observer/-/resize-observer-3.3.1.tgz#b50a781709c81e10701004214340f25475a171a0"
   integrity sha512-zMM9Ds+SawiUkakS7y94Ymqx+S0ORzpG3frZirN3l+UlXUmSUR7hF4wxCVqW+ei94JzV5kt0uXBcoOEAuiydrw==
 
-"@jupyter-widgets/base-manager@^1.0.0-rc.0":
-  version "1.0.0-rc.0"
-  resolved "https://registry.yarnpkg.com/@jupyter-widgets/base-manager/-/base-manager-1.0.0-rc.0.tgz#23642fcfefdd6cb6e572c67e348628a29ca2e5ce"
-  integrity sha512-KiTxeLMqXWEyLI5A67KXVH8QSkQaNRudLGyPWp99F5eetMUJsT0vyePnGzezoS8NGtw6pWbcpZFswj9xDYJYtA==
+"@jupyter-widgets/base-manager@^1.0.0-rc.1":
+  version "1.0.0-rc.1"
+  resolved "https://registry.yarnpkg.com/@jupyter-widgets/base-manager/-/base-manager-1.0.0-rc.1.tgz#d6f3b007af19b9b9712070c8c26a34aaed670422"
+  integrity sha512-e1jT8SpxqE2gwJj6UPyep8PpiiTRDxKC4cZK+yGAFdNH/7EE+WRobyzv+FXtccBWHRG7hsOuO8UzgW26I4S8ZA==
   dependencies:
-    "@jupyter-widgets/base" "^6.0.0-rc.0"
+    "@jupyter-widgets/base" "^6.0.0-rc.1"
     "@jupyterlab/services" "^6.0.0"
     "@lumino/coreutils" "^1.11.1"
     base64-js "^1.2.1"
     sanitize-html "^2.3"
 
-"@jupyter-widgets/base@^6.0.0-rc.0":
-  version "6.0.0-rc.0"
-  resolved "https://registry.yarnpkg.com/@jupyter-widgets/base/-/base-6.0.0-rc.0.tgz#5b7e1a3cb5bc1094abf73cafbb7be26b2dec90cd"
-  integrity sha512-O2XyOmWwYOcIfRxRp74aEG2Rmh6+HrwAvuVFa7z9nqx3Zmujya/iOb4BH9Wjv1zzswyPr0YWobYbEuIHz/DMiQ==
+"@jupyter-widgets/base@^6.0.0-rc.1":
+  version "6.0.0-rc.1"
+  resolved "https://registry.yarnpkg.com/@jupyter-widgets/base/-/base-6.0.0-rc.1.tgz#fdfd58ae7fbd7c21f4a024949c2b4befa779b5a5"
+  integrity sha512-05Qv9HXRVjILwhtIGO7NEdVOD4+mqFQ2hMizb+uZ//JxoFD2J1Zp2Ga6fUx/WCO8OWVdv53+2iPYM6IyEJRMBw==
   dependencies:
     "@jupyterlab/services" "^6.0.0"
     "@lumino/coreutils" "^1.11.1"
@@ -1254,12 +1254,12 @@
     jquery "^3.1.1"
     lodash "^4.17.4"
 
-"@jupyter-widgets/controls@^5.0.0-rc.0":
-  version "5.0.0-rc.0"
-  resolved "https://registry.yarnpkg.com/@jupyter-widgets/controls/-/controls-5.0.0-rc.0.tgz#7a126ba47609ca550cee2ebea4de30051bca13aa"
-  integrity sha512-lhcq73/fqz7eeL+r9FPXuuhSKqYAxGZqFnkeldEHFnR/lNxGMruNvM6onijlxRqjRa0nHH8I+CyJI8AkuOiu3g==
+"@jupyter-widgets/controls@^5.0.0-rc.1":
+  version "5.0.0-rc.1"
+  resolved "https://registry.yarnpkg.com/@jupyter-widgets/controls/-/controls-5.0.0-rc.1.tgz#47998823e868b38b11b1e3552908dac414b89a90"
+  integrity sha512-qM0ZM8VpA7J3sV21zUm4NT29MkbtTDR65IYNioLcGs6sneQ5OaOmbWAxExWFWLKTgI6txuhkVVnv/zfqw8NQnQ==
   dependencies:
-    "@jupyter-widgets/base" "^6.0.0-rc.0"
+    "@jupyter-widgets/base" "^6.0.0-rc.1"
     "@lumino/algorithm" "^1.9.1"
     "@lumino/domutils" "^1.8.1"
     "@lumino/messaging" "^1.10.1"
@@ -1270,15 +1270,15 @@
     jquery "^3.1.1"
     nouislider "15.4.0"
 
-"@jupyter-widgets/jupyterlab-manager@^5.0.0-rc.0":
-  version "5.0.0-rc.0"
-  resolved "https://registry.yarnpkg.com/@jupyter-widgets/jupyterlab-manager/-/jupyterlab-manager-5.0.0-rc.0.tgz#59208010209ade1ffe6651ca2b8884767d6f6018"
-  integrity sha512-naLoKsLzeYkrlyzImbrQcEZ0shVboL/HZzvwx6yr577QqDp+4pzMtA+zM2aXCr57MPJVpEU96dYsrGIhVZl2Vg==
+"@jupyter-widgets/jupyterlab-manager@^5.0.0-rc.1":
+  version "5.0.0-rc.1"
+  resolved "https://registry.yarnpkg.com/@jupyter-widgets/jupyterlab-manager/-/jupyterlab-manager-5.0.0-rc.1.tgz#da19cf80b74ff5c91667762892837bdff985d82b"
+  integrity sha512-oFfA34JvaUGQgkllQycGMo+jhEce0LjyMsp2FP503QPTk8rEyPVu6R1rYs4ThdFJ5wD4RWaKKqsD9ykwFisCBA==
   dependencies:
-    "@jupyter-widgets/base" "^6.0.0-rc.0"
-    "@jupyter-widgets/base-manager" "^1.0.0-rc.0"
-    "@jupyter-widgets/controls" "^5.0.0-rc.0"
-    "@jupyter-widgets/output" "^6.0.0-rc.0"
+    "@jupyter-widgets/base" "^6.0.0-rc.1"
+    "@jupyter-widgets/base-manager" "^1.0.0-rc.1"
+    "@jupyter-widgets/controls" "^5.0.0-rc.1"
+    "@jupyter-widgets/output" "^6.0.0-rc.1"
     "@jupyterlab/application" "^3.0.0"
     "@jupyterlab/docregistry" "^3.0.0"
     "@jupyterlab/logconsole" "^3.0.0"
@@ -1302,12 +1302,12 @@
     jquery "^3.1.1"
     semver "^7.3.5"
 
-"@jupyter-widgets/output@^6.0.0-rc.0":
-  version "6.0.0-rc.0"
-  resolved "https://registry.yarnpkg.com/@jupyter-widgets/output/-/output-6.0.0-rc.0.tgz#df743516e3c66b56e1855ef30437a7d0fa17ab2d"
-  integrity sha512-+aU3GyqAEuDLGhMtm4vdTXpp8HqD+64x1UJO0byLOXYzdhsEfFU/XWdduLBTHh+K33OekZTw6SrFU3DqMe4b1w==
+"@jupyter-widgets/output@^6.0.0-rc.1":
+  version "6.0.0-rc.1"
+  resolved "https://registry.yarnpkg.com/@jupyter-widgets/output/-/output-6.0.0-rc.1.tgz#cebd41b27dad85652c3f342198e4864fd7d47eef"
+  integrity sha512-kVQ8aDIPMxXov8FQ7JTk6u1pdywPoAVYOU8hxyEo3DatAU+QLTt762CZ3C2ycxrZbaD3FT2gh/Ox4zgFE4/q1g==
   dependencies:
-    "@jupyter-widgets/base" "^6.0.0-rc.0"
+    "@jupyter-widgets/base" "^6.0.0-rc.1"
 
 "@jupyterlab/application@^3.0.0", "@jupyterlab/application@^3.3.4":
   version "3.3.4"

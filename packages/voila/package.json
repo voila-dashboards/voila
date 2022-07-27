@@ -8,9 +8,9 @@
   "main": "lib/index.js",
   "browserslist": ">0.8%, not ie 11, not op_mini all, not dead",
   "dependencies": {
-    "@jupyter-widgets/base": "^6.0.0-rc.0",
-    "@jupyter-widgets/controls": "^5.0.0-rc.0",
-    "@jupyter-widgets/jupyterlab-manager": "^5.0.0-rc.0",
+    "@jupyter-widgets/base": "^6.0.0-rc.1",
+    "@jupyter-widgets/controls": "^5.0.0-rc.1",
+    "@jupyter-widgets/jupyterlab-manager": "^5.0.0-rc.1",
     "@jupyterlab/json-extension": "^3.0.0",
     "@jupyterlab/markdownviewer-extension": "^3.0.0",
     "@jupyterlab/mathjax2-extension": "^3.0.0",
