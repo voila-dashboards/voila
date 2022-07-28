@@ -323,7 +323,7 @@ Preheated kernels
 ==================
 
 Since Voilà needs to start a new jupyter kernel and execute the requested notebook in this kernel for every connection, this would lead to a long waiting time before the widgets can be displayed in the browser. 
-To reduce this waiting time, especially for the heavy notebooks, users can activate the preheating kernel option of Voilà, this option will enable two features:
+To reduce this waiting time, especially for heavy notebooks, users can activate the preheating kernel option of Voilà, this option will enable two features:
 
 - A pool of kernels is started for each notebook and kept in standby, then the notebook is executed in every kernel of its pool. When a new client requests a kernel, the preheated kernel in this pool is used and another kernel is started asynchronously to refill the pool.
 - The HTML version of the notebook is rendered in each preheated kernel and stored, when a client connects to Voila, under some conditions, the cached HTML is served instead of re-rendering the notebook.
@@ -334,7 +334,15 @@ The preheating kernel option works with any kernel manager, it is deactivated by
 
     voila --preheat_kernel=True --pool_size=5
 
-If the pool size does not match the user's requirements, or some notebooks need to use environment variables..., additional settings are needed.  The easiest way to change these settings is to provide a file named `voila.json` in the same folder containing the notebooks. Settings for preheating kernel ( list of notebooks does not need preheated kernels, number of kernels in pool, refilling delay, environment variables for starting kernel...) can be set under the `VoilaKernelManager` class name.
+The default environment variables for preheated kernels can be set by the `VoilaKernelManager.default_env_variables` setting. For example, this command
+
+.. code-block:: bash
+
+    voila --preheat_kernel=True --VoilaKernelManager.default_env_variables='{"FOO": "BAR"}'
+
+will set the variable "FOO" in all preheated kernels.
+
+If the pool size does not match the user's requirements, or some notebooks need to use specific environment variables..., additional settings are needed.  The easiest way to change these settings is to provide a file named `voila.json` in the same folder containing the notebooks. Settings for preheating kernel ( list of notebooks does not need preheated kernels, number of kernels in pool, refilling delay, environment variables for starting kernel...) can be set under the `VoilaKernelManager` class name.
 
 Here is an example of settings with explanations for preheating kernel option. 
 
