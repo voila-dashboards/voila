@@ -65,6 +65,9 @@ class VoilaHandler(BaseVoilaHandler):
         self.notebook_path = kwargs.pop('notebook_path', [])  # should it be []
         self.template_paths = kwargs.pop('template_paths', [])
         self.traitlet_config = kwargs.pop('config', None)
+        self.voila_configuration = kwargs['voila_configuration']
+        self.prelaunch_hook = kwargs.get('prelaunch_hook', None)
+
         # we want to avoid starting multiple kernels due to template mistakes
         self.kernel_started = False
 
@@ -77,6 +80,7 @@ class VoilaHandler(BaseVoilaHandler):
         ):  # when we are in single notebook mode but have a path
             self.redirect_to_file(path)
             return
+
         cwd = os.path.dirname(notebook_path)
 
         # Adding request uri to kernel env
@@ -89,8 +93,10 @@ class VoilaHandler(BaseVoilaHandler):
         request_info[ENV_VARIABLE.SERVER_SOFTWARE] = 'voila/{}'.format(__version__)
         request_info[ENV_VARIABLE.SERVER_PROTOCOL] = str(self.request.version)
         host, port = split_host_and_port(self.request.host.lower())
+
         request_info[ENV_VARIABLE.SERVER_PORT] = str(port) if port else ''
         request_info[ENV_VARIABLE.SERVER_NAME] = host
+
         # Add HTTP Headers as env vars following rfc3875#section-4.1.18
         if len(self.voila_configuration.http_header_envs) > 0:
             for header_name in self.request.headers:
@@ -116,6 +122,7 @@ class VoilaHandler(BaseVoilaHandler):
             # For server extenstion case.
             current_notebook_data = {}
             pool_size = 0
+
         # Check if the conditions for using pre-heated kernel are satisfied.
         if self.should_use_rendered_notebook(
             current_notebook_data,
@@ -163,6 +170,7 @@ class VoilaHandler(BaseVoilaHandler):
                 return
 
             gen = NotebookRenderer(
+                request_handler=self,
                 voila_configuration=self.voila_configuration,
                 traitlet_config=self.traitlet_config,
                 notebook_path=notebook_path,
@@ -171,6 +179,7 @@ class VoilaHandler(BaseVoilaHandler):
                 contents_manager=self.contents_manager,
                 base_url=self.base_url,
                 kernel_spec_manager=self.kernel_spec_manager,
+                prelaunch_hook=self.prelaunch_hook,
             )
 
             await gen.initialize(template=template_arg, theme=theme_arg)

@@ -216,6 +216,7 @@ def voila_kernel_manager_factory(base_class: Type[T], preheat_kernel: bool, defa
                         kernel_env[key] = kernel_env_variables[key]
                 kernel_env[ENV_VARIABLE.VOILA_BASE_URL] = self.parent.base_url
                 kernel_env[ENV_VARIABLE.VOILA_SERVER_URL] = self.parent.server_url
+                kernel_env[ENV_VARIABLE.VOILA_APP_PORT] = str(self.parent.port)
                 kernel_env[ENV_VARIABLE.VOILA_PREHEAT] = 'True'
                 kwargs['env'] = kernel_env
 

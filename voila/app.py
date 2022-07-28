@@ -35,7 +35,7 @@ import tornado.web
 
 from traitlets.config.application import Application
 from traitlets.config.loader import Config
-from traitlets import Unicode, Integer, Bool, Dict, List, default
+from traitlets import Unicode, Integer, Bool, Dict, List, Callable, default
 
 from jupyter_server.services.kernels.handlers import KernelHandler, ZMQChannelsHandler
 from jupyter_server.services.contents.largefilemanager import LargeFileManager
@@ -122,19 +122,19 @@ class Voila(Application):
         )
     )
     aliases = {
+        'autoreload': 'Voila.autoreload',
+        'base_url': 'Voila.base_url',
         'port': 'Voila.port',
         'static': 'Voila.static_root',
-        'strip_sources': 'VoilaConfiguration.strip_sources',
-        'autoreload': 'Voila.autoreload',
-        'template': 'VoilaConfiguration.template',
-        'theme': 'VoilaConfiguration.theme',
-        'base_url': 'Voila.base_url',
         'server_url': 'Voila.server_url',
+        'pool_size': 'VoilaConfiguration.default_pool_size',
         'enable_nbextensions': 'VoilaConfiguration.enable_nbextensions',
         'nbextensions_path': 'VoilaConfiguration.nbextensions_path',
         'show_tracebacks': 'VoilaConfiguration.show_tracebacks',
         'preheat_kernel': 'VoilaConfiguration.preheat_kernel',
-        'pool_size': 'VoilaConfiguration.default_pool_size'
+        'strip_sources': 'VoilaConfiguration.strip_sources',
+        'template': 'VoilaConfiguration.template',
+        'theme': 'VoilaConfiguration.theme'
     }
     classes = [
         VoilaConfiguration,
@@ -239,6 +239,30 @@ class Voila(Application):
                                  This option is intended to be used when the URL to display to the user
                                  cannot be determined reliably by the Jupyter notebook server (proxified
                                  or containerized setups for example)."""))
+
+    prelaunch_hook = Callable(
+        default_value=None,
+        allow_none=True,
+        config=True,
+        help=_(
+            """A function that is called prior to the launch of a new kernel instance
+            when a user visits the voila webpage. Used for custom user authorization
+            or any other necessary pre-launch functions.
+
+            Should be of the form:
+
+            def hook(req: tornado.web.RequestHandler,
+                    notebook: nbformat.NotebookNode,
+                    cwd: str)
+
+            Although most customizations can leverage templates, if you need access
+            to the request object (e.g. to inspect cookies for authentication),
+            or to modify the notebook itself (e.g. to inject some custom structure,
+            althought much of this can be done by interacting with the kernel
+            in javascript) the prelaunch hook lets you do that.
+            """
+        ),
+    )
 
     @property
     def display_url(self):
@@ -426,6 +450,10 @@ class Voila(Application):
         self.contents_manager = LargeFileManager(parent=self)
         preheat_kernel: bool = self.voila_configuration.preheat_kernel
         pool_size: int = self.voila_configuration.default_pool_size
+
+        if preheat_kernel and self.prelaunch_hook:
+            raise Exception("`preheat_kernel` and `prelaunch_hook` are incompatible")
+
         kernel_manager_class = voila_kernel_manager_factory(
             self.voila_configuration.multi_kernel_manager_class,
             preheat_kernel,
@@ -539,7 +567,8 @@ class Voila(Application):
                     'notebook_path': os.path.relpath(self.notebook_path, self.root_dir),
                     'template_paths': self.template_paths,
                     'config': self.config,
-                    'voila_configuration': self.voila_configuration
+                    'voila_configuration': self.voila_configuration,
+                    'prelaunch_hook': self.prelaunch_hook
                 }
             ))
         else:
@@ -553,7 +582,8 @@ class Voila(Application):
                  {
                      'template_paths': self.template_paths,
                      'config': self.config,
-                     'voila_configuration': self.voila_configuration
+                     'voila_configuration': self.voila_configuration,
+                     'prelaunch_hook': self.prelaunch_hook
                 }),
             ])
 

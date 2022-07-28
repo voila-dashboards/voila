@@ -209,6 +209,107 @@ There is a Voilà template cookiecutter available to give you a running start.
 This cookiecutter contains some docker configuration for live reloading of your template changes to make development easier.
 Please refer to the `cookiecutter repo <https://github.com/voila-dashboards/voila-template-cookiecutter>`_ for more information on how to use the Voilà template cookiecutter.
 
+Accessing the tornado request (`prelaunch-hook`)
+---------------------------------------------------
+
+In certain custom setups when you need to access the tornado request object in order to check for authentication cookies, access details about the request headers, or modify the notebook before rendering. You can leverage the `prelaunch-hook`, which lets you inject a function to inspect the notebook and the request prior to executing them.
+
+.. warning::
+   Because `prelaunch-hook` only runs after receiving a new request but before the notebook is executed, it is incompatible with
+   `preheated kernels`.
+
+Creating a hook function
+**************************
+The format of this hook should be:
+
+.. code-block:: python
+
+   def hook(req: tornado.web.RequestHandler,
+            notebook: nbformat.NotebookNode,
+            cwd: str) -> Optional[nbformat.NotebookNode]:
+
+- The first argument will be a reference to the tornado `RequetHandler`, with which you can inspect parameters, headers, etc.
+- The second argument will be the `NotebookNode`, which you can mutate to e.g. inject cells or make other notebook-level modifications.
+- The last argument is the current working directory should you need to mutate anything on disk.
+- The return value of your hook function can either be `None`, or a `NotebookNode`.
+
+Adding the hook function to Voilà
+***********************************
+There are two ways to add the hook function to Voila:
+
+- Using the `voila.py` configuration file:
+
+Here is an example of the configuration file. This file needs to be placed in the directory where you start Voilà.
+
+.. code-block:: python
+
+   def hook_function(req, notebook, cwd):
+      """Do your stuffs here"""
+      return notebook
+
+   c.Voila.prelaunch_hook = hook_function 
+
+- Start Voila from a python script:
+
+Here is an example of a custom `prelaunch-hook` to execute a notebook with `papermill`:
+
+.. code-block:: python
+
+    def parameterize_with_papermill(req, notebook, cwd):
+        import tornado
+
+        # Grab parameters
+        parameters = req.get_argument("parameters", {})
+
+        # try to convert to dict if not e.g. string/unicode
+        if not isinstance(parameters, dict):
+            try:
+                parameters = tornado.escape.json_decode(parameters)
+            except ValueError:
+                parameters = None
+
+        # if passed and a dict, use papermill to inject parameters
+        if parameters and isinstance(parameters, dict):
+            from papermill.parameterize import parameterize_notebook
+
+            # setup for papermill
+            # 
+            # these two blocks are done
+            # to avoid triggering errors
+            # in papermill's notebook
+            # loading logic
+            for cell in notebook.cells:
+                if 'tags' not in cell.metadata:
+                    cell.metadata.tags = []
+                if "papermill" not in notebook.metadata:
+                    notebook.metadata.papermill = {}
+
+            # Parameterize with papermill
+            return parameterize_notebook(notebook, parameters)
+
+To add this hook to your `Voilà` application:
+
+.. code-block:: python
+
+    from voila.app import Voila
+    from voila.config import VoilaConfiguration
+
+    # customize config how you like
+    config = VoilaConfiguration()
+
+    # create a voila instance
+    app = Voila()
+
+    # set the config
+    app.voila_configuration = config
+
+    # set the prelaunch hook
+    app.prelaunch_hook = parameterize_with_papermill
+
+    # launch
+    app.start()
+
+
 Adding your own static files
 ============================
 
@@ -323,7 +424,13 @@ Preheated kernels
 ==================
 
 Since Voilà needs to start a new jupyter kernel and execute the requested notebook in this kernel for every connection, this would lead to a long waiting time before the widgets can be displayed in the browser. 
-To reduce this waiting time, especially for heavy notebooks, users can activate the preheating kernel option of Voilà, this option will enable two features:
+To reduce this waiting time, especially for heavy notebooks, users can activate the preheating kernel option of Voilà.
+
+.. warning::
+   Because preheated kernels are not executed on request, this feature is incompatible with the `prelaunch-hook` functionality.
+
+This option will enable two features:
+
 
 - A pool of kernels is started for each notebook and kept in standby, then the notebook is executed in every kernel of its pool. When a new client requests a kernel, the preheated kernel in this pool is used and another kernel is started asynchronously to refill the pool.
 - The HTML version of the notebook is rendered in each preheated kernel and stored, when a client connects to Voila, under some conditions, the cached HTML is served instead of re-rendering the notebook.
@@ -399,6 +506,9 @@ Partially pre-render notebook
 ------------------------------
 
 To benefit the acceleration of preheating kernel mode, the notebooks need to be pre-rendered before users actually connect to Voilà. But in many real-world cases, the notebook requires some user-specific data to render correctly the widgets, which makes pre-rendering impossible. To overcome this limit, Voilà offers a feature to treat the most used method for providing user data: the URL `query string`.
+
+.. note::
+   For more advanced interaction with the tornado request object, see the `prelaunch-hook` feature.
 
 In normal mode, Voilà users can get the `query string` at run time through the ``QUERY_STRING`` environment variable:
 
