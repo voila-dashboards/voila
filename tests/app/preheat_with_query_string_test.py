@@ -15,13 +15,12 @@ def using_server_url(request):
 
 
 @pytest.fixture()
-def voila_args_extra(using_server_url, using_base_url):
-    return using_server_url + using_base_url
+def voila_args_extra(http_server_port, using_server_url, using_base_url):
+    return [f'--port={http_server_port[-1]}'] + using_server_url + using_base_url
 
 
 @pytest.fixture
-def preheat_mode(http_server_port):
-    os.environ['VOILA_APP_PORT'] = str(http_server_port[-1])
+def preheat_mode():
     return True
 
 
