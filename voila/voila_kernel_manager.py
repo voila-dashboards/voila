@@ -41,6 +41,8 @@ def voila_kernel_manager_factory(base_class: Type[T], preheat_kernel: bool, defa
     Args:
         - base_class (Type[T]): The kernel manager class
         - preheat_kernel (Bool): Flag to decorate the input class
+        - default_pool_size (int): Size of pre-heated kernel pool for each notebook.
+            Zero or negative number means disabled
 
     Returns:
         T: Decorated class
@@ -73,6 +75,13 @@ def voila_kernel_manager_factory(base_class: Type[T], preheat_kernel: bool, defa
                 variables used to start kernel''',
             )
 
+            default_env_variables = Dict(
+                {},
+                config=True,
+                help='''Default environmental variables for kernels
+                ''',
+            )
+
             preheat_blacklist = List([],
                                      config=True,
                                      help='List of notebooks which do not use pre-heated kernel.')
@@ -85,7 +94,12 @@ def voila_kernel_manager_factory(base_class: Type[T], preheat_kernel: bool, defa
 
             @default('kernel_pools_config')
             def _kernel_pools_config(self):
-                return {'default': {'pool_size': max(default_pool_size, 0), 'kernel_env_variables': {}}}
+                return {
+                    'default': {
+                        'pool_size': max(default_pool_size, 0),
+                        'kernel_env_variables': self.default_env_variables,
+                    }
+                }
 
             def __init__(self, **kwargs):
 

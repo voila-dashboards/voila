@@ -457,7 +457,7 @@ class Voila(Application):
         kernel_manager_class = voila_kernel_manager_factory(
             self.voila_configuration.multi_kernel_manager_class,
             preheat_kernel,
-            pool_size
+            pool_size,
         )
         self.kernel_manager = kernel_manager_class(
             parent=self,

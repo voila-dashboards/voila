@@ -424,12 +424,13 @@ Preheated kernels
 ==================
 
 Since Voilà needs to start a new jupyter kernel and execute the requested notebook in this kernel for every connection, this would lead to a long waiting time before the widgets can be displayed in the browser. 
-To reduce this waiting time, especially for the heavy notebooks, users can activate the preheating kernel option of Voilà.
+To reduce this waiting time, especially for heavy notebooks, users can activate the preheating kernel option of Voilà.
 
 .. warning::
    Because preheated kernels are not executed on request, this feature is incompatible with the `prelaunch-hook` functionality.
 
 This option will enable two features:
+
 
 - A pool of kernels is started for each notebook and kept in standby, then the notebook is executed in every kernel of its pool. When a new client requests a kernel, the preheated kernel in this pool is used and another kernel is started asynchronously to refill the pool.
 - The HTML version of the notebook is rendered in each preheated kernel and stored, when a client connects to Voila, under some conditions, the cached HTML is served instead of re-rendering the notebook.
@@ -440,7 +441,15 @@ The preheating kernel option works with any kernel manager, it is deactivated by
 
     voila --preheat_kernel=True --pool_size=5
 
-If the pool size does not match the user's requirements, or some notebooks need to use environment variables..., additional settings are needed.  The easiest way to change these settings is to provide a file named `voila.json` in the same folder containing the notebooks. Settings for preheating kernel ( list of notebooks does not need preheated kernels, number of kernels in pool, refilling delay, environment variables for starting kernel...) can be set under the `VoilaKernelManager` class name.
+The default environment variables for preheated kernels can be set by the `VoilaKernelManager.default_env_variables` setting. For example, this command
+
+.. code-block:: bash
+
+    voila --preheat_kernel=True --VoilaKernelManager.default_env_variables='{"FOO": "BAR"}'
+
+will set the variable "FOO" in all preheated kernels.
+
+If the pool size does not match the user's requirements, or some notebooks need to use specific environment variables..., additional settings are needed.  The easiest way to change these settings is to provide a file named `voila.json` in the same folder containing the notebooks. Settings for preheating kernel ( list of notebooks does not need preheated kernels, number of kernels in pool, refilling delay, environment variables for starting kernel...) can be set under the `VoilaKernelManager` class name.
 
 Here is an example of settings with explanations for preheating kernel option. 
 
@@ -519,7 +528,7 @@ In preheating kernel mode, users can prepend with ``wait_for_request`` from ``vo
 
 ``wait_for_request`` will pause the execution of the notebook in the preheated kernel at this cell and wait for an actual user to connect to Voilà, set the request info environment variables and then continue the execution of the remaining cells.
 
-If the Voilà websocket handler is not started with the default protocol (`ws`), the default IP address (`127.0.0.1`) the default port (`8866`) or with url suffix, users need to provide these values through the environment variables ``VOILA_WS_PROTOCOL``, ``VOILA_APP_IP``, ``VOILA_APP_PORT`` and ``VOILA_WS_BASE_URL``. The easiest way is to set these variables in the `voila.json` configuration file, for example:
+If the Voilà websocket handler is not started with the default protocol (`ws`), the default IP address (`127.0.0.1`) the default port (`8866`) or with url suffix, users need to provide these values through the environment variables ``VOILA_WS_PROTOCOL``, ``VOILA_APP_IP``, ``VOILA_APP_PORT`` and ``VOILA_WS_BASE_URL``. One way to set these variables is in the `voila.json` configuration file, for example:
 
 .. code-block:: python
 
@@ -539,6 +548,12 @@ If the Voilà websocket handler is not started with the default protocol (`ws`),
       ...
       }
    }
+
+Additionally, you can set these with the command:
+
+.. code-block:: bash
+
+    voila --preheat_kernel=True --VoilaKernelManager.default_env_variables='{"VOILA_WS_PROTOCOL":"wss","VOILA_APP_IP":"192.168.1.1"}'
 
 Hiding output and code cells based on cell tags
 ===============================================
