@@ -182,13 +182,13 @@ High level instructions specific to Voilà can be found below:
        env: flex
        runtime_config:
          python_version: 3
-       entrypoint: voila --port=$PORT --no-browser
+       entrypoint: voila --port=$PORT --Voila.ip=0.0.0.0 --no-browser
 
 3. Edit the last line if you want to show only one notebook
 
    .. code:: yaml
 
-       entrypoint: voila --port=$PORT --no-browser your_notebook.ipynb
+       entrypoint: voila --port=$PORT --Voila.ip=0.0.0.0 --no-browser your_notebook.ipynb
 
 4. Deploy your app
 
