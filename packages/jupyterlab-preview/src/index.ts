@@ -183,8 +183,11 @@ const extension: JupyterFrontEndPlugin<IVoilaPreviewTracker> = {
         let context: DocumentRegistry.IContext<INotebookModel>;
         if (current) {
           context = current.context;
-          await context.save();
-
+          try {
+            await context.save();
+          } catch (e) {
+            console.error(e);
+          }
           commands.execute('docmanager:open', {
             path: context.path,
             factory: 'Voila-preview',
@@ -204,7 +207,11 @@ const extension: JupyterFrontEndPlugin<IVoilaPreviewTracker> = {
         if (!current) {
           return;
         }
-        await current.context.save();
+        try {
+          await current.context.save();
+        } catch (e) {
+          console.error(e);
+        }
         const voilaUrl = getVoilaUrl(current.context.path);
         window.open(voilaUrl);
       },
