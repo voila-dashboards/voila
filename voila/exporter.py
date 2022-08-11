@@ -105,7 +105,7 @@ class VoilaExporter(HTMLExporter):
     def environment(self):
         # enable Jinja async template execution
         self.enable_async = True
-        env = super(type(self), self).environment
+        env = super().environment
         if 'jinja2.ext.do' not in env.extensions:
             env.add_extension('jinja2.ext.do')
         return env
