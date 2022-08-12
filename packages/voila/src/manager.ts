@@ -7,13 +7,15 @@
  * The full license is in the file LICENSE, distributed with this software. *
  ****************************************************************************/
 
-import { WidgetRenderer, output } from '@jupyter-widgets/jupyterlab-manager';
+import { WidgetRenderer } from '@jupyter-widgets/jupyterlab-manager';
 
 import { KernelWidgetManager } from '@jupyter-widgets/jupyterlab-manager';
 
 import * as base from '@jupyter-widgets/base';
 
 import * as controls from '@jupyter-widgets/controls';
+
+import * as output from '@jupyter-widgets/output';
 
 import { IRenderMimeRegistry } from '@jupyterlab/rendermime';
 

@@ -10,6 +10,7 @@
   "dependencies": {
     "@jupyter-widgets/base": "^6.0.0-rc.1",
     "@jupyter-widgets/controls": "^5.0.0-rc.1",
+    "@jupyter-widgets/output": "^6.0.0-rc.1",
     "@jupyter-widgets/jupyterlab-manager": "^5.0.0-rc.1",
     "@jupyterlab/json-extension": "^3.0.0",
     "@jupyterlab/markdownviewer-extension": "^3.0.0",
