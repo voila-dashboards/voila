@@ -1228,10 +1228,10 @@
   resolved "https://registry.yarnpkg.com/@juggle/resize-observer/-/resize-observer-3.3.1.tgz#b50a781709c81e10701004214340f25475a171a0"
   integrity sha512-zMM9Ds+SawiUkakS7y94Ymqx+S0ORzpG3frZirN3l+UlXUmSUR7hF4wxCVqW+ei94JzV5kt0uXBcoOEAuiydrw==
 
-"@jupyter-widgets/base-manager@^1.0.0":
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/@jupyter-widgets/base-manager/-/base-manager-1.0.0.tgz#8e2093b15423cbb4c8770b8fc97b30fac50d682d"
-  integrity sha512-KbrJXsvzExz7ovZ92CnoquE9JtjfLib0EgGuCxbf24EVhktiVQoKGaDWEQTb1oEF2x/0D3H5vpiu1yFg1gyt/A==
+"@jupyter-widgets/base-manager@^1.0.1":
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/@jupyter-widgets/base-manager/-/base-manager-1.0.1.tgz#85c53c975423a194b9a2ffc6a0b7d9fbb0b68d9e"
+  integrity sha512-3y7RueXBDWhPz9Hp9f3DUIkpYO4Jb3k/51USdGqaQvbn85ux7c8pV3U6oEfm55i4fkGHMHRaRtmkn6SujM2u3Q==
   dependencies:
     "@jupyter-widgets/base" "^6.0.0"
     "@jupyterlab/services" "^6.0.0"
@@ -1270,13 +1270,13 @@
     jquery "^3.1.1"
     nouislider "15.4.0"
 
-"@jupyter-widgets/jupyterlab-manager@^5.0.0":
-  version "5.0.1"
-  resolved "https://registry.yarnpkg.com/@jupyter-widgets/jupyterlab-manager/-/jupyterlab-manager-5.0.1.tgz#c039179b45e3773cfb1ee471e5c4a756a8e0a524"
-  integrity sha512-JedrU2EzZ2EK12ek6PmykY5iC9MkvCVhdzTKT+fuKB9DuOg3JlYokF03klYc04ALx67xEBn0rlm4jos5r/PNsw==
+"@jupyter-widgets/jupyterlab-manager@^5.0.2":
+  version "5.0.2"
+  resolved "https://registry.yarnpkg.com/@jupyter-widgets/jupyterlab-manager/-/jupyterlab-manager-5.0.2.tgz#dfdc2ee22c0b05e9b3df972afc9e3f1c931f28b5"
+  integrity sha512-/KPSwVJ9wNt2z0JHx8nOE/zuE2B8Pw4REBCoxZ6hWsTgPW1wUhSMN/G6RClGJhsrLj2fKDr1FF6/3qJNtYq21g==
   dependencies:
     "@jupyter-widgets/base" "^6.0.0"
-    "@jupyter-widgets/base-manager" "^1.0.0"
+    "@jupyter-widgets/base-manager" "^1.0.1"
     "@jupyter-widgets/controls" "^5.0.0"
     "@jupyter-widgets/output" "^6.0.0"
     "@jupyterlab/application" "^3.0.0"

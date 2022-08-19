@@ -11,7 +11,7 @@
     "@jupyter-widgets/base": "^6.0.0",
     "@jupyter-widgets/controls": "^5.0.0",
     "@jupyter-widgets/output": "^6.0.0",
-    "@jupyter-widgets/jupyterlab-manager": "^5.0.0",
+    "@jupyter-widgets/jupyterlab-manager": "^5.0.2",
     "@jupyterlab/json-extension": "^3.0.0",
     "@jupyterlab/markdownviewer-extension": "^3.0.0",
     "@jupyterlab/mathjax2-extension": "^3.0.0",
