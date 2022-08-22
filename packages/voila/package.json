@@ -10,6 +10,7 @@
   "dependencies": {
     "@jupyter-widgets/base": "^6.0.0",
     "@jupyter-widgets/controls": "^5.0.0",
+    "@jupyter-widgets/output": "^6.0.0",
     "@jupyter-widgets/jupyterlab-manager": "^5.0.2",
     "@jupyterlab/json-extension": "^3.0.0",
     "@jupyterlab/markdownviewer-extension": "^3.0.0",
@@ -21,6 +22,7 @@
     "@jupyterlab/docregistry": "^3.0.0",
     "@jupyterlab/logconsole": "^3.0.0",
     "@jupyterlab/mainmenu": "^3.0.0",
+    "@jupyterlab/nbformat": "^3.0.0",
     "@jupyterlab/notebook": "^3.0.0",
     "@jupyterlab/outputarea": "^3.0.0",
     "@jupyterlab/rendermime": "^3.0.0",

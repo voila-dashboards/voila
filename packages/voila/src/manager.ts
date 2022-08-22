@@ -25,6 +25,8 @@ import { Widget } from '@lumino/widgets';
 
 import { Kernel } from '@jupyterlab/services';
 
+import { OutputModel } from './output';
+
 const WIDGET_MIMETYPE = 'application/vnd.jupyter.widget-view+json';
 
 /**
@@ -112,7 +114,10 @@ export class WidgetManager extends KernelWidgetManager {
     this.register({
       name: '@jupyter-widgets/output',
       version: output.OUTPUT_WIDGET_VERSION,
-      exports: output as any
+      exports: {
+        ...(output as any),
+        OutputModel
+      }
     });
   }
 }
