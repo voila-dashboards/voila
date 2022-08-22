@@ -1,7 +1,6 @@
 name: voila
 channels:
   - conda-forge
-  - conda
 dependencies:
   - sphinx
   - pip
