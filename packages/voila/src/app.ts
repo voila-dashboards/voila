@@ -21,6 +21,7 @@ export class VoilaApp extends JupyterFrontEnd<IShell> {
    */
   constructor(options: App.IOptions = { shell: new VoilaShell() }) {
     super({
+      ...options,
       shell: options.shell ?? new VoilaShell()
     });
 
