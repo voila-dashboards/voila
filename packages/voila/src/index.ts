@@ -8,6 +8,9 @@
  ****************************************************************************/
 
 export * from './app';
-export * as plugins from './plugins';
 export * from './manager';
 export * from './shell';
+
+import * as plugins from './plugins';
+
+export { plugins };
