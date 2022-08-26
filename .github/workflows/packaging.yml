@@ -13,7 +13,7 @@ env:
 
 defaults:
   run:
-    shell: bash -l {0}
+    shell: bash -e {0}
 
 jobs:
   build:
