@@ -28,10 +28,6 @@ def normalize_output(output):
         output['data']['application/vnd.jupyter.widget-view+json'][
             'model_id'
         ] = '<MODEL_ID>'
-        # 'output_type' for widgets is changed from 'display_data' to 'execute_result'
-        # in ipywidgets 8
-        if output['output_type'] == 'display_data':
-            output['output_type'] = 'execute_result'
 
 
 def normalize_outputs(outputs):
