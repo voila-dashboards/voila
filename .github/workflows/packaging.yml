@@ -13,7 +13,7 @@ env:
 
 defaults:
   run:
-    shell: bash -l {0}
+    shell: bash -e {0}
 
 jobs:
   build:
@@ -72,7 +72,7 @@ jobs:
             py_cmd: python
     steps:
       - name: Install Python
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v4
         with:
           python-version: ${{ matrix.python }}
           architecture: 'x64'
@@ -82,7 +82,7 @@ jobs:
           path: ./dist
       - name: Install the prerequisites
         run: |
-          ${{ matrix.py_cmd }} -m pip install pip wheel
+          ${{ matrix.py_cmd }} -m pip install pip wheel jupyterlab~=3.0 notebook~=6.4
       - name: Install the package
         run: |
           cd dist
