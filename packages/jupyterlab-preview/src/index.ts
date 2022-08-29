@@ -183,8 +183,12 @@ const extension: JupyterFrontEndPlugin<IVoilaPreviewTracker> = {
         let context: DocumentRegistry.IContext<INotebookModel>;
         if (current) {
           context = current.context;
-          await context.save();
-
+          try{
+            await context.save();
+          }
+          catch (error) {
+            console.error(error);
+          }
           commands.execute('docmanager:open', {
             path: context.path,
             factory: 'Voila-preview',
