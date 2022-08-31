@@ -98,7 +98,11 @@ export class VoilaPreview extends DocumentWidget<IFrame, INotebookModel> {
       icon: refreshIcon,
       tooltip: 'Reload Preview',
       onClick: async () => {
-        await context.save();
+        try {
+          await context.save();
+        } catch (e) {
+          console.error(e);
+        }
         this.reload();
       }
     });
