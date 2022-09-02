@@ -42,7 +42,7 @@ export class WidgetManager extends KernelWidgetManager {
       {
         safe: false,
         mimeTypes: [WIDGET_MIMETYPE],
-        createRenderer: options => new WidgetRenderer(options)
+        createRenderer: options => new WidgetRenderer(options, this as any)
       },
       1
     );
