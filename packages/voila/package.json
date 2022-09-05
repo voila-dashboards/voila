@@ -8,9 +8,9 @@
   "main": "lib/index.js",
   "browserslist": ">0.8%, not ie 11, not op_mini all, not dead",
   "dependencies": {
-    "@jupyter-widgets/base": "^5.0.0-beta.0",
-    "@jupyter-widgets/controls": "^4.0.0-beta.0",
-    "@jupyter-widgets/jupyterlab-manager": "^4.0.0-beta.0",
+    "@jupyter-widgets/base": "^6.0.1",
+    "@jupyter-widgets/controls": "^5.0.1",
+    "@jupyter-widgets/jupyterlab-manager": "^5.0.3",
     "@jupyterlab/application": "^3.0.0",
     "@jupyterlab/apputils": "^3.0.0",
     "@jupyterlab/coreutils": "^5.0.0",
