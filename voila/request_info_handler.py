@@ -5,14 +5,14 @@ from typing import Dict
 
 class RequestInfoSocketHandler(WebSocketHandler):
     """A websocket handler used to provide the request info
-    assocciated with kernel ids in preheat kernel mode.
+    associated with kernel ids in preheat kernel mode.
 
     Class variables
     ---------------
     - _waiters : A dictionary which holds the `websocket` connection
-    assocciated with the kernel id.
+    associated with the kernel id.
 
-    - cache : A dictionary which holds the request info assocciated
+    - cache : A dictionary which holds the request info associated
     with the kernel id.
     """
     _waiters = dict()
@@ -38,12 +38,12 @@ class RequestInfoSocketHandler(WebSocketHandler):
 
     @classmethod
     def send_updates(cls: 'RequestInfoSocketHandler', msg: Dict) -> None:
-        """Class method used to dispath the request info to the waiting
+        """Class method used to dispatch the request info to the waiting
         notebook. This method is called in `VoilaHandler` when the request
         info becomes available.
         If this method is called before the opening of websocket connection,
         `msg` is stored in `_cache0` and the message will be dispatched when
-        a notebook with coresponding kernel id is connected.
+        a notebook with corresponding kernel id is connected.
 
         Args:
             - msg (Dict): this dictionary contains the `kernel_id` to identify
