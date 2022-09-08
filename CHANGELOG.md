@@ -917,7 +917,7 @@
 - help: show more configurable classes with --help-all, and use consistent naming [#331](https://github.com/voila-dashboards/voila/pull/331) ([@maartenbreddels](https://github.com/maartenbreddels))
 - Fix example use for config attribute resources [#323](https://github.com/voila-dashboards/voila/pull/323) ([@mkcor](https://github.com/mkcor))
 - Fix Windows develop install [#322](https://github.com/voila-dashboards/voila/pull/322) ([@vidartf](https://github.com/vidartf))
-- test: set timeout of pytest_tornado to 20 seconds to avoid false CI failured [#321](https://github.com/voila-dashboards/voila/pull/321) ([@maartenbreddels](https://github.com/maartenbreddels))
+- test: set timeout of pytest_tornado to 20 seconds to avoid false CI failures [#321](https://github.com/voila-dashboards/voila/pull/321) ([@maartenbreddels](https://github.com/maartenbreddels))
 - fix: ignore non-jupyter-widget comm_open messages at the backend, causing 500 errors for users. [#319](https://github.com/voila-dashboards/voila/pull/319) ([@maartenbreddels](https://github.com/maartenbreddels))
 - feat: make the markdown rendered configurable in VoilaExporter [#317](https://github.com/voila-dashboards/voila/pull/317) ([@maartenbreddels](https://github.com/maartenbreddels))
 - Clear output before executing the notebook [#314](https://github.com/voila-dashboards/voila/pull/314) ([@jeffyjefflabs](https://github.com/jeffyjefflabs))

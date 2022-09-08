@@ -258,7 +258,7 @@ class Voila(Application):
             Although most customizations can leverage templates, if you need access
             to the request object (e.g. to inspect cookies for authentication),
             or to modify the notebook itself (e.g. to inject some custom structure,
-            althought much of this can be done by interacting with the kernel
+            although much of this can be done by interacting with the kernel
             in javascript) the prelaunch hook lets you do that.
             """
         ),

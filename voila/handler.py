@@ -119,7 +119,7 @@ class VoilaHandler(BaseVoilaHandler):
             current_notebook_data: Dict = self.kernel_manager.notebook_data.get(notebook_path, {})
             pool_size: int = self.kernel_manager.get_pool_size(notebook_path)
         except AttributeError:
-            # For server extenstion case.
+            # For server extension case.
             current_notebook_data = {}
             pool_size = 0
 
