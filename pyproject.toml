@@ -84,18 +84,11 @@ artifacts = [
 ]
 
 [tool.hatch.build.targets.wheel.shared-data]
-"etc/jupyter/jupyter_server_config.d" = "etc/jupyter/jupyter_server_config.d"
-"etc/jupyter/jupyter_notebook_config.d" = "etc/jupyter/jupyter_notebook_config.d"
-"etc/jupyter/nbconfig/notebook.d" = "etc/jupyter/nbconfig/notebook.d"
+"etc/jupyter" = "etc/jupyter"
 "voila/static" = "share/jupyter/nbextensions/voila"
-"voila/labextension/static" = "share/jupyter/labextensions/@voila-dashboards/jupyterlab-preview/static"
+"voila/labextension" = "share/jupyter/labextensions/@voila-dashboards/jupyterlab-preview"
 "install.json" = "share/jupyter/labextensions/@voila-dashboards/jupyterlab-preview/install.json"
-"voila/labextension/package.json" = "share/jupyter/labextensions/@voila-dashboards/jupyterlab-preview/package.json"
-"voila/labextension/schemas/@voila-dashboards/jupyterlab-preview" = "share/jupyter/labextensions/@voila-dashboards/jupyterlab-preview/schemas/@voila-dashboards/jupyterlab-preview"
-"share/jupyter/voila/templates/base" = "share/jupyter/voila/templates/base"
-"share/jupyter/voila/templates/classic" = "share/jupyter/voila/templates/classic"
-"share/jupyter/voila/templates/reveal" = "share/jupyter/voila/templates/reveal"
-"share/jupyter/voila/templates/lab" = "share/jupyter/voila/templates/lab"
+"share/jupyter/voila/templates" = "share/jupyter/voila/templates"
 
 [tool.hatch.build.targets.sdist]
 exclude = [
