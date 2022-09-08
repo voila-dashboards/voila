@@ -81,6 +81,7 @@ source = "code"
 [tool.hatch.build]
 artifacts = [
     "voila/labextension",
+    "share/jupyter/voila/templates"
 ]
 
 [tool.hatch.build.targets.wheel.shared-data]
@@ -88,10 +89,7 @@ artifacts = [
 "voila/static" = "share/jupyter/nbextensions/voila"
 "voila/labextension" = "share/jupyter/labextensions/@voila-dashboards/jupyterlab-preview"
 "install.json" = "share/jupyter/labextensions/@voila-dashboards/jupyterlab-preview/install.json"
-"share/jupyter/voila/templates/base" = "share/jupyter/voila/templates/base"
-"share/jupyter/voila/templates/classic" = "share/jupyter/voila/templates/classic"
-"share/jupyter/voila/templates/lab" = "share/jupyter/voila/templates/lab"
-"share/jupyter/voila/templates/reveal" = "share/jupyter/voila/templates/reveal"
+"share/jupyter/voila/templates" = "share/jupyter/voila/templates"
 
 [tool.hatch.build.targets.sdist]
 exclude = [
