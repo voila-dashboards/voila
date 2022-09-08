@@ -43,7 +43,9 @@ dependencies = [
     "traitlets>=5.0.3,<6",
     "websockets>=9.0",
 ]
-version = "0.3.6"
+dynamic = [
+    "version",
+]
 
 [project.license]
 file = "LICENSE"
@@ -71,6 +73,10 @@ voila = "voila.app:main"
 
 [project.urls]
 Homepage = "https://github.com/voila-dashboards/voila"
+
+[tool.hatch.version]
+path = "voila/_version.py"
+source = "code"
 
 [tool.hatch.build]
 artifacts = [
