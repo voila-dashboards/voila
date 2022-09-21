@@ -121,6 +121,10 @@ npm = [
     "jlpm",
 ]
 
+# This is only so that we can pin to an ipyvolume branch, we should remove this when we can
+[tool.hatch.metadata]
+allow-direct-references = true
+
 [tool.jupyter-releaser]
 skip = [
     "check-links",
