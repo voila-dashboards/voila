@@ -7,11 +7,28 @@
 # The full license is in the file LICENSE, distributed with this software.  #
 #############################################################################
 
+from nbformat import NotebookNode
 from nbconvert.preprocessors import ClearOutputPreprocessor
 from nbclient.exceptions import CellExecutionError
 from nbclient import NotebookClient
 
 from traitlets import Bool, Unicode
+
+
+SUPPORTED_IPYWIDGETS_VERSION = "7"
+IPYWIDGETS_CELL_CHECK = NotebookNode(
+    id="ipywidgets-check",
+    cell_type="code",
+    metadata=NotebookNode(),
+    execution_count=None,
+    source=f"""
+import sys
+ipywidgets = sys.modules.get("ipywidgets")
+if (ipywidgets is not None and not ipywidgets.__version__.startswith("{SUPPORTED_IPYWIDGETS_VERSION}")):
+    raise RuntimeError("This Voila version is only compatible with ipywidgets version {SUPPORTED_IPYWIDGETS_VERSION}, though we detected that you are using ipywidgets version " + ipywidgets.__version__)
+""",
+    outputs=[],
+)
 
 
 def strip_code_cell_warnings(cell):
@@ -125,6 +142,15 @@ class VoilaExecutor(NotebookClient):
                   'traceback': [timeout_message]}
 
         cell['outputs'] = [output]
+
+    async def teardown(self):
+        """Teardown the executor. This must be called after executing the Notebook."""
+        try:
+            await self.execute_cell(
+                IPYWIDGETS_CELL_CHECK, {}, 0, False
+            )
+        except CellExecutionError as e:
+            self.log.error(e.evalue)
 
 
 def executenb(nb, cwd=None, km=None, **kwargs):

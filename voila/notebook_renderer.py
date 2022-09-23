@@ -302,6 +302,8 @@ class NotebookRenderer(LoggingConfigurable):
             finally:
                 yield output_cell
 
+        await self.executor.teardown()
+
         await self._cleanup_resources()
 
     async def _cleanup_resources(self):
