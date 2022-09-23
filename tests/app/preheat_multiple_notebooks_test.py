@@ -4,7 +4,7 @@ import asyncio
 import os
 
 BASE_DIR = os.path.dirname(__file__)
-NOTEBOOK_EXECUTION_TIME = 3
+NOTEBOOK_EXECUTION_TIME = 2
 NUMBER_PREHEATED_KERNEL = 2
 TIME_THRESHOLD = 1
 
