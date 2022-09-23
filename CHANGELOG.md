@@ -6,6 +6,10 @@
 
 ([Full Changelog](https://github.com/voila-dashboards/voila/compare/@voila-dashboards/jupyterlab-preview@2.1.6...5dcdb80baff00f022c452e053b2f6dea54579161))
 
+### Breaking changes
+
+This new release adds support for ipywidgets 8 [#1046](https://github.com/voila-dashboards/voila/pull/1046) ([@mariobuikhuizen](https://github.com/mariobuikhuizen)), but removes ipywidgets 7 support.
+
 ### Enhancements made
 
 - Render read-only notebook [#1181](https://github.com/voila-dashboards/voila/pull/1181) ([@trungleduc](https://github.com/trungleduc))
@@ -23,7 +27,6 @@
 - Fix CI [#1193](https://github.com/voila-dashboards/voila/pull/1193) ([@trungleduc](https://github.com/trungleduc))
 - Troubleshoot failing `macos` check on CI [#1191](https://github.com/voila-dashboards/voila/pull/1191) ([@jtpio](https://github.com/jtpio))
 - Bump terser from 4.8.0 to 4.8.1 [#1174](https://github.com/voila-dashboards/voila/pull/1174) ([@dependabot](https://github.com/dependabot))
-- feat: support for ipywidgets 8 [#1046](https://github.com/voila-dashboards/voila/pull/1046) ([@mariobuikhuizen](https://github.com/mariobuikhuizen))
 
 ### Documentation improvements
 
