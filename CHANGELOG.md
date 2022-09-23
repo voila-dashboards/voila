@@ -2,6 +2,41 @@
 
 <!-- <START NEW CHANGELOG ENTRY> -->
 
+## 0.4.0a0
+
+([Full Changelog](https://github.com/voila-dashboards/voila/compare/@voila-dashboards/jupyterlab-preview@2.1.6...5dcdb80baff00f022c452e053b2f6dea54579161))
+
+### Enhancements made
+
+- Render read-only notebook [#1181](https://github.com/voila-dashboards/voila/pull/1181) ([@trungleduc](https://github.com/trungleduc))
+- Add Voila app port to kernel env [#1176](https://github.com/voila-dashboards/voila/pull/1176) ([@dcnadler](https://github.com/dcnadler))
+- Add Voila configuration option for default kernel environmental variables [#1175](https://github.com/voila-dashboards/voila/pull/1175) ([@dcnadler](https://github.com/dcnadler))
+- reenable prelaunch-hook [#724](https://github.com/voila-dashboards/voila/pull/724) ([@timkpaine](https://github.com/timkpaine))
+
+### Bugs fixed
+
+- Fix inifinite  loop in property access [#1185](https://github.com/voila-dashboards/voila/pull/1185) ([@martinRenou](https://github.com/martinRenou))
+
+### Maintenance and upkeep improvements
+
+- Fix typos [#1198](https://github.com/voila-dashboards/voila/pull/1198) ([@kianmeng](https://github.com/kianmeng))
+- Fix CI  [#1193](https://github.com/voila-dashboards/voila/pull/1193) ([@trungleduc](https://github.com/trungleduc))
+- Troubleshoot failing `macos` check on CI [#1191](https://github.com/voila-dashboards/voila/pull/1191) ([@jtpio](https://github.com/jtpio))
+- Bump terser from 4.8.0 to 4.8.1 [#1174](https://github.com/voila-dashboards/voila/pull/1174) ([@dependabot](https://github.com/dependabot))
+- feat: support for ipywidgets 8 [#1046](https://github.com/voila-dashboards/voila/pull/1046) ([@mariobuikhuizen](https://github.com/mariobuikhuizen))
+
+### Documentation improvements
+
+- Update Google App Engine deploy docs [#1180](https://github.com/voila-dashboards/voila/pull/1180) ([@trungleduc](https://github.com/trungleduc))
+
+### Contributors to this release
+
+([GitHub contributors page for this release](https://github.com/voila-dashboards/voila/graphs/contributors?from=2022-07-18&to=2022-09-23&type=c))
+
+[@alkasm](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Aalkasm+updated%3A2022-07-18..2022-09-23&type=Issues) | [@dcnadler](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Adcnadler+updated%3A2022-07-18..2022-09-23&type=Issues) | [@dependabot](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Adependabot+updated%3A2022-07-18..2022-09-23&type=Issues) | [@github-actions](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Agithub-actions+updated%3A2022-07-18..2022-09-23&type=Issues) | [@jasongrout](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Ajasongrout+updated%3A2022-07-18..2022-09-23&type=Issues) | [@jtpio](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Ajtpio+updated%3A2022-07-18..2022-09-23&type=Issues) | [@kianmeng](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Akianmeng+updated%3A2022-07-18..2022-09-23&type=Issues) | [@mariobuikhuizen](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Amariobuikhuizen+updated%3A2022-07-18..2022-09-23&type=Issues) | [@martinRenou](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3AmartinRenou+updated%3A2022-07-18..2022-09-23&type=Issues) | [@SylvainCorlay](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3ASylvainCorlay+updated%3A2022-07-18..2022-09-23&type=Issues) | [@timkpaine](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Atimkpaine+updated%3A2022-07-18..2022-09-23&type=Issues) | [@trungleduc](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Atrungleduc+updated%3A2022-07-18..2022-09-23&type=Issues)
+
+<!-- <END NEW CHANGELOG ENTRY> -->
+
 ## 0.3.6
 
 ([Full Changelog](https://github.com/voila-dashboards/voila/compare/@voila-dashboards/jupyterlab-preview@2.1.5...e138bbf95eb119ae987699559b653371351300b6))
@@ -38,8 +73,6 @@
 ([GitHub contributors page for this release](https://github.com/voila-dashboards/voila/graphs/contributors?from=2022-03-29&to=2022-07-18&type=c))
 
 [@dependabot](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Adependabot+updated%3A2022-03-29..2022-07-18&type=Issues) | [@dharmaquark](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Adharmaquark+updated%3A2022-03-29..2022-07-18&type=Issues) | [@github-actions](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Agithub-actions+updated%3A2022-03-29..2022-07-18&type=Issues) | [@martinRenou](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3AmartinRenou+updated%3A2022-03-29..2022-07-18&type=Issues) | [@samharrison7](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Asamharrison7+updated%3A2022-03-29..2022-07-18&type=Issues) | [@SylvainCorlay](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3ASylvainCorlay+updated%3A2022-03-29..2022-07-18&type=Issues) | [@timkpaine](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Atimkpaine+updated%3A2022-03-29..2022-07-18&type=Issues) | [@trungleduc](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Atrungleduc+updated%3A2022-03-29..2022-07-18&type=Issues) | [@vkaidalov-rft](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Avkaidalov-rft+updated%3A2022-03-29..2022-07-18&type=Issues)
-
-<!-- <END NEW CHANGELOG ENTRY> -->
 
 ## 0.3.5
 
