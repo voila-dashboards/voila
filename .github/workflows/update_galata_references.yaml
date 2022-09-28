@@ -35,7 +35,7 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install -r requirements-test.txt
-          python -m pip install --no-deps .
+          python -m pip install .
           jlpm
           jlpm build
           jupyter labextension develop . --overwrite
