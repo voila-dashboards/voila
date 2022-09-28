@@ -19,7 +19,8 @@ jobs:
 
       - name: Install dependencies
         run: |
-          python -m pip install --upgrade ".[test,visual_test]"
+          python -m pip install -r requirements-test.txt
+          python -m pip install --no-deps .
           jlpm
           jlpm build
           jupyter labextension develop . --overwrite
@@ -105,4 +106,3 @@ jobs:
         if: always()
         run: |
           cat /tmp/voila_server.log
-

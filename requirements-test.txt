@@ -1,0 +1,18 @@
+black
+bump2version
+jupyter_releaser~=0.6
+numpy
+pandas
+ipywidgets
+matplotlib
+mock
+pytest
+pytest-rerunfailures
+pytest-tornasync
+papermill
+jupyterlab~=3.0
+bqplot
+scipy
+ipympl==0.9.2
+ipyvolume @ git+https://github.com/jtpio/ipyvolume@ipywidgets-8
+jupyterlab_miami_nights==0.3.2

@@ -197,7 +197,8 @@ Install the test dependencies
 
 .. code-block:: bash
 
-   python -m pip install -e ".[test]"
+   python -m pip install -r requirements-test.txt
+   python -m pip install --no-deps .
 
 Enable the Jupyter server extension:
 
@@ -223,4 +224,3 @@ Editing templates
 The default template files are located in the folder `share/jupyter/voila/templates/default`. They are automatically picked up when running Voilà in development mode.
 
 After editing the templates, reload the browser tab to see the changes.
-
