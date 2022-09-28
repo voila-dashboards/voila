@@ -7,10 +7,13 @@ import { addBenchmarkToTest } from './utils';
 test.describe('Voila performance Tests', () => {
   test.beforeEach(({ page }) => {
     page.setDefaultTimeout(120000);
+    page.on('console', msg => console.log('CONSOLE.LOG: ', msg));
   });
+
   test.afterEach(async ({ page, browserName }) => {
     await page.close({ runBeforeUnload: true });
   });
+
   test('Render tree classic', async ({ page, browserName }, testInfo) => {
     const testFunction = async () => {
       await page.goto('?voila-template=classic');
