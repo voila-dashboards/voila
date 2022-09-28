@@ -4,7 +4,7 @@
   "description": "Voila UI Tests",
   "private": true,
   "scripts": {
-    "start": "voila ../notebooks --no-browser",
+    "start": "voila ../notebooks --no-browser --show_tracebacks",
     "start:detached": "yarn run start&",
     "test": "playwright test",
     "test:debug": "PWDEBUG=1 playwright test",
