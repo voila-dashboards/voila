@@ -53,7 +53,7 @@ file = "LICENSE"
 [project.optional-dependencies]
 dev = [
     "black",
-    "bump2version",
+    "hatch",
     "jupyter_releaser~=0.6",
 ]
 test = [
@@ -76,7 +76,6 @@ Homepage = "https://github.com/voila-dashboards/voila"
 
 [tool.hatch.version]
 path = "voila/_version.py"
-source = "code"
 
 [tool.hatch.build]
 artifacts = [
@@ -132,7 +131,7 @@ skip = [
 
 [tool.jupyter-releaser.hooks]
 before-bump-version = [
-    "python -m pip install bump2version jupyterlab~=3.0",
+    "python -m pip install hatch jupyterlab~=3.0",
 ]
 before-build-npm = [
     "python -m pip install jupyterlab~=3.0",
@@ -146,27 +145,3 @@ after-draft-release = "bash ./scripts/reset-stable.sh"
 
 [tool.jupyter-releaser.options]
 version-cmd = "python scripts/bump-version.py --force"
-
-[tool.tbump]
-field = [
-    { name = "channel", default = "" },
-    { name = "release", default = "" },
-]
-
-[tool.tbump.version]
-current = "0.3.6"
-regex = "(?P<major>\\d+)\\.(?P<minor>\\d+)\\.(?P<patch>\\d+)((?P<channel>a|b|rc|.dev)(?P<release>\\d+))?"
-
-[tool.tbump.git]
-message_template = "Bump to {new_version}"
-tag_template = "v{new_version}"
-
-[[tool.tbump.file]]
-src = "pyproject.toml"
-version_template = "version = \"{major}.{minor}.{patch}{channel}{release}\""
-
-[[tool.tbump.file]]
-src = "voila/_version.py"
-
-[license]
-file = "LICENSE"
