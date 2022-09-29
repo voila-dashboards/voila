@@ -82,7 +82,7 @@ def update(spec, force=False):
         run(cmd)
 
     # Bump the Python version
-    run(f"hatch version {spec}")
+    run(f"hatch version {py_spec}")
 
 
 @click.command()
