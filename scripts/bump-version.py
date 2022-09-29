@@ -63,10 +63,11 @@ def update(spec, force=False):
     elif spec == "release" and "c" in prev:
         lerna_version = "patch"
         py_spec = 'patch'
+    elif spec == "release":
+        py_spec = 'alpha'
 
     if lerna_version == "preminor":
         lerna_version += " --preid=alpha"
-        py_spec = 'alpha'
 
     cmd = f"jlpm run lerna version --force-publish --no-push --no-git-tag-version {lerna_version}"
     if force:
