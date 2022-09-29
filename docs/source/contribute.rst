@@ -223,4 +223,3 @@ Editing templates
 The default template files are located in the folder `share/jupyter/voila/templates/default`. They are automatically picked up when running Voilà in development mode.
 
 After editing the templates, reload the browser tab to see the changes.
-
