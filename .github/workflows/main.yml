@@ -40,8 +40,7 @@ jobs:
         whereis python
         python --version
         yarn install --network-timeout 100000
-        python -m pip install -r requirements-test.txt
-        python -m pip install .
+        python -m pip install ".[test]"
         (cd tests/test_template; pip install .)
         (cd tests/skip_template; pip install .)
 
@@ -91,8 +90,7 @@ jobs:
         whereis python
         python --version
         yarn install --network-timeout 100000
-        python -m pip install -r requirements-test.txt
-        python -m pip install .
+        python -m pip install ".[test]"
         (cd tests/test_template; pip install .)
         (cd tests/skip_template; pip install .)
 
@@ -132,8 +130,7 @@ jobs:
         run: |
           python -m pip install jupyterlab_pygments==0.1.0 pytest-cov pytest-rereunfailures flake8 ipywidgets matplotlib traitlets
           yarn install --network-timeout 100000
-          python -m pip install -r requirements-test.txt
-          python -m pip install .
+          python -m pip install ".[test]"
           cd tests/test_template
           pip install .
           cd ../skip_template

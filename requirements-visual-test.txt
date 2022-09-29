@@ -1,15 +1,3 @@
-black
-bump2version
-jupyter_releaser~=0.6
-numpy
-pandas
-ipywidgets
-matplotlib
-mock
-pytest
-pytest-rerunfailures
-pytest-tornasync
-papermill
 jupyterlab~=3.0
 bqplot
 scipy
