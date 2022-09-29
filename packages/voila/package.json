@@ -1,7 +1,7 @@
 {
   "name": "@voila-dashboards/voila",
   "private": true,
-  "version": "0.3.6",
+  "version": "0.4.0-alpha.0",
   "description": "The Voilà Frontend",
   "author": "Voilà contributors",
   "license": "BSD-3-Clause",
