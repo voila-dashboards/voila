@@ -15,7 +15,7 @@
 
 ### Bugs fixed
 
-- Fix inifinite  loop in property access [#1185](https://github.com/voila-dashboards/voila/pull/1185) ([@martinRenou](https://github.com/martinRenou))
+- Fix inifinite loop in property access [#1185](https://github.com/voila-dashboards/voila/pull/1185) ([@martinRenou](https://github.com/martinRenou))
 
 ### Maintenance and upkeep improvements
 
@@ -24,7 +24,7 @@
 - Use `ipywidgets` 8 on Binder [#1210](https://github.com/voila-dashboards/voila/pull/1210) ([@jtpio](https://github.com/jtpio))
 - Troubleshoot the check release workflow [#1208](https://github.com/voila-dashboards/voila/pull/1208) ([@jtpio](https://github.com/jtpio))
 - Fix typos [#1198](https://github.com/voila-dashboards/voila/pull/1198) ([@kianmeng](https://github.com/kianmeng))
-- Fix CI  [#1193](https://github.com/voila-dashboards/voila/pull/1193) ([@trungleduc](https://github.com/trungleduc))
+- Fix CI [#1193](https://github.com/voila-dashboards/voila/pull/1193) ([@trungleduc](https://github.com/trungleduc))
 - Troubleshoot failing `macos` check on CI [#1191](https://github.com/voila-dashboards/voila/pull/1191) ([@jtpio](https://github.com/jtpio))
 - Bump terser from 4.8.0 to 4.8.1 [#1174](https://github.com/voila-dashboards/voila/pull/1174) ([@dependabot](https://github.com/dependabot))
 - feat: support for ipywidgets 8 [#1046](https://github.com/voila-dashboards/voila/pull/1046) ([@mariobuikhuizen](https://github.com/mariobuikhuizen))
