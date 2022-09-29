@@ -3,6 +3,7 @@ channels:
   - conda-forge
 dependencies:
   - jupyterlab=3
+  - ipywidgets=8
   - ipyvolume
   - bqplot
   - scipy
