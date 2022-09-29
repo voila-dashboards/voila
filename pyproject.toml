@@ -54,7 +54,7 @@ file = "LICENSE"
 dev = [
     "black",
     "hatch",
-    "jupyter_releaser~=0.6",
+    "jupyter_releaser~=0.25",
 ]
 test = [
     "ipywidgets",
