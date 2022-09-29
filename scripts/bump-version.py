@@ -62,9 +62,9 @@ def update(spec, force=False):
     # rc -> final
     elif spec == "release" and "c" in prev:
         lerna_version = "patch"
-        py_spec = 'patch'
+        py_spec = 'release'
     elif spec == "release":
-        py_spec = 'alpha'
+        py_spec = 'minor,alpha'
 
     if lerna_version == "preminor":
         lerna_version += " --preid=alpha"
