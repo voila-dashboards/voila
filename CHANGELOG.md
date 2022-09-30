@@ -2,6 +2,23 @@
 
 <!-- <START NEW CHANGELOG ENTRY> -->
 
+## 0.4.0a1
+
+([Full Changelog](https://github.com/voila-dashboards/voila/compare/v0.4.0a0...4f1492de52cec74b35f43754ee8eaa07a17c2c33))
+
+### Maintenance and upkeep improvements
+
+- Bump d3-color from 3.0.1 to 3.1.0 [#1221](https://github.com/voila-dashboards/voila/pull/1221) ([@dependabot](https://github.com/dependabot))
+- Migrate to `hatch` [#1197](https://github.com/voila-dashboards/voila/pull/1197) ([@jtpio](https://github.com/jtpio))
+
+### Contributors to this release
+
+([GitHub contributors page for this release](https://github.com/voila-dashboards/voila/graphs/contributors?from=2022-09-29&to=2022-09-30&type=c))
+
+[@dependabot](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Adependabot+updated%3A2022-09-29..2022-09-30&type=Issues) | [@github-actions](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Agithub-actions+updated%3A2022-09-29..2022-09-30&type=Issues) | [@jtpio](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Ajtpio+updated%3A2022-09-29..2022-09-30&type=Issues) | [@martinRenou](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3AmartinRenou+updated%3A2022-09-29..2022-09-30&type=Issues)
+
+<!-- <END NEW CHANGELOG ENTRY> -->
+
 ## 0.4.0a0
 
 ([Full Changelog](https://github.com/voila-dashboards/voila/compare/@voila-dashboards/jupyterlab-preview@2.1.6...b16d377ce5a40edef5f7dff704b9143c4562f72d))
@@ -38,8 +55,6 @@
 ([GitHub contributors page for this release](https://github.com/voila-dashboards/voila/graphs/contributors?from=2022-07-18&to=2022-09-29&type=c))
 
 [@alkasm](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Aalkasm+updated%3A2022-07-18..2022-09-29&type=Issues) | [@dcnadler](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Adcnadler+updated%3A2022-07-18..2022-09-29&type=Issues) | [@dependabot](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Adependabot+updated%3A2022-07-18..2022-09-29&type=Issues) | [@github-actions](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Agithub-actions+updated%3A2022-07-18..2022-09-29&type=Issues) | [@jasongrout](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Ajasongrout+updated%3A2022-07-18..2022-09-29&type=Issues) | [@jtpio](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Ajtpio+updated%3A2022-07-18..2022-09-29&type=Issues) | [@kianmeng](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Akianmeng+updated%3A2022-07-18..2022-09-29&type=Issues) | [@mariobuikhuizen](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Amariobuikhuizen+updated%3A2022-07-18..2022-09-29&type=Issues) | [@martinRenou](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3AmartinRenou+updated%3A2022-07-18..2022-09-29&type=Issues) | [@SylvainCorlay](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3ASylvainCorlay+updated%3A2022-07-18..2022-09-29&type=Issues) | [@timkpaine](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Atimkpaine+updated%3A2022-07-18..2022-09-29&type=Issues) | [@trungleduc](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Atrungleduc+updated%3A2022-07-18..2022-09-29&type=Issues)
-
-<!-- <END NEW CHANGELOG ENTRY> -->
 
 ## 0.3.6
 
