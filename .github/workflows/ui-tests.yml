@@ -8,7 +8,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python: [3.8]
+        python-version: [3.9]
       fail-fast: false
 
     steps:
@@ -105,4 +105,3 @@ jobs:
         if: always()
         run: |
           cat /tmp/voila_server.log
-
