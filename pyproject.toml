@@ -39,7 +39,7 @@ dependencies = [
     "jupyter_server>=1.18,<2.0.0",
     "jupyterlab_server>=2.3.0,<3",
     "nbclient>=0.4.0,<0.7",
-    "nbconvert>=6.4.5,<7",
+    "nbconvert>=6.4.5,<8",
     "traitlets>=5.0.3,<6",
     "websockets>=9.0",
 ]
@@ -96,7 +96,7 @@ path = "hatch_build.py"
 [tool.hatch.build.targets.sdist]
 exclude = [
     ".github",
-    "*.gif",    
+    "*.gif",
 ]
 
 [tool.hatch.build.hooks.jupyter-builder]
