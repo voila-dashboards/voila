@@ -7,6 +7,8 @@ import { addBenchmarkToTest } from './utils';
 test.describe('Voila performance Tests', () => {
   test.beforeEach(({ page }) => {
     page.setDefaultTimeout(120000);
+    page.on('console', msg => console.log('LOG FROM INSIDE PAGE: ', msg));
+
   });
   test.afterEach(async ({ page, browserName }) => {
     await page.close({ runBeforeUnload: true });
