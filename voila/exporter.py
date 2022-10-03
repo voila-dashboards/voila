@@ -16,6 +16,11 @@ try:
 except ImportError:
     from jinja2 import contextfilter as pass_context
 
+try:
+    from mistune import Renderer as MistuneRenderer
+except ImportError:
+    from mistune import HTMLRenderer as MistuneRenderer
+
 from nbconvert.filters.markdown_mistune import IPythonRenderer, MarkdownWithMath
 from nbconvert.exporters.html import HTMLExporter
 from nbconvert.exporters.templateexporter import TemplateExporter
@@ -46,7 +51,7 @@ class VoilaExporter(HTMLExporter):
     """Custom HTMLExporter that inlines the images using VoilaMarkdownRenderer"""
 
     base_url = traitlets.Unicode(help="Base url for resources").tag(config=True)
-    markdown_renderer_class = traitlets.Type('mistune.HTMLRenderer').tag(config=True)
+    markdown_renderer_class = traitlets.Type(MistuneRenderer).tag(config=True)
     # Can be a ContentsManager from notebook or jupyter_server, so Any will have to do for now
     contents_manager = traitlets.Any()
 
