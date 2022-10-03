@@ -42,7 +42,7 @@ class VoilaExporter(HTMLExporter):
     """Custom HTMLExporter that inlines the images using VoilaMarkdownRenderer"""
 
     base_url = traitlets.Unicode(help="Base url for resources").tag(config=True)
-    markdown_renderer_class = traitlets.Type('mistune.Renderer').tag(config=True)
+    markdown_renderer_class = traitlets.Type('mistune.HTMLRenderer').tag(config=True)
     # Can be a ContentsManager from notebook or jupyter_server, so Any will have to do for now
     contents_manager = traitlets.Any()
 
