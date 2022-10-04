@@ -28,21 +28,25 @@ from .utils import create_include_assets_functions
 class VoilaMarkdownRenderer(IPythonRenderer):
     """Custom markdown renderer that inlines images"""
 
+    def __init__(self, contents_manager, *args, **kwargs):
+        self.contents_manager = contents_manager
+        super().__init__(*args, **kwargs)
+
     def image(self, src, title, text):
-        contents_manager = self.options['contents_manager']
+        contents_manager = self.contents_manager
         if contents_manager.file_exists(src):
             content = contents_manager.get(src, format='base64')
             data = content['content'].replace('\n', '')  # remove the newline
             mime_type, encoding = mimetypes.guess_type(src)
             src = 'data:{mime_type};base64,{data}'.format(mime_type=mime_type, data=data)
-        return super(VoilaMarkdownRenderer, self).image(src, title, text)
+        return super().image(src, title, text)
 
 
 class VoilaExporter(HTMLExporter):
     """Custom HTMLExporter that inlines the images using VoilaMarkdownRenderer"""
 
     base_url = traitlets.Unicode(help="Base url for resources").tag(config=True)
-    markdown_renderer_class = traitlets.Type('mistune.Renderer').tag(config=True)
+    markdown_renderer_class = traitlets.Type(VoilaMarkdownRenderer).tag(config=True)
     # Can be a ContentsManager from notebook or jupyter_server, so Any will have to do for now
     contents_manager = traitlets.Any()
 
