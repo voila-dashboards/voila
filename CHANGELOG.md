@@ -2,6 +2,27 @@
 
 <!-- <START NEW CHANGELOG ENTRY> -->
 
+## 0.4.0a2
+
+([Full Changelog](https://github.com/voila-dashboards/voila/compare/v0.4.0a1...82445875ab5e6b2031a05ad15ea0b53b6166a876))
+
+### Enhancements made
+
+- Update nbconvert pinning [#1161](https://github.com/voila-dashboards/voila/pull/1161) ([@martinRenou](https://github.com/martinRenou))
+
+### Maintenance and upkeep improvements
+
+- Update nbclient pinning [#1224](https://github.com/voila-dashboards/voila/pull/1224) ([@martinRenou](https://github.com/martinRenou))
+- Update nbconvert pinning [#1161](https://github.com/voila-dashboards/voila/pull/1161) ([@martinRenou](https://github.com/martinRenou))
+
+### Contributors to this release
+
+([GitHub contributors page for this release](https://github.com/voila-dashboards/voila/graphs/contributors?from=2022-09-30&to=2022-10-04&type=c))
+
+[@github-actions](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Agithub-actions+updated%3A2022-09-30..2022-10-04&type=Issues) | [@jtpio](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Ajtpio+updated%3A2022-09-30..2022-10-04&type=Issues) | [@martinRenou](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3AmartinRenou+updated%3A2022-09-30..2022-10-04&type=Issues)
+
+<!-- <END NEW CHANGELOG ENTRY> -->
+
 ## 0.4.0a1
 
 ([Full Changelog](https://github.com/voila-dashboards/voila/compare/v0.4.0a0...4f1492de52cec74b35f43754ee8eaa07a17c2c33))
@@ -16,8 +37,6 @@
 ([GitHub contributors page for this release](https://github.com/voila-dashboards/voila/graphs/contributors?from=2022-09-29&to=2022-09-30&type=c))
 
 [@dependabot](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Adependabot+updated%3A2022-09-29..2022-09-30&type=Issues) | [@github-actions](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Agithub-actions+updated%3A2022-09-29..2022-09-30&type=Issues) | [@jtpio](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Ajtpio+updated%3A2022-09-29..2022-09-30&type=Issues) | [@martinRenou](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3AmartinRenou+updated%3A2022-09-29..2022-09-30&type=Issues)
-
-<!-- <END NEW CHANGELOG ENTRY> -->
 
 ## 0.4.0a0
 
