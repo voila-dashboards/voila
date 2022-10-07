@@ -10,6 +10,8 @@ import { IRenderMime } from '@jupyterlab/rendermime';
 
 import { IShell, VoilaShell } from './shell';
 
+const PACKAGE = require('../package.json');
+
 /**
  * App is the main application class. It is instantiated once and shared.
  */
@@ -19,12 +21,11 @@ export class VoilaApp extends JupyterFrontEnd<IShell> {
    *
    * @param options The instantiation options for an application.
    */
-  constructor(options: App.IOptions = { shell: new VoilaShell() }) {
+  constructor(options: App.IOptions) {
     super({
       ...options,
       shell: options.shell ?? new VoilaShell()
     });
-
     if (options.mimeExtensions) {
       for (const plugin of createRendermimePlugins(options.mimeExtensions)) {
         this.registerPlugin(plugin);
@@ -45,7 +46,7 @@ export class VoilaApp extends JupyterFrontEnd<IShell> {
   /**
    * The version of the application.
    */
-  readonly version = 'unknown';
+  readonly version = PACKAGE['version'];
 
   /**
    * The JupyterLab application paths dictionary.

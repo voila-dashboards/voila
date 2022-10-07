@@ -1,11 +1,8 @@
+import { IBackboneModelOptions } from '@jupyter-widgets/base';
 import { LabWidgetManager } from '@jupyter-widgets/jupyterlab-manager';
-
 import * as outputBase from '@jupyter-widgets/output';
-
 import * as nbformat from '@jupyterlab/nbformat';
-
 import { OutputAreaModel } from '@jupyterlab/outputarea';
-
 import { KernelMessage } from '@jupyterlab/services';
 
 /**
@@ -19,14 +16,13 @@ export class OutputModel extends outputBase.OutputModel {
     return { ...super.defaults(), msg_id: '', outputs: [] };
   }
 
-  initialize(attributes: any, options: any): void {
+  initialize(
+    attributes: Backbone.ObjectHash,
+    options: IBackboneModelOptions
+  ): void {
     super.initialize(attributes, options);
     // The output area model is trusted since widgets are only rendered in trusted contexts.
     this._outputs = new OutputAreaModel({ trusted: true });
-    this._msgHook = (msg): boolean => {
-      this.add(msg);
-      return false;
-    };
 
     this.listenTo(this, 'change:msg_id', this.reset_msg_id);
     this.listenTo(this, 'change:outputs', this.setOutputs);
@@ -93,6 +89,10 @@ export class OutputModel extends outputBase.OutputModel {
 
   widget_manager!: LabWidgetManager;
 
-  private _msgHook!: (msg: KernelMessage.IIOPubMessage) => boolean;
+  private _msgHook = (msg: KernelMessage.IIOPubMessage): boolean => {
+    this.add(msg);
+    return false;
+  };
+
   private _outputs!: OutputAreaModel;
 }

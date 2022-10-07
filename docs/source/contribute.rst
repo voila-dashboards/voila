@@ -194,7 +194,7 @@ About the Voila Frontend
 
 The Voila frontend is built as a JupyterLab-based application using JupyterLab components.
 
-This makes it possible to reuse existing plugins and extensions for Jupyterlab such as core JupyterLab plugin like the JSON viewer,
+This makes it possible to reuse existing plugins and extensions for Jupyterlab such as core JupyterLab plugins like the JSON viewer,
 as well as third-party mime renderers like the `FASTA viewer <https://github.com/jupyterlab/jupyter-renderers>`_.
 
 The Voila frontend is able to load existing JupyterLab extensions installed as prebuilt extensions under ``${PREFIX}/share/labextensions``,
