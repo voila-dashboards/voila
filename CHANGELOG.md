@@ -2,11 +2,25 @@
 
 <!-- <START NEW CHANGELOG ENTRY> -->
 
+## 0.4.0rc0
+
+([Full Changelog](https://github.com/voila-dashboards/voila/compare/v0.4.0b0...b7cdabcbf3df3d340bc9b7b142310a178017ed02))
+
+### Maintenance and upkeep improvements
+
+- Remove pin on `jupyter_releaser` [#1232](https://github.com/voila-dashboards/voila/pull/1232) ([@jtpio](https://github.com/jtpio))
+
+### Contributors to this release
+
+([GitHub contributors page for this release](https://github.com/voila-dashboards/voila/graphs/contributors?from=2022-10-06&to=2022-10-11&type=c))
+
+[@github-actions](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Agithub-actions+updated%3A2022-10-06..2022-10-11&type=Issues) | [@jtpio](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Ajtpio+updated%3A2022-10-06..2022-10-11&type=Issues)
+
+<!-- <END NEW CHANGELOG ENTRY> -->
+
 ## 0.4.0b0
 
 No merged PRs
-
-<!-- <END NEW CHANGELOG ENTRY> -->
 
 ## 0.4.0a2
 
