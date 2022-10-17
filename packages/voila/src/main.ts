@@ -16,9 +16,10 @@ import './style.css';
 
 import { PageConfig, URLExt } from '@jupyterlab/coreutils';
 
-import { VoilaApp } from '@voila-dashboards/voila';
+import { VoilaApp } from './app';
+import { VoilaShell } from './shell';
 
-function loadScript(url) {
+function loadScript(url: string): Promise<any> {
   return new Promise((resolve, reject) => {
     const newScript = document.createElement('script');
     newScript.onerror = reject;
@@ -28,7 +29,7 @@ function loadScript(url) {
     newScript.src = url;
   });
 }
-async function loadComponent(url, scope) {
+async function loadComponent(url: string, scope: string): Promise<void> {
   await loadScript(url);
 
   // From MIT-licensed https://github.com/module-federation/module-federation-examples/blob/af043acd6be1718ee195b2511adf6011fba4233c/advanced-api/dynamic-remotes/app1/src/App.js#L6-L12
@@ -40,7 +41,7 @@ async function loadComponent(url, scope) {
   await container.init(__webpack_share_scopes__.default);
 }
 
-async function createModule(scope, module) {
+async function createModule(scope: string, module: string) {
   try {
     const factory = await window._JUPYTERLAB[scope].get(module);
     return factory();
@@ -58,7 +59,7 @@ const disabled = ['@jupyter-widgets/jupyterlab-manager'];
  * The main function
  */
 async function main() {
-  let mods = [
+  const mods = [
     // @jupyterlab plugins
     require('@jupyterlab/markdownviewer-extension'),
     require('@jupyterlab/mathjax2-extension'),
@@ -78,7 +79,7 @@ async function main() {
    * #### Notes
    * This also populates the disabled
    */
-  function* activePlugins(extension) {
+  function* activePlugins(extension: any) {
     // Handle commonjs or es2015 modules
     let exports;
     if (Object.prototype.hasOwnProperty.call(extension, '__esModule')) {
@@ -88,8 +89,8 @@ async function main() {
       exports = extension;
     }
 
-    let plugins = Array.isArray(exports) ? exports : [exports];
-    for (let plugin of plugins) {
+    const plugins = Array.isArray(exports) ? exports : [exports];
+    for (const plugin of plugins) {
       if (
         PageConfig.Extension.isDisabled(plugin.id) ||
         disabled.includes(plugin.id) ||
@@ -101,13 +102,13 @@ async function main() {
     }
   }
 
-  const extensionData = JSON.parse(
+  const extensionData: any[] = JSON.parse(
     PageConfig.getOption('federated_extensions')
   );
 
-  const federatedExtensionPromises = [];
-  const federatedMimeExtensionPromises = [];
-  const federatedStylePromises = [];
+  const federatedExtensionPromises: Promise<any>[] = [];
+  const federatedMimeExtensionPromises: Promise<any>[] = [];
+  const federatedStylePromises: Promise<any>[] = [];
 
   const extensions = await Promise.allSettled(
     extensionData.map(async data => {
@@ -150,7 +151,7 @@ async function main() {
   );
   federatedExtensions.forEach(p => {
     if (p.status === 'fulfilled') {
-      for (let plugin of activePlugins(p.value)) {
+      for (const plugin of activePlugins(p.value)) {
         mods.push(plugin);
       }
     } else {
@@ -164,7 +165,7 @@ async function main() {
   );
   federatedMimeExtensions.forEach(p => {
     if (p.status === 'fulfilled') {
-      for (let plugin of activePlugins(p.value)) {
+      for (const plugin of activePlugins(p.value)) {
         mimeExtensions.push(plugin);
       }
     } else {
@@ -175,11 +176,11 @@ async function main() {
   // Load all federated component styles and log errors for any that do not
   (await Promise.allSettled(federatedStylePromises))
     .filter(({ status }) => status === 'rejected')
-    .forEach(({ reason }) => {
-      console.error(reason);
+    .forEach(p => {
+      console.error((p as PromiseRejectedResult).reason);
     });
 
-  const app = new VoilaApp({ mimeExtensions });
+  const app = new VoilaApp({ mimeExtensions, shell: new VoilaShell() });
   app.registerPluginModules(mods);
   await app.start();
 

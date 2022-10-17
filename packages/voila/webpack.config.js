@@ -27,10 +27,8 @@ fs.ensureDirSync(buildDir);
 
 // Copy files to the build directory
 const libDir = path.resolve(__dirname, 'lib');
-const index = path.resolve(__dirname, 'index.js');
 const style = path.resolve(__dirname, 'style.css');
 fs.copySync(libDir, buildDir);
-fs.copySync(index, path.resolve(buildDir, 'index.js'));
 fs.copySync(style, path.resolve(buildDir, 'style.css'));
 
 const extras = Build.ensureAssets({
@@ -40,8 +38,6 @@ const extras = Build.ensureAssets({
 
 // Make a bootstrap entrypoint
 const entryPoint = path.join(buildDir, 'bootstrap.js');
-const bootstrap = 'import("./index.js");';
-fs.writeFileSync(entryPoint, bootstrap);
 
 if (process.env.NODE_ENV === 'production') {
   baseConfig.mode = 'production';
