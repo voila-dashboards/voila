@@ -14,7 +14,6 @@ import os
 import sys
 import threading
 import warnings
-from enum import Enum
 from functools import partial
 from pathlib import Path
 from typing import Awaitable, Dict, List
@@ -29,8 +28,22 @@ from markupsafe import Markup
 from ._version import __version__
 from .static_file_handler import TemplateStaticFileHandler
 
+try:
+    # Only exists in Python 3.11
+    from enum import StrEnum
 
-class ENV_VARIABLE(str, Enum):
+
+    class StringEnum(StrEnum):
+        pass
+except ImportError:
+    from enum import Enum
+
+
+    class StringEnum(str, Enum):
+        pass
+
+
+class ENV_VARIABLE(StringEnum):
     VOILA_PREHEAT = "VOILA_PREHEAT"
     VOILA_KERNEL_ID = "VOILA_KERNEL_ID"
     VOILA_BASE_URL = "VOILA_BASE_URL"

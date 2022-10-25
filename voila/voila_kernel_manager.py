@@ -255,7 +255,8 @@ def voila_kernel_manager_factory(
                     # Start the work on the loop immediately, so it is ready when needed:
                     task = loop.create_task(
                         wait_before(
-                            delay, self._initialize(notebook_name, None, **kwargs)
+                            delay,
+                            self._initialize(notebook_name, None, **kwargs),
                         )
                     )
                     pool.append(task)
