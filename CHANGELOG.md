@@ -2,6 +2,26 @@
 
 <!-- <START NEW CHANGELOG ENTRY> -->
 
+## 0.4.0rc1
+
+([Full Changelog](https://github.com/voila-dashboards/voila/compare/@voila-dashboards/jupyterlab-preview@2.2.0-rc.0...7c0ed278574d64a9abe39039ab2249262e41ceaa))
+
+### Bugs fixed
+
+- Add upper bound on jupyter_client dependency [#1239](https://github.com/voila-dashboards/voila/pull/1239) ([@martinRenou](https://github.com/martinRenou))
+
+### Maintenance and upkeep improvements
+
+- Update nbclient [#1234](https://github.com/voila-dashboards/voila/pull/1234) ([@martinRenou](https://github.com/martinRenou))
+
+### Contributors to this release
+
+([GitHub contributors page for this release](https://github.com/voila-dashboards/voila/graphs/contributors?from=2022-10-11&to=2022-10-25&type=c))
+
+[@blink1073](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Ablink1073+updated%3A2022-10-11..2022-10-25&type=Issues) | [@bnavigator](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Abnavigator+updated%3A2022-10-11..2022-10-25&type=Issues) | [@github-actions](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Agithub-actions+updated%3A2022-10-11..2022-10-25&type=Issues) | [@jtpio](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Ajtpio+updated%3A2022-10-11..2022-10-25&type=Issues) | [@martinRenou](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3AmartinRenou+updated%3A2022-10-11..2022-10-25&type=Issues) | [@trungleduc](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Atrungleduc+updated%3A2022-10-11..2022-10-25&type=Issues)
+
+<!-- <END NEW CHANGELOG ENTRY> -->
+
 ## 0.4.0rc0
 
 ([Full Changelog](https://github.com/voila-dashboards/voila/compare/v0.4.0b0...b7cdabcbf3df3d340bc9b7b142310a178017ed02))
@@ -15,8 +35,6 @@
 ([GitHub contributors page for this release](https://github.com/voila-dashboards/voila/graphs/contributors?from=2022-10-06&to=2022-10-11&type=c))
 
 [@github-actions](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Agithub-actions+updated%3A2022-10-06..2022-10-11&type=Issues) | [@jtpio](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Ajtpio+updated%3A2022-10-06..2022-10-11&type=Issues)
-
-<!-- <END NEW CHANGELOG ENTRY> -->
 
 ## 0.4.0b0
 
