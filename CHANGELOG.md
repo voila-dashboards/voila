@@ -17,7 +17,7 @@
 ### Bugs fixed
 
 - Add upper bound on jupyter_client dependency [#1239](https://github.com/voila-dashboards/voila/pull/1239) ([@martinRenou](https://github.com/martinRenou))
-- Fix inifinite  loop in property access [#1185](https://github.com/voila-dashboards/voila/pull/1185) ([@martinRenou](https://github.com/martinRenou))
+- Fix inifinite loop in property access [#1185](https://github.com/voila-dashboards/voila/pull/1185) ([@martinRenou](https://github.com/martinRenou))
 
 ### Maintenance and upkeep improvements
 
@@ -31,7 +31,7 @@
 - Troubleshoot the check release workflow [#1208](https://github.com/voila-dashboards/voila/pull/1208) ([@jtpio](https://github.com/jtpio))
 - Fix typos [#1198](https://github.com/voila-dashboards/voila/pull/1198) ([@kianmeng](https://github.com/kianmeng))
 - Migrate to `hatch` [#1197](https://github.com/voila-dashboards/voila/pull/1197) ([@jtpio](https://github.com/jtpio))
-- Fix CI  [#1193](https://github.com/voila-dashboards/voila/pull/1193) ([@trungleduc](https://github.com/trungleduc))
+- Fix CI [#1193](https://github.com/voila-dashboards/voila/pull/1193) ([@trungleduc](https://github.com/trungleduc))
 - Troubleshoot failing `macos` check on CI [#1191](https://github.com/voila-dashboards/voila/pull/1191) ([@jtpio](https://github.com/jtpio))
 - Bump terser from 4.8.0 to 4.8.1 [#1174](https://github.com/voila-dashboards/voila/pull/1174) ([@dependabot](https://github.com/dependabot))
 - Update nbconvert pinning [#1161](https://github.com/voila-dashboards/voila/pull/1161) ([@martinRenou](https://github.com/martinRenou))
