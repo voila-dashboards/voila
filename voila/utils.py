@@ -21,7 +21,12 @@ from jupyterlab_server.themes_handler import ThemesHandler
 from markupsafe import Markup
 from nbconvert.exporters.html import find_lab_theme
 
+from jupyter_core.paths import jupyter_path
+from jupyterlab_server.config import get_page_config as gpc, recursive_update
+from jupyter_server.utils import url_path_join
+
 from .static_file_handler import TemplateStaticFileHandler
+from ._version import __version__
 
 
 class ENV_VARIABLE(str, Enum):
@@ -68,6 +73,41 @@ async def _get_request_info(ws_url: str) -> Awaitable:
         return None
     else:
         return ri
+
+
+def get_page_config(base_url, settings, log):
+    page_config = {
+        "appVersion": __version__,
+        "baseUrl": base_url,
+        "terminalsAvailable": False,
+        "fullStaticUrl": url_path_join(base_url, "voila/static"),
+        "fullLabextensionsUrl": url_path_join(base_url, "voila/labextensions"),
+    }
+
+    mathjax_config = settings.get("mathjax_config", "TeX-AMS_HTML-full,Safe")
+    # TODO Remove CDN usage.
+    mathjax_url = settings.get(
+        "mathjax_url",
+        "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js",
+    )
+    page_config.setdefault("mathjaxConfig", mathjax_config)
+    page_config.setdefault("fullMathjaxUrl", mathjax_url)
+
+    labextensions_path = jupyter_path('labextensions')
+    recursive_update(
+        page_config,
+        gpc(
+            labextensions_path,
+            logger=log,
+        ),
+    )
+    return page_config
+
+
+async def _get_query_string(ws_url: str) -> Awaitable:
+    async with websockets.connect(ws_url) as websocket:
+        qs = await websocket.recv()
+    return qs
 
 
 def wait_for_request(url: str = None) -> str:

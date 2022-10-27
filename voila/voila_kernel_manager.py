@@ -18,7 +18,7 @@ from traitlets.traitlets import Dict, Float, List, default
 from nbclient.util import ensure_async
 import re
 from .notebook_renderer import NotebookRenderer
-from .utils import ENV_VARIABLE
+from .utils import ENV_VARIABLE, get_page_config
 
 T = TypeVar('T')
 
@@ -344,6 +344,7 @@ def voila_kernel_manager_factory(base_class: Type[T], preheat_kernel: bool, defa
                     contents_manager=self.parent.contents_manager,
                     base_url=self.parent.base_url,
                     kernel_spec_manager=self.parent.kernel_spec_manager,
+                    page_config=get_page_config(base_url=self.parent.base_url, settings=self.parent.app.settings, log=self.parent.log)
                 )
 
             def _notebook_filter(self, nb_path: Path) -> bool:

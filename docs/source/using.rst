@@ -132,25 +132,3 @@ The examples can then be served with:
 
    cd notebooks/
    voila
-
-
-Using third-party Widgets with Voilà
-====================================
-
-By default, Voilà doesn't serve Jupyter Widgets installed as a classic notebook extension (nbextension).
-
-Instead, it fallbacks to fetching the files from a CDN. This might result in an error (404) in case the
-custom widget has not been published to ``npm``, or when Voilà runs in an environment without an Internet
-connection.
-
-To let the Voilà standalone app serve the nbextensions, use the ``enable_nbextensions`` flag as follows:
-
-.. code-block:: bash
-
-   voila --enable_nbextensions=True
-
-When using Voilà as a server extension:
-
-.. code-block:: bash
-
-    jupyter notebook --VoilaConfiguration.enable_nbextensions=True

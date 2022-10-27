@@ -88,7 +88,6 @@ path = "hatch_build.py"
 
 [tool.hatch.build.targets.wheel.shared-data]
 "etc/jupyter" = "etc/jupyter"
-"voila/static" = "share/jupyter/nbextensions/voila"
 "voila/labextension" = "share/jupyter/labextensions/@voila-dashboards/jupyterlab-preview"
 "install.json" = "share/jupyter/labextensions/@voila-dashboards/jupyterlab-preview/install.json"
 "share/jupyter/voila/templates" = "share/jupyter/voila/templates"

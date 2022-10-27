@@ -18,12 +18,17 @@
   {%- endblock html_head_js_jquery -%}
 
   {% block notebook_execute %}
+
+    {# Copy so we do not modify the page_config with updates. #}
+    {% set page_config_full = page_config.copy() %}
+
     {%- set kernel_id = kernel_start(nb) -%}
+
+    {# Set a dummy variable - we just want the side effect of the update. #}
+    {% set _ = page_config_full.update(baseUrl=resources.base_url, kernelId=kernel_id) %}
+
     <script id="jupyter-config-data" type="application/json">
-    {
-        "baseUrl": "{{resources.base_url}}",
-        "kernelId": "{{kernel_id}}"
-    }
+      {{ page_config_full | tojson }}
     </script>
     {# from this point on, nb.cells contains output of the executed cells #}
     {% do notebook_execute(nb, kernel_id) %}
@@ -50,6 +55,6 @@
 {% endblock body_header %}
 
 {% block footer_js %}
-  {{ voila_setup(resources.base_url, resources.nbextensions) }}
+  {{ voila_setup(resources.base_url, resources.labextensions) }}
   {{ super() }}
 {% endblock footer_js %}
