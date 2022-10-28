@@ -2,6 +2,30 @@
 
 <!-- <START NEW CHANGELOG ENTRY> -->
 
+## 0.5.0a0
+
+([Full Changelog](https://github.com/voila-dashboards/voila/compare/@voila-dashboards/jupyterlab-preview@2.2.0...20caacc4d1a5749fd94b709f84b73c452367f589))
+
+### New features added
+
+- Switch to a lab-based app for the Voila frontend [#846](https://github.com/voila-dashboards/voila/pull/846) ([@jtpio](https://github.com/jtpio))
+
+### Enhancements made
+
+- Switch to a lab-based app for the Voila frontend [#846](https://github.com/voila-dashboards/voila/pull/846) ([@jtpio](https://github.com/jtpio))
+
+### API and Breaking Changes
+
+- Switch to a lab-based app for the Voila frontend [#846](https://github.com/voila-dashboards/voila/pull/846) ([@jtpio](https://github.com/jtpio))
+
+### Contributors to this release
+
+([GitHub contributors page for this release](https://github.com/voila-dashboards/voila/graphs/contributors?from=2022-10-26&to=2022-10-28&type=c))
+
+[@bollwyvl](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Abollwyvl+updated%3A2022-10-26..2022-10-28&type=Issues) | [@github-actions](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Agithub-actions+updated%3A2022-10-26..2022-10-28&type=Issues) | [@jtpio](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Ajtpio+updated%3A2022-10-26..2022-10-28&type=Issues) | [@martinRenou](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3AmartinRenou+updated%3A2022-10-26..2022-10-28&type=Issues) | [@trungleduc](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Atrungleduc+updated%3A2022-10-26..2022-10-28&type=Issues)
+
+<!-- <END NEW CHANGELOG ENTRY> -->
+
 ## 0.4.0
 
 ([Full Changelog](https://github.com/voila-dashboards/voila/compare/@voila-dashboards/jupyterlab-preview@2.1.6...b300e144f58b885cf8477b60cdabe024cb82ad01))
@@ -46,8 +70,6 @@
 ([GitHub contributors page for this release](https://github.com/voila-dashboards/voila/graphs/contributors?from=2022-07-18&to=2022-10-26&type=c))
 
 [@alkasm](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Aalkasm+updated%3A2022-07-18..2022-10-26&type=Issues) | [@blink1073](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Ablink1073+updated%3A2022-07-18..2022-10-26&type=Issues) | [@bnavigator](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Abnavigator+updated%3A2022-07-18..2022-10-26&type=Issues) | [@dcnadler](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Adcnadler+updated%3A2022-07-18..2022-10-26&type=Issues) | [@dependabot](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Adependabot+updated%3A2022-07-18..2022-10-26&type=Issues) | [@github-actions](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Agithub-actions+updated%3A2022-07-18..2022-10-26&type=Issues) | [@jasongrout](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Ajasongrout+updated%3A2022-07-18..2022-10-26&type=Issues) | [@jtpio](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Ajtpio+updated%3A2022-07-18..2022-10-26&type=Issues) | [@kianmeng](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Akianmeng+updated%3A2022-07-18..2022-10-26&type=Issues) | [@mariobuikhuizen](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Amariobuikhuizen+updated%3A2022-07-18..2022-10-26&type=Issues) | [@martinRenou](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3AmartinRenou+updated%3A2022-07-18..2022-10-26&type=Issues) | [@SylvainCorlay](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3ASylvainCorlay+updated%3A2022-07-18..2022-10-26&type=Issues) | [@timkpaine](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Atimkpaine+updated%3A2022-07-18..2022-10-26&type=Issues) | [@trungleduc](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Atrungleduc+updated%3A2022-07-18..2022-10-26&type=Issues)
-
-<!-- <END NEW CHANGELOG ENTRY> -->
 
 ## 0.4.0rc1
 
