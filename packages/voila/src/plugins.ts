@@ -23,13 +23,25 @@ import { KernelConnection } from '@jupyterlab/services/lib/kernel/default';
 import { ITranslator, TranslationManager } from '@jupyterlab/translation';
 
 import {
+  WidgetRenderer,
+  KernelWidgetManager
+} from '@jupyter-widgets/jupyterlab-manager';
+
+import {
   IJupyterWidgetRegistry,
   IWidgetRegistryData
 } from '@jupyter-widgets/base';
 
 import { VoilaApp } from './app';
 
-import { WidgetManager as VoilaWidgetManager } from './manager';
+import { Widget } from '@lumino/widgets';
+
+let resolveManager: (value: KernelWidgetManager) => void;
+const managerPromise: Promise<KernelWidgetManager> = new Promise((resolve) => {
+  resolveManager = resolve;
+});
+
+const WIDGET_MIMETYPE = 'application/vnd.jupyter.widget-view+json';
 
 /**
  * The default paths.
@@ -104,11 +116,20 @@ export const widgetManager: JupyterFrontEndPlugin<IJupyterWidgetRegistry> = {
       };
     }
     const kernel = new KernelConnection({ model, serverSettings });
-    const manager = new VoilaWidgetManager(kernel, rendermime);
+    const manager = new KernelWidgetManager(kernel, rendermime);
 
-    manager.restored.connect(() => {
-      void manager.build_widgets();
-    });
+    rendermime.removeMimeType(WIDGET_MIMETYPE);
+    rendermime.addFactory(
+      {
+        safe: false,
+        mimeTypes: [WIDGET_MIMETYPE],
+        // "as any" can be removed when https://github.com/jupyter-widgets/ipywidgets/pull/3625 is released
+        createRenderer: (options) => new WidgetRenderer(options, manager as any)
+      },
+      -10
+    );
+
+    resolveManager(manager);
 
     window.addEventListener('beforeunload', (e) => {
       const data = new FormData();
@@ -124,10 +145,62 @@ export const widgetManager: JupyterFrontEndPlugin<IJupyterWidgetRegistry> = {
     });
 
     return {
-      registerWidget(data: IWidgetRegistryData): void {
+      registerWidget: async (data: IWidgetRegistryData) => {
+        const manager = await managerPromise;
+
         manager.register(data);
       }
     };
+  }
+};
+
+/**
+ * The plugin that renders outputs.
+ */
+const renderOutputsPlugin: JupyterFrontEndPlugin<void> = {
+  id: '@voila-dashboards/voila:render-outputs',
+  autoStart: true,
+  requires: [IRenderMimeRegistry, IJupyterWidgetRegistry],
+  activate: async (
+    app: JupyterFrontEnd,
+    rendermime: IRenderMimeRegistry
+  ): Promise<void> => {
+    // Render outputs
+    const cellOutputs = document.body.querySelectorAll(
+      'script[type="application/vnd.voila.cell-output+json"]'
+    );
+
+    cellOutputs.forEach(async (cellOutput) => {
+      const model = JSON.parse(cellOutput.innerHTML);
+
+      const mimeType = rendermime.preferredMimeType(model.data, 'any');
+
+      if (!mimeType) {
+        return null;
+      }
+      const output = rendermime.createRenderer(mimeType);
+      output.renderModel(model).catch((error) => {
+        // Manually append error message to output
+        const pre = document.createElement('pre');
+        pre.textContent = `Javascript Error: ${error.message}`;
+        output.node.appendChild(pre);
+
+        // Remove mime-type-specific CSS classes
+        pre.className = 'lm-Widget jp-RenderedText';
+        pre.setAttribute('data-mime-type', 'application/vnd.jupyter.stderr');
+      });
+
+      output.addClass('jp-OutputArea-output');
+
+      if (cellOutput.parentElement) {
+        const container = cellOutput.parentElement;
+
+        container.removeChild(cellOutput);
+
+        // Attach output
+        Widget.attach(output, container);
+      }
+    });
   }
 };
 
@@ -138,7 +211,8 @@ const plugins: JupyterFrontEndPlugin<any>[] = [
   pathsPlugin,
   stopPollingPlugin,
   translatorPlugin,
-  widgetManager
+  widgetManager,
+  renderOutputsPlugin
 ];
 
 export default plugins;

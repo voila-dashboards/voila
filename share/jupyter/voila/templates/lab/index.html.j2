@@ -62,6 +62,14 @@
   <div>
 {%- endblock body_header -%}
 
+{% block data_priority scoped %}
+{% if output %}
+  <script type="application/vnd.voila.cell-output+json">
+    {{ output | trusted | tojson }}
+  </script>
+{% endif %}
+{% endblock data_priority %}
+
 {%- block body_loop -%}
   {# from this point on, the kernel is started #}
 

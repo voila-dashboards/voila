@@ -53,7 +53,10 @@ async function createModule(scope: string, module: string) {
   }
 }
 
-const disabled = ['@jupyter-widgets/jupyterlab-manager'];
+const disabled = [
+  '@jupyter-widgets/jupyterlab-manager:plugin',
+  '@jupyter-widgets/jupyterlab-manager:saveWidgetState'
+];
 
 /**
  * The main function
@@ -71,7 +74,11 @@ async function main() {
     plugins
   ];
 
-  const mimeExtensions = [require('@jupyterlab/json-extension')];
+  const mimeExtensions = [
+    require('@jupyterlab/javascript-extension'),
+    require('@jupyterlab/json-extension'),
+    require('@jupyterlab/vega5-extension')
+  ];
 
   /**
    * Iterate over active plugins in an extension.
