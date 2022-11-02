@@ -110,7 +110,7 @@ Install a custom template
 -------------------------
 
 Suppose you created a custom template called ``mytemplate``, defined in a set of
-directories located on your machine at ``/path/to/share/``.
+directories located on your machine at ``/path/to/custom/``.
 You can install the custom template for use with Voilà like so:
 
 .. code-block:: python
@@ -118,13 +118,15 @@ You can install the custom template for use with Voilà like so:
    from voila.paths import install_custom_template
 
    custom_template_name = 'mytemplate'
-   share_path = '/path/to/share/'
+   share_path = '/path/to/custom/'
 
    install_custom_template(share_path, custom_template_name)
 
 This function will try to symlink (preferred) or copy (fallback option) the
 directories defining ``mytemplate`` to the paths where voilà keeps other
-templates.
+templates. ``share_path`` should contain the directories
+``share/jupyter/nbconvert/templates/mytemplate`` and
+``share/jupyter/voila/templates/mytemplate``.
 
 .. todo: Add information on config.json
 
