@@ -9,6 +9,8 @@
 
 import os
 import json
+from pathlib import Path
+import shutil
 
 from jupyter_core.paths import jupyter_path
 import nbconvert.exporters.templateexporter
@@ -93,15 +95,20 @@ def collect_paths(
     return paths
 
 
-def _default_root_dirs():
+def _default_root_dirs(root_first=True):
     # We look at the usual jupyter locations, and for development purposes also
     # relative to the package directory (first entry, meaning with highest precedence)
     root_dirs = []
-    if DEV_MODE:
-        root_dirs.append(os.path.abspath(os.path.join(ROOT, '..', 'share', 'jupyter')))
+    pkg_share_jupyter = os.path.abspath(os.path.join(ROOT, '..', 'share', 'jupyter'))
+    if DEV_MODE and root_first:
+        root_dirs.append(pkg_share_jupyter)
     if nbconvert.exporters.templateexporter.DEV_MODE:
         root_dirs.append(os.path.abspath(os.path.join(nbconvert.exporters.templateexporter.ROOT, '..', '..', 'share', 'jupyter')))
+
     root_dirs.extend(jupyter_path())
+
+    if DEV_MODE and not root_first:
+        root_dirs.append(pkg_share_jupyter)
 
     return root_dirs
 
@@ -129,3 +136,121 @@ def _find_template_hierarchy(app_names, template_name, root_dirs):
                 # if not specified, 'base' is assumed
                 template_name = 'base'
     return template_names
+
+
+def get_existing_template_dirs(app_names, template_name, root_first=False):
+    """
+    Return a list of available template directories with
+    template name ``template_name``. ``app_names`` might be
+    ``["nbconvert", "voila"]``, for example. If ``root_first``,
+    give priority to the current working directory in the search
+    for a ``share`` directory which will be the destination
+    for custom templates. If False, set lowest priority to the cwd.
+    """
+    return [
+        d for d in collect_paths(
+            app_names,
+            template_name,
+            # only use a ``share`` dir in the cwd as a last resort:
+            root_dirs=_default_root_dirs(root_first=root_first)
+        )
+        if os.path.exists(d) and template_name in d
+    ]
+
+
+def install_custom_template(
+    share_path,
+    template_name,
+    reference_template_name='base',
+    try_symlink=True,
+    overwrite=False,
+    include_root_paths=False
+):
+    """
+    Make a custom template available for use with Voilà.
+
+    Generate copies of/symbolic links pointing towards custom template files,
+    which will be located in directories where Voilà expects them. By default,
+    the template will be copied/symlinked where the Voilà template named "base"
+    can be found on your machine.
+
+    Parameters
+    ----------
+    share_path : path-like, str
+        Path to a ``share`` directory containing the custom template to be
+        installed. Custom templates will be organized in the subdirs:
+        ``share/jupyter/nbconvert/templates/<template_name>`` and
+        ``share/jupyter/voila/templates/<template_name>``.
+    template_name : str
+        Name of the custom template
+    reference_template_name : str (default is "base")
+        Name of a default Voilà template. This function will try to install the
+        custom template in the same location as this reference template.
+    try_symlink : bool
+        If True, try to make a symlink and fall back on making a copy. Otherwise,
+        make a copy.
+    overwrite : bool
+        Overwrite custom template directories with the same name if they
+        already exist.
+    include_root_paths : bool
+        If True, include the cwd in the search for the ``share`` directory
+        which will become the destination path for the custom template
+        directories.
+    """
+    # search for existing custom template and "base" (default) template paths
+    # that may already be installed on this machine:
+    app_names = ['nbconvert', 'voila']
+    custom_template_dirs = get_existing_template_dirs(
+        app_names, template_name, include_root_paths=include_root_paths
+    )
+    reference_template_dirs = get_existing_template_dirs(
+        app_names, reference_template_name, include_root_paths=include_root_paths
+    )
+
+    # if there are existing jdaviz template dirs but overwrite=False, raise error:
+    if not overwrite and len(custom_template_dirs):
+        raise FileExistsError(
+            f"Existing files found at {custom_template_dirs} which "
+            f"would be overwritten, but overwrite=False."
+        )
+
+    prefix_targets = [
+        os.path.join(app_name, "templates") for app_name in app_names
+    ]
+
+    if len(reference_template_dirs):
+        target_dir = Path(reference_template_dirs[0]).absolute().parents[2]
+    else:
+        raise FileNotFoundError(f"No {reference_template_name} template found for voila.")
+
+    for prefix_target in prefix_targets:
+        # Path to the source for the custom template to be installed
+        source = os.path.join(share_path, 'share', 'jupyter', prefix_target, template_name)
+        parent_dir_of_target = os.path.join(target_dir, prefix_target)
+        # Path to destination for new custom template
+        target = os.path.join(parent_dir_of_target, template_name)
+        abs_source = os.path.abspath(source)
+        try:
+            rel_source = os.path.relpath(abs_source, parent_dir_of_target)
+        except Exception:
+            # relpath does not work if source/target on different Windows disks.
+            try_symlink = False
+
+        try:
+            os.remove(target)
+        except Exception:
+            try:
+                shutil.rmtree(target)  # Maybe not a symlink
+            except Exception:
+                pass
+
+        # Cannot symlink without relpath or Windows admin priv in some OS versions.
+        try:
+            if try_symlink:
+                print('making symlink:', rel_source, '->', target)
+                os.symlink(rel_source, target)
+            else:
+                raise OSError('just make copies')
+        except Exception:
+            print('making copy:', abs_source, '->', target)
+            shutil.copytree(abs_source, target)
