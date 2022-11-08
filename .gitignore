@@ -41,6 +41,8 @@ share/jupyter/voila/templates/reveal/static/materialcolors.css
 lib
 
 voila/labextension
+voila/voilite/static/voila/**/*
+
 tsconfig.tsbuildinfo
 
 ui-tests/playwright-report

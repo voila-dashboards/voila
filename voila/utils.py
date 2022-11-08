@@ -14,7 +14,7 @@ import threading
 import warnings
 from enum import Enum
 from functools import partial
-from typing import Awaitable, Dict
+from typing import Awaitable, Dict, List, Tuple
 
 import websockets
 from jupyterlab_server.themes_handler import ThemesHandler
@@ -60,7 +60,7 @@ def get_server_root_dir(settings):
     home = os.path.expanduser('~')
     if root_dir.startswith(home + os.path.sep):
         # collapse $HOME to ~
-        root_dir = '~' + root_dir[len(home):]
+        root_dir = '~' + root_dir[len(home) :]
     return root_dir
 
 
@@ -215,3 +215,22 @@ def create_include_assets_functions(template_name: str, base_url: str) -> Dict:
         'include_url': partial(include_url, template_name, base_url),
         'include_lab_theme': partial(include_lab_theme, base_url),
     }
+
+
+def find_all_lab_theme() -> List[Tuple[str, str]]:
+
+    labextensions_path = jupyter_path('labextensions')
+    roots = tuple(
+        os.path.abspath(os.path.expanduser(p)) + os.sep
+        for p in labextensions_path
+    )
+    theme_list = []
+    for root in roots:
+        if os.path.exists(root):
+            for ex in os.listdir(root):
+                try:
+                    theme_list.append(find_lab_theme(ex))
+                except Exception:
+                    pass
+
+    return theme_list

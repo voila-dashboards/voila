@@ -163,6 +163,7 @@ class NotebookRenderer(LoggingConfigurable):
         # notebook_executer cell_generator to implement progressive cell rendering
 
         extra_context = {
+            'frontend': 'voila',
             'kernel_start': inner_kernel_start,
             'cell_generator': inner_cell_generator,
             'notebook_execute': self._jinja_notebook_execute
