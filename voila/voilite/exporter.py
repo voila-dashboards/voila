@@ -49,14 +49,6 @@ class VoiliteExporter(VoilaExporter):
         )
         return path
 
-    @property
-    def default_config(self):
-        config = super().default_config
-        config['NbConvertBase']['display_data_priority'] = [
-            'application/vnd.voilite.code+txt'
-        ]
-        return config
-
     def from_notebook_node(self, nb, resources=None, **kwargs):
         # this replaces from_notebook_node, but calls template.generate instead of template.render
         # Mocking the highligh_code filter

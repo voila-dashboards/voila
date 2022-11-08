@@ -9,9 +9,7 @@ interface ICellData {
   cell_type: string;
   cell_source: string;
 }
-declare var cells: {
-  [key: number]: ICellData;
-};
+
 declare function update_loading_text(
   cell_index: number,
   cell_count: number,

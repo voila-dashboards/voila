@@ -72,9 +72,6 @@ test = [
 voila = "voila.app:main"
 voilite = "voila.voilite.app:main"
 
-[project.entry-points."nbconvert.exporters"]
-voilite_dashboard = "voilite.exporter:VoiliteExporter"
-
 [project.urls]
 Homepage = "https://github.com/voila-dashboards/voila"
 

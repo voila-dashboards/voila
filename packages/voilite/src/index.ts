@@ -203,7 +203,6 @@ async function main() {
       litePluginsToRegister.push(plugin);
     }
   });
-  console.log('start server');
 
   // create the in-browser JupyterLite Server
   const jupyterLiteServer = new JupyterLiteServer({ shell: null as never });
@@ -211,7 +210,7 @@ async function main() {
   jupyterLiteServer.registerPluginModules(litePluginsToRegister);
   // start the server
   await jupyterLiteServer.start();
-  console.log('done  server');
+
   const serviceManager = jupyterLiteServer.serviceManager;
   const app = new VoiliteApp({
     serviceManager: serviceManager as any,
