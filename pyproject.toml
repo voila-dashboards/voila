@@ -107,7 +107,7 @@ dependencies = [
 build-function = "hatch_jupyter_builder.npm_builder"
 ensured-targets = [
     "voila/labextension/static/style.js",
-    "voila/voilite/static/voila/voilite.js",
+    "voila/voilite/static/voilite.js",
     "share/jupyter/voila/templates/classic/static/materialcolors.css",
     "share/jupyter/voila/templates/classic/static/labvariables.css",
     "share/jupyter/voila/templates/reveal/static/materialcolors.css",

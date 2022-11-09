@@ -57,8 +57,7 @@ const distRoot = path.resolve(
   '..',
   'voila',
   'voilite',
-  'static',
-  'voila'
+  'static'
 );
 
 const topLevelBuild = path.resolve('build');

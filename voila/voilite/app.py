@@ -58,6 +58,12 @@ class Voilite(Application):
         'base_url': 'Voilite.base_url',
     }
 
+    output_prefix = Unicode(
+        '_output',
+        config=True,
+        help=_('Path to the output directory'),
+    )
+
     @default('log_level')
     def _default_log_level(self):
         return logging.INFO
@@ -94,16 +100,12 @@ class Voilite(Application):
         lite_static_path = os.path.join(
             os.path.dirname(os.path.realpath(__file__)), 'static'
         )
-        dest_static_path = os.path.join(os.getcwd(), 'voila')
+        dest_static_path = os.path.join(os.getcwd(), self.output_prefix)
         if os.path.isdir(dest_static_path):
-            shutil.rmtree(dest_static_path)
+            shutil.rmtree(dest_static_path, ignore_errors=False)
         copy_tree(
-            os.path.join(lite_static_path, 'voila'),
-            os.path.join(dest_static_path, 'static'),
-        )
-        shutil.move(
-            os.path.join(dest_static_path, 'static', 'pypi'),
-            os.path.join(dest_static_path, 'build', 'pypi'),
+            os.path.join(lite_static_path),
+            os.path.join(dest_static_path, 'build'),
         )
         shutil.copyfile(
             os.path.join(lite_static_path, 'services.js'),
@@ -117,9 +119,7 @@ class Voilite(Application):
             os.path.abspath(os.path.expanduser(p)) + os.sep
             for p in labextensions_path
         )
-        dest_extension_path = os.path.join(
-            os.getcwd(), 'voila', 'labextensions'
-        )
+        dest_extension_path = os.path.join(dest_static_path, 'labextensions')
         if os.path.isdir(dest_extension_path):
             shutil.rmtree(dest_extension_path)
         for extension in federated_extensions:
@@ -135,7 +135,7 @@ class Voilite(Application):
         all_themes = find_all_lab_theme()
         for theme in all_themes:
             theme_dst = os.path.join(
-                dest_static_path, 'static', 'themes', theme[0]
+                dest_static_path, 'build', 'themes', theme[0]
             )
             copy_tree(theme[1], theme_dst)
 
@@ -145,10 +145,16 @@ class Voilite(Application):
             page_config = get_page_config(
                 base_url=self.base_url, settings={}, log=None
             )
+            page_config['themesUrl'] = url_path_join('build', 'themes')
+            page_config['fullStaticUrl'] = url_path_join(
+                self.base_url, 'build'
+            )
+            page_config['fullLabextensionsUrl'] = url_path_join(
+                self.base_url, 'labextensions'
+            )
             page_config['settingsUrl'] = url_path_join(
                 page_config['fullStaticUrl'], 'schemas'
             )
-            page_config['themesUrl'] = url_path_join('static', 'themes')
 
             if self.voilite_configuration.theme == 'light':
                 themeName = 'JupyterLab Light'
@@ -161,7 +167,10 @@ class Voilite(Application):
             with open(self.notebook_path) as f:
                 nb = nbformat.read(f, 4)
                 src = [
-                    {'cell_source': cell['source'], 'cell_type': cell['cell_type']}
+                    {
+                        'cell_source': cell['source'],
+                        'cell_type': cell['cell_type'],
+                    }
                     for cell in nb['cells']
                 ]
                 page_config['notebookSrc'] = src
@@ -173,7 +182,9 @@ class Voilite(Application):
                 base_url=self.base_url,
             )
             content, _ = voilite_converter.from_filename(self.notebook_path)
-            with open('index.html', 'w') as f:
+            with open(
+                os.path.join(self.output_prefix, 'index.html'), 'w'
+            ) as f:
                 f.write(content)
 
 

@@ -66,7 +66,7 @@ class VoiliteExporter(VoilaExporter):
         nb_copy, resources = super(TemplateExporter, self).from_notebook_node(
             nb, resources, **kwargs
         )
-
+        resources['base_url'] = self.base_url
         resources.setdefault('raw_mimetypes', self.raw_mimetypes)
         resources['global_content_filter'] = {
             'include_code': not self.exclude_code_cell,
@@ -107,10 +107,6 @@ class VoiliteExporter(VoilaExporter):
         return ''
 
     def cell_generator(self, nb, kernel_id):
-        # self.cwd = os.path.dirname(notebook_path) ??
-        # nb, _ = ClearOutputPreprocessor().preprocess(
-        #     nb, {'metadata': {'path': self.cwd}}
-        # )
         nb, _ = ClearOutputPreprocessor().preprocess(nb, {})
         for cell_idx, input_cell in enumerate(nb.cells):
             output = input_cell.copy()
@@ -119,7 +115,7 @@ class VoiliteExporter(VoilaExporter):
     def _init_resources(self, resources):
         resources = super()._init_resources(resources)
         # We are using the theme manager of JupyterLab instead of including
-        # CSS file in the template.  
+        # CSS file in the template.
         resources['include_css'] = lambda x: ''
         resources['include_lab_theme'] = lambda x: ''
 
