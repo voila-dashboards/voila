@@ -237,6 +237,7 @@ class Voilite(Application):
             voilite_configuration=self.voilite_configuration,
             contents_manager=self.contents_manager,
             base_url=self.base_url,
+            page_config=page_config
         )
         nb_paths = tree_exporter.from_contents()
         for nb in nb_paths:

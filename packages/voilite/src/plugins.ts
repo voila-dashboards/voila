@@ -39,7 +39,7 @@ const widgetManager = {
 /**
  * A plugin to handler the theme
  */
-const themePlugin: JupyterFrontEndPlugin<void> = {
+export const themePlugin: JupyterFrontEndPlugin<void> = {
   id: '@voila-dashboards/voilite:theme-manager',
   autoStart: true,
   optional: [IThemeManager],

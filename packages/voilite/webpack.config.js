@@ -70,6 +70,7 @@ const extras = Build.ensureAssets({
 
 // Make a bootstrap entrypoint
 const entryPoint = path.join(buildDir, 'bootstrap.js');
+const treeEntryPoint = path.join(buildDir, 'treebootstrap.js');
 
 if (process.env.NODE_ENV === 'production') {
   baseConfig.mode = 'production';
@@ -120,14 +121,20 @@ class CompileSchemasPlugin {
 module.exports = [
   merge(baseConfig, {
     mode: 'development',
-    entry: ['./publicpath.js', './' + path.relative(__dirname, entryPoint)],
+    entry: {
+      voilite: ['./publicpath.js', './' + path.relative(__dirname, entryPoint)],
+      treepage: [
+        './publicpath.js',
+        './' + path.relative(__dirname, treeEntryPoint)
+      ]
+    },
     output: {
       path: distRoot,
       library: {
         type: 'var',
         name: ['_JUPYTERLAB', 'CORE_OUTPUT']
       },
-      filename: 'voilite.js'
+      filename: '[name].js'
     },
     module: {
       rules: [
