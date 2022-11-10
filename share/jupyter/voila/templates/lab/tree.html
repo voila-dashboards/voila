@@ -83,7 +83,11 @@
 
     {% for content in contents.content %}
       {% if content.type in ['notebook', 'file'] %}
-        <li><a href="{{ base_url }}voila/render/{{ content.path }}?{{ query }}"><i class="fa fa-book"></i>{{content.name}}</a></li>
+        {% if frontend == 'voila' %}
+          <li><a href="{{ base_url }}voila/render/{{ content.path }}?{{ query }}"><i class="fa fa-book"></i>{{content.name}}</a></li>
+        {% elif frontend == 'voilite' %}
+          <li><a href="{{ base_url }}voila/render/{{ content.path }}?{{ query }}" target="_blank" rel="noopener noreferrer"><i class="fa fa-book"></i>{{content.name}}</a></li>
+        {% endif %}
       {% endif %}
       {% if content.type == 'directory' %}
         <li><a href="{{ base_url }}voila/tree/{{ content.path }}?{{ query }}"><i class="fa fa-folder"></i>{{content.name}}</a></li>
