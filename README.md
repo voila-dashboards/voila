@@ -16,7 +16,7 @@ callbacks to changes in Jupyter interactive widgets.
 
 - By default, Voilà disallows execute requests from the front-end, preventing
   execution of arbitrary code.
-- By default, Voilà runs with the `strip_source` option, which strips out the
+- By default, Voilà runs with the `strip_sources` option, which strips out the
   input cells from the rendered notebook.
 
 ## Installation
