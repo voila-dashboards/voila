@@ -75,13 +75,19 @@
     <script id="jupyter-config-data" type="application/json">
       {{ page_config | tojson }}
     </script>
-    <script src="{{ page_config['fullStaticUrl'] | e }}/treepage.js"></script>
-    <div id="voila-tree-main", style="display: None;">
+    {% if (theme != 'dark' and theme != 'light') %}
+      <script src="{{ page_config['fullStaticUrl'] | e }}/treepage.js"></script>
+      <div id="voila-tree-main" style="display: None;">
+        {% set mainStyle = 'style="display: None;"' %}
+    {% else %}
+      {% set mainStyle = '' %}
+    {% endif %}
   {% elif frontend == 'voila' %}
-  {% set openInNewTab = "" %}
-    <div id="voila-tree-main">
+    {% set openInNewTab = '' %}
+    {% set mainStyle = '' %}
   {% endif %}
-
+    
+  <div id="voila-tree-main" {{mainStyle}}>
     <div class="list-header">
         <div class="list-header-text">
             Select items to open with Voilà.

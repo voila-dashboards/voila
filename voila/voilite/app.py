@@ -4,7 +4,6 @@ import logging
 import os
 import shutil
 from copy import deepcopy
-from distutils.dir_util import copy_tree
 from pathlib import Path
 from typing import Dict
 from typing import List as TypeList
@@ -156,9 +155,10 @@ class Voilite(Application):
         dest_static_path = os.path.join(os.getcwd(), self.output_prefix)
         if os.path.isdir(dest_static_path):
             shutil.rmtree(dest_static_path, ignore_errors=False)
-        copy_tree(
+        shutil.copytree(
             os.path.join(lite_static_path),
             os.path.join(dest_static_path, 'build'),
+            dirs_exist_ok=True,
         )
         shutil.copyfile(
             os.path.join(lite_static_path, 'services.js'),
@@ -179,9 +179,33 @@ class Voilite(Application):
                 name = extension['name']
                 full_path = os.path.join(root, name)
                 if os.path.isdir(full_path):
-                    copy_tree(
-                        full_path, os.path.join(dest_extension_path, name)
+                    shutil.copytree(
+                        full_path,
+                        os.path.join(dest_extension_path, name),
+                        dirs_exist_ok=True,
                     )
+
+        template_name = self.voilite_configuration.template
+        ignore_func = lambda dir, files: [
+            f
+            for f in files
+            if os.path.isfile(os.path.join(dir, f)) and f[-3:] != 'css'
+        ]
+        for root in self.static_paths:
+            abspath = os.path.abspath(root)
+            if os.path.exists(abspath):
+                shutil.copytree(
+                    abspath,
+                    os.path.join(
+                        dest_static_path,
+                        'voila',
+                        'templates',
+                        template_name,
+                        'static',
+                    ),
+                    ignore=ignore_func,
+                    dirs_exist_ok=True,
+                )
 
         # Copy themes files
         all_themes = find_all_lab_theme()
@@ -189,7 +213,7 @@ class Voilite(Application):
             theme_dst = os.path.join(
                 dest_static_path, 'build', 'themes', theme[0]
             )
-            copy_tree(theme[1], theme_dst)
+            shutil.copytree(theme[1], theme_dst, dirs_exist_ok=True)
 
     def convert_notebook(
         self,
@@ -237,7 +261,7 @@ class Voilite(Application):
             voilite_configuration=self.voilite_configuration,
             contents_manager=self.contents_manager,
             base_url=self.base_url,
-            page_config=page_config
+            page_config=page_config,
         )
         nb_paths = tree_exporter.from_contents()
         for nb in nb_paths:
