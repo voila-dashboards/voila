@@ -26,16 +26,22 @@
     }
     var el = document.getElementById("loading_text");
     innterText = text ?? `Executing ${cell_index} of ${cell_count}`
-    el.innerHTML = innterText;
+    if(el){
+      el.innerHTML = innterText;
+    }
   }
 
   window.display_cells = function() {
     // remove the loading element
     var el = document.getElementById("loading");
-    el.parentNode.removeChild(el);
+    if(el){
+      el.parentNode.removeChild(el);
+    }
     // show the cell output
     el = document.getElementById("rendered_cells");
-    el.style.display = '';
+    if(el){
+      el.style.display = '';
+    }
   }
 
   {% if frontend == 'voila' %}

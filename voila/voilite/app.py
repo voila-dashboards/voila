@@ -192,11 +192,11 @@ class Voilite(Application):
 
         template_name = self.voilite_configuration.template
 
-        def ignore_func(dir, files) -> List[str]:
+        def ignore_func(dir, files: TypeList[str]) -> TypeList[str]:
             return [
                 f
                 for f in files
-                if os.path.isfile(os.path.join(dir, f)) and f[-3:] != 'css'
+                if os.path.isfile(os.path.join(dir, f)) and f.endswith('voila.js')
             ]
 
         for root in self.static_paths:
