@@ -20,7 +20,7 @@ from traitlets.config.loader import Config
 
 from ..configuration import VoilaConfiguration
 from ..paths import ROOT, collect_static_paths, collect_template_paths
-from ..utils import find_all_lab_theme, get_page_config
+from ..utils import DateTimeEncoder, find_all_lab_theme, get_page_config
 from .exporter import VoiliteExporter
 from .voilite_tree_exporter import VoiliteTreeExporter
 
@@ -66,12 +66,17 @@ class Voilite(Application):
         'template': 'VoilaConfiguration.template',
         'theme': 'VoilaConfiguration.theme',
         'base_url': 'Voilite.base_url',
+        'contents': 'Voilite.contents',
     }
 
     output_prefix = Unicode(
         '_output',
         config=True,
         help=_('Path to the output directory'),
+    )
+
+    contents = Unicode(
+        'files', config=True, help=_('Name of the user contents directory')
     )
 
     @default('log_level')
@@ -186,11 +191,14 @@ class Voilite(Application):
                     )
 
         template_name = self.voilite_configuration.template
-        ignore_func = lambda dir, files: [
-            f
-            for f in files
-            if os.path.isfile(os.path.join(dir, f)) and f[-3:] != 'css'
-        ]
+
+        def ignore_func(dir, files) -> List[str]:
+            return [
+                f
+                for f in files
+                if os.path.isfile(os.path.join(dir, f)) and f[-3:] != 'css'
+            ]
+
         for root in self.static_paths:
             abspath = os.path.abspath(root)
             if os.path.exists(abspath):
@@ -214,6 +222,45 @@ class Voilite(Application):
                 dest_static_path, 'build', 'themes', theme[0]
             )
             shutil.copytree(theme[1], theme_dst, dirs_exist_ok=True)
+
+        # Copy additional files
+        in_files_path = os.path.join(os.getcwd(), self.contents)
+        out_files_path = os.path.join(dest_static_path, 'files')
+        if os.path.exists(in_files_path):
+            shutil.copytree(
+                in_files_path, os.path.join(out_files_path, self.contents)
+            )
+        self.index_user_files()
+
+    def index_user_files(self, current_path='') -> None:
+
+        dest_static_path = os.path.join(os.getcwd(), self.output_prefix)
+        cm = self.contents_manager
+        contents = cm.get(current_path)
+        contents['content'] = sorted(
+            contents['content'], key=lambda i: i['name']
+        )
+        if current_path == '':
+            contents['content'] = list(
+                filter(
+                    lambda c: c['type'] == 'directory'
+                    and c['name'] == self.contents,
+                    contents['content'],
+                )
+            )
+        for item in contents['content']:
+            if item['type'] == 'directory':
+                self.index_user_files(item['path'])
+
+        output_dir = os.path.join(
+            dest_static_path, 'api', 'contents', current_path
+        )
+        if not os.path.exists(output_dir):
+            os.makedirs(output_dir, exist_ok=True)
+        with open(os.path.join(output_dir, 'all.json'), 'w') as f:
+            json.dump(
+                contents, f, sort_keys=True, indent=2, cls=DateTimeEncoder
+            )
 
     def convert_notebook(
         self,
@@ -262,6 +309,7 @@ class Voilite(Application):
             contents_manager=self.contents_manager,
             base_url=self.base_url,
             page_config=page_config,
+            contents_directory=self.contents,
         )
         nb_paths = tree_exporter.from_contents()
         for nb in nb_paths:

@@ -34,6 +34,7 @@ class VoiliteTreeExporter:
         self.notebook_paths = []
 
         self.page_config = self.filter_extensions(page_config)
+        self.contents_directory = kwargs.get('contents_directory', None)
 
     def filter_extensions(self, page_config: Dict) -> Dict:
 
@@ -52,7 +53,11 @@ class VoiliteTreeExporter:
     def allowed_content(self, content: Dict) -> bool:
         if content['type'] == 'notebook':
             return True
-        if content['type'] == 'directory' and content['name'] != '_output':
+        if (
+            content['type'] == 'directory'
+            and content['name'] != '_output'
+            and content['name'] != self.contents_directory
+        ):
             return True
         __, ext = os.path.splitext(content.get('path'))
         return ext in self.allowed_extensions

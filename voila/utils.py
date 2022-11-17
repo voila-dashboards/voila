@@ -8,6 +8,7 @@
 #############################################################################
 
 import asyncio
+import datetime
 import json
 import os
 import threading
@@ -17,16 +18,16 @@ from functools import partial
 from typing import Awaitable, Dict, List, Tuple
 
 import websockets
+from jupyter_core.paths import jupyter_path
+from jupyter_server.utils import url_path_join
+from jupyterlab_server.config import get_page_config as gpc
+from jupyterlab_server.config import recursive_update
 from jupyterlab_server.themes_handler import ThemesHandler
 from markupsafe import Markup
 from nbconvert.exporters.html import find_lab_theme
 
-from jupyter_core.paths import jupyter_path
-from jupyterlab_server.config import get_page_config as gpc, recursive_update
-from jupyter_server.utils import url_path_join
-
-from .static_file_handler import TemplateStaticFileHandler
 from ._version import __version__
+from .static_file_handler import TemplateStaticFileHandler
 
 
 class ENV_VARIABLE(str, Enum):
@@ -233,3 +234,13 @@ def find_all_lab_theme() -> List[Tuple[str, str]]:
                     pass
 
     return theme_list
+
+
+class DateTimeEncoder(json.JSONEncoder):
+    """A custom date-aware JSON encoder"""
+
+    def default(self, o):
+        if isinstance(o, datetime.datetime):
+            return o.isoformat().replace('+00:00', 'Z')
+
+        return json.JSONEncoder.default(self, o)
