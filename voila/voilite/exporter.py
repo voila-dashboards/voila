@@ -8,13 +8,13 @@
 #############################################################################
 
 
-from traitlets import default
+from copy import deepcopy
 
-from nbconvert.filters.highlight import Highlight2HTML
 from jupyter_server.services.contents.largefilemanager import LargeFileManager
-
 from nbconvert.exporters import TemplateExporter
+from nbconvert.filters.highlight import Highlight2HTML
 from nbconvert.preprocessors import ClearOutputPreprocessor
+from traitlets import default
 
 from ..exporter import VoilaExporter
 from ..paths import collect_template_paths
@@ -25,14 +25,14 @@ class VoiliteExporter(VoilaExporter):
         kwargs.setdefault('base_url', '/')
         kwargs.setdefault('contents_manager', LargeFileManager())
 
-        self.voilite_configuration = kwargs.get('voilite_config')
+        super().__init__(*args, **kwargs)
 
+        self.voilite_configuration = kwargs.get('voilite_config')
         self.page_config = kwargs.get('page_config', {})
         self.theme = self.voilite_configuration.theme
         self.template_name = self.voilite_configuration.template
-        # template_paths?
-
-        super().__init__(*args, **kwargs)
+        self.packages = kwargs.get('packages', [])
+        self.nb_src = kwargs.get('nb_src', [])
 
         # TODO
         # Investigate why this doesnt work
@@ -66,6 +66,7 @@ class VoiliteExporter(VoilaExporter):
         nb_copy, resources = super(TemplateExporter, self).from_notebook_node(
             nb, resources, **kwargs
         )
+
         resources['base_url'] = self.base_url
         resources.setdefault('raw_mimetypes', self.raw_mimetypes)
         resources['global_content_filter'] = {
@@ -97,7 +98,7 @@ class VoiliteExporter(VoilaExporter):
             resources=resources,
             **extra_context,
             static_url=self.static_url,
-            page_config=self.page_config
+            page_config=self.update_page_config(self.page_config),
         ):
             html.append(html_snippet)
 
@@ -120,3 +121,14 @@ class VoiliteExporter(VoilaExporter):
         resources['include_lab_theme'] = lambda x: ''
 
         return resources
+
+    def update_page_config(self, page_config):
+        page_config_copy = deepcopy(page_config)
+
+        page_config_copy['notebookSrc'] = self.nb_src
+        if len(self.packages) > 0:
+            packages_src = 'import piplite\n'
+            packages_src += f'await piplite.install({self.packages})\n'
+            page_config_copy['packagesSrc'] = packages_src
+
+        return page_config_copy

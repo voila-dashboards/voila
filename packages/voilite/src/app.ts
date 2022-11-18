@@ -170,11 +170,16 @@ export class VoiliteApp extends JupyterFrontEnd<IShell> {
         const notebookSrc = JSON.parse(
           PageConfig.getOption('notebookSrc')
         ) as ICellData[];
-
+        const packagesSrc = PageConfig.getOption('packagesSrc');
         kernel.statusChanged.connect(async (_, status) => {
           if (!executed && status === 'idle') {
             executed = true;
-            await App.executeCells(notebookSrc, rendermime, connection.kernel!);
+            await App.executeCells({
+              packages: packagesSrc,
+              source: notebookSrc,
+              rendermime,
+              kernel: connection.kernel!
+            });
           }
         });
       }
@@ -218,12 +223,20 @@ export namespace App {
     default: JupyterFrontEndPlugin<any> | JupyterFrontEndPlugin<any>[];
   }
 
-  export async function executeCells(
-    source: ICellData[],
-    rendermime: RenderMimeRegistry,
-    kernel: IKernelConnection
-  ): Promise<void> {
-    // const cellKeys = Object.keys(cells).map(key => parseInt(key));
+  export async function executeCells(options: {
+    packages?: string;
+    source: ICellData[];
+    rendermime: RenderMimeRegistry;
+    kernel: IKernelConnection;
+  }): Promise<void> {
+    const { packages, source, rendermime, kernel } = options;
+    if (packages && packages.length > 0) {
+      window.update_loading_text(0, 0, 'Installing dependencies');
+      const future = kernel.requestExecute({
+        code: packages
+      });
+      await future.done;
+    }
     const cellCount = source.length;
     for (let idx = 0; idx < cellCount; idx++) {
       const cell = source[idx];

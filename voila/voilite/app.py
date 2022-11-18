@@ -3,7 +3,6 @@ import json
 import logging
 import os
 import shutil
-from copy import deepcopy
 from pathlib import Path
 from typing import Dict
 from typing import List as TypeList
@@ -67,6 +66,7 @@ class Voilite(Application):
         'theme': 'VoilaConfiguration.theme',
         'base_url': 'Voilite.base_url',
         'contents': 'Voilite.contents',
+        'packages': 'Voilite.packages',
     }
 
     output_prefix = Unicode(
@@ -79,6 +79,16 @@ class Voilite(Application):
         'files', config=True, help=_('Name of the user contents directory')
     )
 
+    packages = List(
+        [],
+        config=True,
+        help=_('List of packages to be installed in the voilite enviroment'),
+    )
+
+    config_file_paths = List(
+        Unicode(), config=True, help=_('Paths to search for voilite.(py|json)')
+    )
+
     @default('log_level')
     def _default_log_level(self):
         return logging.INFO
@@ -89,6 +99,10 @@ class Voilite(Application):
             return os.path.dirname(os.path.abspath(self.notebook_path))
         else:
             return os.getcwd()
+
+    @default('config_file_paths')
+    def _config_file_paths_default(self):
+        return [os.getcwd()]
 
     def setup_template_dirs(self):
         if self.voilite_configuration.template:
@@ -147,6 +161,7 @@ class Voilite(Application):
             raise ValueError(
                 'provided more than 1 argument: %r' % self.extra_args
             )
+        self.load_config_file('voilite', path=self.config_file_paths)
         self.voilite_configuration = VoilaConfiguration(parent=self)
         self.setup_template_dirs()
 
@@ -196,7 +211,8 @@ class Voilite(Application):
             return [
                 f
                 for f in files
-                if os.path.isfile(os.path.join(dir, f)) and f.endswith('voila.js')
+                if os.path.isfile(os.path.join(dir, f))
+                and f.endswith('voila.js')
             ]
 
         for root in self.static_paths:
@@ -267,6 +283,7 @@ class Voilite(Application):
         nb_path: str,
         page_config: Dict,
         output_prefix: str,
+        packages: TypeList[str],
         output_name: str = None,
     ) -> None:
         nb_name = output_name
@@ -274,24 +291,21 @@ class Voilite(Application):
         nb_path = Path(nb_path)
         if not nb_name:
             nb_name = f'{nb_path.stem}.html'
-
-        page_config_copy = deepcopy(page_config)
-
         with open(nb_path) as f:
             nb = nbformat.read(f, 4)
-            src = [
+            nb_src = [
                 {
                     'cell_source': cell['source'],
                     'cell_type': cell['cell_type'],
                 }
                 for cell in nb['cells']
             ]
-            page_config_copy['notebookSrc'] = src
-
         voilite_exporter = VoiliteExporter(
             voilite_config=self.voilite_configuration,
-            page_config=page_config_copy,
+            page_config=page_config,
             base_url=self.base_url,
+            nb_src=nb_src,
+            packages=packages,
         )
         content, _ = voilite_exporter.from_filename(nb_path)
         output_dir = os.path.join(output_prefix, nb_path.parent)
@@ -317,6 +331,7 @@ class Voilite(Application):
                 nb,
                 page_config,
                 os.path.join(self.output_prefix, 'voila', 'render'),
+                self.packages,
             )
 
     def start(self):
@@ -347,6 +362,7 @@ class Voilite(Application):
                 self.notebook_path,
                 page_config,
                 self.output_prefix,
+                self.packages,
                 'index.html',
             )
         else:
