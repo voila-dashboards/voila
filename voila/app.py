@@ -83,7 +83,13 @@ class Voila(Application):
             },
             _("Set the log level to logging.DEBUG, and show exception tracebacks in output.")
         ),
-        'no-browser': ({'Voila': {'open_browser': False}}, _('Don\'t open the notebook in a browser after startup.'))
+        'no-browser': ({'Voila': {'open_browser': False}}, _('Don\'t open the notebook in a browser after startup.')),
+        'show-margins': (
+            {
+                'VoilaConfiguration': {'show_margins': True},
+            },
+            _('show left and right margins for the "lab" template, this gives a "classic" template look')
+        )
     }
 
     description = Unicode(

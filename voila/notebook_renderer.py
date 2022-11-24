@@ -151,6 +151,7 @@ class NotebookRenderer(LoggingConfigurable):
             contents_manager=self.contents_manager,  # for the image inlining
             theme=self.theme,  # we now have the theme in two places
             base_url=self.base_url,
+            show_margins=self.voila_configuration.show_margins,
         )
 
         if self.voila_configuration.strip_sources:
