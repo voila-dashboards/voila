@@ -27,6 +27,25 @@
       display: none;
     }
   </style>
+{% if resources.show_margins %}
+  <style>
+    body {
+      background: var(--jp-layout-color1);
+    }
+
+    .jp-Notebook {
+      padding-left: calc(calc(100% - 1200px) * 0.5);
+      padding-right: calc( calc( 100% - 1200px - 20px ) * 0.5 );
+    }
+
+    .jp-Notebook > div {
+      background: var(--jp-layout-color0);
+      padding: 6ex 12ex 8ex 12ex;
+      border-radius: var(--jp-border-radius);
+      box-shadow: var(--jp-elevation-z4);
+    }
+  </style>
+{% endif %}
 {%- endblock html_head_css -%}
 
 {# this overrides the default behaviour of rendering static widgets #}
@@ -35,13 +54,14 @@
 
 {%- block body_header -%}
 {% if resources.theme == 'dark' %}
-<body class="jp-Notebook theme-dark" data-base-url="{{resources.base_url}}voila/" data-jp-theme-light="false" data-jp-theme-name="JupyterLab Dark">
+<body class="theme-dark" data-base-url="{{resources.base_url}}voila/" data-jp-theme-light="false" data-jp-theme-name="JupyterLab Dark">
 {% else %}
-<body class="jp-Notebook theme-light" data-base-url="{{resources.base_url}}voila/" data-jp-theme-light="true" data-jp-theme-name="JupyterLab Light">
+<body class="theme-light" data-base-url="{{resources.base_url}}voila/" data-jp-theme-light="true" data-jp-theme-name="JupyterLab Light">
 {% endif %}
 {{ spinner.html() }}
 {{ voila_setup_helper_functions() }}
-<div id="rendered_cells" style="display: none">
+<div class="jp-Notebook" style="display: none">
+  <div>
 {%- endblock body_header -%}
 
 {%- block body_loop -%}
@@ -73,6 +93,7 @@
 {%- endblock body_loop -%}
 
 {%- block body_footer -%}
+  </div>
 </div>
 <script type="text/javascript">
   (function() {
@@ -80,7 +101,7 @@
     var el = document.getElementById("loading");
     el.parentNode.removeChild(el);
     // show the cell output
-    el = document.getElementById("rendered_cells");
+    el = document.querySelector(".jp-Notebook");
     el.style.display = '';
   })();
 </script>

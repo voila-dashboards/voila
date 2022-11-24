@@ -86,6 +86,9 @@ System administrators who want to disable changing the theme, can pass ``--Voila
 .. note::
    Changing the template from the notebook metadata may change in the future if this features moves to nbconvert.
 
+.. warning::
+   The "classic" template is being deprecated and its support will be removed in Voilà 0.5.0, an alternative is to use ``voila --template lab --show-margins`` to get a similar look.
+
 
 Creating your own template
 ==========================
@@ -247,7 +250,7 @@ Here is an example of the configuration file. This file needs to be placed in th
       """Do your stuffs here"""
       return notebook
 
-   c.Voila.prelaunch_hook = hook_function 
+   c.Voila.prelaunch_hook = hook_function
 
 - Start Voila from a python script:
 
@@ -273,7 +276,7 @@ Here is an example of a custom `prelaunch-hook` to execute a notebook with `pape
             from papermill.parameterize import parameterize_notebook
 
             # setup for papermill
-            # 
+            #
             # these two blocks are done
             # to avoid triggering errors
             # in papermill's notebook
@@ -423,7 +426,7 @@ For more information about these options, check out the `Jupyter Server <https:/
 Preheated kernels
 ==================
 
-Since Voilà needs to start a new jupyter kernel and execute the requested notebook in this kernel for every connection, this would lead to a long waiting time before the widgets can be displayed in the browser. 
+Since Voilà needs to start a new jupyter kernel and execute the requested notebook in this kernel for every connection, this would lead to a long waiting time before the widgets can be displayed in the browser.
 To reduce this waiting time, especially for heavy notebooks, users can activate the preheating kernel option of Voilà.
 
 .. warning::
@@ -451,7 +454,7 @@ will set the variable "FOO" in all preheated kernels.
 
 If the pool size does not match the user's requirements, or some notebooks need to use specific environment variables..., additional settings are needed.  The easiest way to change these settings is to provide a file named `voila.json` in the same folder containing the notebooks. Settings for preheating kernel ( list of notebooks does not need preheated kernels, number of kernels in pool, refilling delay, environment variables for starting kernel...) can be set under the `VoilaKernelManager` class name.
 
-Here is an example of settings with explanations for preheating kernel option. 
+Here is an example of settings with explanations for preheating kernel option.
 
 .. code-block:: python
 
@@ -459,7 +462,7 @@ Here is an example of settings with explanations for preheating kernel option.
    {
       "VoilaConfiguration": {
          # Activate or deactivate preheat kernel option.
-         "preheat_kernel": true 
+         "preheat_kernel": true
       },
       "VoilaKernelManager": {
          # A list of notebook name or regex patterns to exclude notebooks from using preheat kernel.
@@ -467,9 +470,9 @@ Here is an example of settings with explanations for preheating kernel option.
             "notebook-does-not-need-preheat.ipynb",
             "^.*foo.*$",
             ...
-         ], 
+         ],
          # Configuration for kernel pools
-         "kernel_pools_config": { 
+         "kernel_pools_config": {
             # Setting for `voila.ipynb` notebook
             "voila.ipynb": {
                "pool_size": 3, # Size of pool
@@ -515,7 +518,7 @@ In normal mode, Voilà users can get the `query string` at run time through the 
 .. code-block:: python
 
    import os
-   query_string = os.getenv('QUERY_STRING') 
+   query_string = os.getenv('QUERY_STRING')
 
 In preheating kernel mode, users can prepend with ``wait_for_request`` from ``voila.utils``
 
@@ -536,9 +539,9 @@ If the Voilà websocket handler is not started with the default protocol (`ws`),
    {
       ...
       "VoilaKernelManager": {
-         "kernel_pools_config": { 
+         "kernel_pools_config": {
             "foo.ipynb": {
-               "kernel_env_variables": { 
+               "kernel_env_variables": {
                   "VOILA_APP_IP": "192.168.1.1",
                   "VOILA_APP_PORT": "6789",
                   "VOILA_WS_PROTOCOL": "wss"
@@ -561,7 +564,7 @@ Hiding output and code cells based on cell tags
 Voilà uses `nbconvert <https://github.com/jupyter/nbconvert>`_ under the hood to render the notebooks so we can benefit from some of its advanced functionalities to hide code and output cells based on cell tags.
 
 To hide the cell output for every cell in your notebook that has been tagged (`how to tag <https://jupyter-notebook.readthedocs.io/en/stable/changelog.html#cell-tags>`_) with "hide" in Voilà::
-    
+
     voila --TagRemovePreprocessor.remove_all_outputs_tags='{"hide"}' your_notebook.ipynb
 
 To hide both the code cell and the output cell (if any) for every cell that has been tagged with "hide"::
