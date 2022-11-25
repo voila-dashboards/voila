@@ -88,7 +88,7 @@ class Voila(Application):
             {
                 'VoilaConfiguration': {'show_margins': True},
             },
-            _('show left and right margins for the "lab" template, this gives a "classic" template look')
+            _('Show left and right margins for the "lab" template, this gives a "classic" template look')
         )
     }
 
