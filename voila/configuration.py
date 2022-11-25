@@ -41,7 +41,7 @@ class VoilaConfiguration(traitlets.config.Configurable):
         False,
         config=True,
         help=(
-            'show left and right margins for the "lab" template, this gives a "classic" template look'
+            'Show left and right margins for the "lab" template, this gives a "classic" template look'
         )
     )
     strip_sources = Bool(True, config=True, help='Strip sources from rendered html')
