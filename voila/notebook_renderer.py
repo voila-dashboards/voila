@@ -137,6 +137,7 @@ class NotebookRenderer(LoggingConfigurable):
             theme=self.theme,  # we now have the theme in two places
             base_url=self.base_url,
             page_config=self.page_config,
+            show_margins=self.voila_configuration.show_margins,
         )
 
         if self.voila_configuration.strip_sources:
