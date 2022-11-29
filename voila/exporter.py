@@ -46,15 +46,31 @@ class VoilaExporter(HTMLExporter):
     """Custom HTMLExporter that inlines the images using VoilaMarkdownRenderer"""
 
     base_url = traitlets.Unicode(help="Base url for resources").tag(config=True)
+
     markdown_renderer_class = traitlets.Type(VoilaMarkdownRenderer).tag(config=True)
+
     # Can be a ContentsManager from notebook or jupyter_server, so Any will have to do for now
     contents_manager = traitlets.Any()
 
-    # The voila exporter overrides the markdown renderer from the HTMLExporter
-    # to inline images.
+    show_margins = traitlets.Bool(
+        True,
+        help='show left and right margins for the "lab" template, this gives a "classic" template look'
+    ).tag(config=True)
+
+    @traitlets.validate("template_name")
+    def _validate_template_name(self, template_name):
+        if template_name.value == "classic":
+            self.log.warning(
+                "\"classic\" template support will be removed in Voila 1.0.0, "
+                "please use the \"lab\" template instead with the \"--show-margins\" "
+                "option for a similar look"
+            )
+        return template_name.value
 
     @pass_context
     def markdown2html(self, context, source):
+        # The voila exporter overrides the markdown renderer from the HTMLExporter
+        # to inline images.
         cell = context['cell']
         attachments = cell.get('attachments', {})
         cls = self.markdown_renderer_class
@@ -131,5 +147,7 @@ class VoilaExporter(HTMLExporter):
         include_assets_functions = create_include_assets_functions(self.template_name, self.base_url)
 
         resources.update(include_assets_functions)
+
+        resources["show_margins"] = self.show_margins
 
         return resources
