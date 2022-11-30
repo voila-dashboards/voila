@@ -37,6 +37,13 @@ class VoilaConfiguration(traitlets.config.Configurable):
         """
     )
     theme = Unicode('light', config=True)
+    show_margins = Bool(
+        False,
+        config=True,
+        help=(
+            'Show left and right margins for the "lab" template, this gives a "classic" template look'
+        )
+    )
     strip_sources = Bool(True, config=True, help='Strip sources from rendered html')
 
     file_whitelist = List(
