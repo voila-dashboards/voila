@@ -5,6 +5,8 @@
 {% block stylesheets %}
   {{ super() }}
 
+  {{ resources.include_js("static/voila-style.js") }}
+
   <style>
     .list-header {
       width: 80%;

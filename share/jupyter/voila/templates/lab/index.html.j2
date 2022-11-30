@@ -10,10 +10,12 @@
 {%- endblock html_head_js -%}
 
 {%- block html_head_css -%}
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@^5/css/all.min.css" type="text/css" />
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@^5/css/v4-shims.min.css" type="text/css" />
-{{ super() }}
-{{ spinner.css() }}
+  {{ super() }}
+
+  {{ resources.include_js("static/voila-style.js") }}
+
+  {{ spinner.css() }}
+
   <style>
     /*Hide empty cells*/
     .jp-mod-noOutputs.jp-mod-noInput {
@@ -38,6 +40,9 @@
       box-shadow: var(--jp-elevation-z4);
     }
   </style>
+
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@^5/css/all.min.css" type="text/css" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@^5/css/v4-shims.min.css" type="text/css" />
 {% endif %}
 {%- endblock html_head_css -%}
 
