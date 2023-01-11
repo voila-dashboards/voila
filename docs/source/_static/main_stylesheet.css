@@ -6,3 +6,12 @@
 .wy-nav-content img {
   margin: 5px auto 25px;
 }
+
+/*use voila palette for title coloring*/
+html[data-theme="light"] {
+  --pst-color-primary: #5dbcaf;
+}
+
+html[data-theme="dark"] {
+  --pst-color-primary: #5dbcaf;
+}
