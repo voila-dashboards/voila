@@ -81,14 +81,14 @@ Customizing Voilà on Binder
 To specify different options (such as the theme and template), create a
 ``jupyter_config.json`` file at the root of the repository with the following content:
 
-   .. code:: json
+.. code:: json
 
-       {
-         "VoilaConfiguration": {
-           "theme": "dark",
-           "template": "gridstack"
-         }
-       }
+    {
+      "VoilaConfiguration": {
+        "theme": "dark",
+        "template": "gridstack"
+      }
+    }
 
 
 An example can be found in the
@@ -224,96 +224,96 @@ Steps
 
 1. SSH into the server:
 
-    .. code:: text
+   .. code:: text
 
-        ssh ubuntu@<ip-address>
+      ssh ubuntu@<ip-address>
 
 2. Install nginx:
 
-    .. code:: text
+   .. code:: text
 
-        sudo apt install nginx
+      sudo apt install nginx
 
 3. To check that ``nginx`` is correctly installed:
 
-    .. code:: text
+   .. code:: text
 
-        sudo systemctl status nginx
+      sudo systemctl status nginx
 
 4. Create the file ``/etc/nginx/sites-enabled/yourdomain.com`` with the following content:
 
-    .. code:: text
+   .. code:: text
 
-        server {
-            listen 80;
-            server_name yourdomain.com;
-            proxy_buffering off;
-            location / {
-                    proxy_pass http://localhost:8866;
-                    proxy_set_header Host $host;
-                    proxy_set_header X-Real-IP $remote_addr;
-                    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-
-                    proxy_http_version 1.1;
-                    proxy_set_header Upgrade $http_upgrade;
-                    proxy_set_header Connection "upgrade";
-                    proxy_read_timeout 86400;
-            }
-
-            client_max_body_size 100M;
-            error_log /var/log/nginx/error.log;
-        }
+      server {
+          listen 80;
+          server_name yourdomain.com;
+          proxy_buffering off;
+          location / {
+              proxy_pass http://localhost:8866;
+              proxy_set_header Host $host;
+              proxy_set_header X-Real-IP $remote_addr;
+              proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+              
+              proxy_http_version 1.1;
+              proxy_set_header Upgrade $http_upgrade;
+              proxy_set_header Connection "upgrade";
+              proxy_read_timeout 86400;
+          }
+          
+          client_max_body_size 100M;
+          error_log /var/log/nginx/error.log;
+      }
 
 5. Enable and start the ``nginx`` service:
 
-    .. code:: text
+   .. code:: text
 
-        sudo systemctl enable nginx.service
-        sudo systemctl start nginx.service
+      sudo systemctl enable nginx.service
+      sudo systemctl start nginx.service
 
 6. Install pip:
 
-    .. code:: text
+   .. code:: text
 
-        sudo apt update && sudo apt install python3-pip
+      sudo apt update && sudo apt install python3-pip
 
 7. Follow the instructions in `Setup an example project`_, and install the dependencies:
 
-    .. code:: text
+   .. code:: text
 
-        sudo python3 -m pip install -r requirements.txt
+      sudo python3 -m pip install -r requirements.txt
 
-8. Create a new systemd service for running Voilà in ``/usr/lib/systemd/system/voila.service``.
-The service will ensure Voilà is automatically restarted on startup:
+8. Create a new systemd service for running Voilà in ``/usr/lib/systemd/system/voila.service``. The service will ensure Voilà is automatically restarted on startup:
 
-    .. code:: text
+   .. code:: text
 
-        [Unit]
-        Description=Voila
-
-        [Service]
-        Type=simple
-        PIDFile=/run/voila.pid
-        ExecStart=voila --no-browser voila/notebooks/basics.ipynb
-        User=ubuntu
-        WorkingDirectory=/home/ubuntu/
-        Restart=always
-        RestartSec=10
-
-        [Install]
-        WantedBy=multi-user.target
+      [Unit]
+      Description=Voila
+      
+      [Service]
+      Type=simple
+      PIDFile=/run/voila.pid
+      ExecStart=voila --no-browser voila/notebooks/basics.ipynb
+      User=ubuntu
+      WorkingDirectory=/home/ubuntu/
+      Restart=always
+      RestartSec=10
+      
+      [Install]
+      WantedBy=multi-user.target
 
 In this example Voilà is started with ``voila --no-browser voila/notebooks/basics.ipynb`` to serve a single notebook.
 You can edit the command to change this behavior and the notebooks Voilà is serving.
 
 9. Enable and start the ``voila`` service:
 
-    .. code:: text
+   .. code:: text
 
-        sudo systemctl enable voila.service
-        sudo systemctl start voila.service
+      sudo systemctl enable voila.service
+      sudo systemctl start voila.service
 
 .. note::
+
     To check the logs for Voilà:
 
     .. code:: text
@@ -328,45 +328,45 @@ Enable HTTPS with Let's Encrypt
 
 1. Install ``certbot``:
 
-    .. code:: text
+   .. code:: text
 
-        sudo add-apt-repository ppa:certbot/certbot
-        sudo apt update
-        sudo apt install python-certbot-nginx
+      sudo add-apt-repository ppa:certbot/certbot
+      sudo apt update
+      sudo apt install python-certbot-nginx
 
 2. Obtain the certificates from Let's Encrypt. The ``--nginx`` flag will edit the nginx configuration automatically:
 
-    .. code:: text
-
-        sudo certbot --nginx -d yourdomain.com
+   .. code:: text
+    
+      sudo certbot --nginx -d yourdomain.com
 
 3. ``/etc/nginx/sites-enabled/yourdomain.com`` should now contain a few more entries:
 
-    .. code :: text
+   .. code :: text
 
-        $ cat /etc/nginx/sites-enabled/yourdomain.com
-
-        ...
-        listen 443 ssl; # managed by Certbot
-        ssl_certificate /etc/letsencrypt/live/yourdomain.com/fullchain.pem; # managed by Certbot
-        ssl_certificate_key /etc/letsencrypt/live/yourdomain.com/privkey.pem; # managed by Certbot
-        include /etc/letsencrypt/options-ssl-nginx.conf; # managed by Certbot
-        ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem; # managed by Certbot
-        ...
+      $ cat /etc/nginx/sites-enabled/yourdomain.com
+      
+      ...
+      listen 443 ssl; # managed by Certbot
+      ssl_certificate /etc/letsencrypt/live/yourdomain.com/fullchain.pem; # managed by Certbot
+      ssl_certificate_key /etc/letsencrypt/live/yourdomain.com/privkey.pem; # managed by Certbot
+      include /etc/letsencrypt/options-ssl-nginx.conf; # managed by Certbot
+      ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem; # managed by Certbot
+      ...
 
 4. Visit ``yourdomain.com`` to access the Voilà applications over HTTPS.
 
 5. To automatically renew the certificates (they expire after 90 days), open the ``crontab`` file:
 
-    .. code :: text
+   .. code :: text
 
-        crontab -e
+      crontab -e
 
-And add the following line:
+   And add the following line:
 
-    .. code :: text
+   .. code :: text
 
-        0 12 * * * /usr/bin/certbot renew --quiet
+      0 12 * * * /usr/bin/certbot renew --quiet
 
 For more information, you can also follow `the guide on the nginx blog <https://www.nginx.com/blog/using-free-ssltls-certificates-from-lets-encrypt-with-nginx/>`__.
 
