@@ -95,19 +95,26 @@ An example can be found in the
 `voila-demo <https://github.com/maartenbreddels/voila-demo>`__ repository.
 
 
-Deployment on Heroku
---------------------
+Deployment on Railway
+---------------------
 
-Heroku.com is an attractive option if you want to try out deployment for
-free. You have limited computing hours, however the app will also
-automatically shutdown if it is idle.
+.. note::
 
-The general steps for deployment at Heroku can be found
-`here <https://devcenter.heroku.com/articles/getting-started-with-python>`__.
+    Heroku.com was the suggested option for free deployment but since `November 28th 2022 <https://help.heroku.com/RSBRUH58/removal-of-heroku-free-product-plans-faq>`__, free
+    product plans have been removed from the platform. The process described in
+    this section remain valid for other services.
+
+`Railway.app <https://railway.app>`__ is an attractive option if you want to try
+out deployment for free. You have limited computing hours, however the app will
+also automatically shutdown if it is idle.
+
+The general steps for deployment at Railway can be found
+`here <https://nixpacks.com/docs/providers/python>`__.
 High level instructions, specific to Voilà can be found below:
 
-1. Follow the steps of the official documentation to install the heroku
-   cli and login on your machine.
+1. Follow the steps of the official documentation to install the Railway
+   CLI and login on your machine.
+
 2. Add a file named runtime.txt to the project directory with a 
    `valid Python runtime <https://devcenter.heroku.com/articles/python-support#supported-runtimes>`__:
 
@@ -115,7 +122,7 @@ High level instructions, specific to Voilà can be found below:
 
        python-3.10.4
 
-3. Add a file named Procfile to the project directory with the
+3. Add a file named ``Procfile`` to the project directory with the
    following content if you want to show all notebooks:
 
    .. code:: text
@@ -128,7 +135,7 @@ High level instructions, specific to Voilà can be found below:
 
        web: voila --port=$PORT --no-browser --Voila.ip=0.0.0.0 your_notebook.ipynb
 
-4. Initialize your git repo and commit your code. At minimum you need to commit
+4. Initialize a git repo and commit your code. At minimum you need to commit
    your notebooks, requirements.txt, runtime.txt, and the Procfile.
 
    .. code:: bash
@@ -137,24 +144,23 @@ High level instructions, specific to Voilà can be found below:
        git add <your-files>
        git commit -m "my message"
 
-5. Create an Heroku instance and push the code.
+5. Create an Railway instance and push the code.
 
    .. code:: bash
 
-       heroku create
-       git push heroku master
+       railway init
 
 6. Open your web app
 
    .. code:: bash
 
-       heroku open
+       railway up --detach
 
 To resolve issues, it is useful to see the logs of your application. You can do this by running:
 
-   .. code:: bash
+.. code:: bash
 
-       heroku logs --tail
+    railway up
 
 
 Deployment on Google App Engine
