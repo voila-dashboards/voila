@@ -27,6 +27,7 @@ jobs:
     - name: Setup mamba
       uses: conda-incubator/setup-miniconda@v2
       with:
+        auto-update-conda: true
         mamba-version: "*"
         channels: conda-forge
 
