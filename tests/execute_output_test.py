@@ -37,7 +37,6 @@ def normalize_outputs(outputs):
         normalize_output(output)
 
 
-@pytest.mark.xfail(reason='TODO: investigate this failing test')
 def test_execute_output():
     path = os.path.join(BASE_DIR, 'notebooks/output.ipynb')
     nb = read(path, NO_CONVERT)
