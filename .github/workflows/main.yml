@@ -28,7 +28,7 @@ jobs:
       uses: conda-incubator/setup-miniconda@v2
       with:
         auto-update-conda: true
-        mamba-version: "*"
+        miniforge-variant: Mambaforge
         channels: conda-forge
         python-version: ${{ matrix.python_version }}
 
