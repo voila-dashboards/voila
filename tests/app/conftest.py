@@ -2,9 +2,19 @@ import os
 import pytest
 import voila.app
 
+from jupyter_server.auth import IdentityProvider, User
 
 BASE_DIR = os.path.dirname(__file__)
 
+class MockUser(User):
+    permissions = "*"
+
+
+class MockIdentityProvider(IdentityProvider):
+    mock_user: MockUser
+
+    async def get_user(self, handler):
+        return self.mock_user
 
 class VoilaTest(voila.app.Voila):
     def listen(self):
@@ -52,6 +62,13 @@ def voila_app(voila_args, voila_config, preheat_config):
     voila_app = VoilaTest.instance()
     voila_app.initialize(voila_args + ['--no-browser', preheat_config])
     voila_config(voila_app)
+
+    identity_provider = MockIdentityProvider()
+    identity_provider.mock_user = MockUser(username="user.username", name="user.name", display_name="user.username")
+
+    voila_app.tornado_settings["identity_provider"] = identity_provider
+    voila_app.tornado_settings["disable_check_xsrf"] = True
+
     voila_app.start()
     yield voila_app
     voila_app.stop()
