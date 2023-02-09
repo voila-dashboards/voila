@@ -21,12 +21,8 @@ import webbrowser
 import errno
 import random
 
-try:
-    from urllib.parse import urljoin
-    from urllib.request import pathname2url
-except ImportError:
-    from urllib import pathname2url
-    from urlparse import urljoin
+from urllib.parse import urljoin, urlencode
+from urllib.request import pathname2url
 
 import jinja2
 
@@ -164,26 +160,33 @@ class Voila(Application):
         default_value=ZMQChannelsWebsocketConnection,
         klass=BaseKernelWebsocketConnection,
         config=True,
-        help="The kernel websocket connection class to use.",
+        help='The kernel websocket connection class to use.',
     )
 
     identity_provider_class = Type(
         default_value=IdentityProvider,
         klass=IdentityProvider,
         config=True,
-        help="The jupyter_server IdentityProvider class to use.",
+        help='The jupyter_server IdentityProvider class to use.',
     )
 
     authorizer_class = Type(
         default_value=AllowAllAuthorizer,
         klass=Authorizer,
         config=True,
-        help="The jupyter_server Authorizer class to use.",
+        help='The jupyter_server Authorizer class to use.',
     )
 
     cookie_secret = Bytes(
         config=True,
-        help="The tornado cookie_secret"
+        help='The tornado cookie_secret. Keep it secret. Keep it safe.'
+    )
+
+    login_url = Unicode(
+        '/login',
+        config=True,
+        help=_("This is not used unless you chosen an authenticator that \
+                supports logging in via a password.")
     )
 
     base_url = Unicode(
@@ -312,13 +315,10 @@ class Voila(Application):
             else:
                 ip = self.ip
             url = self._url(ip)
-        # TODO: do we want to have the token?
-        # if self.token:
-        #     # Don't log full token if it came from config
-        #     token = self.token if self._token_generated else '...'
-        #     url = (url_concat(url, {'token': token})
-        #           + '\n or '
-        #           + url_concat(self._url('127.0.0.1'), {'token': token}))
+        if self.identity_provider.token:
+            encoded_token = urlencode({'token': self.identity_provider.token})
+            url = f"{url}?{encoded_token}"  # is there a better way to do this?
+
         return url
 
     @property
@@ -456,6 +456,13 @@ class Voila(Application):
         self.log.info('Handle signal %s.' % sig)
         self.ioloop.add_callback_from_signal(self.ioloop.stop)
 
+    def _get_url_with_token(self, url):
+        if self.identity_provider.token:
+            encoded_token = urlencode({'token': self.identity_provider.token})
+            url = f"{url}?{encoded_token}"  # is there a better way to do this?
+
+        return url
+
     def start(self):
         self.connection_dir = tempfile.mkdtemp(
             prefix='voila_',
@@ -476,6 +483,7 @@ class Voila(Application):
         read_config_path += [os.path.join(p, 'nbconfig') for p in jupyter_config_path()]
         self.config_manager = ConfigManager(parent=self, read_config_path=read_config_path)
         self.contents_manager = LargeFileManager(parent=self)
+        self.identity_provider = self.identity_provider_class()
         preheat_kernel: bool = self.voila_configuration.preheat_kernel
         pool_size: int = self.voila_configuration.default_pool_size
 
@@ -520,9 +528,10 @@ class Voila(Application):
             contents_manager=self.contents_manager,
             config_manager=self.config_manager,
             kernel_websocket_connection_class=self.kernel_websocket_connection_class,
-            identity_provider = self.identity_provider_class(),
-            authorizer = self.authorizer_class(),
-            cookie_secret = self.cookie_secret
+            identity_provider=self.identity_provider,
+            authorizer=self.authorizer_class(),
+            cookie_secret=self.cookie_secret,
+            login_url=self.login_url
         )
 
         self.app.settings.update(self.tornado_settings)
@@ -687,9 +696,8 @@ class Voila(Application):
         fd, open_file = tempfile.mkstemp(suffix='.html')
         # Write a temporary file to open in the browser
         with io.open(fd, 'w', encoding='utf-8') as fh:
-            # if self.token:
-            #     url = url_concat(url, {'token': self.token})
             url = url_path_join(self.connection_url, uri)
+            url = self._get_url_with_token(url)
 
             include_assets_functions = create_include_assets_functions(self.voila_configuration.template, url)
 

@@ -33,8 +33,8 @@ classifiers = [
     "Programming Language :: Python :: 3.10",
 ]
 dependencies = [
-    "jupyter_client>=6.1.3,<9.0.0",
-    "jupyter_core>=4.11.0",
+    "jupyter_client>=7.4.4,<9.0.0",
+    "jupyter_core>=4.12",
     "jupyter_server>=2.0.0,<3.0.0",
     "jupyterlab_server>=2.3.0,<3",
     "nbclient>=0.4.0,<0.8",
