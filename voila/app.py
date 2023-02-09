@@ -35,9 +35,12 @@ import tornado.web
 
 from traitlets.config.application import Application
 from traitlets.config.loader import Config
-from traitlets import Unicode, Integer, Bool, Dict, List, Callable, default
+from traitlets import Unicode, Integer, Bool, Dict, List, Callable, default, Type
 
-from jupyter_server.services.kernels.handlers import KernelHandler #, ZMQChannelsHandler
+from jupyter_server.services.kernels.handlers import KernelHandler
+from jupyter_server.services.kernels.websocket import KernelWebsocketHandler
+from jupyter_server.services.kernels.connection.base import BaseKernelWebsocketConnection
+from jupyter_server.services.kernels.connection.channels import ZMQChannelsWebsocketConnection
 from jupyter_server.services.contents.largefilemanager import LargeFileManager
 from jupyter_server.base.handlers import FileFindHandler, path_regex
 from jupyter_server.config_manager import recursive_update
@@ -154,6 +157,13 @@ class Voila(Application):
         )
     )
     connection_dir = Unicode()
+
+    kernel_websocket_connection_class = Type(
+        default_value=ZMQChannelsWebsocketConnection,
+        klass=BaseKernelWebsocketConnection,
+        config=True,
+        help="The kernel websocket connection class to use.",
+    )
 
     base_url = Unicode(
         '/',
@@ -483,7 +493,8 @@ class Voila(Application):
             static_path='/',
             server_root_dir='/',
             contents_manager=self.contents_manager,
-            config_manager=self.config_manager
+            config_manager=self.config_manager,
+            kernel_websocket_connection_class=self.kernel_websocket_connection_class,
         )
 
         self.app.settings.update(self.tornado_settings)
@@ -492,7 +503,7 @@ class Voila(Application):
 
         handlers.extend([
             (url_path_join(self.server_url, r'/api/kernels/%s' % _kernel_id_regex), KernelHandler),
-            # (url_path_join(self.server_url, r'/api/kernels/%s/channels' % _kernel_id_regex), ZMQChannelsHandler),
+            (url_path_join(self.server_url, r'/api/kernels/%s/channels' % _kernel_id_regex), KernelWebsocketHandler),
             (
                 url_path_join(self.server_url, r'/voila/templates/(.*)'),
                 TemplateStaticFileHandler
@@ -584,7 +595,7 @@ class Voila(Application):
 
     def stop(self):
         shutil.rmtree(self.connection_dir)
-        run_sync(self.kernel_manager.shutdown_all)
+        run_sync(self.kernel_manager.shutdown_all)()
 
     def random_ports(self, port, n):
         """Generate a list of n random ports near the given port.

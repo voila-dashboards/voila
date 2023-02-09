@@ -3,6 +3,7 @@ import os
 import pytest
 
 from jupyter_server.serverapp import ServerApp
+from jupyter_server.services.contents.largefilemanager import LargeFileManager
 
 from tornado import httpserver
 
@@ -30,6 +31,9 @@ def jupyter_server_args(notebook_directory, jupyter_server_args_extra):
 @pytest.fixture
 def jupyter_server_app(jupyter_server_args, jupyter_server_config):
     jupyter_server_app = ServerApp.instance()
+
+    # TODO: I'm not sure if this is the right thing to do or make treehandler deal with both sync and async contents_managers? 
+    jupyter_server_app.contents_manager_class=LargeFileManager
     # we monkey patch
     old_listen = httpserver.HTTPServer.listen
     httpserver.HTTPServer.listen = lambda *x, **y: None
