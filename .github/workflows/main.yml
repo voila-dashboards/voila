@@ -51,12 +51,11 @@ jobs:
     - name: Run tests
       shell: bash -l {0}
       run: |
-        VOILA_TEST_XEUS_CLING=1 py.test tests/ --async-test-timeout=240 --reruns 2 --reruns-delay 1
+        VOILA_TEST_XEUS_CLING=1 VOILA_TEST_DEBUG=True py.test tests/ --async-test-timeout=240 --reruns 2 --reruns-delay 1
         voila --help  # Making sure we can run `voila --help`
         # tests if voila sends a 'heartbeat' to avoid proxies from closing an apparently stale connection
         # Note that wget is the only easily available software that has a read-timeout
-        export JUPYTER_TOKEN=a
-        voila tests/notebooks/sleep10seconds.ipynb --port=8878 --VoilaConfiguration.http_keep_alive_timeout=2 &
+        JUPYTER_TOKEN=a voila tests/notebooks/sleep10seconds.ipynb --port=8878 --VoilaConfiguration.http_keep_alive_timeout=2 &
         sleep 2
         wget --read-timeout=5 --tries=1 http://localhost:8878/?token=a
 
