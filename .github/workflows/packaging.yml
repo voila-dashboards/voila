@@ -3,10 +3,14 @@ name: Packaging
 on:
   push:
     branches:
-    - '*'
+    - main
   pull_request:
     branches:
     - '*'
+
+concurrency: 
+  group: ${{ github.workflow }}-${{ github.head_ref }}
+  cancel-in-progress: true
 
 env:
   PIP_DISABLE_PIP_VERSION_CHECK: 1
