@@ -6,6 +6,7 @@ from jupyter_server.auth import IdentityProvider
 
 BASE_DIR = os.path.dirname(__file__)
 
+
 class VoilaTest(voila.app.Voila):
     def listen(self):
         pass  # the ioloop is taken care of by the pytest-tornado framework
