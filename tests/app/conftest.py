@@ -2,19 +2,9 @@ import os
 import pytest
 import voila.app
 
-from jupyter_server.auth import IdentityProvider, User
+from jupyter_server.auth import IdentityProvider
 
 BASE_DIR = os.path.dirname(__file__)
-
-class MockUser(User):
-    permissions = "*"
-
-
-class MockIdentityProvider(IdentityProvider):
-    mock_user: MockUser
-
-    async def get_user(self, handler):
-        return self.mock_user
 
 class VoilaTest(voila.app.Voila):
     def listen(self):
@@ -39,7 +29,7 @@ def voila_config_file_paths_arg():
 
 @pytest.fixture
 def voila_args(voila_notebook, voila_args_extra, voila_config_file_paths_arg):
-    debug_args = ['--VoilaTest.log_level=DEBUG'] if os.environ.get('VOILA_TEST_DEBUG', False) else []
+    debug_args = ['--VoilaTest.log_level=DEBUG', '--ServerApp.token='] if os.environ.get('VOILA_TEST_DEBUG', False) else []
     return [voila_notebook, voila_config_file_paths_arg] + voila_args_extra + debug_args
 
 
@@ -63,10 +53,11 @@ def voila_app(voila_args, voila_config, preheat_config):
     voila_app.initialize(voila_args + ['--no-browser', preheat_config])
     voila_config(voila_app)
 
-    identity_provider = MockIdentityProvider()
-    identity_provider.mock_user = MockUser(username="user.username", name="user.name", display_name="user.username")
+    # monkey patch the identity provider for unit testing to disable auth
+    def auth_enabled_override(self): return False
+    setattr(IdentityProvider, 'auth_enabled', property(auth_enabled_override))
 
-    voila_app.tornado_settings["identity_provider"] = identity_provider
+    # disable cross site scripting check for unit tests
     voila_app.tornado_settings["disable_check_xsrf"] = True
 
     voila_app.start()

@@ -35,8 +35,10 @@ import tornado.web
 
 from traitlets.config.application import Application
 from traitlets.config.loader import Config
-from traitlets import Unicode, Integer, Bool, Dict, List, Callable, default, Type
+from traitlets import Unicode, Integer, Bool, Dict, List, Callable, default, Type, Bytes
 
+from jupyter_server.auth.identity import IdentityProvider
+from jupyter_server.auth.authorizer import AllowAllAuthorizer, Authorizer
 from jupyter_server.services.kernels.handlers import KernelHandler
 from jupyter_server.services.kernels.websocket import KernelWebsocketHandler
 from jupyter_server.services.kernels.connection.base import BaseKernelWebsocketConnection
@@ -163,6 +165,25 @@ class Voila(Application):
         klass=BaseKernelWebsocketConnection,
         config=True,
         help="The kernel websocket connection class to use.",
+    )
+
+    identity_provider_class = Type(
+        default_value=IdentityProvider,
+        klass=IdentityProvider,
+        config=True,
+        help="The jupyter_server IdentityProvider class to use.",
+    )
+
+    authorizer_class = Type(
+        default_value=AllowAllAuthorizer,
+        klass=Authorizer,
+        config=True,
+        help="The jupyter_server Authorizer class to use.",
+    )
+
+    cookie_secret = Bytes(
+        config=True,
+        help="The tornado cookie_secret"
     )
 
     base_url = Unicode(
@@ -326,6 +347,10 @@ class Voila(Application):
             'Extra settings to apply to tornado application, e.g. headers, ssl, etc'
         )
     )
+
+    @default('cookie_secret')
+    def get_bar_default(self):
+        return os.urandom(32)
 
     @default('config_file_paths')
     def _config_file_paths_default(self):
@@ -495,6 +520,9 @@ class Voila(Application):
             contents_manager=self.contents_manager,
             config_manager=self.config_manager,
             kernel_websocket_connection_class=self.kernel_websocket_connection_class,
+            identity_provider = self.identity_provider_class(),
+            authorizer = self.authorizer_class(),
+            cookie_secret = self.cookie_secret
         )
 
         self.app.settings.update(self.tornado_settings)
@@ -659,7 +687,6 @@ class Voila(Application):
         fd, open_file = tempfile.mkstemp(suffix='.html')
         # Write a temporary file to open in the browser
         with io.open(fd, 'w', encoding='utf-8') as fh:
-            # TODO: do we want to have the token?
             # if self.token:
             #     url = url_concat(url, {'token': self.token})
             url = url_path_join(self.connection_url, uri)
