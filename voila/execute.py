@@ -1013,9 +1013,11 @@ class MyNotebookClient(LoggingConfigurable):
             The cell which was just processed.
         """
         assert self.kc is not None
-
+        print("ASYNC EXEC CELL 1")
+        sys.stdout.flush()
         await run_hook(self.on_cell_start, cell=cell, cell_index=cell_index)
-
+        print("ASYNC EXEC CELL 2")
+        sys.stdout.flush()
         if cell.cell_type != 'code' or not cell.source.strip():
             self.log.debug("Skipping non-executing cell %s", cell_index)
             return cell
@@ -1033,13 +1035,21 @@ class MyNotebookClient(LoggingConfigurable):
             self.allow_errors or "raises-exception" in cell.metadata.get("tags", [])
         )
 
+        print("ASYNC EXEC CELL 3")
+        sys.stdout.flush()
         await run_hook(self.on_cell_execute, cell=cell, cell_index=cell_index)
+        print("ASYNC EXEC CELL 4")
+        sys.stdout.flush()
         parent_msg_id = await ensure_async(
             self.kc.execute(
                 cell.source, store_history=store_history, stop_on_error=not cell_allows_errors
             )
         )
+        print("ASYNC EXEC CELL 5")
+        sys.stdout.flush()
         await run_hook(self.on_cell_complete, cell=cell, cell_index=cell_index)
+        print("ASYNC EXEC CELL 6")
+        sys.stdout.flush()
         # We launched a code cell to execute
         self.code_cells_executed += 1
         exec_timeout = self._get_timeout(cell)
@@ -1047,22 +1057,36 @@ class MyNotebookClient(LoggingConfigurable):
         cell.outputs = []
         self.clear_before_next_output = False
 
+        print("ASYNC EXEC CELL 7")
+        sys.stdout.flush()
         task_poll_kernel_alive = asyncio.ensure_future(self._async_poll_kernel_alive())
+        print("ASYNC EXEC CELL 8")
+        sys.stdout.flush()
         task_poll_output_msg = asyncio.ensure_future(
             self._async_poll_output_msg(parent_msg_id, cell, cell_index)
         )
+        print("ASYNC EXEC CELL 9")
+        sys.stdout.flush()
         self.task_poll_for_reply = asyncio.ensure_future(
             self._async_poll_for_reply(
                 parent_msg_id, cell, exec_timeout, task_poll_output_msg, task_poll_kernel_alive
             )
         )
         try:
+            print("ASYNC EXEC CELL 10")
+            sys.stdout.flush()
             exec_reply = await self.task_poll_for_reply
+            print("ASYNC EXEC CELL 11")
+            sys.stdout.flush()
         except asyncio.CancelledError:
             # can only be cancelled by task_poll_kernel_alive when the kernel is dead
+            print("ASYNC EXEC CELL CENCELERROR")
+            sys.stdout.flush()
             task_poll_output_msg.cancel()
             raise DeadKernelError("Kernel died")
         except Exception as e:
+            print("ASYNC EXEC CELL GENERAL EXCEPTION")
+            sys.stdout.flush()
             # Best effort to cancel request if it hasn't been resolved
             try:
                 # Check if the task_poll_output is doing the raising for us
@@ -1073,10 +1097,16 @@ class MyNotebookClient(LoggingConfigurable):
 
         if execution_count:
             cell['execution_count'] = execution_count
+        print("ASYNC EXEC CELL 12")
+        sys.stdout.flush()
         await run_hook(
             self.on_cell_executed, cell=cell, cell_index=cell_index, execute_reply=exec_reply
         )
+        print("ASYNC EXEC CELL 13")
+        sys.stdout.flush()
         await self._check_raise_for_error(cell, cell_index, exec_reply)
+        print("ASYNC EXEC CELL 14")
+        sys.stdout.flush()
         self.nb['cells'][cell_index] = cell
         return cell
 
