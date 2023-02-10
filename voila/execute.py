@@ -831,31 +831,57 @@ class MyNotebookClient(LoggingConfigurable):
                     msg = error_on_timeout_execute_reply
                     msg['parent_header'] = {'msg_id': msg_id}
                 else:
+                    print("ASYNC POLLING FOR REPLY 1")
+                    sys.stdout.flush()
                     msg = await ensure_async(self.kc.shell_channel.get_msg(timeout=new_timeout))
+                    print("ASYNC POLLING FOR REPLY 2")
+                    sys.stdout.flush()
                 if msg['parent_header'].get('msg_id') == msg_id:
                     if self.record_timing:
                         cell['metadata']['execution']['shell.execute_reply'] = timestamp(msg)
                     try:
+                        print("ASYNC POLLING FOR REPLY 3")
+                        sys.stdout.flush()
                         await asyncio.wait_for(task_poll_output_msg, self.iopub_timeout)
+                        print("ASYNC POLLING FOR REPLY 4")
+                        sys.stdout.flush()
                     except (asyncio.TimeoutError, Empty):
+                        print("ASYNC POLLING FOR TIMEOUTERROR")
+                        sys.stdout.flush()
                         if self.raise_on_iopub_timeout:
+                            print("ASYNC POLLING FOR TIMEOUT ERROR 1")
+                            sys.stdout.flush()
                             task_poll_kernel_alive.cancel()
                             raise CellTimeoutError.error_from_timeout_and_cell(
                                 "Timeout waiting for IOPub output", self.iopub_timeout, cell
                             )
                         else:
+                            print("ASYNC POLLING TIMEOUT ERROR 2")
+                            sys.stdout.flush()
                             self.log.warning("Timeout waiting for IOPub output")
+                    print("ASYNC POLLING FOR REPLY 5")
+                    sys.stdout.flush()
                     task_poll_kernel_alive.cancel()
                     return msg
                 else:
+                    print("ASYNC POLLING FOR REPLY 6")
+                    sys.stdout.flush()
                     if new_timeout is not None:
+                        print("ASYNC POLLING FOR REPLY 7")
+                        sys.stdout.flush()
                         new_timeout = max(0, deadline - monotonic())
             except Empty:
+                print("ASYNC POLLING EMPOTRY")
+                sys.stdout.flush()
                 # received no message, check if kernel is still alive
                 assert timeout is not None
                 task_poll_kernel_alive.cancel()
                 await self._async_check_alive()
+                print("ASYNC POLLING FOR REPLY 9")
+                sys.stdout.flush()
                 error_on_timeout_execute_reply = await self._async_handle_timeout(timeout, cell)
+                print("ASYNC POLLING FOR REPLY 10")
+                sys.stdout.flush()
 
     async def _async_poll_output_msg(
         self, parent_msg_id: str, cell: NotebookNode, cell_index: int
