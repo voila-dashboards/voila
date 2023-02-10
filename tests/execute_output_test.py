@@ -42,14 +42,14 @@ def test_execute_output():
     path = os.path.join(BASE_DIR, 'notebooks/output.ipynb')
     nb = read(path, NO_CONVERT)
     nb_voila = deepcopy(nb)
-    """executenb(nb_voila)
+    executenb(nb_voila)
 
     widget_states = nb.metadata.widgets[WIDGET_MIME_TYPE_STATE]['state']
     widget_states_voila = nb_voila.metadata.widgets[WIDGET_MIME_TYPE_STATE][
         'state'
     ]
 
-    for cell_voila, cell in zip(nb_voila.cells, nb.cells):
+    """for cell_voila, cell in zip(nb_voila.cells, nb.cells):
         for output_voila, output in zip(cell_voila.outputs, cell.outputs):
             if 'data' in output and WIDGET_MIME_TYPE_VIEW in output['data']:
                 widget_id = output['data'][WIDGET_MIME_TYPE_VIEW]['model_id']
