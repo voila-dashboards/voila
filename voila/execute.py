@@ -53,8 +53,14 @@ class VoilaExecutor(NotebookClient):
 
     def execute(self, nb, resources, km=None):
         try:
+            print("EXEC1")
+            sys.stdout.flush()
             result = super(VoilaExecutor, self).execute()
+            print("EXEC2")
+            sys.stdout.flush()
         except CellExecutionError as e:
+            print("CELL ERROR")
+            sys.stdout.flush()
             self.log.error(e)
             result = (nb, resources)
 
@@ -126,6 +132,7 @@ class VoilaExecutor(NotebookClient):
 
         cell['outputs'] = [output]
 
+import sys
 
 def executenb(nb, cwd=None, km=None, **kwargs):
     resources = {}
@@ -133,9 +140,11 @@ def executenb(nb, cwd=None, km=None, **kwargs):
         resources['metadata'] = {'path': cwd}  # pragma: no cover
     # Clear any stale output, in case of exception
     print("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")
+    sys.stdout.flush()
     nb, resources = ClearOutputPreprocessor().preprocess(nb, resources)
     print("BAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")
+    sys.stdout.flush()
     executor = VoilaExecutor(nb, km=km, **kwargs)
     print("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")
-
+    sys.stdout.flush()
     return executor.execute(nb, resources, km=km)
