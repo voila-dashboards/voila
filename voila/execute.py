@@ -193,7 +193,7 @@ class MyNotebookClient(LoggingConfigurable):
     ).tag(config=True)
 
     force_raise_errors: bool = Bool(
-        False,
+        True,
         help=dedent(
             """
             If False (default), errors from executing the notebook can be
@@ -746,10 +746,22 @@ class MyNotebookClient(LoggingConfigurable):
             for index, cell in enumerate(self.nb.cells):
                 # Ignore `'execution_count' in content` as it's always 1
                 # when store_history is False
+                print("ASYCNC BEFORE CELL")
+                sys.stdout.flush()
+
                 await self.async_execute_cell(
                     cell, index, execution_count=self.code_cells_executed + 1
                 )
+                print("ASYCNC AFTER CELL")
+                sys.stdout.flush()
+
+            print("ASYCNC 7")
+            sys.stdout.flush()
+
             self.set_widgets_metadata()
+
+            print("ASYCNC 8")
+            sys.stdout.flush()
 
         return self.nb
 
