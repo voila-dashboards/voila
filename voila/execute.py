@@ -65,7 +65,19 @@ class VoilaExecutor(NotebookClient):
         return result
 
     async def execute_cell(self, cell, resources, cell_index, store_history=True):
-        pass
+        try:
+            result = await self.async_execute_cell(cell, cell_index, store_history)
+        except TimeoutError as e:
+            self.log.error(e)
+            self.show_code_cell_timeout(cell)
+            raise e
+
+        # Strip errors and traceback if not in debug mode
+        if self.should_strip_error():
+            strip_code_cell_warnings(cell)
+            self.strip_code_cell_errors(cell)
+
+        return result
 
     def should_strip_error(self):
         """Return True if errors should be stripped from the Notebook, False otherwise, depending on the current config."""

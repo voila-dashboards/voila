@@ -36,10 +36,12 @@ def normalize_outputs(outputs):
     for output in outputs:
         normalize_output(output)
 
+import sys
 
 @pytest.mark.xfail(reason='TODO: investigate this failing test')
 def test_execute_output():
     print("WTFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF")
+    sys.stdout.flush()
     path = os.path.join(BASE_DIR, 'notebooks/output.ipynb')
     nb = read(path, NO_CONVERT)
     nb_voila = deepcopy(nb)
