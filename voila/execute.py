@@ -836,7 +836,7 @@ class MyNotebookClient(LoggingConfigurable):
                     msg = error_on_timeout_execute_reply
                     msg['parent_header'] = {'msg_id': msg_id}
                 else:
-                    print("ASYNC POLLING FOR REPLY 1")
+                    print(f"ASYNC POLLING FOR REPLY 1: {new_timeout}")
                     sys.stdout.flush()
                     msg = await ensure_async(self.kc.shell_channel.get_msg(timeout=new_timeout))
                     print("ASYNC POLLING FOR REPLY 2")
