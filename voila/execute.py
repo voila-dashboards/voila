@@ -132,6 +132,9 @@ def executenb(nb, cwd=None, km=None, **kwargs):
     if cwd is not None:
         resources['metadata'] = {'path': cwd}  # pragma: no cover
     # Clear any stale output, in case of exception
+    print("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")
     nb, resources = ClearOutputPreprocessor().preprocess(nb, resources)
+    print("BAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")
     executor = VoilaExecutor(nb, km=km, **kwargs)
+    print("CAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")
     return executor.execute(nb, resources, km=km)
