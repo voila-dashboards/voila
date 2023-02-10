@@ -52,17 +52,7 @@ class VoilaExecutor(NotebookClient):
     ))
 
     def execute(self, nb, resources, km=None):
-        try:
-            result = super(VoilaExecutor, self).execute()
-        except CellExecutionError as e:
-            self.log.error(e)
-            result = (nb, resources)
-
-        # Strip errors and traceback if not in debug mode
-        if self.should_strip_error():
-            self.strip_notebook_errors(nb)
-
-        return result
+        pass
 
     async def execute_cell(self, cell, resources, cell_index, store_history=True):
         try:
