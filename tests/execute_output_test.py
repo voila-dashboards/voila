@@ -37,6 +37,9 @@ def normalize_outputs(outputs):
         normalize_output(output)
 
 import sys
+import logging
+
+logging.basicConfig(level=logging.DEBUG)
 
 @pytest.mark.xfail(reason='TODO: investigate this failing test')
 def test_execute_output():
