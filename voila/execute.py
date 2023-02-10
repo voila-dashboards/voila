@@ -584,7 +584,12 @@ class MyNotebookClient(LoggingConfigurable):
         """
         assert self.km is not None
         try:
+            print("CREATING KC")
+            sys.stdout.flush()
             self.kc = self.km.client()
+            print(f"CREATED: KC {type(self.kc)}")
+            sys.stdout.flush()
+
             await ensure_async(self.kc.start_channels())  # type:ignore[func-returns-value]
             await ensure_async(
                 self.kc.wait_for_ready(timeout=self.startup_timeout)  # type:ignore[attr-defined]
