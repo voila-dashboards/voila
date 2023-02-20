@@ -1,5 +1,9 @@
 {%- macro voila_setup_labextensions(base_url, labextensions) -%}
-<script src="{{ page_config['fullStaticUrl'] | e }}/voila.js"></script>
+{% if frontend == 'voila' %}
+  <script src="{{ page_config['fullStaticUrl'] | e }}/voila.js"></script>
+{% elif frontend == 'voilite' %}
+  <script src="{{ page_config['fullStaticUrl'] | e }}/voilite.js"></script>
+{% endif %}
 {%- endmacro %}
 
 {# For backward compatibility #}
@@ -10,12 +14,48 @@
 {# Helper functions for updating the loading text #}
 {%- macro voila_setup_helper_functions() -%}
 <script>
-var voila_process = function(cell_index, cell_count) {
-  var el = document.getElementById("loading_text");
-  el.innerHTML = `Executing ${cell_index} of ${cell_count}`;
-}
-var voila_heartbeat = function() {
-  console.log('Ok, voila is still executing...');
-}
+
+  window.voila_heartbeat = function() {
+    console.log('Ok, voila is still executing...');
+  }
+
+  window.update_loading_text = function(cell_index, cell_count, text) {
+    const spinner = document.getElementById("loading")
+    if(spinner && spinner.style.display === "none"){
+      spinner.style.display="flex";
+    }
+    var el = document.getElementById("loading_text");
+    innterText = text ?? `Executing ${cell_index} of ${cell_count}`
+    if(el){
+      el.innerHTML = innterText;
+    }
+  }
+
+  window.display_cells = function() {
+    // remove the loading element
+    var el = document.getElementById("loading");
+    if(el){
+      el.parentNode.removeChild(el);
+    }
+    // show the cell output
+    el = document.getElementById("rendered_cells");
+    if(el){
+      el.style.display = '';
+    }
+  }
+
+  {% if frontend == 'voila' %}
+    window.voila_process = function(cell_index, cell_count){
+      update_loading_text(cell_index, cell_count);
+    }   
+    window.voila_finish = display_cells;
+  {% elif frontend == 'voilite' %}
+    window.voila_process = function(cell_index, cell_count) {
+      // no-op
+    };
+    window.voila_finish = function() {
+      // no-op
+    }
+  {% endif %}
 </script>
 {%- endmacro %}

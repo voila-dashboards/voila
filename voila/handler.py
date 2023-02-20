@@ -193,7 +193,7 @@ class VoilaHandler(BaseVoilaHandler):
                 can be used in a template to give feedback to a user
                 """
 
-                return '<script>voila_heartbeat()</script>\n'
+                return '<script>window.voila_heartbeat()</script>\n'
 
             kernel_env = {**os.environ, **request_info}
             kernel_env[ENV_VARIABLE.VOILA_PREHEAT] = 'False'

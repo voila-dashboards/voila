@@ -70,24 +70,43 @@
 {% endblock %}
 
 {% block body %}
-  <div class="list-header">
-      <div class="list-header-text">
-          Select items to open with Voilà.
-      </div>
-  </div>
-
-  <ul class="voila-notebooks">
-    {% if breadcrumbs|length > 1: %}
-      <li><a href="{{ breadcrumbs[-2][0] }}?{{ query }}"><i class="fa fa-folder"></i>..</a></li>
+  {% if frontend == 'voilite' %}
+    {% set openInNewTab = 'target=_blank' %}
+    <script id="jupyter-config-data" type="application/json">
+      {{ page_config | tojson }}
+    </script>
+    {% if (theme != 'dark' and theme != 'light') %}
+      <script src="{{ page_config['fullStaticUrl'] | e }}/treepage.js"></script>
+      <div id="voila-tree-main" style="display: None;">
+        {% set mainStyle = 'style="display: None;"' %}
+    {% else %}
+      {% set mainStyle = '' %}
     {% endif %}
-
-    {% for content in contents.content %}
-      {% if content.type in ['notebook', 'file'] %}
-        <li><a href="{{ base_url }}voila/render/{{ content.path }}?{{ query }}"><i class="fa fa-book"></i>{{content.name}}</a></li>
+  {% elif frontend == 'voila' %}
+    {% set openInNewTab = '' %}
+    {% set mainStyle = '' %}
+  {% endif %}
+    
+  <div id="voila-tree-main" {{mainStyle}}>
+    <div class="list-header">
+        <div class="list-header-text">
+            Select items to open with Voilà.
+        </div>
+    </div>
+  
+    <ul class="voila-notebooks">
+      {% if breadcrumbs|length > 1: %}
+        <li><a href="{{ breadcrumbs[-2][0] }}?{{ query }}"><i class="fa fa-folder"></i>..</a></li>
       {% endif %}
-      {% if content.type == 'directory' %}
-        <li><a href="{{ base_url }}voila/tree/{{ content.path }}?{{ query }}"><i class="fa fa-folder"></i>{{content.name}}</a></li>
-      {% endif %}
-    {% endfor %}
-  </ul>
+  
+      {% for content in contents.content %}
+        {% if content.type in ['notebook', 'file'] %}
+          <li><a href="{{ base_url }}voila/render/{{ content.path }}?{{ query }}" {{openInNewTab}}><i class="fa fa-book"></i>{{content.name}}</a></li>
+        {% endif %}
+        {% if content.type == 'directory' %}
+          <li><a href="{{ base_url }}voila/tree/{{ content.path }}?{{ query }}"><i class="fa fa-folder"></i>{{content.name}}</a></li>
+        {% endif %}
+      {% endfor %}
+    </ul>
+  </div>
 {% endblock %}
