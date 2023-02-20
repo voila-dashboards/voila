@@ -8,26 +8,25 @@
 #############################################################################
 
 import asyncio
-import datetime
 import json
 import os
 import threading
 import warnings
 from enum import Enum
 from functools import partial
-from typing import Awaitable, Dict, List, Tuple
+from typing import Awaitable, Dict
 
 import websockets
-from jupyter_core.paths import jupyter_path
-from jupyter_server.utils import url_path_join
-from jupyterlab_server.config import get_page_config as gpc
-from jupyterlab_server.config import recursive_update
 from jupyterlab_server.themes_handler import ThemesHandler
 from markupsafe import Markup
 from nbconvert.exporters.html import find_lab_theme
 
-from ._version import __version__
+from jupyter_core.paths import jupyter_path
+from jupyterlab_server.config import get_page_config as gpc, recursive_update
+from jupyter_server.utils import url_path_join
+
 from .static_file_handler import TemplateStaticFileHandler
+from ._version import __version__
 
 
 class ENV_VARIABLE(str, Enum):
@@ -78,20 +77,21 @@ async def _get_request_info(ws_url: str) -> Awaitable:
 
 def get_page_config(base_url, settings, log):
     page_config = {
-        'appVersion': __version__,
-        'baseUrl': base_url,
-        'terminalsAvailable': False,
-        'fullStaticUrl': url_path_join(base_url, 'voila/static'),
-        'fullLabextensionsUrl': url_path_join(base_url, 'voila/labextensions'),
+        "appVersion": __version__,
+        "baseUrl": base_url,
+        "terminalsAvailable": False,
+        "fullStaticUrl": url_path_join(base_url, "voila/static"),
+        "fullLabextensionsUrl": url_path_join(base_url, "voila/labextensions"),
     }
-    mathjax_config = settings.get('mathjax_config', 'TeX-AMS_HTML-full,Safe')
+
+    mathjax_config = settings.get("mathjax_config", "TeX-AMS_HTML-full,Safe")
     # TODO Remove CDN usage.
     mathjax_url = settings.get(
-        'mathjax_url',
-        'https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js',
+        "mathjax_url",
+        "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js",
     )
-    page_config.setdefault('mathjaxConfig', mathjax_config)
-    page_config.setdefault('fullMathjaxUrl', mathjax_url)
+    page_config.setdefault("mathjaxConfig", mathjax_config)
+    page_config.setdefault("fullMathjaxUrl", mathjax_url)
 
     labextensions_path = jupyter_path('labextensions')
     recursive_update(
@@ -215,32 +215,3 @@ def create_include_assets_functions(template_name: str, base_url: str) -> Dict:
         'include_url': partial(include_url, template_name, base_url),
         'include_lab_theme': partial(include_lab_theme, base_url),
     }
-
-
-def find_all_lab_theme() -> List[Tuple[str, str]]:
-
-    labextensions_path = jupyter_path('labextensions')
-    roots = tuple(
-        os.path.abspath(os.path.expanduser(p)) + os.sep
-        for p in labextensions_path
-    )
-    theme_list = []
-    for root in roots:
-        if os.path.exists(root):
-            for ex in os.listdir(root):
-                try:
-                    theme_list.append(find_lab_theme(ex))
-                except Exception:
-                    pass
-
-    return theme_list
-
-
-class DateTimeEncoder(json.JSONEncoder):
-    """A custom date-aware JSON encoder"""
-
-    def default(self, o):
-        if isinstance(o, datetime.datetime):
-            return o.isoformat().replace('+00:00', 'Z')
-
-        return json.JSONEncoder.default(self, o)
