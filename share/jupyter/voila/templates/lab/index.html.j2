@@ -82,12 +82,10 @@
     {%- for cell in cell_generator(nb, kernel_id) -%}
       {% set cellloop = loop %}
       {%- block any_cell scoped -%}
-        <div cell-index={{cellloop.index}}>
-          <script>
-            voila_process({{ cellloop.index }}, {{ cell_count }})
-          </script>
-          {{ super() }}
-        </div>
+      <script>
+        voila_process({{ cellloop.index }}, {{ cell_count }})
+      </script>
+        {{ super() }}
       {%- endblock any_cell -%}
     {%- endfor -%}
   {% endwith %}
@@ -97,7 +95,14 @@
   </div>
 </div>
 <script type="text/javascript">
-  window.voila_finish();
+  (function() {
+    // remove the loading element
+    var el = document.getElementById("loading");
+    el.parentNode.removeChild(el);
+    // show the cell output
+    el = document.getElementById("rendered_cells");
+    el.style.display = '';
+  })();
 </script>
 {{ voila_setup_labextensions(resources.base_url, resources.labextensions) }}
 {{ super() }}

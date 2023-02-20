@@ -18,7 +18,6 @@ import { PageConfig, URLExt } from '@jupyterlab/coreutils';
 
 import { VoilaApp } from './app';
 import { VoilaShell } from './shell';
-import plugins from './plugins';
 
 function loadScript(url: string): Promise<any> {
   return new Promise((resolve, reject) => {
@@ -69,8 +68,9 @@ async function main() {
     // This would also need the theme manager plugin and settings
     // require('@jupyterlab/theme-light-extension'),
     // require('@jupyterlab/theme-dark-extension'),
-    plugins
+    require('./plugins')
   ];
+
   const mimeExtensions = [require('@jupyterlab/json-extension')];
 
   /**

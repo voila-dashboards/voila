@@ -70,7 +70,6 @@ test = [
 
 [project.scripts]
 voila = "voila.app:main"
-voilite = "voila.voilite.app:main"
 
 [project.urls]
 Homepage = "https://github.com/voila-dashboards/voila"
@@ -81,8 +80,7 @@ path = "voila/_version.py"
 [tool.hatch.build]
 artifacts = [
     "voila/labextension",
-    "share/jupyter/voila/templates",
-    "voila/voilite/static",
+    "share/jupyter/voila/templates"
 ]
 
 [tool.hatch.build.hooks.custom]
@@ -107,7 +105,6 @@ dependencies = [
 build-function = "hatch_jupyter_builder.npm_builder"
 ensured-targets = [
     "voila/labextension/static/style.js",
-    "voila/voilite/static/voilite.js",
     "share/jupyter/voila/templates/classic/static/materialcolors.css",
     "share/jupyter/voila/templates/classic/static/labvariables.css",
     "share/jupyter/voila/templates/reveal/static/materialcolors.css",
@@ -115,7 +112,6 @@ ensured-targets = [
 ]
 skip-if-exists = [
     "voila/labextension/static/style.js",
-    "voila/voilite/static/voila/voilite.js",
     "share/jupyter/voila/templates/classic/static/materialcolors.css",
     "share/jupyter/voila/templates/classic/static/labvariables.css",
     "share/jupyter/voila/templates/reveal/static/materialcolors.css",

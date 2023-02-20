@@ -1,7 +1,6 @@
 {%- extends 'nbconvert/templates/classic/index.html.j2' -%}
 {% import "log.macro.html.j2" as log %}
-{% import "spinner.macro.html.j2" as spinner %}
-{% from 'voila_setup.macro.html.j2' import voila_setup_helper_functions, voila_setup with context %}
+{% from 'voila_setup.macro.html.j2' import voila_setup with context %}
 
 {%- block html_head_js -%}
 {%- block html_head_js_logs -%}
@@ -33,7 +32,6 @@
 {%- block html_head_css -%}
   {{ resources.include_css("static/materialcolors.css") }}
   {{ resources.include_css("static/labvariables.css") }}
-  {{ spinner.css() }}
   <style>
     /*Hide empty cells*/
     .jp-mod-noOutputs.jp-mod-noInput {
@@ -46,32 +44,9 @@
 
 {% block body_header %}
 <body data-base-url="{{resources.base_url}}voila/">
-  {{ spinner.html() }}
-  {{ voila_setup_helper_functions() }}
   <div tabindex="-1" id="notebook" class="border-box-sizing">
     <div class="container" id="notebook-container">
-      <div id="rendered_cells" style="display: none">
 {% endblock body_header %}
-
-{%- block body_loop -%}
-  {%- for cell in nb.cells -%}
-    {% set cellloop = loop %}
-      {%- block any_cell scoped -%}
-        <div cell-index={{cellloop.index}}>
-          {{ super() }}
-        </div>
-      {%- endblock any_cell -%}  
-  {%- endfor -%}
-{%- endblock body_loop -%}
-
-
-{%- block body_footer -%}
-</div>
-<script type="text/javascript">
-  window.voila_finish();
-</script>
-{{ super() }}
-{%- endblock body_footer -%}
 
 {%- block footer %}
 {% block footer_js %}
