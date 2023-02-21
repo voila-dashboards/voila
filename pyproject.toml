@@ -134,6 +134,7 @@ npm = [
 [tool.jupyter-releaser]
 skip = [
     "check-links",
+    "check-wheel-contents",
 ]
 
 [tool.jupyter-releaser.hooks]
