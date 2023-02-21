@@ -29,7 +29,7 @@ jobs:
           pip install .
 
       - name: Check Release
-        uses: jupyter-server/jupyter_releaser/.github/actions/check-release@v1
+        uses: jupyter-server/jupyter_releaser/.github/actions/check-release@v2
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           version_spec: next
