@@ -142,6 +142,7 @@ before-bump-version = [
 ]
 before-build-npm = [
     "python -m pip install jupyterlab~=3.0",
+    "jlpm",
     "jlpm clean",
     "jlpm build:prod",
 ]
@@ -152,3 +153,6 @@ after-draft-release = "bash ./scripts/reset-stable.sh"
 
 [tool.jupyter-releaser.options]
 version-cmd = "python scripts/bump-version.py --force"
+
+[tool.check-wheel-contents]
+ignore = ["W002"]
