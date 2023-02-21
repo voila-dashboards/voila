@@ -70,6 +70,8 @@ class VoilaTreeHandler(BaseVoilaHandler):
 
             self.write(self.render_template(
                 'tree.html',
+                frontend='voila',
+                main_js='voila.js',
                 page_title=page_title,
                 notebook_path=path,
                 breadcrumbs=breadcrumbs,

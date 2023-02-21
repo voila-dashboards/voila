@@ -34,7 +34,7 @@ import { WidgetManager as VoilaWidgetManager } from './manager';
 /**
  * The default paths.
  */
-const paths: JupyterFrontEndPlugin<JupyterFrontEnd.IPaths> = {
+export const pathsPlugin: JupyterFrontEndPlugin<JupyterFrontEnd.IPaths> = {
   id: '@voila-dashboards/voila:paths',
   activate: (
     app: JupyterFrontEnd<JupyterFrontEnd.IShell>
@@ -51,7 +51,7 @@ const paths: JupyterFrontEndPlugin<JupyterFrontEnd.IPaths> = {
  * TODO: a cleaner solution would involve a custom ServiceManager to the VoilaApp
  * to prevent the default behavior of polling the /api endpoints.
  */
-const stopPolling: JupyterFrontEndPlugin<void> = {
+export const stopPollingPlugin: JupyterFrontEndPlugin<void> = {
   id: '@voila-dashboards/voila:stop-polling',
   autoStart: true,
   activate: (app: JupyterFrontEnd): void => {
@@ -69,7 +69,7 @@ const stopPolling: JupyterFrontEndPlugin<void> = {
 /**
  * A simplified Translator
  */
-const translator: JupyterFrontEndPlugin<ITranslator> = {
+export const translatorPlugin: JupyterFrontEndPlugin<ITranslator> = {
   id: '@voila-dashboards/voila:translator',
   activate: (app: JupyterFrontEnd<JupyterFrontEnd.IShell>): ITranslator => {
     const translationManager = new TranslationManager();
@@ -82,7 +82,7 @@ const translator: JupyterFrontEndPlugin<ITranslator> = {
 /**
  * The Voila widgets manager plugin.
  */
-const widgetManager: JupyterFrontEndPlugin<IJupyterWidgetRegistry> = {
+export const widgetManager: JupyterFrontEndPlugin<IJupyterWidgetRegistry> = {
   id: '@voila-dashboards/voila:widget-manager',
   autoStart: true,
   requires: [IRenderMimeRegistry],
@@ -135,9 +135,9 @@ const widgetManager: JupyterFrontEndPlugin<IJupyterWidgetRegistry> = {
  * Export the plugins as default.
  */
 const plugins: JupyterFrontEndPlugin<any>[] = [
-  paths,
-  stopPolling,
-  translator,
+  pathsPlugin,
+  stopPollingPlugin,
+  translatorPlugin,
   widgetManager
 ];
 
