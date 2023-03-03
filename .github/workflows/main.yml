@@ -82,7 +82,7 @@ jobs:
 
     - name: Create the conda environment
       shell: bash -l {0}
-      run: mamba install -q python=${{ matrix.python_version }} pip jupyterlab_pygments==0.1.0 pytest-cov pytest-rerunfailures nodejs yarn flake8 ipywidgets matplotlib xeus-cling openssl=1.1.1l "traitlets>=5.0.3,<6"
+      run: mamba install -q python=${{ matrix.python_version }} pip jupyterlab_pygments==0.1.0 pytest-cov pytest-rerunfailures nodejs yarn=1 flake8 ipywidgets matplotlib xeus-cling openssl=1.1.1l "traitlets>=5.0.3,<6"
 
     - name: Install dependencies
       shell: bash -l {0}
