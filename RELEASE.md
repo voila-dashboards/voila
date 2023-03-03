@@ -4,6 +4,11 @@
 
 The recommended way to make a release is to use [`jupyter_releaser`](https://github.com/jupyter-server/jupyter_releaser#typical-workflow).
 
+This repository contains the two workflows located under https://github.com/voila-dashboards/voila/actions:
+
+- Step 1: Prep Release
+- Step 2: Publish Release
+
 ## Bumping versions
 
 `voila` follows a similar bump strategy as in JupyterLab:
