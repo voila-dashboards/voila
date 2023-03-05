@@ -231,10 +231,10 @@ The format of this hook should be:
             notebook: nbformat.NotebookNode,
             cwd: str) -> Optional[nbformat.NotebookNode]:
 
-- The first argument will be a reference to the tornado `RequetHandler`, with which you can inspect parameters, headers, etc.
-- The second argument will be the `NotebookNode`, which you can mutate to e.g. inject cells or make other notebook-level modifications.
+- The first argument will be a reference to the tornado ``RequestHandler``, with which you can inspect parameters, headers, etc.
+- The second argument will be the ``NotebookNode``, which you can mutate to e.g. inject cells or make other notebook-level modifications.
 - The last argument is the current working directory should you need to mutate anything on disk.
-- The return value of your hook function can either be `None`, or a `NotebookNode`.
+- The return value of your hook function can either be ``None``, or a ``NotebookNode``.
 
 Adding the hook function to Voilà
 ***********************************

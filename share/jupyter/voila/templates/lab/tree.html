@@ -92,7 +92,7 @@
   <div id="voila-tree-main" {{mainStyle}}>
     <div class="list-header">
         <div class="list-header-text">
-            Select items to open with Voilà.
+            Select items to open with {{ "Voilà" if frontend == "voila" else frontend.capitalize() }}.
         </div>
     </div>
 
@@ -103,10 +103,10 @@
 
       {% for content in contents.content %}
         {% if content.type in ['notebook', 'file'] %}
-          <li><a href="{{ base_url }}voila/render/{{ content.path }}?{{ query }}" {{openInNewTab}}><i class="fa fa-book"></i>{{content.name}}</a></li>
+          <li><a href="{{ base_url }}{{ frontend }}/render/{{ content.path }}?{{ query }}" {{openInNewTab}}><i class="fa fa-book"></i>{{content.name}}</a></li>
         {% endif %}
         {% if content.type == 'directory' %}
-          <li><a href="{{ base_url }}voila/tree/{{ content.path }}?{{ query }}"><i class="fa fa-folder"></i>{{content.name}}</a></li>
+          <li><a href="{{ base_url }}{{ frontend }}/tree/{{ content.path }}?{{ query }}"><i class="fa fa-folder"></i>{{content.name}}</a></li>
         {% endif %}
       {% endfor %}
     </ul>
