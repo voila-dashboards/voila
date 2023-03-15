@@ -9,9 +9,7 @@
 {%- endblock html_head_js_logs -%}
 {%- endblock html_head_js -%}
 
-{%- block html_head_css -%}
-  {{ super() }}
-
+{%- block notebook_css -%}
   {{ resources.include_js("static/voila-style.js") }}
 
   {{ spinner.css() }}
@@ -44,7 +42,9 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@^5/css/all.min.css" type="text/css" />
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@^5/css/v4-shims.min.css" type="text/css" />
 {% endif %}
-{%- endblock html_head_css -%}
+
+  {{ super() }}
+{%- endblock notebook_css -%}
 
 {# this overrides the default behaviour of rendering static widgets #}
 {% block jupyter_widgets %}

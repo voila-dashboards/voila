@@ -35,9 +35,7 @@
 
 {%- endblock html_head_js -%}
 
-{%- block html_head_css -%}
-  {{ super() }}
-
+{%- block notebook_css -%}
   {{ resources.include_css("static/materialcolors.css") }}
   {{ resources.include_css("static/labvariables.css") }}
   {{ resources.include_js("static/voila-style.js") }}
@@ -52,7 +50,9 @@
   </style>
 
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/font-awesome@4.5.0/css/font-awesome.min.css" type="text/css" />
-{%- endblock html_head_css -%}
+
+  {{ super() }}
+{%- endblock notebook_css -%}
 
 {% block body_header %}
 <body data-base-url="{{resources.base_url}}voila/">
