@@ -54,6 +54,7 @@ file = "LICENSE"
 dev = [
     "black",
     "hatch",
+    "pre-commit",
     "jupyter_releaser",
 ]
 test = [
