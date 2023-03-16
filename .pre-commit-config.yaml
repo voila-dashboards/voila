@@ -12,6 +12,7 @@
 ci:
   # pre-commit.ci will open PRs updating our hooks once a month
   autoupdate_schedule: monthly
+  autofix_prs: true
 
 repos:
   # Autoformat: Python code, syntax patterns are modernized
