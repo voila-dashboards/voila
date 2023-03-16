@@ -31,7 +31,7 @@ fs.copySync(libDir, buildDir);
 
 const extras = Build.ensureAssets({
   packageNames: names,
-  output: buildDir,
+  output: buildDir
 });
 
 // Make a bootstrap entrypoint
@@ -54,7 +54,7 @@ const distRoot = path.resolve(
   'voila',
   'templates',
   'base',
-  'static',
+  'static'
 );
 
 module.exports = [
@@ -65,29 +65,29 @@ module.exports = [
       path: distRoot,
       library: {
         type: 'var',
-        name: ['_JUPYTERLAB', 'CORE_OUTPUT'],
+        name: ['_JUPYTERLAB', 'CORE_OUTPUT']
       },
-      filename: 'voila.js',
+      filename: 'voila.js'
     },
     plugins: [
       new ModuleFederationPlugin({
         library: {
           type: 'var',
-          name: ['_JUPYTERLAB', 'CORE_LIBRARY_FEDERATION'],
+          name: ['_JUPYTERLAB', 'CORE_LIBRARY_FEDERATION']
         },
         name: 'CORE_FEDERATION',
         shared: {
-          ...data.dependencies,
-        },
-      }),
-    ],
+          ...data.dependencies
+        }
+      })
+    ]
   }),
   merge(baseConfig, {
     entry: './' + path.relative(__dirname, styleEntryPoint),
     mode: 'production',
     output: {
       path: distRoot,
-      filename: 'voila-style.js',
-    },
-  }),
+      filename: 'voila-style.js'
+    }
+  })
 ].concat(extras);

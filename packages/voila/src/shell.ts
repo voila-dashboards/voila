@@ -52,7 +52,7 @@ export class VoilaShell extends Widget implements JupyterFrontEnd.IShell {
   add(
     widget: Widget,
     area?: IShell.Area,
-    options?: DocumentRegistry.IOpenOptions,
+    options?: DocumentRegistry.IOpenOptions
   ): void {
     // no-op for now
     // TODO: support adding widgets to areas?

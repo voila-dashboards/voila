@@ -2,13 +2,13 @@ import {
   IFrame,
   ToolbarButton,
   ReactWidget,
-  IWidgetTracker,
+  IWidgetTracker
 } from '@jupyterlab/apputils';
 
 import {
   ABCWidgetFactory,
   DocumentRegistry,
-  DocumentWidget,
+  DocumentWidget
 } from '@jupyterlab/docregistry';
 
 import { INotebookModel } from '@jupyterlab/notebook';
@@ -32,7 +32,7 @@ export interface IVoilaPreviewTracker extends IWidgetTracker<VoilaPreview> {}
  * The Voilà Preview tracker token.
  */
 export const IVoilaPreviewTracker = new Token<IVoilaPreviewTracker>(
-  '@voila-dashboards/jupyterlab-preview:IVoilaPreviewTracker',
+  '@voila-dashboards/jupyterlab-preview:IVoilaPreviewTracker'
 );
 
 /**
@@ -52,9 +52,9 @@ export class VoilaPreview extends DocumentWidget<IFrame, INotebookModel> {
           'allow-scripts',
           'allow-downloads',
           'allow-modals',
-          'allow-popups',
-        ],
-      }),
+          'allow-popups'
+        ]
+      })
     });
 
     window.onmessage = (event: any) => {
@@ -104,7 +104,7 @@ export class VoilaPreview extends DocumentWidget<IFrame, INotebookModel> {
           console.error(e);
         }
         this.reload();
-      },
+      }
     });
 
     const renderOnSaveCheckbox = ReactWidget.create(
@@ -118,7 +118,7 @@ export class VoilaPreview extends DocumentWidget<IFrame, INotebookModel> {
           }}
         />
         Render on Save
-      </label>,
+      </label>
     );
 
     this.toolbar.addItem('reload', reloadButton);
@@ -202,18 +202,18 @@ export class VoilaPreviewFactory extends ABCWidgetFactory<
 
   constructor(
     private getVoilaUrl: (path: string) => string,
-    options: DocumentRegistry.IWidgetFactoryOptions<VoilaPreview>,
+    options: DocumentRegistry.IWidgetFactoryOptions<VoilaPreview>
   ) {
     super(options);
   }
 
   protected createNewWidget(
-    context: DocumentRegistry.IContext<INotebookModel>,
+    context: DocumentRegistry.IContext<INotebookModel>
   ): VoilaPreview {
     return new VoilaPreview({
       context,
       getVoilaUrl: this.getVoilaUrl,
-      renderOnSave: this.defaultRenderOnSave,
+      renderOnSave: this.defaultRenderOnSave
     });
   }
 }

@@ -20,14 +20,14 @@ export async function addBenchmarkToTest(
   testFunction: () => Promise<void>,
   testInfo: TestInfo,
   browserName: string,
-  nSamples = 5,
+  nSamples = 5
 ): Promise<void> {
   const testTimeArray = [];
   const attachmentCommon = {
     nSamples: nSamples,
     browser: browserName,
     file: `${notebookName}.ipynb`,
-    project: testInfo.project.name,
+    project: testInfo.project.name
   };
   for (let idx = 0; idx < nSamples; idx++) {
     const testTime = await timeit(testFunction);
@@ -36,8 +36,8 @@ export async function addBenchmarkToTest(
       benchmark.addAttachment({
         ...attachmentCommon,
         test: 'Render',
-        time: average(testTimeArray),
-      }),
+        time: average(testTimeArray)
+      })
     );
     await new Promise((r) => setTimeout(r, 500));
   }

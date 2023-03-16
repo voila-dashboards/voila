@@ -9,7 +9,7 @@
 
 import {
   JupyterFrontEnd,
-  JupyterFrontEndPlugin,
+  JupyterFrontEndPlugin
 } from '@jupyterlab/application';
 
 import { PageConfig } from '@jupyterlab/coreutils';
@@ -24,7 +24,7 @@ import { ITranslator, TranslationManager } from '@jupyterlab/translation';
 
 import {
   IJupyterWidgetRegistry,
-  IWidgetRegistryData,
+  IWidgetRegistryData
 } from '@jupyter-widgets/base';
 
 import { VoilaApp } from './app';
@@ -37,12 +37,12 @@ import { WidgetManager as VoilaWidgetManager } from './manager';
 export const pathsPlugin: JupyterFrontEndPlugin<JupyterFrontEnd.IPaths> = {
   id: '@voila-dashboards/voila:paths',
   activate: (
-    app: JupyterFrontEnd<JupyterFrontEnd.IShell>,
+    app: JupyterFrontEnd<JupyterFrontEnd.IShell>
   ): JupyterFrontEnd.IPaths => {
     return (app as VoilaApp).paths;
   },
   autoStart: true,
-  provides: JupyterFrontEnd.IPaths,
+  provides: JupyterFrontEnd.IPaths
 };
 
 /**
@@ -63,7 +63,7 @@ export const stopPollingPlugin: JupyterFrontEndPlugin<void> = {
     app.serviceManager.kernelspecs?.ready.then((value) => {
       void app.serviceManager.kernelspecs.dispose();
     });
-  },
+  }
 };
 
 /**
@@ -76,7 +76,7 @@ export const translatorPlugin: JupyterFrontEndPlugin<ITranslator> = {
     return translationManager;
   },
   autoStart: true,
-  provides: ITranslator,
+  provides: ITranslator
 };
 
 /**
@@ -89,7 +89,7 @@ export const widgetManager: JupyterFrontEndPlugin<IJupyterWidgetRegistry> = {
   provides: IJupyterWidgetRegistry,
   activate: async (
     app: JupyterFrontEnd,
-    rendermime: IRenderMimeRegistry,
+    rendermime: IRenderMimeRegistry
   ): Promise<IJupyterWidgetRegistry> => {
     const baseUrl = PageConfig.getBaseUrl();
     const kernelId = PageConfig.getOption('kernelId');
@@ -100,7 +100,7 @@ export const widgetManager: JupyterFrontEndPlugin<IJupyterWidgetRegistry> = {
       return {
         registerWidget(data: IWidgetRegistryData): void {
           throw Error(`The model for kernel id ${kernelId} does not exist`);
-        },
+        }
       };
     }
     const kernel = new KernelConnection({ model, serverSettings });
@@ -118,7 +118,7 @@ export const widgetManager: JupyterFrontEndPlugin<IJupyterWidgetRegistry> = {
       data.append('_xsrf', xsrfToken);
       window.navigator.sendBeacon(
         `${baseUrl}voila/api/shutdown/${kernel.id}`,
-        data,
+        data
       );
       kernel.dispose();
     });
@@ -126,9 +126,9 @@ export const widgetManager: JupyterFrontEndPlugin<IJupyterWidgetRegistry> = {
     return {
       registerWidget(data: IWidgetRegistryData): void {
         manager.register(data);
-      },
+      }
     };
-  },
+  }
 };
 
 /**
@@ -138,7 +138,7 @@ const plugins: JupyterFrontEndPlugin<any>[] = [
   pathsPlugin,
   stopPollingPlugin,
   translatorPlugin,
-  widgetManager,
+  widgetManager
 ];
 
 export default plugins;

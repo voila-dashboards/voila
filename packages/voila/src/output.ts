@@ -18,7 +18,7 @@ export class OutputModel extends outputBase.OutputModel {
 
   initialize(
     attributes: Backbone.ObjectHash,
-    options: IBackboneModelOptions,
+    options: IBackboneModelOptions
   ): void {
     super.initialize(attributes, options);
     // The output area model is trusted since widgets are only rendered in trusted contexts.

@@ -1,13 +1,13 @@
 import {
   JupyterFrontEnd,
   JupyterFrontEndPlugin,
-  ILayoutRestorer,
+  ILayoutRestorer
 } from '@jupyterlab/application';
 
 import {
   ICommandPalette,
   WidgetTracker,
-  ToolbarButton,
+  ToolbarButton
 } from '@jupyterlab/apputils';
 
 import { ISettingRegistry } from '@jupyterlab/settingregistry';
@@ -21,7 +21,7 @@ import { IMainMenu } from '@jupyterlab/mainmenu';
 import {
   INotebookTracker,
   NotebookPanel,
-  INotebookModel,
+  INotebookModel
 } from '@jupyterlab/notebook';
 
 import { CommandRegistry } from '@lumino/commands';
@@ -33,7 +33,7 @@ import { IDisposable } from '@lumino/disposable';
 import {
   VoilaPreview,
   IVoilaPreviewTracker,
-  VoilaPreviewFactory,
+  VoilaPreviewFactory
 } from './preview';
 
 import { voilaIcon } from './icons';
@@ -71,7 +71,7 @@ class VoilaRenderButton
       icon: voilaIcon,
       onClick: () => {
         this._commands.execute(CommandIDs.voilaRender);
-      },
+      }
     });
     panel.toolbar.insertAfter('cellType', 'voilaRender', button);
     return button;
@@ -91,7 +91,7 @@ const extension: JupyterFrontEndPlugin<IVoilaPreviewTracker> = {
     ICommandPalette,
     ILayoutRestorer,
     IMainMenu,
-    ISettingRegistry,
+    ISettingRegistry
   ],
   provides: IVoilaPreviewTracker,
   activate: (
@@ -100,11 +100,11 @@ const extension: JupyterFrontEndPlugin<IVoilaPreviewTracker> = {
     palette: ICommandPalette | null,
     restorer: ILayoutRestorer | null,
     menu: IMainMenu | null,
-    settingRegistry: ISettingRegistry | null,
+    settingRegistry: ISettingRegistry | null
   ) => {
     // Create a widget tracker for Voilà Previews.
     const tracker = new WidgetTracker<VoilaPreview>({
-      namespace: 'voila-preview',
+      namespace: 'voila-preview'
     });
 
     if (restorer) {
@@ -112,10 +112,10 @@ const extension: JupyterFrontEndPlugin<IVoilaPreviewTracker> = {
         command: 'docmanager:open',
         args: (panel) => ({
           path: panel.context.path,
-          factory: factory.name,
+          factory: factory.name
         }),
         name: (panel) => panel.context.path,
-        when: app.serviceManager.ready,
+        when: app.serviceManager.ready
       });
     }
 
@@ -145,7 +145,7 @@ const extension: JupyterFrontEndPlugin<IVoilaPreviewTracker> = {
     const factory = new VoilaPreviewFactory(getVoilaUrl, {
       name: 'Voila-preview',
       fileTypes: ['notebook'],
-      modelName: 'notebook',
+      modelName: 'notebook'
     });
 
     factory.widgetCreated.connect((sender, widget) => {
@@ -193,12 +193,12 @@ const extension: JupyterFrontEndPlugin<IVoilaPreviewTracker> = {
             path: context.path,
             factory: 'Voila-preview',
             options: {
-              mode: 'split-right',
-            },
+              mode: 'split-right'
+            }
           });
         }
       },
-      isEnabled,
+      isEnabled
     });
 
     commands.addCommand(CommandIDs.voilaOpen, {
@@ -216,7 +216,7 @@ const extension: JupyterFrontEndPlugin<IVoilaPreviewTracker> = {
         const voilaUrl = getVoilaUrl(current.context.path);
         window.open(voilaUrl);
       },
-      isEnabled,
+      isEnabled
     });
 
     if (palette) {
@@ -230,13 +230,13 @@ const extension: JupyterFrontEndPlugin<IVoilaPreviewTracker> = {
       menu.viewMenu.addGroup(
         [
           {
-            command: CommandIDs.voilaRender,
+            command: CommandIDs.voilaRender
           },
           {
-            command: CommandIDs.voilaOpen,
-          },
+            command: CommandIDs.voilaOpen
+          }
         ],
-        1000,
+        1000
       );
     }
 
@@ -244,7 +244,7 @@ const extension: JupyterFrontEndPlugin<IVoilaPreviewTracker> = {
     docRegistry.addWidgetExtension('Notebook', voilaButton);
 
     return tracker;
-  },
+  }
 };
 
 export default extension;

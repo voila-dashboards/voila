@@ -1,7 +1,7 @@
 import {
   JupyterFrontEnd,
   JupyterFrontEndPlugin,
-  createRendermimePlugins,
+  createRendermimePlugins
 } from '@jupyterlab/application';
 
 import { PageConfig } from '@jupyterlab/coreutils';
@@ -24,7 +24,7 @@ export class VoilaApp extends JupyterFrontEnd<IShell> {
   constructor(options: App.IOptions) {
     super({
       ...options,
-      shell: options.shell ?? new VoilaShell(),
+      shell: options.shell ?? new VoilaShell()
     });
     if (options.mimeExtensions) {
       for (const plugin of createRendermimePlugins(options.mimeExtensions)) {
@@ -65,7 +65,7 @@ export class VoilaApp extends JupyterFrontEnd<IShell> {
         hubHost: PageConfig.getOption('hubHost') || undefined,
         hubPrefix: PageConfig.getOption('hubPrefix') || undefined,
         hubUser: PageConfig.getOption('hubUser') || undefined,
-        hubServerName: PageConfig.getOption('hubServerName') || undefined,
+        hubServerName: PageConfig.getOption('hubServerName') || undefined
       },
       directories: {
         appSettings: PageConfig.getOption('appSettingsDir'),
@@ -75,8 +75,8 @@ export class VoilaApp extends JupyterFrontEnd<IShell> {
         themes: PageConfig.getOption('themesDir'),
         userSettings: PageConfig.getOption('userSettingsDir'),
         serverRoot: PageConfig.getOption('serverRoot'),
-        workspaces: PageConfig.getOption('workspacesDir'),
-      },
+        workspaces: PageConfig.getOption('workspacesDir')
+      }
     };
   }
 
