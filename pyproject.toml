@@ -105,17 +105,13 @@ dependencies = [
 build-function = "hatch_jupyter_builder.npm_builder"
 ensured-targets = [
     "voila/labextension/static/style.js",
-    "share/jupyter/voila/templates/classic/static/materialcolors.css",
-    "share/jupyter/voila/templates/classic/static/labvariables.css",
-    "share/jupyter/voila/templates/reveal/static/materialcolors.css",
-    "share/jupyter/voila/templates/reveal/static/labvariables.css",
+    "share/jupyter/voila/templates/base/static/materialcolors.css",
+    "share/jupyter/voila/templates/base/static/labvariables.css",
 ]
 skip-if-exists = [
     "voila/labextension/static/style.js",
-    "share/jupyter/voila/templates/classic/static/materialcolors.css",
-    "share/jupyter/voila/templates/classic/static/labvariables.css",
-    "share/jupyter/voila/templates/reveal/static/materialcolors.css",
-    "share/jupyter/voila/templates/reveal/static/labvariables.css",
+    "share/jupyter/voila/templates/base/static/materialcolors.css",
+    "share/jupyter/voila/templates/base/static/labvariables.css",
 ]
 
 [tool.hatch.build.hooks.jupyter-builder.editable-build-kwargs]

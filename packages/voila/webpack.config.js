@@ -27,9 +27,7 @@ fs.ensureDirSync(buildDir);
 
 // Copy files to the build directory
 const libDir = path.resolve(__dirname, 'lib');
-const style = path.resolve(__dirname, 'style.css');
 fs.copySync(libDir, buildDir);
-fs.copySync(style, path.resolve(buildDir, 'style.css'));
 
 const extras = Build.ensureAssets({
   packageNames: names,
@@ -38,6 +36,10 @@ const extras = Build.ensureAssets({
 
 // Make a bootstrap entrypoint
 const entryPoint = path.join(buildDir, 'bootstrap.js');
+
+// Also build the style bundle
+const styleDir = path.resolve(__dirname, 'style');
+const styleEntryPoint = path.join(styleDir, 'index.js');
 
 if (process.env.NODE_ENV === 'production') {
   baseConfig.mode = 'production';
@@ -79,5 +81,13 @@ module.exports = [
         }
       })
     ]
+  }),
+  merge(baseConfig, {
+    entry: './' + path.relative(__dirname, styleEntryPoint),
+    mode: 'production',
+    output: {
+      path: distRoot,
+      filename: 'voila-style.js'
+    }
   })
 ].concat(extras);
