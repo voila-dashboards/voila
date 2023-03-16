@@ -152,3 +152,6 @@ version-cmd = "python scripts/bump-version.py --force"
 
 [tool.check-wheel-contents]
 ignore = ["W002"]
+
+[tool.isort]
+profile = "black"
