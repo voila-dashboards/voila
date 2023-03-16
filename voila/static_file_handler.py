@@ -27,15 +27,16 @@ class TemplateStaticFileHandler(tornado.web.StaticFileHandler):
     For this system, we don't need to use the root, since this is handled in the
     paths module.
     """
+
     def initialize(self):
-        super().initialize(path='/fake-root/voila-template-system/')
+        super().initialize(path="/fake-root/voila-template-system/")
 
     def parse_url_path(self, path):
         # since we cannot determine the template from validate_absolute_path
         # we get all possible roots here:
-        template, static, _ignore = path.split('/', 2)
-        assert static == 'static'
-        self.roots = collect_static_paths(['voila', 'nbconvert'], template)
+        template, static, _ignore = path.split("/", 2)
+        assert static == "static"
+        self.roots = collect_static_paths(["voila", "nbconvert"], template)
         # simply forward the call
         return super().parse_url_path(path)
 
@@ -54,8 +55,8 @@ class TemplateStaticFileHandler(tornado.web.StaticFileHandler):
     @classmethod
     def get_absolute_path(cls, root, path):
         template, static, relpath = os.path.normpath(path).split(os.path.sep, 2)
-        assert static == 'static'
-        roots = collect_static_paths(['voila', 'nbconvert'], template)
+        assert static == "static"
+        roots = collect_static_paths(["voila", "nbconvert"], template)
         for root in roots:
             abspath = os.path.abspath(os.path.join(root, relpath))
             if os.path.exists(abspath):
@@ -81,7 +82,7 @@ class MultiStaticFileHandler(tornado.web.StaticFileHandler):
 
     def initialize(self, paths, default_filename=None):
         self.roots = paths
-        super(MultiStaticFileHandler, self).initialize(path=paths[0], default_filename=default_filename)
+        super().initialize(path=paths[0], default_filename=default_filename)
 
     def get_absolute_path(self, root, path):
         # find the first absolute path that exists
@@ -98,7 +99,7 @@ class WhiteListFileHandler(tornado.web.StaticFileHandler):
     def initialize(self, whitelist=[], blacklist=[], **kwargs):
         self.whitelist = whitelist
         self.blacklist = blacklist
-        super(WhiteListFileHandler, self).initialize(**kwargs)
+        super().initialize(**kwargs)
 
     def get_absolute_path(self, root, path):
         # StaticFileHandler.get always calls this method first, so we use this as the
@@ -106,7 +107,7 @@ class WhiteListFileHandler(tornado.web.StaticFileHandler):
         whitelisted = any(re.fullmatch(pattern, path) for pattern in self.whitelist)
         blacklisted = any(re.fullmatch(pattern, path) for pattern in self.blacklist)
         if not whitelisted:
-            raise tornado.web.HTTPError(403, 'File not whitelisted')
+            raise tornado.web.HTTPError(403, "File not whitelisted")
         if blacklisted:
-            raise tornado.web.HTTPError(403, 'File blacklisted')
-        return super(WhiteListFileHandler, self).get_absolute_path(root, path)
+            raise tornado.web.HTTPError(403, "File blacklisted")
+        return super().get_absolute_path(root, path)

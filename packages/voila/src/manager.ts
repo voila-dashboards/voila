@@ -35,26 +35,26 @@ const WIDGET_MIMETYPE = 'application/vnd.jupyter.widget-view+json';
 export class WidgetManager extends KernelWidgetManager {
   constructor(
     kernel: Kernel.IKernelConnection,
-    rendermime: IRenderMimeRegistry
+    rendermime: IRenderMimeRegistry,
   ) {
     super(kernel, rendermime);
     rendermime.addFactory(
       {
         safe: false,
         mimeTypes: [WIDGET_MIMETYPE],
-        createRenderer: options => new WidgetRenderer(options, this as any)
+        createRenderer: (options) => new WidgetRenderer(options, this as any),
       },
-      1
+      1,
     );
     this._registerWidgets();
   }
 
   async build_widgets(): Promise<void> {
     const tags = document.body.querySelectorAll(
-      `script[type="${WIDGET_MIMETYPE}"]`
+      `script[type="${WIDGET_MIMETYPE}"]`,
     );
 
-    tags.forEach(async viewtag => {
+    tags.forEach(async (viewtag) => {
       if (!viewtag?.parentElement) {
         return;
       }
@@ -83,7 +83,7 @@ export class WidgetManager extends KernelWidgetManager {
 
   async display_view(
     view: base.DOMWidgetView,
-    el: HTMLElement
+    el: HTMLElement,
   ): Promise<Widget> {
     if (el) {
       LuminoWidget.Widget.attach(view.luminoWidget, el);
@@ -93,7 +93,7 @@ export class WidgetManager extends KernelWidgetManager {
       view.el.addEventListener('jupyterWidgetResize', (e: Event) => {
         MessageLoop.postMessage(
           view.luminoWidget,
-          LuminoWidget.Widget.ResizeMessage.UnknownSize
+          LuminoWidget.Widget.ResizeMessage.UnknownSize,
         );
       });
     }
@@ -104,20 +104,20 @@ export class WidgetManager extends KernelWidgetManager {
     this.register({
       name: '@jupyter-widgets/base',
       version: base.JUPYTER_WIDGETS_VERSION,
-      exports: base as any
+      exports: base as any,
     });
     this.register({
       name: '@jupyter-widgets/controls',
       version: controls.JUPYTER_CONTROLS_VERSION,
-      exports: controls as any
+      exports: controls as any,
     });
     this.register({
       name: '@jupyter-widgets/output',
       version: output.OUTPUT_WIDGET_VERSION,
       exports: {
         ...(output as any),
-        OutputModel
-      }
+        OutputModel,
+      },
     });
   }
 }

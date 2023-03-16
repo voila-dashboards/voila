@@ -10,11 +10,10 @@
 
 import asyncio
 import os
-from typing import Dict
 from pathlib import Path
+from typing import Dict
 
 import tornado.web
-
 from jupyter_server.base.handlers import JupyterHandler
 from jupyter_server.utils import url_path_join
 from nbclient.util import ensure_async
@@ -22,20 +21,17 @@ from tornado.httputil import split_host_and_port
 from traitlets.traitlets import Bool
 
 from ._version import __version__
-from .utils import get_page_config
 from .notebook_renderer import NotebookRenderer
 from .request_info_handler import RequestInfoSocketHandler
-from .utils import ENV_VARIABLE, create_include_assets_functions
+from .utils import ENV_VARIABLE, create_include_assets_functions, get_page_config
 
 
 class BaseVoilaHandler(JupyterHandler):
-
     def initialize(self, **kwargs):
-        self.voila_configuration = kwargs['voila_configuration']
+        self.voila_configuration = kwargs["voila_configuration"]
 
     def render_template(self, name, **ns):
-        """ Render the Voila HTML template, respecting the theme and nbconvert template.
-        """
+        """Render the Voila HTML template, respecting the theme and nbconvert template."""
         template_arg = (
             self.get_argument("voila-template", self.voila_configuration.template)
             if self.voila_configuration.allow_template_override == "YES"
@@ -50,10 +46,8 @@ class BaseVoilaHandler(JupyterHandler):
         ns = {
             **ns,
             **self.template_namespace,
-            **create_include_assets_functions(
-                template_arg, self.base_url
-            ),
-            "theme": theme_arg
+            **create_include_assets_functions(template_arg, self.base_url),
+            "theme": theme_arg,
         }
 
         template = self.get_template(name)
@@ -61,14 +55,13 @@ class BaseVoilaHandler(JupyterHandler):
 
 
 class VoilaHandler(BaseVoilaHandler):
-
     def initialize(self, **kwargs):
         super().initialize(**kwargs)
-        self.notebook_path = kwargs.pop('notebook_path', [])  # should it be []
-        self.template_paths = kwargs.pop('template_paths', [])
-        self.traitlet_config = kwargs.pop('config', None)
-        self.voila_configuration = kwargs['voila_configuration']
-        self.prelaunch_hook = kwargs.get('prelaunch_hook', None)
+        self.notebook_path = kwargs.pop("notebook_path", [])  # should it be []
+        self.template_paths = kwargs.pop("template_paths", [])
+        self.traitlet_config = kwargs.pop("config", None)
+        self.voila_configuration = kwargs["voila_configuration"]
+        self.prelaunch_hook = kwargs.get("prelaunch_hook", None)
 
         # we want to avoid starting multiple kernels due to template mistakes
         self.kernel_started = False
@@ -90,19 +83,22 @@ class VoilaHandler(BaseVoilaHandler):
         request_info[ENV_VARIABLE.SCRIPT_NAME] = self.request.path
         request_info[
             ENV_VARIABLE.PATH_INFO
-        ] = ''  # would be /foo/bar if voila.ipynb/foo/bar was supported
+        ] = ""  # would be /foo/bar if voila.ipynb/foo/bar was supported
         request_info[ENV_VARIABLE.QUERY_STRING] = str(self.request.query)
-        request_info[ENV_VARIABLE.SERVER_SOFTWARE] = 'voila/{}'.format(__version__)
+        request_info[ENV_VARIABLE.SERVER_SOFTWARE] = f"voila/{__version__}"
         request_info[ENV_VARIABLE.SERVER_PROTOCOL] = str(self.request.version)
         host, port = split_host_and_port(self.request.host.lower())
 
-        request_info[ENV_VARIABLE.SERVER_PORT] = str(port) if port else ''
+        request_info[ENV_VARIABLE.SERVER_PORT] = str(port) if port else ""
         request_info[ENV_VARIABLE.SERVER_NAME] = host
 
         # Add HTTP Headers as env vars following rfc3875#section-4.1.18
         if len(self.voila_configuration.http_header_envs) > 0:
             for header_name in self.request.headers:
-                config_headers_lower = [header.lower() for header in self.voila_configuration.http_header_envs]
+                config_headers_lower = [
+                    header.lower()
+                    for header in self.voila_configuration.http_header_envs
+                ]
                 # Use case insensitive comparison of header names as per rfc2616#section-4.2
                 if header_name.lower() in config_headers_lower:
                     env_name = f'HTTP_{header_name.upper().replace("-", "_")}'
@@ -112,13 +108,15 @@ class VoilaHandler(BaseVoilaHandler):
         theme_arg = self.get_argument("voila-theme", None)
 
         # Compose reply
-        self.set_header('Content-Type', 'text/html')
-        self.set_header('Cache-Control', 'no-cache, no-store, must-revalidate')
-        self.set_header('Pragma', 'no-cache')
-        self.set_header('Expires', '0')
+        self.set_header("Content-Type", "text/html")
+        self.set_header("Cache-Control", "no-cache, no-store, must-revalidate")
+        self.set_header("Pragma", "no-cache")
+        self.set_header("Expires", "0")
 
         try:
-            current_notebook_data: Dict = self.kernel_manager.notebook_data.get(notebook_path, {})
+            current_notebook_data: Dict = self.kernel_manager.notebook_data.get(
+                notebook_path, {}
+            )
             pool_size: int = self.kernel_manager.get_pool_size(notebook_path)
         except AttributeError:
             # For server extension case.
@@ -137,20 +135,26 @@ class VoilaHandler(BaseVoilaHandler):
             # of the notebook or some rendred cells and a generator which can be used by this
             # handler to continue rendering calls.
 
-            render_task, rendered_cache, kernel_id = await self.kernel_manager.get_rendered_notebook(
-                    notebook_name=notebook_path,
+            (
+                render_task,
+                rendered_cache,
+                kernel_id,
+            ) = await self.kernel_manager.get_rendered_notebook(
+                notebook_name=notebook_path,
             )
 
-            RequestInfoSocketHandler.send_updates({'kernel_id': kernel_id, 'payload': request_info})
+            RequestInfoSocketHandler.send_updates(
+                {"kernel_id": kernel_id, "payload": request_info}
+            )
             # Send rendered cell to frontend
             if len(rendered_cache) > 0:
-                yield ''.join(rendered_cache)
+                yield "".join(rendered_cache)
 
             # Wait for current running cell finish and send this cell to
             # frontend.
             rendered, rendering = await render_task
             if len(rendered) > len(rendered_cache):
-                html_snippet = ''.join(rendered[len(rendered_cache):])
+                html_snippet = "".join(rendered[len(rendered_cache) :])
                 yield html_snippet
 
             # Continue render cell from generator.
@@ -159,7 +163,7 @@ class VoilaHandler(BaseVoilaHandler):
 
         else:
             # All kernels are used or pre-heated kernel is disabled, start a normal kernel.
-            supported_file_extensions = ['.ipynb']
+            supported_file_extensions = [".ipynb"]
             supported_file_extensions.extend(
                 [
                     x.lower()
@@ -182,7 +186,9 @@ class VoilaHandler(BaseVoilaHandler):
                 base_url=self.base_url,
                 kernel_spec_manager=self.kernel_spec_manager,
                 prelaunch_hook=self.prelaunch_hook,
-                page_config=get_page_config(base_url=self.base_url, settings=self.settings, log=self.log)
+                page_config=get_page_config(
+                    base_url=self.base_url, settings=self.settings, log=self.log
+                ),
             )
 
             await gen.initialize(template=template_arg, theme=theme_arg)
@@ -193,26 +199,28 @@ class VoilaHandler(BaseVoilaHandler):
                 can be used in a template to give feedback to a user
                 """
 
-                return '<script>window.voila_heartbeat()</script>\n'
+                return "<script>window.voila_heartbeat()</script>\n"
 
             kernel_env = {**os.environ, **request_info}
-            kernel_env[ENV_VARIABLE.VOILA_PREHEAT] = 'False'
+            kernel_env[ENV_VARIABLE.VOILA_PREHEAT] = "False"
             kernel_env[ENV_VARIABLE.VOILA_BASE_URL] = self.base_url
-            kernel_env[ENV_VARIABLE.VOILA_SERVER_URL] = self.settings.get('server_url', '/')
+            kernel_env[ENV_VARIABLE.VOILA_SERVER_URL] = self.settings.get(
+                "server_url", "/"
+            )
             kernel_id = await ensure_async(
-                (
-                    self.kernel_manager.start_kernel(
-                        kernel_name=gen.notebook.metadata.kernelspec.name,
-                        path=cwd,
-                        env=kernel_env,
-                    )
+                self.kernel_manager.start_kernel(
+                    kernel_name=gen.notebook.metadata.kernelspec.name,
+                    path=cwd,
+                    env=kernel_env,
                 )
             )
             kernel_future = self.kernel_manager.get_kernel(kernel_id)
             queue = asyncio.Queue()
 
             async def put_html():
-                async for html_snippet, _ in gen.generate_content_generator(kernel_id, kernel_future):
+                async for html_snippet, _ in gen.generate_content_generator(
+                    kernel_id, kernel_future
+                ):
                     await queue.put(html_snippet)
 
                 await queue.put(None)
@@ -224,7 +232,9 @@ class VoilaHandler(BaseVoilaHandler):
             # can be used in a template to give feedback to a user
             while True:
                 try:
-                    html_snippet = await asyncio.wait_for(queue.get(), self.voila_configuration.http_keep_alive_timeout)
+                    html_snippet = await asyncio.wait_for(
+                        queue.get(), self.voila_configuration.http_keep_alive_timeout
+                    )
                 except asyncio.TimeoutError:
                     yield time_out()
                 else:
@@ -240,7 +250,7 @@ class VoilaHandler(BaseVoilaHandler):
             self.flush()
 
     def redirect_to_file(self, path):
-        self.redirect(url_path_join(self.base_url, 'voila', 'files', path))
+        self.redirect(url_path_join(self.base_url, "voila", "files", path))
 
     def should_use_rendered_notebook(
         self,
@@ -255,8 +265,8 @@ class VoilaHandler(BaseVoilaHandler):
         if len(notebook_data) == 0:
             return False
 
-        rendered_template = notebook_data.get('template')
-        rendered_theme = notebook_data.get('theme')
+        rendered_template = notebook_data.get("template")
+        rendered_theme = notebook_data.get("theme")
         if template_name is not None and template_name != rendered_template:
             return False
         if theme is not None and rendered_theme != theme:

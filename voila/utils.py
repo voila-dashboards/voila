@@ -17,50 +17,49 @@ from functools import partial
 from typing import Awaitable, Dict
 
 import websockets
+from jupyter_core.paths import jupyter_path
+from jupyter_server.utils import url_path_join
+from jupyterlab_server.config import get_page_config as gpc
+from jupyterlab_server.config import recursive_update
 from jupyterlab_server.themes_handler import ThemesHandler
 from markupsafe import Markup
 from nbconvert.exporters.html import find_lab_theme
 
-from jupyter_core.paths import jupyter_path
-from jupyterlab_server.config import get_page_config as gpc, recursive_update
-from jupyter_server.utils import url_path_join
-
-from .static_file_handler import TemplateStaticFileHandler
 from ._version import __version__
+from .static_file_handler import TemplateStaticFileHandler
 
 
 class ENV_VARIABLE(str, Enum):
-
-    VOILA_PREHEAT = 'VOILA_PREHEAT'
-    VOILA_KERNEL_ID = 'VOILA_KERNEL_ID'
-    VOILA_BASE_URL = 'VOILA_BASE_URL'
-    VOILA_SERVER_URL = 'VOILA_SERVER_URL'
-    VOILA_APP_IP = 'VOILA_APP_IP'
-    VOILA_APP_PORT = 'VOILA_APP_PORT'
-    VOILA_WS_PROTOCOL = 'VOILA_WS_PROTOCOL'
-    VOILA_WS_BASE_URL = 'VOILA_WS_BASE_URL'
-    SERVER_NAME = 'SERVER_NAME'
-    SERVER_PORT = 'SERVER_PORT'
-    SCRIPT_NAME = 'SCRIPT_NAME'
-    PATH_INFO = 'PATH_INFO'
-    QUERY_STRING = 'QUERY_STRING'
-    SERVER_SOFTWARE = 'SERVER_SOFTWARE'
-    SERVER_PROTOCOL = 'SERVER_PROTOCOL'
+    VOILA_PREHEAT = "VOILA_PREHEAT"
+    VOILA_KERNEL_ID = "VOILA_KERNEL_ID"
+    VOILA_BASE_URL = "VOILA_BASE_URL"
+    VOILA_SERVER_URL = "VOILA_SERVER_URL"
+    VOILA_APP_IP = "VOILA_APP_IP"
+    VOILA_APP_PORT = "VOILA_APP_PORT"
+    VOILA_WS_PROTOCOL = "VOILA_WS_PROTOCOL"
+    VOILA_WS_BASE_URL = "VOILA_WS_BASE_URL"
+    SERVER_NAME = "SERVER_NAME"
+    SERVER_PORT = "SERVER_PORT"
+    SCRIPT_NAME = "SCRIPT_NAME"
+    PATH_INFO = "PATH_INFO"
+    QUERY_STRING = "QUERY_STRING"
+    SERVER_SOFTWARE = "SERVER_SOFTWARE"
+    SERVER_PROTOCOL = "SERVER_PROTOCOL"
 
 
 def get_server_root_dir(settings):
     # notebook >= 5.0.0 has this in the settings
-    if 'server_root_dir' in settings:
-        return settings['server_root_dir']
+    if "server_root_dir" in settings:
+        return settings["server_root_dir"]
 
     # This copies the logic added in the notebook in
     #  https://github.com/jupyter/notebook/pull/2234
-    contents_manager = settings['contents_manager']
+    contents_manager = settings["contents_manager"]
     root_dir = contents_manager.root_dir
-    home = os.path.expanduser('~')
+    home = os.path.expanduser("~")
     if root_dir.startswith(home + os.path.sep):
         # collapse $HOME to ~
-        root_dir = '~' + root_dir[len(home):]
+        root_dir = "~" + root_dir[len(home) :]
     return root_dir
 
 
@@ -69,7 +68,7 @@ async def _get_request_info(ws_url: str) -> Awaitable:
         async with websockets.connect(ws_url, open_timeout=5) as websocket:
             ri = await websocket.recv()
     except (TimeoutError, ConnectionRefusedError):
-        warnings.warn(f'Failed to connect to {ws_url}')
+        warnings.warn(f"Failed to connect to {ws_url}")
         return None
     else:
         return ri
@@ -93,7 +92,7 @@ def get_page_config(base_url, settings, log):
     page_config.setdefault("mathjaxConfig", mathjax_config)
     page_config.setdefault("fullMathjaxUrl", mathjax_url)
 
-    labextensions_path = jupyter_path('labextensions')
+    labextensions_path = jupyter_path("labextensions")
     recursive_update(
         page_config,
         gpc(
@@ -121,22 +120,22 @@ def wait_for_request(url: str = None) -> str:
         Defaults to None.
 
     """
-    preheat_mode = os.getenv(ENV_VARIABLE.VOILA_PREHEAT, 'False')
-    if preheat_mode == 'False':
+    preheat_mode = os.getenv(ENV_VARIABLE.VOILA_PREHEAT, "False")
+    if preheat_mode == "False":
         return
 
     request_info = None
     if url is None:
-        protocol = os.getenv(ENV_VARIABLE.VOILA_WS_PROTOCOL, 'ws')
-        server_ip = os.getenv(ENV_VARIABLE.VOILA_APP_IP, '127.0.0.1')
-        server_port = os.getenv(ENV_VARIABLE.VOILA_APP_PORT, '8866')
-        server_url = os.getenv(ENV_VARIABLE.VOILA_SERVER_URL, '/')
+        protocol = os.getenv(ENV_VARIABLE.VOILA_WS_PROTOCOL, "ws")
+        server_ip = os.getenv(ENV_VARIABLE.VOILA_APP_IP, "127.0.0.1")
+        server_port = os.getenv(ENV_VARIABLE.VOILA_APP_PORT, "8866")
+        server_url = os.getenv(ENV_VARIABLE.VOILA_SERVER_URL, "/")
         # Use `VOILA_SERVER_URL` if `VOILA_WS_BASE_URL` not specified.
         ws_base_url = os.getenv(ENV_VARIABLE.VOILA_WS_BASE_URL, server_url)
-        url = f'{protocol}://{server_ip}:{server_port}{ws_base_url}voila/query'
+        url = f"{protocol}://{server_ip}:{server_port}{ws_base_url}voila/query"
 
     kernel_id = os.getenv(ENV_VARIABLE.VOILA_KERNEL_ID)
-    ws_url = f'{url}/{kernel_id}'
+    ws_url = f"{url}/{kernel_id}"
 
     def inner():
         nonlocal request_info
@@ -172,11 +171,11 @@ def get_query_string(url: str = None) -> str:
 def make_url(template_name: str, base_url: str, path: str) -> str:
     # similar to static_url, but does not assume the static prefix
     settings = {
-        'static_url_prefix': f'{base_url}voila/templates/',
-        'static_path': None,  # not used in TemplateStaticFileHandler.get_absolute_path
+        "static_url_prefix": f"{base_url}voila/templates/",
+        "static_path": None,  # not used in TemplateStaticFileHandler.get_absolute_path
     }
     return TemplateStaticFileHandler.make_static_url(
-        settings, f'{template_name}/{path}'
+        settings, f"{template_name}/{path}"
     )
 
 
@@ -199,10 +198,10 @@ def include_lab_theme(base_url: str, name: str) -> str:
     theme_name, _ = find_lab_theme(name)
 
     settings = {
-        'static_url_prefix': f'{base_url}voila/themes/',
-        'static_path': None,  # not used in TemplateStaticFileHandler.get_absolute_path
+        "static_url_prefix": f"{base_url}voila/themes/",
+        "static_path": None,  # not used in TemplateStaticFileHandler.get_absolute_path
     }
-    url = ThemesHandler.make_static_url(settings, f'{theme_name}/index.css')
+    url = ThemesHandler.make_static_url(settings, f"{theme_name}/index.css")
 
     code = f'<link rel="stylesheet" type="text/css" href="{url}">'
     return Markup(code)
@@ -210,8 +209,8 @@ def include_lab_theme(base_url: str, name: str) -> str:
 
 def create_include_assets_functions(template_name: str, base_url: str) -> Dict:
     return {
-        'include_css': partial(include_css, template_name, base_url),
-        'include_js': partial(include_js, template_name, base_url),
-        'include_url': partial(include_url, template_name, base_url),
-        'include_lab_theme': partial(include_lab_theme, base_url),
+        "include_css": partial(include_css, template_name, base_url),
+        "include_js": partial(include_js, template_name, base_url),
+        "include_url": partial(include_url, template_name, base_url),
+        "include_lab_theme": partial(include_lab_theme, base_url),
     }

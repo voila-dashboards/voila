@@ -3,16 +3,15 @@ name: Tests
 on:
   push:
     branches:
-    - '*'
+      - '*'
   pull_request:
     branches:
-    - '*'
+      - '*'
   schedule:
-  - cron: "0 2 * * 1-5"  # run on weekdays at 2:00am UTC
+    - cron: '0 2 * * 1-5' # run on weekdays at 2:00am UTC
 
 jobs:
   test-linux:
-
     runs-on: ${{ matrix.os }}
 
     strategy:
@@ -22,47 +21,45 @@ jobs:
         python_version: ['3.7', '3.8', '3.9', '3.10']
 
     steps:
-    - uses: actions/checkout@v2
+      - uses: actions/checkout@v2
 
-    - name: Setup mamba
-      uses: conda-incubator/setup-miniconda@v2
-      with:
-        miniforge-variant: Mambaforge
-        channels: conda-forge
+      - name: Setup mamba
+        uses: conda-incubator/setup-miniconda@v2
+        with:
+          miniforge-variant: Mambaforge
+          channels: conda-forge
 
-    - name: Create the conda environment
-      shell: bash -l {0}
-      run: mamba install -q python=${{ matrix.python_version }} pip jupyterlab_pygments==0.1.0 pytest-cov pytest-rerunfailures nodejs yarn=1 flake8 ipywidgets matplotlib xeus-cling openssl=1.1.1l "traitlets>=5.0.3,<6"
+      - name: Create the conda environment
+        shell: bash -l {0}
+        run: mamba install -q python=${{ matrix.python_version }} pip jupyterlab_pygments==0.1.0 pytest-cov pytest-rerunfailures nodejs yarn=1 flake8 ipywidgets matplotlib xeus-cling openssl=1.1.1l "traitlets>=5.0.3,<6"
 
-    - name: Install dependencies
-      shell: bash -l {0}
-      run: |
-        whereis python
-        python --version
-        yarn install --network-timeout 100000
-        python -m pip install ".[test]"
-        (cd tests/test_template; pip install .)
-        (cd tests/skip_template; pip install .)
+      - name: Install dependencies
+        shell: bash -l {0}
+        run: |
+          whereis python
+          python --version
+          yarn install --network-timeout 100000
+          python -m pip install ".[test]"
+          (cd tests/test_template; pip install .)
+          (cd tests/skip_template; pip install .)
 
-    - name: Run tests
-      shell: bash -l {0}
-      run: |
-        VOILA_TEST_XEUS_CLING=1 py.test tests/ --async-test-timeout=240 --reruns 2 --reruns-delay 1
-        voila --help  # Making sure we can run `voila --help`
-        # tests if voila sends a 'heartbeat' to avoid proxies from closing an apparently stale connection
-        # Note that wget is the only easily available software that has a read-timeout
-        voila tests/notebooks/sleep10seconds.ipynb --port=8878 --VoilaConfiguration.http_keep_alive_timeout=2 &
-        sleep 2
-        wget --read-timeout=5 --tries=1 http://localhost:8878
+      - name: Run tests
+        shell: bash -l {0}
+        run: |
+          VOILA_TEST_XEUS_CLING=1 py.test tests/ --async-test-timeout=240 --reruns 2 --reruns-delay 1
+          voila --help  # Making sure we can run `voila --help`
+          # tests if voila sends a 'heartbeat' to avoid proxies from closing an apparently stale connection
+          # Note that wget is the only easily available software that has a read-timeout
+          voila tests/notebooks/sleep10seconds.ipynb --port=8878 --VoilaConfiguration.http_keep_alive_timeout=2 &
+          sleep 2
+          wget --read-timeout=5 --tries=1 http://localhost:8878
 
-    - name: Flake8
-      shell: bash -l {0}
-      run: |
-        python -m flake8 voila tests setup.py
-
+      - name: Flake8
+        shell: bash -l {0}
+        run: |
+          python -m flake8 voila tests setup.py
 
   test-osx:
-
     runs-on: ${{ matrix.os }}
 
     strategy:
@@ -72,41 +69,40 @@ jobs:
         python_version: ['3.7', '3.8', '3.9', '3.10']
 
     steps:
-    - uses: actions/checkout@v2
+      - uses: actions/checkout@v2
 
-    - name: Setup mamba
-      uses: conda-incubator/setup-miniconda@v2
-      with:
-        miniforge-variant: Mambaforge
-        channels: conda-forge
+      - name: Setup mamba
+        uses: conda-incubator/setup-miniconda@v2
+        with:
+          miniforge-variant: Mambaforge
+          channels: conda-forge
 
-    - name: Create the conda environment
-      shell: bash -l {0}
-      run: mamba install -q python=${{ matrix.python_version }} pip jupyterlab_pygments==0.1.0 pytest-cov pytest-rerunfailures nodejs yarn=1 flake8 ipywidgets matplotlib xeus-cling openssl=1.1.1l "traitlets>=5.0.3,<6"
+      - name: Create the conda environment
+        shell: bash -l {0}
+        run: mamba install -q python=${{ matrix.python_version }} pip jupyterlab_pygments==0.1.0 pytest-cov pytest-rerunfailures nodejs yarn=1 flake8 ipywidgets matplotlib xeus-cling openssl=1.1.1l "traitlets>=5.0.3,<6"
 
-    - name: Install dependencies
-      shell: bash -l {0}
-      run: |
-        whereis python
-        python --version
-        yarn install --network-timeout 100000
-        python -m pip install ".[test]"
-        (cd tests/test_template; pip install .)
-        (cd tests/skip_template; pip install .)
+      - name: Install dependencies
+        shell: bash -l {0}
+        run: |
+          whereis python
+          python --version
+          yarn install --network-timeout 100000
+          python -m pip install ".[test]"
+          (cd tests/test_template; pip install .)
+          (cd tests/skip_template; pip install .)
 
-    - name: Run tests
-      shell: bash -l {0}
-      run: |
-        py.test tests/ --async-test-timeout=240 --reruns 2 --reruns-delay 1
-        voila --help  # Making sure we can run `voila --help`
-        # tests if voila sends a 'heartbeat' to avoid proxies from closing an apparently stale connection
-        # Note that wget is the only easily available software that has a read-timeout
-        voila tests/notebooks/sleep10seconds.ipynb --port=8878 --VoilaConfiguration.http_keep_alive_timeout=2 &
-        sleep 2
-        wget --read-timeout=5 --tries=1 http://localhost:8878
+      - name: Run tests
+        shell: bash -l {0}
+        run: |
+          py.test tests/ --async-test-timeout=240 --reruns 2 --reruns-delay 1
+          voila --help  # Making sure we can run `voila --help`
+          # tests if voila sends a 'heartbeat' to avoid proxies from closing an apparently stale connection
+          # Note that wget is the only easily available software that has a read-timeout
+          voila tests/notebooks/sleep10seconds.ipynb --port=8878 --VoilaConfiguration.http_keep_alive_timeout=2 &
+          sleep 2
+          wget --read-timeout=5 --tries=1 http://localhost:8878
 
   test-win:
-
     runs-on: ${{ matrix.os }}
 
     strategy:

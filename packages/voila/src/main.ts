@@ -47,7 +47,7 @@ async function createModule(scope: string, module: string) {
     return factory();
   } catch (e) {
     console.warn(
-      `Failed to create module: package: ${scope}; module: ${module}`
+      `Failed to create module: package: ${scope}; module: ${module}`,
     );
     throw e;
   }
@@ -68,7 +68,7 @@ async function main() {
     // This would also need the theme manager plugin and settings
     // require('@jupyterlab/theme-light-extension'),
     // require('@jupyterlab/theme-dark-extension'),
-    plugins
+    plugins,
   ];
 
   const mimeExtensions = [require('@jupyterlab/json-extension')];
@@ -103,7 +103,7 @@ async function main() {
   }
 
   const extensionData: any[] = JSON.parse(
-    PageConfig.getOption('federated_extensions')
+    PageConfig.getOption('federated_extensions'),
   );
 
   const federatedExtensionPromises: Promise<any>[] = [];
@@ -111,20 +111,20 @@ async function main() {
   const federatedStylePromises: Promise<any>[] = [];
 
   const extensions = await Promise.allSettled(
-    extensionData.map(async data => {
+    extensionData.map(async (data) => {
       await loadComponent(
         `${URLExt.join(
           PageConfig.getOption('fullLabextensionsUrl'),
           data.name,
-          data.load
+          data.load,
         )}`,
-        data.name
+        data.name,
       );
       return data;
-    })
+    }),
   );
 
-  extensions.forEach(p => {
+  extensions.forEach((p) => {
     if (p.status === 'rejected') {
       // There was an error loading the component
       console.error(p.reason);
@@ -137,7 +137,7 @@ async function main() {
     }
     if (data.mimeExtension) {
       federatedMimeExtensionPromises.push(
-        createModule(data.name, data.mimeExtension)
+        createModule(data.name, data.mimeExtension),
       );
     }
     if (data.style) {
@@ -147,9 +147,9 @@ async function main() {
 
   // Add the federated extensions.
   const federatedExtensions = await Promise.allSettled(
-    federatedExtensionPromises
+    federatedExtensionPromises,
   );
-  federatedExtensions.forEach(p => {
+  federatedExtensions.forEach((p) => {
     if (p.status === 'fulfilled') {
       for (const plugin of activePlugins(p.value)) {
         mods.push(plugin);
@@ -161,9 +161,9 @@ async function main() {
 
   // Add the federated mime extensions.
   const federatedMimeExtensions = await Promise.allSettled(
-    federatedMimeExtensionPromises
+    federatedMimeExtensionPromises,
   );
-  federatedMimeExtensions.forEach(p => {
+  federatedMimeExtensions.forEach((p) => {
     if (p.status === 'fulfilled') {
       for (const plugin of activePlugins(p.value)) {
         mimeExtensions.push(plugin);
@@ -176,7 +176,7 @@ async function main() {
   // Load all federated component styles and log errors for any that do not
   (await Promise.allSettled(federatedStylePromises))
     .filter(({ status }) => status === 'rejected')
-    .forEach(p => {
+    .forEach((p) => {
       console.error((p as PromiseRejectedResult).reason);
     });
 

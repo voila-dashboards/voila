@@ -1,7 +1,8 @@
-import pytest
-import time
 import asyncio
 import os
+import time
+
+import pytest
 
 
 @pytest.fixture(params=[['--Voila.base_url="/base/"'], []])
@@ -16,7 +17,7 @@ def using_server_url(request):
 
 @pytest.fixture()
 def voila_args_extra(http_server_port, using_server_url, using_base_url):
-    return [f'--port={http_server_port[-1]}'] + using_server_url + using_base_url
+    return [f"--port={http_server_port[-1]}"] + using_server_url + using_base_url
 
 
 @pytest.fixture
@@ -26,9 +27,7 @@ def preheat_mode():
 
 @pytest.fixture
 def voila_notebook(notebook_directory):
-    return os.path.join(
-        notebook_directory, 'preheat', 'get_query_string.ipynb'
-    )
+    return os.path.join(notebook_directory, "preheat", "get_query_string.ipynb")
 
 
 NOTEBOOK_EXECUTION_TIME = 2
@@ -40,7 +39,7 @@ async def send_request(sc, url, wait=0):
     real_time = time.time()
     response = await sc.fetch(url)
     real_time = time.time() - real_time
-    html_text = response.body.decode('utf-8')
+    html_text = response.body.decode("utf-8")
     return real_time, html_text
 
 
@@ -52,13 +51,13 @@ async def test_request_with_query(
     return value.
     """
     if len(using_server_url) > 0:
-        url = '/server/?foo=bar'
+        url = "/server/?foo=bar"
     else:
         if len(using_base_url) > 0:
-            url = '/base/?foo=bar'
+            url = "/base/?foo=bar"
         else:
-            url = f'{base_url}?foo=bar'
+            url = f"{base_url}?foo=bar"
     _, html_text = await send_request(
         sc=http_server_client, url=url, wait=NOTEBOOK_EXECUTION_TIME + 1
     )
-    assert 'foo=bar' in html_text
+    assert "foo=bar" in html_text

@@ -1,6 +1,7 @@
-from tornado.websocket import WebSocketHandler
 import logging
 from typing import Dict
+
+from tornado.websocket import WebSocketHandler
 
 
 class RequestInfoSocketHandler(WebSocketHandler):
@@ -15,6 +16,7 @@ class RequestInfoSocketHandler(WebSocketHandler):
     - cache : A dictionary which holds the request info associated
     with the kernel id.
     """
+
     _waiters = dict()
     _cache = dict()
 
@@ -37,7 +39,7 @@ class RequestInfoSocketHandler(WebSocketHandler):
         del RequestInfoSocketHandler._waiters[k_id]
 
     @classmethod
-    def send_updates(cls: 'RequestInfoSocketHandler', msg: Dict) -> None:
+    def send_updates(cls: "RequestInfoSocketHandler", msg: Dict) -> None:
         """Class method used to dispatch the request info to the waiting
         notebook. This method is called in `VoilaHandler` when the request
         info becomes available.
@@ -49,8 +51,8 @@ class RequestInfoSocketHandler(WebSocketHandler):
             - msg (Dict): this dictionary contains the `kernel_id` to identify
             the waiting notebook and `payload` is the request info.
         """
-        kernel_id = msg['kernel_id']
-        payload = msg['payload']
+        kernel_id = msg["kernel_id"]
+        payload = msg["payload"]
         waiter = cls._waiters.get(kernel_id, None)
         if waiter is not None:
             try:

@@ -10,17 +10,20 @@
 
 import asyncio
 import os
-from typing import Awaitable, Tuple, Type, TypeVar, Union
+import re
+from pathlib import Path
+from typing import Awaitable
 from typing import Dict as TypeDict
 from typing import List as TypeList
-from pathlib import Path
-from traitlets.traitlets import Dict, Float, List, default
+from typing import Tuple, Type, TypeVar, Union
+
 from nbclient.util import ensure_async
-import re
+from traitlets.traitlets import Dict, Float, List, default
+
 from .notebook_renderer import NotebookRenderer
 from .utils import ENV_VARIABLE, get_page_config
 
-T = TypeVar('T')
+T = TypeVar("T")
 
 
 async def wait_before(delay: float, aw: Awaitable) -> Awaitable:
@@ -28,7 +31,9 @@ async def wait_before(delay: float, aw: Awaitable) -> Awaitable:
     return await aw
 
 
-def voila_kernel_manager_factory(base_class: Type[T], preheat_kernel: bool, default_pool_size: int) -> T:
+def voila_kernel_manager_factory(
+    base_class: Type[T], preheat_kernel: bool, default_pool_size: int
+) -> T:
     """
     Decorator used to make a normal kernel manager compatible with pre-heated
     kernel system.
@@ -50,7 +55,6 @@ def voila_kernel_manager_factory(base_class: Type[T], preheat_kernel: bool, defa
     if not preheat_kernel:
 
         class NormalKernelManager(base_class):
-
             @property
             def notebook_data(self) -> TypeDict:
                 return {}
@@ -70,39 +74,40 @@ def voila_kernel_manager_factory(base_class: Type[T], preheat_kernel: bool, defa
 
             kernel_pools_config = Dict(
                 config=True,
-                help='''Mapping from notebook name to the kernel configuration
+                help="""Mapping from notebook name to the kernel configuration
                 like: number of started kernels to keep on standby, environment
-                variables used to start kernel''',
+                variables used to start kernel""",
             )
 
             default_env_variables = Dict(
                 {},
                 config=True,
-                help='''Default environmental variables for kernels
-                ''',
+                help="""Default environmental variables for kernels
+                """,
             )
 
-            preheat_blacklist = List([],
-                                     config=True,
-                                     help='List of notebooks which do not use pre-heated kernel.')
+            preheat_blacklist = List(
+                [],
+                config=True,
+                help="List of notebooks which do not use pre-heated kernel.",
+            )
 
             fill_delay = Float(
                 1,
                 config=True,
-                help='Wait time before re-filling the pool after a kernel is used',
+                help="Wait time before re-filling the pool after a kernel is used",
             )
 
-            @default('kernel_pools_config')
+            @default("kernel_pools_config")
             def _kernel_pools_config(self):
                 return {
-                    'default': {
-                        'pool_size': max(default_pool_size, 0),
-                        'kernel_env_variables': self.default_env_variables,
+                    "default": {
+                        "pool_size": max(default_pool_size, 0),
+                        "kernel_env_variables": self.default_env_variables,
                     }
                 }
 
             def __init__(self, **kwargs):
-
                 super().__init__(**kwargs)
                 self._wait_at_startup = True
                 self.notebook_data: TypeDict = {}
@@ -117,7 +122,7 @@ def voila_kernel_manager_factory(base_class: Type[T], preheat_kernel: bool, defa
                     self.notebook_path = None
                     all_notebooks = [
                         x.relative_to(self.root_dir)
-                        for x in list(Path(self.root_dir).rglob('*.ipynb'))
+                        for x in list(Path(self.root_dir).rglob("*.ipynb"))
                         if self._notebook_filter(x)
                     ]
                     for nb in all_notebooks:
@@ -126,7 +131,7 @@ def voila_kernel_manager_factory(base_class: Type[T], preheat_kernel: bool, defa
             async def get_rendered_notebook(
                 self, notebook_name: str, **kwargs
             ) -> Tuple[asyncio.Task, TypeList[str]]:
-                """ Get the notebook rendering task and the rendered cell.
+                """Get the notebook rendering task and the rendered cell.
                 By setting the `stop_generator` to True, the running task
                 `render_task` used for rendering notebook will be stopped
                 after finishing the running cell. The results of this task
@@ -149,18 +154,20 @@ def voila_kernel_manager_factory(base_class: Type[T], preheat_kernel: bool, defa
 
                 """
                 if notebook_name is None:
-                    raise NameError('Notebook name must be provided!')
+                    raise NameError("Notebook name must be provided!")
 
-                if (len(self._pools.get(notebook_name, ())) == 0):
-                    raise Exception(f'Kernel pool for {notebook_name} is empty!')
+                if len(self._pools.get(notebook_name, ())) == 0:
+                    raise Exception(f"Kernel pool for {notebook_name} is empty!")
 
                 pool_item = self._pools[notebook_name].pop(0)
                 content = await pool_item
-                renderer: NotebookRenderer = content['renderer']
-                render_task: asyncio.Task = content['task']
-                kernel_id: str = content['kernel_id']
+                renderer: NotebookRenderer = content["renderer"]
+                render_task: asyncio.Task = content["task"]
+                kernel_id: str = content["kernel_id"]
                 renderer.stop_generator = True
-                self.log.info('Using pre-heated kernel: %s for %s', kernel_id, notebook_name)
+                self.log.info(
+                    "Using pre-heated kernel: %s for %s", kernel_id, notebook_name
+                )
                 self.fill_if_needed(delay=None, notebook_name=notebook_name, **kwargs)
 
                 return render_task, renderer.rendered_cache, kernel_id
@@ -189,26 +196,27 @@ def voila_kernel_manager_factory(base_class: Type[T], preheat_kernel: bool, defa
                 except RuntimeError:
                     loop = asyncio.new_event_loop()
                     asyncio.set_event_loop(loop)
-                default_config: dict = self.kernel_pools_config.get('default', {})
+                default_config: dict = self.kernel_pools_config.get("default", {})
                 notebook_config: dict = self.kernel_pools_config.get(
                     notebook_name, default_config
                 )
                 kernel_env_variables: dict = notebook_config.get(
-                    'kernel_env_variables', default_config.get('kernel_env_variables', {})
+                    "kernel_env_variables",
+                    default_config.get("kernel_env_variables", {}),
                 )
                 kernel_size: int = notebook_config.get(
-                    'pool_size', default_config.get('pool_size', 1)
+                    "pool_size", default_config.get("pool_size", 1)
                 )
                 pool = self._pools.get(notebook_name, [])
                 self._pools[notebook_name] = pool
-                if 'path' not in kwargs:
-                    kwargs['path'] = (
+                if "path" not in kwargs:
+                    kwargs["path"] = (
                         os.path.dirname(notebook_name)
                         if notebook_name is not None
                         else self.root_dir
                     )
                 kernel_env = os.environ.copy()
-                kernel_env_arg = kwargs.get('env', {})
+                kernel_env_arg = kwargs.get("env", {})
                 kernel_env.update(kernel_env_arg)
 
                 for key in kernel_env_variables:
@@ -217,22 +225,27 @@ def voila_kernel_manager_factory(base_class: Type[T], preheat_kernel: bool, defa
                 kernel_env[ENV_VARIABLE.VOILA_BASE_URL] = self.parent.base_url
                 kernel_env[ENV_VARIABLE.VOILA_SERVER_URL] = self.parent.server_url
                 kernel_env[ENV_VARIABLE.VOILA_APP_PORT] = str(self.parent.port)
-                kernel_env[ENV_VARIABLE.VOILA_PREHEAT] = 'True'
-                kwargs['env'] = kernel_env
+                kernel_env[ENV_VARIABLE.VOILA_PREHEAT] = "True"
+                kwargs["env"] = kernel_env
 
                 heated = len(pool)
 
                 def task_counter(tk):
                     nonlocal heated
                     heated += 1
-                    if (heated == kernel_size):
+                    if heated == kernel_size:
                         self.log.info(
-                            'Kernel pool of %s is filled with %s kernel(s)', notebook_name, kernel_size)
+                            "Kernel pool of %s is filled with %s kernel(s)",
+                            notebook_name,
+                            kernel_size,
+                        )
 
                 for _ in range(kernel_size - len(pool)):
                     # Start the work on the loop immediately, so it is ready when needed:
                     task = loop.create_task(
-                        wait_before(delay, self._initialize(notebook_name, None, **kwargs))
+                        wait_before(
+                            delay, self._initialize(notebook_name, None, **kwargs)
+                        )
                     )
                     pool.append(task)
                     task.add_done_callback(task_counter)
@@ -246,15 +259,15 @@ def voila_kernel_manager_factory(base_class: Type[T], preheat_kernel: bool, defa
             async def shutdown_kernel(self, kernel_id: str, *args, **kwargs):
                 for pool in self._pools.values():
                     for i, f in enumerate(pool):
-                        if f.done() and f.result().get('kernel_id') == kernel_id:
+                        if f.done() and f.result().get("kernel_id") == kernel_id:
                             pool.pop(i)
                             break
                     else:
                         continue
                     break
                 for value in self.notebook_data.values():
-                    if kernel_id in value['kernel_ids']:
-                        value['kernel_ids'].remove(kernel_id)
+                    if kernel_id in value["kernel_ids"]:
+                        value["kernel_ids"].remove(kernel_id)
 
                 return await ensure_async(
                     super().shutdown_kernel(kernel_id, *args, **kwargs)
@@ -267,7 +280,7 @@ def voila_kernel_manager_factory(base_class: Type[T], preheat_kernel: bool, defa
                 self._pools = {}
 
                 for value in self.notebook_data.values():
-                    value['kernel_ids'] = set()
+                    value["kernel_ids"] = set()
 
                 for pool in pools.values():
                     # The iteration gets confused if we don't copy pool
@@ -277,7 +290,7 @@ def voila_kernel_manager_factory(base_class: Type[T], preheat_kernel: bool, defa
                         except Exception:
                             pass
                         else:
-                            kid = result['kernel_id']
+                            kid = result["kernel_id"]
                             if kid in self:
                                 try:
                                     await ensure_async(
@@ -287,7 +300,8 @@ def voila_kernel_manager_factory(base_class: Type[T], preheat_kernel: bool, defa
                                     pass  # Kernel is not running
 
             async def _initialize(
-                    self, notebook_path: str, kernel_id: str = None, **kwargs) -> str:
+                self, notebook_path: str, kernel_id: str = None, **kwargs
+            ) -> str:
                 """Run any configured initialization code in the kernel"""
 
                 renderer = self._notebook_renderer_factory(notebook_path)
@@ -295,22 +309,28 @@ def voila_kernel_manager_factory(base_class: Type[T], preheat_kernel: bool, defa
                 kernel_name = renderer.notebook.metadata.kernelspec.name
 
                 if kernel_id is None:
-                    kernel_id = await super().start_kernel(kernel_name=kernel_name, **kwargs)
+                    kernel_id = await super().start_kernel(
+                        kernel_name=kernel_name, **kwargs
+                    )
 
                 if renderer.notebook_path not in self.notebook_data:
                     self.notebook_data[renderer.notebook_path] = {
-                        'notebook': renderer.notebook,
-                        'template': renderer.template_name,
-                        'theme': renderer.theme,
-                        'kernel_name': kernel_name,
-                        'kernel_ids': {kernel_id}
+                        "notebook": renderer.notebook,
+                        "template": renderer.template_name,
+                        "theme": renderer.theme,
+                        "kernel_name": kernel_name,
+                        "kernel_ids": {kernel_id},
                     }
                 else:
-                    self.notebook_data[renderer.notebook_path]['kernel_ids'].add(kernel_id)
+                    self.notebook_data[renderer.notebook_path]["kernel_ids"].add(
+                        kernel_id
+                    )
 
                 kernel_future = self.get_kernel(kernel_id)
-                task = asyncio.get_event_loop().create_task(renderer.generate_content_hybrid(kernel_id, kernel_future))
-                return {'task': task, 'renderer': renderer, 'kernel_id': kernel_id}
+                task = asyncio.get_event_loop().create_task(
+                    renderer.generate_content_hybrid(kernel_id, kernel_future)
+                )
+                return {"task": task, "renderer": renderer, "kernel_id": kernel_id}
 
             async def cull_kernel_if_idle(self, kernel_id: str):
                 """Ensure we don't cull pooled kernels:
@@ -320,7 +340,7 @@ def voila_kernel_manager_factory(base_class: Type[T], preheat_kernel: bool, defa
                 for pool in self._pools.values():
                     for i, f in enumerate(pool):
                         try:
-                            if f.done() and f.result().get('kernel_id') == kernel_id:
+                            if f.done() and f.result().get("kernel_id") == kernel_id:
                                 return
                         except Exception:
                             pool.pop(i)
@@ -344,7 +364,11 @@ def voila_kernel_manager_factory(base_class: Type[T], preheat_kernel: bool, defa
                     contents_manager=self.parent.contents_manager,
                     base_url=self.parent.base_url,
                     kernel_spec_manager=self.parent.kernel_spec_manager,
-                    page_config=get_page_config(base_url=self.parent.base_url, settings=self.parent.app.settings, log=self.parent.log)
+                    page_config=get_page_config(
+                        base_url=self.parent.base_url,
+                        settings=self.parent.app.settings,
+                        log=self.parent.log,
+                    ),
                 )
 
             def _notebook_filter(self, nb_path: Path) -> bool:
@@ -358,7 +382,7 @@ def voila_kernel_manager_factory(base_class: Type[T], preheat_kernel: bool, defa
                     is blacklisted, `True` otherwise.
                 """
                 nb_name = str(nb_path)
-                if '.ipynb_checkpoints' in nb_name:
+                if ".ipynb_checkpoints" in nb_name:
                     return False
                 for nb_pattern in self.preheat_blacklist:
                     pattern = re.compile(nb_pattern)
@@ -377,7 +401,7 @@ def voila_kernel_manager_factory(base_class: Type[T], preheat_kernel: bool, defa
 
                 """
                 for nb_name, data in self.notebook_data.items():
-                    if kernel_id in data['kernel_ids']:
+                    if kernel_id in data["kernel_ids"]:
                         return nb_name
                 return None
 

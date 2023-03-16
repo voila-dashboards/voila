@@ -1,9 +1,8 @@
 import os
 import sys
-
-from hatchling.builders.hooks.plugin.interface import BuildHookInterface
 from urllib.request import urlopen
 
+from hatchling.builders.hooks.plugin.interface import BuildHookInterface
 
 JUPYTERLAB_APPUTILS_VERSION = "3.2.8"
 JUPYTERLAB_THEME_LIGHT_VERSION = "3.2.8"
@@ -36,7 +35,7 @@ class CustomBuildHook(BuildHookInterface):
             try:
                 css = urlopen(url).read()
             except Exception as e:
-                msg = "Failed to download css from %s: %s" % (url, e)
+                msg = f"Failed to download css from {url}: {e}"
                 print(msg, file=sys.stderr)
 
                 if os.path.exists(dest):

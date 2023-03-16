@@ -7,14 +7,14 @@ module.exports = {
     [process.env.CI ? 'dot' : 'list'],
     [
       '@jupyterlab/galata/lib/benchmarkReporter',
-      { outputFile: 'voila-benchmark.json' }
+      { outputFile: 'voila-benchmark.json' },
     ],
-    ['html']
+    ['html'],
   ],
   use: {
     baseURL: 'http://localhost:8866',
-    video: 'retain-on-failure'
+    video: 'retain-on-failure',
   },
   // Try one retry as some tests are flaky
-  retries: 1
+  retries: 1,
 };

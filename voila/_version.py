@@ -11,7 +11,6 @@
 # Distributed under the terms of the Modified BSD License.
 
 import re
-
 from collections import namedtuple
 
 # Use "hatch version xx.yy.zz" to handle version changes
@@ -33,7 +32,9 @@ _version_regex = re.compile(
 
 _version_fields = _version_regex.match(__version__).groupdict()  # type:ignore
 
-VersionInfo = namedtuple("VersionInfo", ["major", "minor", "micro", "releaselevel", "serial"])
+VersionInfo = namedtuple(
+    "VersionInfo", ["major", "minor", "micro", "releaselevel", "serial"]
+)
 
 version_info = VersionInfo(
     *[

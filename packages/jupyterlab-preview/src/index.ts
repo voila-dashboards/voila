@@ -1,13 +1,13 @@
 import {
   JupyterFrontEnd,
   JupyterFrontEndPlugin,
-  ILayoutRestorer
+  ILayoutRestorer,
 } from '@jupyterlab/application';
 
 import {
   ICommandPalette,
   WidgetTracker,
-  ToolbarButton
+  ToolbarButton,
 } from '@jupyterlab/apputils';
 
 import { ISettingRegistry } from '@jupyterlab/settingregistry';
@@ -21,7 +21,7 @@ import { IMainMenu } from '@jupyterlab/mainmenu';
 import {
   INotebookTracker,
   NotebookPanel,
-  INotebookModel
+  INotebookModel,
 } from '@jupyterlab/notebook';
 
 import { CommandRegistry } from '@lumino/commands';
@@ -33,7 +33,7 @@ import { IDisposable } from '@lumino/disposable';
 import {
   VoilaPreview,
   IVoilaPreviewTracker,
-  VoilaPreviewFactory
+  VoilaPreviewFactory,
 } from './preview';
 
 import { voilaIcon } from './icons';
@@ -51,7 +51,8 @@ export namespace CommandIDs {
  * A notebook widget extension that adds a voila preview button to the toolbar.
  */
 class VoilaRenderButton
-  implements DocumentRegistry.IWidgetExtension<NotebookPanel, INotebookModel> {
+  implements DocumentRegistry.IWidgetExtension<NotebookPanel, INotebookModel>
+{
   /**
    * Instantiate a new VoilaRenderButton.
    * @param commands The command registry.
@@ -70,7 +71,7 @@ class VoilaRenderButton
       icon: voilaIcon,
       onClick: () => {
         this._commands.execute(CommandIDs.voilaRender);
-      }
+      },
     });
     panel.toolbar.insertAfter('cellType', 'voilaRender', button);
     return button;
@@ -90,7 +91,7 @@ const extension: JupyterFrontEndPlugin<IVoilaPreviewTracker> = {
     ICommandPalette,
     ILayoutRestorer,
     IMainMenu,
-    ISettingRegistry
+    ISettingRegistry,
   ],
   provides: IVoilaPreviewTracker,
   activate: (
@@ -99,22 +100,22 @@ const extension: JupyterFrontEndPlugin<IVoilaPreviewTracker> = {
     palette: ICommandPalette | null,
     restorer: ILayoutRestorer | null,
     menu: IMainMenu | null,
-    settingRegistry: ISettingRegistry | null
+    settingRegistry: ISettingRegistry | null,
   ) => {
     // Create a widget tracker for Voilà Previews.
     const tracker = new WidgetTracker<VoilaPreview>({
-      namespace: 'voila-preview'
+      namespace: 'voila-preview',
     });
 
     if (restorer) {
       restorer.restore(tracker, {
         command: 'docmanager:open',
-        args: panel => ({
+        args: (panel) => ({
           path: panel.context.path,
-          factory: factory.name
+          factory: factory.name,
         }),
-        name: panel => panel.context.path,
-        when: app.serviceManager.ready
+        name: (panel) => panel.context.path,
+        when: app.serviceManager.ready,
       });
     }
 
@@ -144,7 +145,7 @@ const extension: JupyterFrontEndPlugin<IVoilaPreviewTracker> = {
     const factory = new VoilaPreviewFactory(getVoilaUrl, {
       name: 'Voila-preview',
       fileTypes: ['notebook'],
-      modelName: 'notebook'
+      modelName: 'notebook',
     });
 
     factory.widgetCreated.connect((sender, widget) => {
@@ -178,7 +179,7 @@ const extension: JupyterFrontEndPlugin<IVoilaPreviewTracker> = {
 
     commands.addCommand(CommandIDs.voilaRender, {
       label: 'Render Notebook with Voilà',
-      execute: async args => {
+      execute: async (args) => {
         const current = getCurrent(args);
         let context: DocumentRegistry.IContext<INotebookModel>;
         if (current) {
@@ -192,17 +193,17 @@ const extension: JupyterFrontEndPlugin<IVoilaPreviewTracker> = {
             path: context.path,
             factory: 'Voila-preview',
             options: {
-              mode: 'split-right'
-            }
+              mode: 'split-right',
+            },
           });
         }
       },
-      isEnabled
+      isEnabled,
     });
 
     commands.addCommand(CommandIDs.voilaOpen, {
       label: 'Open with Voilà in New Browser Tab',
-      execute: async args => {
+      execute: async (args) => {
         const current = getCurrent(args);
         if (!current) {
           return;
@@ -215,12 +216,12 @@ const extension: JupyterFrontEndPlugin<IVoilaPreviewTracker> = {
         const voilaUrl = getVoilaUrl(current.context.path);
         window.open(voilaUrl);
       },
-      isEnabled
+      isEnabled,
     });
 
     if (palette) {
       const category = 'Notebook Operations';
-      [CommandIDs.voilaRender, CommandIDs.voilaOpen].forEach(command => {
+      [CommandIDs.voilaRender, CommandIDs.voilaOpen].forEach((command) => {
         palette.addItem({ command, category });
       });
     }
@@ -229,13 +230,13 @@ const extension: JupyterFrontEndPlugin<IVoilaPreviewTracker> = {
       menu.viewMenu.addGroup(
         [
           {
-            command: CommandIDs.voilaRender
+            command: CommandIDs.voilaRender,
           },
           {
-            command: CommandIDs.voilaOpen
-          }
+            command: CommandIDs.voilaOpen,
+          },
         ],
-        1000
+        1000,
       );
     }
 
@@ -243,7 +244,7 @@ const extension: JupyterFrontEndPlugin<IVoilaPreviewTracker> = {
     docRegistry.addWidgetExtension('Notebook', voilaButton);
 
     return tracker;
-  }
+  },
 };
 
 export default extension;

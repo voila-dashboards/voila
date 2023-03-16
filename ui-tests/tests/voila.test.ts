@@ -21,7 +21,7 @@ test.describe('Voila performance Tests', () => {
       'voila-tree-classic',
       testFunction,
       testInfo,
-      browserName
+      browserName,
     );
 
     expect(await page.screenshot()).toMatchSnapshot('voila-tree-classic.png');
@@ -37,7 +37,7 @@ test.describe('Voila performance Tests', () => {
       'voila-tree-light',
       testFunction,
       testInfo,
-      browserName
+      browserName,
     );
 
     expect(await page.screenshot()).toMatchSnapshot('voila-tree-light.png');
@@ -53,7 +53,7 @@ test.describe('Voila performance Tests', () => {
       'voila-tree-dark',
       testFunction,
       testInfo,
-      browserName
+      browserName,
     );
 
     expect(await page.screenshot()).toMatchSnapshot('voila-tree-dark.png');
@@ -69,7 +69,7 @@ test.describe('Voila performance Tests', () => {
       'voila-tree-miami',
       testFunction,
       testInfo,
-      browserName
+      browserName,
     );
 
     expect(await page.screenshot()).toMatchSnapshot('voila-tree-miami.png');
@@ -77,12 +77,12 @@ test.describe('Voila performance Tests', () => {
 
   test('Render and benchmark basics.ipynb with classic template', async ({
     page,
-    browserName
+    browserName,
   }, testInfo) => {
     const notebookName = 'basics';
     const testFunction = async () => {
       await page.goto(
-        `/voila/render/${notebookName}.ipynb?voila-template=classic`
+        `/voila/render/${notebookName}.ipynb?voila-template=classic`,
       );
       // wait for the widgets to load
       await page.waitForSelector('span[role="presentation"] >> text=x');
@@ -93,13 +93,13 @@ test.describe('Voila performance Tests', () => {
     await page.$('text=Typesetting math: 100%');
     await page.waitForSelector('#MathJax_Message', { state: 'hidden' });
     expect(await page.screenshot()).toMatchSnapshot(
-      `${notebookName}-classic.png`
+      `${notebookName}-classic.png`,
     );
   });
 
   test('Render and benchmark basics.ipynb', async ({
     page,
-    browserName
+    browserName,
   }, testInfo) => {
     const notebookName = 'basics';
     const testFunction = async () => {
@@ -112,7 +112,7 @@ test.describe('Voila performance Tests', () => {
     await page.fill('text=4.00', '8.00');
     await page.keyboard.down('Enter');
     // fetch the value of the label
-    const value = await page.$eval('input', el => el.value);
+    const value = await page.$eval('input', (el) => el.value);
 
     expect(value).toBe('64');
     // wait for the final MathJax message to be hidden
@@ -123,7 +123,7 @@ test.describe('Voila performance Tests', () => {
 
   test('Render basics.ipynb with dark theme', async ({
     page,
-    browserName
+    browserName,
   }, testInfo) => {
     const notebookName = 'basics';
     const testFunction = async () => {
@@ -141,12 +141,12 @@ test.describe('Voila performance Tests', () => {
 
   test('Render basics.ipynb with miami theme', async ({
     page,
-    browserName
+    browserName,
   }, testInfo) => {
     const notebookName = 'basics';
     const testFunction = async () => {
       await page.goto(
-        `/voila/render/${notebookName}.ipynb?voila-theme=jupyterlab_miami_nights`
+        `/voila/render/${notebookName}.ipynb?voila-theme=jupyterlab_miami_nights`,
       );
       // wait for the widgets to load
       await page.waitForSelector('span[role="presentation"] >> text=x');
@@ -157,7 +157,7 @@ test.describe('Voila performance Tests', () => {
     await page.$('text=Typesetting math: 100%');
     await page.waitForSelector('#MathJax_Message', { state: 'hidden' });
     expect(await page.screenshot()).toMatchSnapshot(
-      `${notebookName}-miami.png`
+      `${notebookName}-miami.png`,
     );
   });
 
@@ -184,7 +184,7 @@ test.describe('Voila performance Tests', () => {
 
   test('Render and benchmark bqplot.ipynb', async ({
     page,
-    browserName
+    browserName,
   }, testInfo) => {
     const notebookName = 'bqplot';
     const testFunction = async () => {
@@ -197,7 +197,7 @@ test.describe('Voila performance Tests', () => {
 
   test('Render and benchmark dashboard.ipynb', async ({
     page,
-    browserName
+    browserName,
   }, testInfo) => {
     const notebookName = 'dashboard';
     const testFunction = async () => {
@@ -213,13 +213,13 @@ test.describe('Voila performance Tests', () => {
 
   test('Render and benchmark gridspecLayout.ipynb', async ({
     page,
-    browserName
+    browserName,
   }, testInfo) => {
     const notebookName = 'gridspecLayout';
     const testFunction = async () => {
       await page.goto(`/voila/render/${notebookName}.ipynb`);
       await page.waitForSelector(
-        'button.jupyter-widgets.jupyter-button.widget-button >> text=10'
+        'button.jupyter-widgets.jupyter-button.widget-button >> text=10',
       );
     };
     await addBenchmarkToTest(notebookName, testFunction, testInfo, browserName);
@@ -228,7 +228,7 @@ test.describe('Voila performance Tests', () => {
 
   test('Render and benchmark interactive.ipynb', async ({
     page,
-    browserName
+    browserName,
   }, testInfo) => {
     const notebookName = 'interactive';
     const testFunction = async () => {
@@ -246,7 +246,7 @@ test.describe('Voila performance Tests', () => {
 
   test('Render and benchmark ipympl.ipynb', async ({
     page,
-    browserName
+    browserName,
   }, testInfo) => {
     const notebookName = 'ipympl';
     const testFunction = async () => {
@@ -259,39 +259,39 @@ test.describe('Voila performance Tests', () => {
 
   test('Benchmark the multiple widgets notebook', async ({
     page,
-    browserName
+    browserName,
   }, testInfo) => {
     const notebookName = 'multiple_widgets';
     const testMultipleWidget = async () => {
       await page.goto(`/voila/render/${notebookName}.ipynb`);
       await page.waitForSelector(
-        'button.jupyter-widgets.jupyter-button.widget-button >> text=400'
+        'button.jupyter-widgets.jupyter-button.widget-button >> text=400',
       );
     };
     await addBenchmarkToTest(
       notebookName,
       testMultipleWidget,
       testInfo,
-      browserName
+      browserName,
     );
     expect(await page.screenshot()).toMatchSnapshot(`${notebookName}.png`);
   });
   test('Render and benchmark query-strings.ipynb', async ({
     page,
-    browserName
+    browserName,
   }, testInfo) => {
     const notebookName = 'query-strings';
     const testFunction = async () => {
       await page.goto(`/voila/render/${notebookName}.ipynb`);
       const userName = await page.$$(
-        'div.jp-RenderedText.jp-OutputArea-output > pre'
+        'div.jp-RenderedText.jp-OutputArea-output > pre',
       );
       expect(await userName[1].innerHTML()).toContain('Hi Kim');
     };
     await addBenchmarkToTest(notebookName, testFunction, testInfo, browserName);
     await page.goto(`/voila/render/${notebookName}.ipynb?username=Riley`);
     const userName = await page.$$(
-      'div.jp-RenderedText.jp-OutputArea-output > pre'
+      'div.jp-RenderedText.jp-OutputArea-output > pre',
     );
     expect(await userName[1].innerHTML()).toContain('Hi Riley');
     await page.$('text=Typesetting math: 100%');
@@ -300,7 +300,7 @@ test.describe('Voila performance Tests', () => {
   });
   test('Render and benchmark reveal.ipynb', async ({
     page,
-    browserName
+    browserName,
   }, testInfo) => {
     const notebookName = 'reveal';
     const testFunction = async () => {
