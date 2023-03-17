@@ -17,7 +17,7 @@ def using_server_url(request):
 
 @pytest.fixture()
 def voila_args_extra(http_server_port, using_server_url, using_base_url):
-    return [f"--port={http_server_port[-1]}"] + using_server_url + using_base_url
+    return [f"--port={http_server_port[-1]}", *using_server_url, *using_base_url]
 
 
 @pytest.fixture

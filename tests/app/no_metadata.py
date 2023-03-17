@@ -10,7 +10,7 @@ def non_existing_notebook_metadata(base_url):
 
 @pytest.fixture
 def voila_args(notebook_directory, voila_args_extra):
-    return ["--VoilaTest.root_dir=%r" % notebook_directory] + voila_args_extra
+    return ["--VoilaTest.root_dir=%r" % notebook_directory, *voila_args_extra]
 
 
 async def test_non_existing_metadata(

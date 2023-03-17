@@ -75,7 +75,7 @@ def update(spec, force=False):
     # For a preminor release, we bump 10 minor versions so that we do
     # not conflict with versions during minor releases of the top level package.
     if lerna_version == "preminor":
-        for i in range(10):
+        for _i in range(10):
             run(cmd)
     else:
         run(cmd)

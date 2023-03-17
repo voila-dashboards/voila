@@ -17,8 +17,8 @@ class RequestInfoSocketHandler(WebSocketHandler):
     with the kernel id.
     """
 
-    _waiters = dict()
-    _cache = dict()
+    _waiters = {}
+    _cache = {}
 
     def open(self, kernel_id: str) -> None:
         """Create a new websocket connection, this connection is

@@ -12,10 +12,9 @@ import asyncio
 import os
 import re
 from pathlib import Path
-from typing import Awaitable
+from typing import Awaitable, Tuple, Type, TypeVar, Union
 from typing import Dict as TypeDict
 from typing import List as TypeList
-from typing import Tuple, Type, TypeVar, Union
 
 from nbclient.util import ensure_async
 from traitlets.traitlets import Dict, Float, List, default

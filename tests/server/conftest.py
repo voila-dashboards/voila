@@ -25,7 +25,7 @@ def jupyter_server_args(notebook_directory, jupyter_server_args_extra):
         else []
     )
     default_args = ["--ServerApp.token="]
-    return [notebook_directory] + jupyter_server_args_extra + debug_args + default_args
+    return [notebook_directory, *jupyter_server_args_extra, *debug_args, *default_args]
 
 
 @pytest.fixture

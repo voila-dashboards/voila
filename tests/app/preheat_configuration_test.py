@@ -39,7 +39,7 @@ async def test_refill_kernel_asynchronously(http_server_client, base_url):
     await asyncio.sleep(NUMBER_PREHEATED_KERNEL * NOTEBOOK_EXECUTION_TIME + 1)
     fast = []
     slow = []
-    for i in range(5 * NUMBER_PREHEATED_KERNEL):
+    for _i in range(5 * NUMBER_PREHEATED_KERNEL):
         time, _ = await send_request(sc=http_server_client, url=base_url)
         if time < TIME_THRESHOLD:
             fast.append(time)

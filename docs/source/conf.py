@@ -18,7 +18,7 @@ if _release["version_info"][-1] == "dev":
 on_rtd = os.environ.get("READTHEDOCS", None) == "True"
 
 html_theme = "pydata_sphinx_theme"
-html_theme_options = dict(github_url="https://github.com/voila-dashboards/voila")
+html_theme_options = {"github_url": "https://github.com/voila-dashboards/voila"}
 
 
 def setup(app):

@@ -25,6 +25,7 @@ try:
     from urllib.request import pathname2url
 except ImportError:
     from urllib import pathname2url
+
     from urlparse import urljoin
 
 import jinja2
@@ -278,10 +279,7 @@ class Voila(Application):
             if not url.endswith("/"):
                 url += "/"
         else:
-            if self.ip in ("", "0.0.0.0"):
-                ip = "%s" % socket.gethostname()
-            else:
-                ip = self.ip
+            ip = "%s" % socket.gethostname() if self.ip in ("", "0.0.0.0") else self.ip
             url = self._url(ip)
         # TODO: do we want to have the token?
         # if self.token:
@@ -317,7 +315,7 @@ class Voila(Application):
 
     @default("config_file_paths")
     def _config_file_paths_default(self):
-        return [os.getcwd()] + jupyter_config_path()
+        return [os.getcwd(), *jupyter_config_path()]
 
     @default("connection_dir_root")
     def _default_connection_dir(self):

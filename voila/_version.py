@@ -38,13 +38,10 @@ VersionInfo = namedtuple(
 
 version_info = VersionInfo(
     *[
-        field
-        for field in (
-            int(_version_fields["major"]),
-            int(_version_fields["minor"]),
-            int(_version_fields["micro"]),
-            _version_fields["releaselevel"] or "",
-            _version_fields["serial"] or "",
-        )
+        int(_version_fields["major"]),
+        int(_version_fields["minor"]),
+        int(_version_fields["micro"]),
+        _version_fields["releaselevel"] or "",
+        _version_fields["serial"] or "",
     ]
 )

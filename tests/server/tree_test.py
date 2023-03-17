@@ -4,7 +4,7 @@ import pytest
 
 @pytest.fixture
 def voila_args(notebook_directory, voila_args_extra):
-    return ["--VoilaTest.root_dir=%r" % notebook_directory] + voila_args_extra
+    return ["--VoilaTest.root_dir=%r" % notebook_directory, *voila_args_extra]
 
 
 @pytest.fixture

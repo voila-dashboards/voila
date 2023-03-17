@@ -79,7 +79,7 @@ class VoilaHandler(BaseVoilaHandler):
         cwd = os.path.dirname(notebook_path)
 
         # Adding request uri to kernel env
-        request_info = dict()
+        request_info = {}
         request_info[ENV_VARIABLE.SCRIPT_NAME] = self.request.path
         request_info[
             ENV_VARIABLE.PATH_INFO
@@ -165,10 +165,7 @@ class VoilaHandler(BaseVoilaHandler):
             # All kernels are used or pre-heated kernel is disabled, start a normal kernel.
             supported_file_extensions = [".ipynb"]
             supported_file_extensions.extend(
-                [
-                    x.lower()
-                    for x in self.voila_configuration.extension_language_mapping.keys()
-                ]
+                [x.lower() for x in self.voila_configuration.extension_language_mapping]
             )
             file_extenstion = Path(notebook_path).suffix.lower()
             if file_extenstion not in supported_file_extensions:

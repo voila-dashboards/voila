@@ -18,9 +18,10 @@ from .utils import get_server_root_dir
 class VoilaTreeHandler(BaseVoilaHandler):
     def initialize(self, **kwargs):
         super().initialize(**kwargs)
-        self.allowed_extensions = list(
-            self.voila_configuration.extension_language_mapping.keys()
-        ) + [".ipynb"]
+        self.allowed_extensions = [
+            *list(self.voila_configuration.extension_language_mapping.keys()),
+            ".ipynb",
+        ]
 
     def get_template(self, name):
         """Return the jinja template object for a given name"""

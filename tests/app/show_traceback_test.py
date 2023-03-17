@@ -18,7 +18,8 @@ def voila_args(notebook_directory, voila_args_extra, show_tracebacks):
     return [
         "--VoilaTest.root_dir=%r" % notebook_directory,
         f"--VoilaConfiguration.show_tracebacks={show_tracebacks}",
-    ] + voila_args_extra
+        *voila_args_extra,
+    ]
 
 
 async def test_syntax_error(

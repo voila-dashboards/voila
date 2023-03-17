@@ -11,7 +11,7 @@ def notebook_other_comms_path(base_url):
 
 @pytest.fixture
 def voila_args(notebook_directory, voila_args_extra):
-    return ["--VoilaTest.root_dir=%r" % notebook_directory] + voila_args_extra
+    return ["--VoilaTest.root_dir=%r" % notebook_directory, *voila_args_extra]
 
 
 async def test_other_comms(http_server_client, notebook_other_comms_path):
