@@ -154,5 +154,18 @@ version-cmd = "python scripts/bump-version.py --force"
 [tool.check-wheel-contents]
 ignore = ["W002"]
 
-[tool.isort]
-profile = "black"
+[tool.ruff]
+target-version = "py37"
+line-length = 100
+ignore = [
+# Q000 Single quotes found but double quotes preferred
+"Q000",
+# FBT001 Boolean positional arg in function definition
+"FBT001", "FBT002", "FBT003",
+# E501 Line too long (158 > 100 characters)
+"E501",
+# PLR0913 Too many arguments to function call
+"PLR0913",
+# SIM105 Use `contextlib.suppress(...)`
+"SIM105",
+]
