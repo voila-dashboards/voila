@@ -12,4 +12,4 @@
 #     name: python
 # ---
 
-print('Hi Voilà!')
+print("Hi Voilà!")

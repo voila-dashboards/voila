@@ -4,8 +4,7 @@ from nbclient.util import ensure_async
 
 
 class VoilaShutdownKernelHandler(APIHandler):
-    """ Handler to shut down kernel on page's `beforeunload` event.
-    """
+    """Handler to shut down kernel on page's `beforeunload` event."""
 
     @tornado.web.authenticated
     async def post(self, kernel_id):

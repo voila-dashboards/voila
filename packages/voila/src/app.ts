@@ -94,7 +94,7 @@ export class VoilaApp extends JupyterFrontEnd<IShell> {
     if (!Array.isArray(data)) {
       data = [data];
     }
-    data.forEach(item => {
+    data.forEach((item) => {
       try {
         this.registerPlugin(item);
       } catch (error) {
@@ -109,7 +109,7 @@ export class VoilaApp extends JupyterFrontEnd<IShell> {
    * @param mods - The plugin modules to register.
    */
   registerPluginModules(mods: App.IPluginModule[]): void {
-    mods.forEach(mod => {
+    mods.forEach((mod) => {
       this.registerPluginModule(mod);
     });
   }

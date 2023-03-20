@@ -1,9 +1,8 @@
 # fixtures common for app and server
 import os
+import time
 
 import pytest
-
-import time
 
 BASE_DIR = os.path.dirname(__file__)
 
@@ -15,7 +14,7 @@ def base_url():
 
 @pytest.fixture
 def notebook_directory():
-    return os.path.join(BASE_DIR, 'notebooks')
+    return os.path.join(BASE_DIR, "notebooks")
 
 
 @pytest.fixture
@@ -30,7 +29,7 @@ def syntax_error_notebook_url(base_url):
 
 @pytest.fixture
 def voila_notebook(notebook_directory):
-    return os.path.join(notebook_directory, 'print.ipynb')
+    return os.path.join(notebook_directory, "print.ipynb")
 
 
 @pytest.fixture(autouse=True)

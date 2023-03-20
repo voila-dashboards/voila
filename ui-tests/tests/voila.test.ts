@@ -112,7 +112,7 @@ test.describe('Voila performance Tests', () => {
     await page.fill('text=4.00', '8.00');
     await page.keyboard.down('Enter');
     // fetch the value of the label
-    const value = await page.$eval('input', el => el.value);
+    const value = await page.$eval('input', (el) => el.value);
 
     expect(value).toBe('64');
     // wait for the final MathJax message to be hidden

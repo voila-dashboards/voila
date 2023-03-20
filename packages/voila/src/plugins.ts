@@ -55,12 +55,12 @@ export const stopPollingPlugin: JupyterFrontEndPlugin<void> = {
   id: '@voila-dashboards/voila:stop-polling',
   autoStart: true,
   activate: (app: JupyterFrontEnd): void => {
-    app.serviceManager.sessions?.ready.then(value => {
+    app.serviceManager.sessions?.ready.then((value) => {
       app.serviceManager.sessions['_kernelManager']['_pollModels']?.stop();
       void app.serviceManager.sessions['_pollModels'].stop();
     });
 
-    app.serviceManager.kernelspecs?.ready.then(value => {
+    app.serviceManager.kernelspecs?.ready.then((value) => {
       void app.serviceManager.kernelspecs.dispose();
     });
   }
@@ -110,7 +110,7 @@ export const widgetManager: JupyterFrontEndPlugin<IJupyterWidgetRegistry> = {
       void manager.build_widgets();
     });
 
-    window.addEventListener('beforeunload', e => {
+    window.addEventListener('beforeunload', (e) => {
       const data = new FormData();
       // it seems if we attach this to early, it will not be called
       const matches = document.cookie.match('\\b_xsrf=([^;]*)\\b');

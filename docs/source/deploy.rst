@@ -108,7 +108,7 @@ High level instructions, specific to Voilà can be found below:
 
 1. Follow the steps of the official documentation to install the heroku
    cli and login on your machine.
-2. Add a file named runtime.txt to the project directory with a 
+2. Add a file named runtime.txt to the project directory with a
    `valid Python runtime <https://devcenter.heroku.com/articles/python-support#supported-runtimes>`__:
 
    .. code:: text

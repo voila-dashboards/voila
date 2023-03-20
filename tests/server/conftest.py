@@ -1,11 +1,8 @@
 import os
 
 import pytest
-
 from jupyter_server.serverapp import ServerApp
-
 from tornado import httpserver
-
 
 BASE_DIR = os.path.dirname(__file__)
 
@@ -22,9 +19,13 @@ def jupyter_server_args_extra():
 
 @pytest.fixture
 def jupyter_server_args(notebook_directory, jupyter_server_args_extra):
-    debug_args = ['--ServerApp.log_level=DEBUG'] if os.environ.get('VOILA_TEST_DEBUG', False) else []
-    default_args = ['--ServerApp.token=']
-    return [notebook_directory] + jupyter_server_args_extra + debug_args + default_args
+    debug_args = (
+        ["--ServerApp.log_level=DEBUG"]
+        if os.environ.get("VOILA_TEST_DEBUG", False)
+        else []
+    )
+    default_args = ["--ServerApp.token="]
+    return [notebook_directory, *jupyter_server_args_extra, *debug_args, *default_args]
 
 
 @pytest.fixture

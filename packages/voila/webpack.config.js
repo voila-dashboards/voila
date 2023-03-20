@@ -13,7 +13,7 @@ const baseConfig = require('@jupyterlab/builder/lib/webpack.config.base');
 
 const data = require('./package.json');
 
-const names = Object.keys(data.dependencies).filter(name => {
+const names = Object.keys(data.dependencies).filter((name) => {
   const packageData = require(path.join(name, 'package.json'));
   return packageData.jupyterlab !== undefined;
 });

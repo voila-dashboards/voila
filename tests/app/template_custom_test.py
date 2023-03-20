@@ -1,29 +1,34 @@
 # tests programmatic config of template system
-import pytest
-
 import os
+
+import pytest
 
 BASE_DIR = os.path.dirname(__file__)
 
 
 @pytest.fixture
 def voila_args_extra():
-    return ['--template=test_template', '--VoilaExecutor.timeout=240']
+    return ["--template=test_template", "--VoilaExecutor.timeout=240"]
 
 
 @pytest.fixture
 def voila_config():
     def config(app):
-        path_test_template = os.path.abspath(os.path.join(BASE_DIR, '../test_template/share/jupyter/voila/templates/test_template'))
-        path_default = os.path.abspath(os.path.join(BASE_DIR, '../../share/jupyter/voila/templates/default'))
+        path_test_template = os.path.abspath(
+            os.path.join(
+                BASE_DIR, "../test_template/share/jupyter/voila/templates/test_template"
+            )
+        )
+        path_default = os.path.abspath(
+            os.path.join(BASE_DIR, "../../share/jupyter/voila/templates/default")
+        )
         app.template_paths = [path_test_template, path_default]
 
     return config
 
 
 async def test_template(http_server_client, base_url):
-
     response = await http_server_client.fetch(base_url)
     assert response.code == 200
-    assert 'test_template.css' in response.body.decode('utf-8')
-    assert 'Hi Voilà' in response.body.decode('utf-8')
+    assert "test_template.css" in response.body.decode("utf-8")
+    assert "Hi Voilà" in response.body.decode("utf-8")

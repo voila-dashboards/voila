@@ -1,0 +1,49 @@
+ci:
+  # pre-commit.ci will open PRs updating our hooks once a month
+  autoupdate_schedule: monthly
+  # skip any check that needs internet access
+  skip: [prettier, eslint]
+
+repos:
+  # Autoformat and linting, misc. details
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.4.0
+    hooks:
+      - id: forbid-new-submodules
+      - id: end-of-file-fixer
+        exclude: galata/.*-snapshots
+      - id: check-case-conflict
+      - id: requirements-txt-fixer
+      - id: check-added-large-files
+      - id: check-case-conflict
+      - id: check-toml
+      - id: check-yaml
+      - id: debug-statements
+      - id: check-builtin-literals
+      - id: trailing-whitespace
+        exclude: .bumpversion.cfg
+
+  # Autoformat: Python code
+  - repo: https://github.com/psf/black
+    rev: 23.1.0
+    hooks:
+      - id: black
+
+  - repo: https://github.com/charliermarsh/ruff-pre-commit
+    rev: v0.0.255
+    hooks:
+      - id: ruff
+        args: ['--fix']
+
+  - repo: local
+    hooks:
+      - id: prettier
+        name: prettier
+        entry: 'yarn run prettier'
+        language: node
+        types_or: [json, ts, tsx, javascript, jsx, css]
+      - id: eslint
+        name: eslint
+        entry: 'yarn run eslint'
+        language: node
+        types_or: [ts, tsx, javascript, jsx]

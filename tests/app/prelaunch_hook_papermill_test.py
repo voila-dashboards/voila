@@ -1,16 +1,15 @@
 # tests prelaunch hook config
-import pytest
-
 import os
-
 from urllib.parse import quote_plus
+
+import pytest
 
 BASE_DIR = os.path.dirname(__file__)
 
 
 @pytest.fixture
 def voila_notebook(notebook_directory):
-    return os.path.join(notebook_directory, 'print_parameterized.ipynb')
+    return os.path.join(notebook_directory, "print_parameterized.ipynb")
 
 
 @pytest.fixture
@@ -39,7 +38,7 @@ def voila_config():
             # in papermill's notebook
             # loading logic
             for cell in notebook.cells:
-                if 'tags' not in cell.metadata:
+                if "tags" not in cell.metadata:
                     cell.metadata.tags = []
                 if "papermill" not in notebook.metadata:
                     notebook.metadata.papermill = {}
@@ -54,9 +53,11 @@ def voila_config():
 
 
 async def test_prelaunch_hook_papermill(http_server_client, base_url):
-    url = base_url + '?parameters=' + quote_plus('{"name":"Parameterized_Variable"}')
+    url = base_url + "?parameters=" + quote_plus('{"name":"Parameterized_Variable"}')
     response = await http_server_client.fetch(url)
     assert response.code == 200
-    html_text = response.body.decode('utf-8')
-    assert 'Hi Parameterized_Variable' in html_text
-    assert 'test_template.css' not in html_text, "test_template should not be the default"
+    html_text = response.body.decode("utf-8")
+    assert "Hi Parameterized_Variable" in html_text
+    assert (
+        "test_template.css" not in html_text
+    ), "test_template should not be the default"

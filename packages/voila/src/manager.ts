@@ -42,7 +42,7 @@ export class WidgetManager extends KernelWidgetManager {
       {
         safe: false,
         mimeTypes: [WIDGET_MIMETYPE],
-        createRenderer: options => new WidgetRenderer(options, this as any)
+        createRenderer: (options) => new WidgetRenderer(options, this as any)
       },
       1
     );
@@ -54,7 +54,7 @@ export class WidgetManager extends KernelWidgetManager {
       `script[type="${WIDGET_MIMETYPE}"]`
     );
 
-    tags.forEach(async viewtag => {
+    tags.forEach(async (viewtag) => {
       if (!viewtag?.parentElement) {
         return;
       }
