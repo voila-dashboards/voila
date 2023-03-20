@@ -119,7 +119,7 @@ class VoilaExporter(HTMLExporter):
             output["trusted"] = True
             return output
 
-        self.register_filter('trusted', trusted_output)
+        self.register_filter("trusted", trusted_output)
 
         # NOTE: we don't call HTML or TemplateExporter' from_notebook_node
         nb_copy, resources = super(TemplateExporter, self).from_notebook_node(
