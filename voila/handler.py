@@ -143,7 +143,7 @@ class VoilaHandler(BaseVoilaHandler):
                 notebook_name=notebook_path,
                 extra_kernel_env_variables={
                     ENV_VARIABLE.VOILA_REQUEST_URL: self.request.full_url()
-                }
+                },
             )
 
             RequestInfoSocketHandler.send_updates(

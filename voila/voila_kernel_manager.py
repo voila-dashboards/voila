@@ -128,7 +128,10 @@ def voila_kernel_manager_factory(
                         self.fill_if_needed(delay=0, notebook_name=str(nb))
 
             async def get_rendered_notebook(
-                self, notebook_name: str, extra_kernel_env_variables: dict = {}, **kwargs
+                self,
+                notebook_name: str,
+                extra_kernel_env_variables: dict = {},
+                **kwargs,
             ) -> Tuple[asyncio.Task, TypeList[str]]:
                 """Get the notebook rendering task and the rendered cell.
                 By setting the `stop_generator` to True, the running task
@@ -167,7 +170,12 @@ def voila_kernel_manager_factory(
                 self.log.info(
                     "Using pre-heated kernel: %s for %s", kernel_id, notebook_name
                 )
-                self.fill_if_needed(delay=None, notebook_name=notebook_name, extra_kernel_env_variables=extra_kernel_env_variables, **kwargs)
+                self.fill_if_needed(
+                    delay=None,
+                    notebook_name=notebook_name,
+                    extra_kernel_env_variables=extra_kernel_env_variables,
+                    **kwargs,
+                )
 
                 return render_task, renderer.rendered_cache, kernel_id
 
