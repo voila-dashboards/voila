@@ -141,6 +141,9 @@ class VoilaHandler(BaseVoilaHandler):
                 kernel_id,
             ) = await self.kernel_manager.get_rendered_notebook(
                 notebook_name=notebook_path,
+                extra_kernel_env_variables={
+                    ENV_VARIABLE.VOILA_REQUEST_URL: self.request.full_url()
+                }
             )
 
             RequestInfoSocketHandler.send_updates(
@@ -198,15 +201,13 @@ class VoilaHandler(BaseVoilaHandler):
 
                 return "<script>window.voila_heartbeat()</script>\n"
 
-            server_url = self.request.full_url()
-            # Removing trailing slash
-            if server_url[-1] == "/":
-                server_url = server_url[:-1]
-
             kernel_env = {**os.environ, **request_info}
             kernel_env[ENV_VARIABLE.VOILA_PREHEAT] = "False"
             kernel_env[ENV_VARIABLE.VOILA_BASE_URL] = self.base_url
-            kernel_env[ENV_VARIABLE.VOILA_SERVER_URL] = server_url
+            kernel_env[ENV_VARIABLE.VOILA_SERVER_URL] = self.settings.get(
+                "server_url", "/"
+            )
+            kernel_env[ENV_VARIABLE.VOILA_REQUEST_URL] = self.request.full_url()
             kernel_env[ENV_VARIABLE.VOILA_APP_PORT] = request_info[
                 ENV_VARIABLE.SERVER_PORT
             ]
