@@ -114,7 +114,7 @@ class VoilaExporter(HTMLExporter):
         )
         self.register_filter("highlight_code", highlight_code)
 
-        # Why do we need this? Should we make this configurable?
+        # We need outputs to be marked as trusted for the JupyterLab mimerendering logic
         def trusted_output(output):
             output["trusted"] = True
             return output
