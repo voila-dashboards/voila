@@ -114,6 +114,10 @@ class Voila(Application):
                 'Show left and right margins for the "lab" template, this gives a "classic" template look'
             ),
         ),
+        "token": (
+            {"Voila": {"auto_token": True}},
+            _(""),
+        ),
     }
 
     description = Unicode(
@@ -307,6 +311,10 @@ class Voila(Application):
     token = Unicode(None, help="""Token for identity provider """, allow_none=True).tag(
         config=True
     )
+
+    auto_token = Bool(
+        False, help="""Generate token automatically """, allow_none=True
+    ).tag(config=True)
 
     @default("cookie_secret")
     def _default_cookie_secret(self):
@@ -560,8 +568,10 @@ class Voila(Application):
             "log": self.log,
             "login_handler_class": VoilaLoginHandler,
         }
-        if self.token is None:
+        if self.token is None and not self.auto_token:
             identity_provider_kwargs["token"] = ""
+        elif self.token is not None:
+            identity_provider_kwargs["token"] = self.token
 
         self.identity_provider = self.identity_provider_class(
             **identity_provider_kwargs
@@ -804,9 +814,6 @@ class Voila(Application):
         fd, open_file = tempfile.mkstemp(suffix=".html")
         # Write a temporary file to open in the browser
         with open(fd, "w", encoding="utf-8") as fh:
-            # TODO: do we want to have the token?
-            # if self.token:
-            #     url = url_concat(url, {'token': self.token})
             url = url_path_join(self.connection_url, uri)
 
             include_assets_functions = create_include_assets_functions(
