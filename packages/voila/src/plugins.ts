@@ -36,11 +36,6 @@ import { VoilaApp } from './app';
 
 import { Widget } from '@lumino/widgets';
 
-let resolveManager: (value: KernelWidgetManager) => void;
-const managerPromise: Promise<KernelWidgetManager> = new Promise((resolve) => {
-  resolveManager = resolve;
-});
-
 const WIDGET_MIMETYPE = 'application/vnd.jupyter.widget-view+json';
 
 /**
@@ -103,6 +98,11 @@ export const widgetManager: JupyterFrontEndPlugin<IJupyterWidgetRegistry> = {
     app: JupyterFrontEnd,
     rendermime: IRenderMimeRegistry
   ): Promise<IJupyterWidgetRegistry> => {
+    if (!(app instanceof VoilaApp)) {
+      throw Error(
+        'The Voila Widget Manager plugin must be activated in a VoilaApp'
+      );
+    }
     const baseUrl = PageConfig.getBaseUrl();
     const kernelId = PageConfig.getOption('kernelId');
     const serverSettings = ServerConnection.makeSettings({ baseUrl });
@@ -117,6 +117,7 @@ export const widgetManager: JupyterFrontEndPlugin<IJupyterWidgetRegistry> = {
     }
     const kernel = new KernelConnection({ model, serverSettings });
     const manager = new KernelWidgetManager(kernel, rendermime);
+    app.widgetManager = manager;
 
     rendermime.removeMimeType(WIDGET_MIMETYPE);
     rendermime.addFactory(
@@ -127,8 +128,6 @@ export const widgetManager: JupyterFrontEndPlugin<IJupyterWidgetRegistry> = {
       },
       -10
     );
-
-    resolveManager(manager);
 
     window.addEventListener('beforeunload', (e) => {
       const data = new FormData();
@@ -145,7 +144,7 @@ export const widgetManager: JupyterFrontEndPlugin<IJupyterWidgetRegistry> = {
 
     return {
       registerWidget: async (data: IWidgetRegistryData) => {
-        const manager = await managerPromise;
+        const manager = await app.widgetManagerPromise.promise;
 
         manager.register(data);
       }
