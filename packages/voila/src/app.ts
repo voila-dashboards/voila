@@ -10,9 +10,7 @@ import { PageConfig } from '@jupyterlab/coreutils';
 
 import { IRenderMime } from '@jupyterlab/rendermime';
 
-import {
-  KernelWidgetManager
-} from '@jupyter-widgets/jupyterlab-manager';
+import { KernelWidgetManager } from '@jupyter-widgets/jupyterlab-manager';
 
 import { IShell, VoilaShell } from './shell';
 
