@@ -123,8 +123,7 @@ export const widgetManager: JupyterFrontEndPlugin<IJupyterWidgetRegistry> = {
       {
         safe: false,
         mimeTypes: [WIDGET_MIMETYPE],
-        // "as any" can be removed when https://github.com/jupyter-widgets/ipywidgets/pull/3625 is released
-        createRenderer: (options) => new WidgetRenderer(options, manager as any)
+        createRenderer: (options) => new WidgetRenderer(options, manager)
       },
       -10
     );
