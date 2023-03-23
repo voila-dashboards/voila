@@ -16,7 +16,6 @@
 {% endblock jupyter_widgets %}
 
 {% block notebook_execute %}
-
     {# Copy so we do not modify the page_config with updates. #}
     {% set page_config_full = page_config.copy() %}
 
@@ -81,6 +80,14 @@
 </script>
 {{ super() }}
 {%- endblock body_footer -%}
+
+{% block data_priority scoped %}
+{% if output %}
+  <script type="application/vnd.voila.cell-output+json">
+    {{ output | tojson }}
+  </script>
+{% endif %}
+{% endblock data_priority %}
 
 {%- block footer %}
 {% block footer_js %}

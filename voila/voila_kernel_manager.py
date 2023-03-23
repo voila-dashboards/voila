@@ -128,7 +128,10 @@ def voila_kernel_manager_factory(
                         self.fill_if_needed(delay=0, notebook_name=str(nb))
 
             async def get_rendered_notebook(
-                self, notebook_name: str, **kwargs
+                self,
+                notebook_name: str,
+                extra_kernel_env_variables: dict = {},
+                **kwargs,
             ) -> Tuple[asyncio.Task, TypeList[str]]:
                 """Get the notebook rendering task and the rendered cell.
                 By setting the `stop_generator` to True, the running task
@@ -167,7 +170,12 @@ def voila_kernel_manager_factory(
                 self.log.info(
                     "Using pre-heated kernel: %s for %s", kernel_id, notebook_name
                 )
-                self.fill_if_needed(delay=None, notebook_name=notebook_name, **kwargs)
+                self.fill_if_needed(
+                    delay=None,
+                    notebook_name=notebook_name,
+                    extra_kernel_env_variables=extra_kernel_env_variables,
+                    **kwargs,
+                )
 
                 return render_task, renderer.rendered_cache, kernel_id
 
@@ -178,6 +186,7 @@ def voila_kernel_manager_factory(
                 self,
                 delay: Union[float, None] = None,
                 notebook_name: Union[str, None] = None,
+                extra_kernel_env_variables: dict = {},
                 **kwargs,
             ) -> None:
                 """Start kernels until the pool is full
@@ -221,6 +230,8 @@ def voila_kernel_manager_factory(
                 for key in kernel_env_variables:
                     if key not in kernel_env:
                         kernel_env[key] = kernel_env_variables[key]
+
+                kernel_env.update(extra_kernel_env_variables)
                 kernel_env[ENV_VARIABLE.VOILA_BASE_URL] = self.parent.base_url
                 kernel_env[ENV_VARIABLE.VOILA_SERVER_URL] = self.parent.server_url
                 kernel_env[ENV_VARIABLE.VOILA_APP_PORT] = str(self.parent.port)

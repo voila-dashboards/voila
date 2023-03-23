@@ -58,6 +58,7 @@ dev = [
     "jupyter_releaser",
 ]
 test = [
+    "ipykernel",
     "ipywidgets",
     "matplotlib",
     "mock",

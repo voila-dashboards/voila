@@ -66,6 +66,14 @@
 <div class="slides">
 {% endblock body_header %}
 
+{% block data_priority scoped %}
+{% if output %}
+  <script type="application/vnd.voila.cell-output+json">
+    {{ output | tojson }}
+  </script>
+{% endif %}
+{% endblock data_priority %}
+
 {%- block codecell -%}
   <div cell-index={{cellloop.index}}>
     {{ super() }}

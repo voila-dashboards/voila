@@ -141,6 +141,9 @@ class VoilaHandler(BaseVoilaHandler):
                 kernel_id,
             ) = await self.kernel_manager.get_rendered_notebook(
                 notebook_name=notebook_path,
+                extra_kernel_env_variables={
+                    ENV_VARIABLE.VOILA_REQUEST_URL: self.request.full_url()
+                },
             )
 
             RequestInfoSocketHandler.send_updates(
@@ -204,6 +207,10 @@ class VoilaHandler(BaseVoilaHandler):
             kernel_env[ENV_VARIABLE.VOILA_SERVER_URL] = self.settings.get(
                 "server_url", "/"
             )
+            kernel_env[ENV_VARIABLE.VOILA_REQUEST_URL] = self.request.full_url()
+            kernel_env[ENV_VARIABLE.VOILA_APP_PORT] = request_info[
+                ENV_VARIABLE.SERVER_PORT
+            ]
             kernel_id = await ensure_async(
                 self.kernel_manager.start_kernel(
                     kernel_name=gen.notebook.metadata.kernelspec.name,

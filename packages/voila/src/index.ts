@@ -8,7 +8,5 @@
  ****************************************************************************/
 
 export * from './app';
-export * from './manager';
 export * from './shell';
-export * from './output';
 export * from './plugins';

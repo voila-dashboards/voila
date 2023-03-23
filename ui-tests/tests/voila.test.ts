@@ -257,6 +257,34 @@ test.describe('Voila performance Tests', () => {
     expect(await page.screenshot()).toMatchSnapshot(`${notebookName}.png`);
   });
 
+  test('Render and benchmark mimerenderers.ipynb', async ({
+    page,
+    browserName
+  }, testInfo) => {
+    const notebookName = 'mimerenderers';
+    const testFunction = async () => {
+      await page.goto(`/voila/render/${notebookName}.ipynb`);
+      await page.waitForSelector('.biojs_msa_div');
+      await page.waitForSelector('#MathJax_Message', { state: 'hidden' });
+      await page.waitForTimeout(2000);
+    };
+    await addBenchmarkToTest(notebookName, testFunction, testInfo, browserName);
+    expect(await page.screenshot()).toMatchSnapshot(`${notebookName}.png`);
+  });
+
+  test('Render and benchmark bokeh.ipynb', async ({
+    page,
+    browserName
+  }, testInfo) => {
+    const notebookName = 'bokeh';
+    const testFunction = async () => {
+      await page.goto(`/voila/render/${notebookName}.ipynb`);
+      await page.waitForSelector('.bk-Canvas');
+    };
+    await addBenchmarkToTest(notebookName, testFunction, testInfo, browserName);
+    expect(await page.screenshot()).toMatchSnapshot(`${notebookName}.png`);
+  });
+
   test('Benchmark the multiple widgets notebook', async ({
     page,
     browserName
@@ -276,6 +304,7 @@ test.describe('Voila performance Tests', () => {
     );
     expect(await page.screenshot()).toMatchSnapshot(`${notebookName}.png`);
   });
+
   test('Render and benchmark query-strings.ipynb', async ({
     page,
     browserName
@@ -298,6 +327,7 @@ test.describe('Voila performance Tests', () => {
     await page.waitForSelector('#MathJax_Message', { state: 'hidden' });
     expect(await page.screenshot()).toMatchSnapshot(`${notebookName}.png`);
   });
+
   test('Render and benchmark reveal.ipynb', async ({
     page,
     browserName

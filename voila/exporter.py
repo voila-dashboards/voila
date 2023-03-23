@@ -114,6 +114,13 @@ class VoilaExporter(HTMLExporter):
         )
         self.register_filter("highlight_code", highlight_code)
 
+        # We need outputs to be marked as trusted for the JupyterLab mimerendering logic
+        def trusted_output(output):
+            output["trusted"] = True
+            return output
+
+        self.register_filter("trusted", trusted_output)
+
         # NOTE: we don't call HTML or TemplateExporter' from_notebook_node
         nb_copy, resources = super(TemplateExporter, self).from_notebook_node(
             nb, resources, **kw
