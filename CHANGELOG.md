@@ -2,6 +2,33 @@
 
 <!-- <START NEW CHANGELOG ENTRY> -->
 
+## 0.5.0a3
+
+([Full Changelog](https://github.com/voila-dashboards/voila/compare/v0.5.0a2...34a52e7deb65a8e4f8e8a4512ac66b36c8cc733f))
+
+### Enhancements made
+
+- Make use of JupyterLab mimetype renderers [#1249](https://github.com/voila-dashboards/voila/pull/1249) ([@martinRenou](https://github.com/martinRenou))
+
+### Bugs fixed
+
+- Reveal template: Use proper routine for including JS asset [#1301](https://github.com/voila-dashboards/voila/pull/1301) ([@martinRenou](https://github.com/martinRenou))
+
+### Maintenance and upkeep improvements
+
+- Add `pre-commit` hook [#1306](https://github.com/voila-dashboards/voila/pull/1306) ([@trungleduc](https://github.com/trungleduc))
+- Bump webpack from 5.75.0 to 5.76.0 [#1302](https://github.com/voila-dashboards/voila/pull/1302) ([@dependabot](https://github.com/dependabot))
+- Bump vega from 5.20.2 to 5.23.0 in /ui-tests [#1297](https://github.com/voila-dashboards/voila/pull/1297) ([@dependabot](https://github.com/dependabot))
+- Refactor styling [#1268](https://github.com/voila-dashboards/voila/pull/1268) ([@martinRenou](https://github.com/martinRenou))
+
+### Contributors to this release
+
+([GitHub contributors page for this release](https://github.com/voila-dashboards/voila/graphs/contributors?from=2023-03-06&to=2023-03-23&type=c))
+
+[@davidbrochart](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Adavidbrochart+updated%3A2023-03-06..2023-03-23&type=Issues) | [@dependabot](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Adependabot+updated%3A2023-03-06..2023-03-23&type=Issues) | [@github-actions](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Agithub-actions+updated%3A2023-03-06..2023-03-23&type=Issues) | [@jtpio](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Ajtpio+updated%3A2023-03-06..2023-03-23&type=Issues) | [@maartenbreddels](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Amaartenbreddels+updated%3A2023-03-06..2023-03-23&type=Issues) | [@martinRenou](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3AmartinRenou+updated%3A2023-03-06..2023-03-23&type=Issues) | [@philippjfr](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Aphilippjfr+updated%3A2023-03-06..2023-03-23&type=Issues) | [@trungleduc](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Atrungleduc+updated%3A2023-03-06..2023-03-23&type=Issues)
+
+<!-- <END NEW CHANGELOG ENTRY> -->
+
 ## 0.5.0a2
 
 ([Full Changelog](https://github.com/voila-dashboards/voila/compare/@voila-dashboards/jupyterlab-preview@2.3.0-alpha.1...ac93bd1a2b13cf2cbbf61b899a025520d9c6a769))
@@ -24,8 +51,6 @@
 ([GitHub contributors page for this release](https://github.com/voila-dashboards/voila/graphs/contributors?from=2023-02-21&to=2023-03-06&type=c))
 
 [@12rambau](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3A12rambau+updated%3A2023-02-21..2023-03-06&type=Issues) | [@github-actions](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Agithub-actions+updated%3A2023-02-21..2023-03-06&type=Issues) | [@jtpio](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Ajtpio+updated%3A2023-02-21..2023-03-06&type=Issues) | [@martinRenou](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3AmartinRenou+updated%3A2023-02-21..2023-03-06&type=Issues) | [@trungleduc](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Atrungleduc+updated%3A2023-02-21..2023-03-06&type=Issues)
-
-<!-- <END NEW CHANGELOG ENTRY> -->
 
 ## 0.5.0a1
 
