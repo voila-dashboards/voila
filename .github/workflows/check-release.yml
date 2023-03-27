@@ -20,14 +20,6 @@ jobs:
       - name: Base Setup
         uses: jupyterlab/maintainer-tools/.github/actions/base-setup@v1
 
-      - name: Upgrade packaging dependencies
-        run: |
-          pip install --upgrade jupyter-packaging~=0.10 --user
-
-      - name: Install Dependencies
-        run: |
-          pip install .
-
       - name: Check Release
         uses: jupyter-server/jupyter_releaser/.github/actions/check-release@v2
         with:
