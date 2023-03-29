@@ -820,7 +820,7 @@ class Voila(Application):
                 self.voila_configuration.template, url
             )
 
-            jinja2_env = self.app.settings["jinja2_env"]
+            jinja2_env = self.app.settings["voila_jinja2_env"]
             template = jinja2_env.get_template("browser-open.html")
             fh.write(
                 template.render(

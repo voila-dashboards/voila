@@ -53,6 +53,15 @@ class BaseVoilaHandler(JupyterHandler):
         template = self.get_template(name)
         return template.render(**ns)
 
+    def get_template(self, name):
+        """Return the jinja template object for a given name"""
+        voila_env = self.settings["voila_jinja2_env"]
+        template = voila_env.get_template(name)
+        if template is not None:
+            return template
+
+        return self.settings["jinja2_env"].get_template(name)
+
 
 class VoilaHandler(BaseVoilaHandler):
     def initialize(self, **kwargs):
@@ -77,7 +86,7 @@ class VoilaHandler(BaseVoilaHandler):
             return
 
         cwd = os.path.dirname(notebook_path)
-
+        print("#########", cwd)
         # Adding request uri to kernel env
         request_info = {}
         request_info[ENV_VARIABLE.SCRIPT_NAME] = self.request.path
@@ -166,6 +175,7 @@ class VoilaHandler(BaseVoilaHandler):
 
         else:
             # All kernels are used or pre-heated kernel is disabled, start a normal kernel.
+
             supported_file_extensions = [".ipynb"]
             supported_file_extensions.extend(
                 [x.lower() for x in self.voila_configuration.extension_language_mapping]
@@ -248,6 +258,7 @@ class VoilaHandler(BaseVoilaHandler):
 
     @tornado.web.authenticated
     async def get(self, path=None):
+        print("OPATH", path)
         gen = self.get_generator(path=path)
         async for html in gen:
             self.write(html)
