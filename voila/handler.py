@@ -86,7 +86,6 @@ class VoilaHandler(BaseVoilaHandler):
             return
 
         cwd = os.path.dirname(notebook_path)
-        print("#########", cwd)
         # Adding request uri to kernel env
         request_info = {}
         request_info[ENV_VARIABLE.SCRIPT_NAME] = self.request.path
@@ -258,7 +257,6 @@ class VoilaHandler(BaseVoilaHandler):
 
     @tornado.web.authenticated
     async def get(self, path=None):
-        print("OPATH", path)
         gen = self.get_generator(path=path)
         async for html in gen:
             self.write(html)
