@@ -7,9 +7,9 @@
 # The full license is in the file LICENSE, distributed with this software.  #
 #############################################################################
 
-from nbclient import NotebookClient
+from nbclient.client import NotebookClient
 from nbclient.exceptions import CellExecutionError
-from nbconvert.preprocessors import ClearOutputPreprocessor
+from nbconvert.preprocessors.clearoutput import ClearOutputPreprocessor
 from traitlets import Bool, Unicode
 
 

@@ -58,9 +58,9 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu, macos, windows]
-        python: ['3.7', '3.10']
+        python: ['3.8', '3.10']
         include:
-          - python: '3.7'
+          - python: '3.8'
             dist: 'voila*.tar.gz'
           - python: '3.10'
             dist: 'voila*.whl'
