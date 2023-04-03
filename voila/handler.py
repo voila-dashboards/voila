@@ -57,6 +57,15 @@ class BaseVoilaHandler(JupyterHandler):
         template = self.get_template(name)
         return template.render(**ns)
 
+    def get_template(self, name):
+        """Return the jinja template object for a given name"""
+        voila_env = self.settings["voila_jinja2_env"]
+        template = voila_env.get_template(name)
+        if template is not None:
+            return template
+
+        return self.settings["jinja2_env"].get_template(name)
+
 
 class VoilaHandler(BaseVoilaHandler):
 
@@ -82,7 +91,6 @@ class VoilaHandler(BaseVoilaHandler):
             return
 
         cwd = os.path.dirname(notebook_path)
-
         # Adding request uri to kernel env
         request_info = dict()
         request_info[ENV_VARIABLE.SCRIPT_NAME] = self.request.path

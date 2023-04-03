@@ -1,4 +1,13 @@
 import re
+import pytest
+
+
+@pytest.fixture
+def voila_config():
+    def config(voila_app):
+        voila_app.tornado_settings["disable_check_xsrf"] = True
+
+    return config
 
 
 async def test_shutdown_handler(http_server_client, base_url):
