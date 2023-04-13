@@ -104,12 +104,6 @@ def get_page_config(base_url, settings, log):
     return page_config
 
 
-async def _get_query_string(ws_url: str) -> Awaitable:
-    async with websockets.connect(ws_url) as websocket:
-        qs = await websocket.recv()
-    return qs
-
-
 def wait_for_request(url: str = None) -> str:
     """Helper function to pause the execution of notebook and wait for
     the pre-heated kernel to be used and all request info is added to
