@@ -66,7 +66,7 @@
   {%- for cell in nb.cells -%}
     {% set cellloop = loop %}
       {%- block any_cell scoped -%}
-        <div cell-index={{cellloop.index}}>
+        <div cell-index="{{cellloop.index}}">
           {{ super() }}
         </div>
       {%- endblock any_cell -%}

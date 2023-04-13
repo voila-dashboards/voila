@@ -95,7 +95,7 @@
     {%- for cell in cell_generator(nb, kernel_id) -%}
       {% set cellloop = loop %}
       {%- block any_cell scoped -%}
-        <div cell-index={{cellloop.index}}>
+        <div cell-index="{{cellloop.index}}">
           <script>
             voila_process({{ cellloop.index }}, {{ cell_count }})
           </script>

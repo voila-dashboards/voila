@@ -75,19 +75,19 @@
 {% endblock data_priority %}
 
 {%- block codecell -%}
-  <div cell-index={{cellloop.index}}>
+  <div cell-index="{{cellloop.index}}">
     {{ super() }}
   </div>
 {%- endblock codecell -%}
 
 {%- block markdowncell -%}
-  <div cell-index={{cellloop.index}}>
+  <div cell-index="{{cellloop.index}}">
     {{ super() }}
   </div>
 {%- endblock markdowncell -%}
 
 {%- block rawcell -%}
-  <div cell-index={{cellloop.index}}>
+  <div cell-index="{{cellloop.index}}">
     {{ super() }}
   </div>
 {%- endblock rawcell -%}
