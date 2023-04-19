@@ -2,6 +2,29 @@
 
 <!-- <START NEW CHANGELOG ENTRY> -->
 
+## 0.5.0a4
+
+([Full Changelog](https://github.com/voila-dashboards/voila/compare/v0.5.0a3...6663f0b1c4f8abe09a6c8fee10899a7e2da59a53))
+
+### Enhancements made
+
+- Migrating to `jupyter-server` 2, `jupyter_client` 7.x [#1308](https://github.com/voila-dashboards/voila/pull/1308) ([@trungleduc](https://github.com/trungleduc))
+
+### Maintenance and upkeep improvements
+
+- Update `galata` bot [#1318](https://github.com/voila-dashboards/voila/pull/1318) ([@trungleduc](https://github.com/trungleduc))
+- Set `cell-index` attribute as a string [#1317](https://github.com/voila-dashboards/voila/pull/1317) ([@jtpio](https://github.com/jtpio))
+- Remove unused `_get_query_string` function [#1316](https://github.com/voila-dashboards/voila/pull/1316) ([@jtpio](https://github.com/jtpio))
+- Clean up the check release workflow [#1310](https://github.com/voila-dashboards/voila/pull/1310) ([@jtpio](https://github.com/jtpio))
+
+### Contributors to this release
+
+([GitHub contributors page for this release](https://github.com/voila-dashboards/voila/graphs/contributors?from=2023-03-23&to=2023-04-19&type=c))
+
+[@github-actions](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Agithub-actions+updated%3A2023-03-23..2023-04-19&type=Issues) | [@jtpio](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Ajtpio+updated%3A2023-03-23..2023-04-19&type=Issues) | [@pre-commit-ci](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Apre-commit-ci+updated%3A2023-03-23..2023-04-19&type=Issues) | [@trungleduc](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Atrungleduc+updated%3A2023-03-23..2023-04-19&type=Issues)
+
+<!-- <END NEW CHANGELOG ENTRY> -->
+
 ## 0.5.0a3
 
 ([Full Changelog](https://github.com/voila-dashboards/voila/compare/v0.5.0a2...34a52e7deb65a8e4f8e8a4512ac66b36c8cc733f))
@@ -26,8 +49,6 @@
 ([GitHub contributors page for this release](https://github.com/voila-dashboards/voila/graphs/contributors?from=2023-03-06&to=2023-03-23&type=c))
 
 [@davidbrochart](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Adavidbrochart+updated%3A2023-03-06..2023-03-23&type=Issues) | [@dependabot](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Adependabot+updated%3A2023-03-06..2023-03-23&type=Issues) | [@github-actions](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Agithub-actions+updated%3A2023-03-06..2023-03-23&type=Issues) | [@jtpio](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Ajtpio+updated%3A2023-03-06..2023-03-23&type=Issues) | [@maartenbreddels](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Amaartenbreddels+updated%3A2023-03-06..2023-03-23&type=Issues) | [@martinRenou](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3AmartinRenou+updated%3A2023-03-06..2023-03-23&type=Issues) | [@philippjfr](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Aphilippjfr+updated%3A2023-03-06..2023-03-23&type=Issues) | [@trungleduc](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Atrungleduc+updated%3A2023-03-06..2023-03-23&type=Issues)
-
-<!-- <END NEW CHANGELOG ENTRY> -->
 
 ## 0.5.0a2
 
