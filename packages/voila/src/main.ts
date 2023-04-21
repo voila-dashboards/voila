@@ -12,6 +12,9 @@
 
 // Inspired by: https://github.com/jupyterlab/jupyterlab/blob/master/dev_mode/index.js
 
+// Inject some packages in the shared scope
+import 'react-dom';
+
 import { PageConfig, URLExt } from '@jupyterlab/coreutils';
 
 import { VoilaApp } from './app';

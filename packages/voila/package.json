@@ -40,7 +40,8 @@
     "@lumino/signaling": "^1.7.2",
     "@lumino/virtualdom": "^1.11.2",
     "@lumino/widgets": "^1.26.2",
-    "react": "^17.0.1"
+    "react": "^17.0.1",
+    "react-dom": "^17.0.1"
   },
   "devDependencies": {
     "@babel/core": "^7.2.2",
