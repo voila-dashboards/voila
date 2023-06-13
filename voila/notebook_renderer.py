@@ -184,7 +184,7 @@ class NotebookRenderer(LoggingConfigurable):
         kernel_future=None,
     ) -> Tuple[List[str], Generator]:
         """Generate the HTML version of notebook, this process can be stopped
-        anytime by setting `elf.stop_generator=True`. The remaining cells can
+        anytime by setting `self.stop_generator=True`. The remaining cells can
         be rendered after by using the returned generator.
         """
         rendered = []
