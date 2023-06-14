@@ -193,7 +193,8 @@ const extension: JupyterFrontEndPlugin<IVoilaPreviewTracker> = {
             path: context.path,
             factory: 'Voila-preview',
             options: {
-              mode: 'split-right'
+              mode: 'split-right',
+              type: 'Voila Preview'
             }
           });
         }
