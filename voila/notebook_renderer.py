@@ -155,11 +155,11 @@ class NotebookRenderer(LoggingConfigurable):
             self._jinja_kernel_start, kernel_id=kernel_id, kernel_future=kernel_future
         )
 
-        # These functions allow the start of a kernel and execution of the
-        # notebook after (parts of) the template has been rendered and send
+        # kernel_start and cell_generator allow starting the kernel and executing the
+        # notebook after (parts of) the template has been rendered and sent
         # to the client to allow progressive rendering.
         # Template should first call kernel_start, and then decide to use
-        # notebook_executer cell_generator to implement progressive cell rendering
+        # notebook_executer cell_generator to implement progressive cell rendering.
 
         extra_context = {
             "frontend": "voila",
