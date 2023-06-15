@@ -155,9 +155,6 @@ class NotebookRenderer(LoggingConfigurable):
             self._jinja_kernel_start, kernel_id=kernel_id, kernel_future=kernel_future
         )
 
-        def inner_cell_generator(nb, kernel_id):
-            return self._jinja_cell_generator(nb, kernel_id)
-
         # These functions allow the start of a kernel and execution of the
         # notebook after (parts of) the template has been rendered and send
         # to the client to allow progressive rendering.
@@ -168,7 +165,7 @@ class NotebookRenderer(LoggingConfigurable):
             "frontend": "voila",
             "main_js": "voila.js",
             "kernel_start": inner_kernel_start,
-            "cell_generator": inner_cell_generator,
+            "cell_generator": self._jinja_cell_generator,
             "notebook_execute": self._jinja_notebook_execute,
         }
         # render notebook in snippets, then return an iterator so we can flush
