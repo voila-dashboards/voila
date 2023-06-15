@@ -151,7 +151,9 @@ class NotebookRenderer(LoggingConfigurable):
         kernel_id: Union[str, None] = None,
         kernel_future=None,
     ) -> Generator:
-        inner_kernel_start = partial(self._jinja_kernel_start, kernel_id=kernel_id, kernel_future=kernel_future)
+        inner_kernel_start = partial(
+            self._jinja_kernel_start, kernel_id=kernel_id, kernel_future=kernel_future
+        )
 
         def inner_cell_generator(nb, kernel_id):
             return self._jinja_cell_generator(nb, kernel_id)
