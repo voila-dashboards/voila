@@ -13,7 +13,6 @@ import os
 from pathlib import Path
 from typing import Dict
 
-import tornado.web
 from jupyter_server.base.handlers import JupyterHandler
 from jupyter_server.utils import url_path_join
 from nbclient.util import ensure_async
@@ -255,12 +254,6 @@ class VoilaHandler(BaseVoilaHandler):
                         break
                     yield html_snippet
 
-    @tornado.web.authenticated
-    async def get(self, path=None):
-        gen = self.get_generator(path=path)
-        async for html in gen:
-            self.write(html)
-            self.flush()
 
     def redirect_to_file(self, path):
         self.redirect(url_path_join(self.base_url, "voila", "files", path))

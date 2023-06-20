@@ -67,7 +67,6 @@ from ._version import __version__
 from .configuration import VoilaConfiguration
 from .execute import VoilaExecutor
 from .exporter import VoilaExporter
-from .handler import VoilaHandler
 from .paths import ROOT, STATIC_ROOT, collect_static_paths, collect_template_paths
 from .request_info_handler import RequestInfoSocketHandler
 from .shutdown_kernel_handler import VoilaShutdownKernelHandler
@@ -76,7 +75,8 @@ from .static_file_handler import (
     TemplateStaticFileHandler,
     WhiteListFileHandler,
 )
-from .treehandler import VoilaTreeHandler
+from .tornado_handler import TornadoVoilaHandler
+from .tornado_treehandler import TornadoVoilaTreeHandler
 from .utils import create_include_assets_functions
 from .voila_kernel_manager import voila_kernel_manager_factory
 
@@ -684,7 +684,7 @@ class Voila(Application):
             handlers.append(
                 (
                     url_path_join(self.server_url, r"/(.*)"),
-                    VoilaHandler,
+                    TornadoVoilaHandler,
                     {
                         "notebook_path": os.path.relpath(
                             self.notebook_path, self.root_dir
@@ -700,15 +700,15 @@ class Voila(Application):
             self.log.debug("serving directory: %r", self.root_dir)
             handlers.extend(
                 [
-                    (self.server_url, VoilaTreeHandler, tree_handler_conf),
+                    (self.server_url, TornadoVoilaTreeHandler, tree_handler_conf),
                     (
                         url_path_join(self.server_url, r"/voila/tree" + path_regex),
-                        VoilaTreeHandler,
+                        TornadoVoilaTreeHandler,
                         tree_handler_conf,
                     ),
                     (
                         url_path_join(self.server_url, r"/voila/render/(.*)"),
-                        VoilaHandler,
+                        TornadoVoilaHandler,
                         {
                             "template_paths": self.template_paths,
                             "config": self.config,
