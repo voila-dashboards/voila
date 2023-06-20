@@ -254,7 +254,6 @@ class VoilaHandler(BaseVoilaHandler):
                         break
                     yield html_snippet
 
-
     def redirect_to_file(self, path):
         self.redirect(url_path_join(self.base_url, "voila", "files", path))
 

@@ -73,7 +73,11 @@ def _load_jupyter_server_extension(server_app):
                     "voila_configuration": voila_configuration,
                 },
             ),
-            (url_path_join(base_url, "/voila"), TornadoVoilaTreeHandler, tree_handler_conf),
+            (
+                url_path_join(base_url, "/voila"),
+                TornadoVoilaTreeHandler,
+                tree_handler_conf,
+            ),
             (
                 url_path_join(base_url, "/voila/tree" + path_regex),
                 TornadoVoilaTreeHandler,
