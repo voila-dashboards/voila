@@ -22,13 +22,18 @@ from nbconvert.exporters.html import HTMLExporter
 from nbconvert.exporters.templateexporter import TemplateExporter
 from nbconvert.filters.highlight import Highlight2HTML
 from nbconvert.filters.markdown_mistune import (
-    MISTUNE_V3,
     IPythonRenderer,
     MarkdownWithMath,
 )
-
 from .static_file_handler import TemplateStaticFileHandler
 from .utils import create_include_assets_functions
+
+try:
+    from nbconvert.filters.markdown_mistune import MISTUNE_V3  # noqa
+
+    NB_CONVERT_760 = True
+except ImportError:
+    NB_CONVERT_760 = False
 
 
 class VoilaMarkdownRenderer(IPythonRenderer):
@@ -40,15 +45,15 @@ class VoilaMarkdownRenderer(IPythonRenderer):
 
     def image(self, text: str, url: str, title: Optional[str] = None):
         contents_manager = self.contents_manager
-        # for mistune v2, the first argument is the URL
-        src = url if MISTUNE_V3 else text
+        # for nbconvert <7.6.0, the first argument is the URL
+        src = url if NB_CONVERT_760 else text
 
         if contents_manager.file_exists(src):
             content = contents_manager.get(src, format="base64")
             data = content["content"].replace("\n", "")  # remove the newline
             mime_type, encoding = mimetypes.guess_type(src)
             src = f"data:{mime_type};base64,{data}"
-        if MISTUNE_V3:
+        if NB_CONVERT_760:
             return super().image(text, src, title)
         else:
             return super().image(src, url, title)

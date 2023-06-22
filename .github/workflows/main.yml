@@ -58,6 +58,9 @@ jobs:
           voila tests/notebooks/sleep10seconds.ipynb --port=8878 --VoilaConfiguration.http_keep_alive_timeout=2 &
           sleep 2
           wget --read-timeout=5 --tries=1 http://localhost:8878
+          # Test nbconvert < 7.6.0
+          python -m pip install "nbconvert<7.6.0"
+          VOILA_TEST_XEUS_CLING=1 py.test tests/app/image_inlining_test.py
 
   test-osx:
     runs-on: ${{ matrix.os }}
