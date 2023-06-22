@@ -244,8 +244,6 @@ class NotebookRenderer(LoggingConfigurable):
         #  (it seems to be local to our block)
         nb.cells = result.cells
 
-        await self._cleanup_resources()
-
     async def _jinja_cell_generator(self, nb, kernel_id):
         """Generator that will execute a single notebook cell at a time"""
         nb, _ = ClearOutputPreprocessor().preprocess(
@@ -294,12 +292,6 @@ class NotebookRenderer(LoggingConfigurable):
                     ]
             finally:
                 yield output_cell
-
-        await self._cleanup_resources()
-
-    async def _cleanup_resources(self):
-        await ensure_async(self.executor.km.cleanup_resources())
-        await ensure_async(self.executor.kc.stop_channels())
 
     async def load_notebook(self, path):
         model = await ensure_async(self.contents_manager.get(path=path))
