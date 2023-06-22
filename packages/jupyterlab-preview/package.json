@@ -72,6 +72,7 @@
   },
   "jupyterlab": {
     "extension": true,
+    "webpackConfig": "webpack.lab.config.js",
     "schemaDir": "schema",
     "outputDir": "../../voila/labextension",
     "discovery": {
