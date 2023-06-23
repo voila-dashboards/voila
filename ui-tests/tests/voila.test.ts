@@ -105,12 +105,13 @@ test.describe('Voila performance Tests', () => {
     const testFunction = async () => {
       await page.goto(`/voila/render/${notebookName}.ipynb`);
       // wait for the widgets to load
-      await page.waitForSelector('span[role="presentation"] >> text=x');
+      await page.waitForSelector('span.mjx-char >> text=x');
     };
     await addBenchmarkToTest(notebookName, testFunction, testInfo, browserName);
     // change the value of the slider
     await page.fill('text=4.00', '8.00');
     await page.keyboard.down('Enter');
+    await page.waitForTimeout(500);
     // fetch the value of the label
     const value = await page.$eval('input', (el) => el.value);
 
