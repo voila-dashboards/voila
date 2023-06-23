@@ -4,7 +4,7 @@ on: [push, pull_request]
 
 defaults:
   run:
-    shell: bash -e {0}
+    shell: bash -l {0}
 
 jobs:
   ui-tests:
@@ -28,7 +28,6 @@ jobs:
           channels: conda-forge
 
       - name: Create the conda environment
-        shell: bash -l {0}
         run: mamba install -q python=3.9 pip jupyterlab_pygments=0.1.0 pytest-cov pytest-rerunfailures nodejs=16.19.0 yarn=1 flake8 ipywidgets matplotlib xeus-cling traitlets=5
 
       - name: Install dependencies
