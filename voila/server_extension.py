@@ -16,7 +16,7 @@ from jupyter_server.utils import url_path_join
 from jupyterlab_server.themes_handler import ThemesHandler
 
 from .configuration import VoilaConfiguration
-from .handler import VoilaHandler
+from .tornado.handler import TornadoVoilaHandler
 from .paths import ROOT, collect_static_paths, collect_template_paths, jupyter_path
 from .shutdown_kernel_handler import VoilaShutdownKernelHandler
 from .static_file_handler import (
@@ -24,7 +24,7 @@ from .static_file_handler import (
     TemplateStaticFileHandler,
     WhiteListFileHandler,
 )
-from .treehandler import VoilaTreeHandler
+from .tornado.treehandler import TornadoVoilaTreeHandler
 from .utils import get_server_root_dir
 
 
@@ -66,17 +66,21 @@ def _load_jupyter_server_extension(server_app):
         [
             (
                 url_path_join(base_url, "/voila/render/(.*)"),
-                VoilaHandler,
+                TornadoVoilaHandler,
                 {
                     "config": server_app.config,
                     "template_paths": template_paths,
                     "voila_configuration": voila_configuration,
                 },
             ),
-            (url_path_join(base_url, "/voila"), VoilaTreeHandler, tree_handler_conf),
+            (
+                url_path_join(base_url, "/voila"),
+                TornadoVoilaTreeHandler,
+                tree_handler_conf,
+            ),
             (
                 url_path_join(base_url, "/voila/tree" + path_regex),
-                VoilaTreeHandler,
+                TornadoVoilaTreeHandler,
                 tree_handler_conf,
             ),
             (
