@@ -75,8 +75,8 @@ from .static_file_handler import (
     TemplateStaticFileHandler,
     WhiteListFileHandler,
 )
-from .tornado_handler import TornadoVoilaHandler
-from .tornado_treehandler import TornadoVoilaTreeHandler
+from .tornado.handler import TornadoVoilaHandler
+from .tornado.treehandler import TornadoVoilaTreeHandler
 from .utils import create_include_assets_functions
 from .voila_kernel_manager import voila_kernel_manager_factory
 

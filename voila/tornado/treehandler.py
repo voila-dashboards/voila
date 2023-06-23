@@ -12,8 +12,8 @@ from jupyter_server.utils import url_escape, url_path_join
 from nbclient.util import ensure_async
 from tornado import web
 
-from .treehandler import VoilaTreeHandler
-from .utils import get_server_root_dir
+from ..treehandler import VoilaTreeHandler
+from ..utils import get_server_root_dir
 
 
 class TornadoVoilaTreeHandler(VoilaTreeHandler):

@@ -8,7 +8,7 @@
 #############################################################################
 import tornado.web
 
-from .handler import VoilaHandler
+from ..handler import VoilaHandler
 
 
 class TornadoVoilaHandler(VoilaHandler):

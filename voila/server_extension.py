@@ -16,7 +16,7 @@ from jupyter_server.utils import url_path_join
 from jupyterlab_server.themes_handler import ThemesHandler
 
 from .configuration import VoilaConfiguration
-from .tornado_handler import TornadoVoilaHandler
+from .tornado.handler import TornadoVoilaHandler
 from .paths import ROOT, collect_static_paths, collect_template_paths, jupyter_path
 from .shutdown_kernel_handler import VoilaShutdownKernelHandler
 from .static_file_handler import (
@@ -24,7 +24,7 @@ from .static_file_handler import (
     TemplateStaticFileHandler,
     WhiteListFileHandler,
 )
-from .tornado_treehandler import TornadoVoilaTreeHandler
+from .tornado.treehandler import TornadoVoilaTreeHandler
 from .utils import get_server_root_dir
 
 
