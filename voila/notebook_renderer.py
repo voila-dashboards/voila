@@ -302,7 +302,7 @@ class NotebookRenderer(LoggingConfigurable):
             finally:
                 yield output_cell
 
-            await self._cleanup_resources()
+        await self._cleanup_resources()
 
     async def _cleanup_resources(self):
         await ensure_async(self.executor.kc.stop_channels())
