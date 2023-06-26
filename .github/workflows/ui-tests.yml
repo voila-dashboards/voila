@@ -8,12 +8,12 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python: [3.8]
+        python-version: [3.8]
+        node-version: [16.x]
       fail-fast: false
 
     steps:
       - uses: actions/checkout@v2
-
       - name: Base Setup
         uses: jupyterlab/maintainer-tools/.github/actions/base-setup@v1
 
