@@ -1,7 +1,7 @@
 [build-system]
 requires = [
     "hatchling>=1.8.1",
-    "jupyterlab~=3.0",
+    "jupyterlab~=4.0",
     "jupyter_core",
 ]
 build-backend = "hatchling.build"
@@ -135,10 +135,10 @@ skip = [
 
 [tool.jupyter-releaser.hooks]
 before-bump-version = [
-    "python -m pip install hatch jupyterlab~=3.0",
+    "python -m pip install hatch jupyterlab~=4.0",
 ]
 before-build-npm = [
-    "python -m pip install jupyterlab~=3.0",
+    "python -m pip install jupyterlab~=4.0",
     "jlpm",
     "jlpm clean",
     "jlpm build:prod",

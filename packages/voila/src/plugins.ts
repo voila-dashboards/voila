@@ -63,8 +63,8 @@ export const stopPollingPlugin: JupyterFrontEndPlugin<void> = {
   autoStart: true,
   activate: (app: JupyterFrontEnd): void => {
     app.serviceManager.sessions?.ready.then((value) => {
-      app.serviceManager.sessions['_kernelManager']['_pollModels']?.stop();
-      void app.serviceManager.sessions['_pollModels'].stop();
+      // app.serviceManager.sessions['_kernelManager']['_pollModels']?.stop();
+      // void app.serviceManager.sessions['_pollModels'].stop();
     });
 
     app.serviceManager.kernelspecs?.ready.then((value) => {

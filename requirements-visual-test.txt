@@ -1,9 +1,10 @@
 bokeh
 bqplot
 ipympl==0.9.2
-jupyterlab~=3.0
-jupyterlab-fasta
-jupyterlab_miami_nights==0.3.2
+jupyterlab~=4.0
 matplotlib
 scipy
 vega_datasets
+#TODO Re-enable where these extension are updated.
+#jupyterlab-fasta
+#jupyterlab_miami_nights==0.3.2

@@ -47,7 +47,7 @@ jobs:
           jlpm build
           jupyter labextension develop . --overwrite
           cd ui-tests
-          jlpm install --frozen-lockfile
+          jlpm install
 
       - uses: jupyterlab/maintainer-tools/.github/actions/update-snapshots@main
         with:

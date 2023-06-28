@@ -67,8 +67,10 @@ const disabled = [
 async function main() {
   const mods = [
     // @jupyterlab plugins
-    require('@jupyterlab/markdownviewer-extension'),
-    require('@jupyterlab/mathjax2-extension'),
+    require('@jupyterlab/codemirror-extension').default.filter(
+      (p: any) => p.id === '@jupyterlab/codemirror-extension:languages'
+    ), // Needed for @jupyterlab/markedparser-extension
+    require('@jupyterlab/markedparser-extension'),
     require('@jupyterlab/rendermime-extension'),
     // TODO: add the settings endpoint to re-enable the theme plugins?
     // This would also need the theme manager plugin and settings

@@ -24,10 +24,16 @@
     "clean": "lerna run clean",
     "eslint": "eslint . --ext .ts,.tsx --fix",
     "eslint:check": "eslint . --ext .ts,.tsx",
-    "install": "lerna bootstrap",
     "prettier": "prettier --write \"**/*{.ts,.tsx,.js,.jsx,.css,.json,.md}\"",
     "prettier:check": "prettier --list-different \"**/*{.ts,.tsx,.js,.jsx,.css,.json,.md}\"",
     "test": "lerna run test"
+  },
+  "resolutions": {
+    "@jupyter-widgets/base-manager": "file:../ipywidgets/packages/base-manager",
+    "@jupyter-widgets/base": "file:../ipywidgets/packages/base",
+    "@jupyter-widgets/controls": "file:../ipywidgets/packages/controls",
+    "@jupyter-widgets/output": "file:../ipywidgets/packages/output",
+    "@jupyter-widgets/jupyterlab-manager": "file:../ipywidgets/python/jupyterlab_widgets"
   },
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "^4.2.0",

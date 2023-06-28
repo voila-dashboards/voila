@@ -25,7 +25,7 @@ jobs:
           jlpm build
           jupyter labextension develop . --overwrite
           cd ui-tests
-          jlpm install --frozen-lockfile
+          jlpm install
 
       - name: Launch Voila
         run: |
@@ -34,7 +34,7 @@ jobs:
         working-directory: ui-tests
 
       - name: Install browser
-        run: jlpm playwright install chromium
+        run: npx playwright install chromium
         working-directory: ui-tests
 
       - name: Wait for Voila
