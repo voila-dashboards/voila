@@ -298,7 +298,6 @@ class NotebookRenderer(LoggingConfigurable):
         await self._cleanup_resources()
 
     async def _cleanup_resources(self):
-        await ensure_async(self.executor.km.cleanup_resources())
         await ensure_async(self.executor.kc.stop_channels())
 
     async def load_notebook(self, path):
