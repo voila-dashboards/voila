@@ -63,6 +63,7 @@
     "sass-loader": "^13.2.0",
     "style-loader": "^2.0.0",
     "svg-url-loader": "^7.1.1",
+    "tsc-watch": "^6.0.0",
     "typescript": "~5.0.2",
     "url-loader": "^4.1.1",
     "watch": "^1.0.2",
@@ -79,7 +80,7 @@
     "clean": "jlpm run clean:lib && rimraf build",
     "clean:lib": "rimraf lib tsconfig.tsbuildinfo",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "watch": "npm-run-all -p watch:*",
+    "watch": "tsc-watch --onSuccess \"webpack --mode=development\"",
     "watch:lib": "tsc -w",
     "watch:bundle": "webpack --watch --mode=development"
   }

@@ -6,6 +6,14 @@
  *                                                                          *
  * The full license is in the file LICENSE, distributed with this software. *
  ****************************************************************************/
+import 'react-dom';
+
+import { PageConfig, URLExt } from '@jupyterlab/coreutils';
+
+import { VoilaApp } from './app';
+import plugins from './plugins';
+import { VoilaServiceManager } from './services/servicemanager';
+import { VoilaShell } from './shell';
 
 // Copyright (c) Jupyter Development Team.
 // Distributed under the terms of the Modified BSD License.
@@ -13,14 +21,6 @@
 // Inspired by: https://github.com/jupyterlab/jupyterlab/blob/master/dev_mode/index.js
 
 // Inject some packages in the shared scope
-import 'react-dom';
-
-import { PageConfig, URLExt } from '@jupyterlab/coreutils';
-
-import { VoilaApp } from './app';
-import { VoilaShell } from './shell';
-import plugins from './plugins';
-
 function loadScript(url: string): Promise<any> {
   return new Promise((resolve, reject) => {
     const newScript = document.createElement('script');
@@ -192,7 +192,11 @@ async function main() {
       console.error((p as PromiseRejectedResult).reason);
     });
 
-  const app = new VoilaApp({ mimeExtensions, shell: new VoilaShell() });
+  const app = new VoilaApp({
+    mimeExtensions,
+    shell: new VoilaShell(),
+    serviceManager: new VoilaServiceManager()
+  });
   app.registerPluginModules(mods);
   await app.start();
 
