@@ -50,3 +50,7 @@ ui-tests/benchmark-results
 ui-tests/jlab_root
 
 .yarn/
+
+share/jupyter/voila/schemas
+share/jupyter/voila/themes
+share/jupyter/voila/style.js

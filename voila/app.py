@@ -20,7 +20,6 @@ import tempfile
 import threading
 import webbrowser
 
-from .setting_handler import VoilaSettingHandler
 
 from .voila_identity_provider import VoilaLoginHandler
 
@@ -59,6 +58,7 @@ from jupyter_server.utils import url_path_join
 from jupyter_core.utils import run_sync
 
 from jupyterlab_server.themes_handler import ThemesHandler
+from jupyterlab_server.settings_handler import SettingsHandler
 
 
 from traitlets import Bool, Callable, Dict, Integer, List, Unicode, default, Type, Bytes
@@ -79,10 +79,12 @@ from .static_file_handler import (
 )
 from .tornado.handler import TornadoVoilaHandler
 from .tornado.treehandler import TornadoVoilaTreeHandler
-from .utils import create_include_assets_functions
+from .utils import create_include_assets_functions, get_data_dir, pjoin
 from .voila_kernel_manager import voila_kernel_manager_factory
 
 _kernel_id_regex = r"(?P<kernel_id>\w+-\w+-\w+-\w+-\w+)"
+
+HERE = os.path.dirname(os.path.abspath(__file__))
 
 
 def _(x):
@@ -406,6 +408,18 @@ class Voila(Application):
     def labextensions_path(self):
         return jupyter_path("labextensions")
 
+    @property
+    def data_dir(self):
+        return get_data_dir()
+
+    @property
+    def schemas_dir(self):
+        return pjoin(self.data_dir, "schemas")
+
+    @property
+    def themes_dir(self):
+        return pjoin(self.data_dir, "themes")
+
     @default("root_dir")
     def _default_root_dir(self):
         if self.notebook_path:
@@ -602,6 +616,7 @@ class Voila(Application):
             kernel_websocket_connection_class=self.kernel_websocket_connection_class,
             login_url=url_path_join(self.base_url, "/login"),
         )
+        settings[self.name] = self
 
         return settings
 
@@ -625,13 +640,27 @@ class Voila(Application):
                 ),
                 (
                     url_path_join(self.server_url, r"/voila/api/settings", "?"),
-                    VoilaSettingHandler,
+                    SettingsHandler,
+                    {
+                        "name": self.name,
+                        "app_settings_dir": pjoin(self.data_dir, "settings"),
+                        "schemas_dir": self.schemas_dir,
+                        "labextensions_path": self.labextensions_path,
+                        "settings_dir": "",
+                    },
                 ),
                 (
                     url_path_join(
                         self.server_url, r"/voila/api/settings", "(?P<schema_name>.+)"
                     ),
-                    VoilaSettingHandler,
+                    SettingsHandler,
+                    {
+                        "name": self.name,
+                        "app_settings_dir": pjoin(self.data_dir, "settings"),
+                        "schemas_dir": self.schemas_dir,
+                        "labextensions_path": self.labextensions_path,
+                        "settings_dir": "",
+                    },
                 ),
                 (
                     url_path_join(self.server_url, r"/voila/templates/(.*)"),
@@ -643,11 +672,11 @@ class Voila(Application):
                     {"paths": self.static_paths, "default_filename": "index.html"},
                 ),
                 (
-                    url_path_join(self.server_url, r"/voila/themes/(.*)"),
+                    url_path_join(self.server_url, r"/voila/api/themes/(.*)"),
                     ThemesHandler,
                     {
-                        "themes_url": "/voila/themes",
-                        "path": "",
+                        "themes_url": "/voila/api/themes",
+                        "path": self.themes_dir,
                         "labextensions_path": jupyter_path("labextensions"),
                         "no_cache_paths": ["/"],
                     },

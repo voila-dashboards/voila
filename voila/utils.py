@@ -10,12 +10,14 @@
 import asyncio
 import json
 import os
+from pathlib import Path
+import sys
 import threading
 import warnings
 from enum import Enum
 from functools import partial
 from typing import Awaitable, Dict
-
+import site
 import websockets
 from jupyter_core.paths import jupyter_path
 from jupyter_server.utils import url_path_join
@@ -220,3 +222,37 @@ def create_include_assets_functions(template_name: str, base_url: str) -> Dict:
         "include_url": partial(include_url, template_name, base_url),
         "include_lab_theme": partial(include_lab_theme, base_url),
     }
+
+
+def pjoin(*args):
+    """Join paths to create a real path."""
+    return os.path.abspath(os.path.join(*args))
+
+
+def get_data_dir():
+    """Get the Voila data directory."""
+
+    from .app import HERE
+
+    # Use the default locations for data_files.
+    app_dir = pjoin(sys.prefix, "share", "jupyter", "voila")
+
+    # Check for a user level install.
+    # Ensure that USER_BASE is defined
+    if hasattr(site, "getuserbase"):
+        site.getuserbase()
+    userbase = getattr(site, "USER_BASE", None)
+    if HERE.startswith(userbase) and not app_dir.startswith(userbase):
+        app_dir = pjoin(userbase, "share", "jupyter", "lab")
+
+    # Check for a system install in '/usr/local/share'.
+    elif (
+        sys.prefix.startswith("/usr")
+        and not os.path.exists(app_dir)
+        and os.path.exists("/usr/local/share/jupyter/voila")
+    ):
+        app_dir = "/usr/local/share/jupyter/voila"
+
+    # We must resolve the path to get the canonical case of the path for
+    # case-sensitive systems
+    return str(Path(app_dir).resolve())

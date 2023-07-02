@@ -7,7 +7,6 @@ const path = require('path');
 const webpack = require('webpack');
 const merge = require('webpack-merge').default;
 const { ModuleFederationPlugin } = webpack.container;
-const glob = require('glob');
 const Build = require('@jupyterlab/builder').Build;
 const baseConfig = require('@jupyterlab/builder/lib/webpack.config.base');
 
@@ -29,9 +28,17 @@ fs.ensureDirSync(buildDir);
 const libDir = path.resolve(__dirname, 'lib');
 fs.copySync(libDir, buildDir);
 
+const assetDir = path.resolve(
+  __dirname,
+  '..',
+  '..',
+  'share',
+  'jupyter',
+  'voila'
+);
 const extras = Build.ensureAssets({
   packageNames: names,
-  output: buildDir
+  output: assetDir
 });
 
 // Make a bootstrap entrypoint
@@ -57,60 +64,6 @@ const distRoot = path.resolve(
   'static'
 );
 
-/**
- * Define a custom plugin to ensure schemas are statically compiled
- * after they have been emitted.
- * Taken from jupyterlite project
- */
-class CompileSchemasPlugin {
-  apply(compiler) {
-    compiler.hooks.done.tapAsync(
-      'CompileSchemasPlugin',
-      (compilation, callback) => {
-        // ensure all schemas are statically compiled
-        const schemaDir = path.resolve(buildDir, './schemas');
-        const allSchemaDir = path.resolve(
-          __dirname,
-          '..',
-          '..',
-          'voila',
-          'schema'
-        );
-        const files = glob.sync(`${schemaDir}/**/*.json`, {
-          ignore: [`${schemaDir}/all.json`]
-        });
-
-        const all = files.map((file) => {
-          const schema = fs.readJSONSync(file);
-          const pluginFile = file.replace(`${schemaDir}/`, '');
-          const basename = path.basename(pluginFile, '.json');
-          const dirname = path.dirname(pluginFile);
-          const packageJsonFile = path.resolve(
-            schemaDir,
-            dirname,
-            'package.json.orig'
-          );
-          const packageJson = fs.readJSONSync(packageJsonFile);
-          const pluginId = `${dirname}:${basename}`;
-          return {
-            id: pluginId,
-            raw: '{}',
-            schema,
-            settings: {},
-            version: packageJson.version
-          };
-        });
-
-        fs.writeFileSync(
-          path.resolve(allSchemaDir, 'all.json'),
-          JSON.stringify(all)
-        );
-        callback();
-      }
-    );
-  }
-}
-
 module.exports = [
   merge(baseConfig, {
     mode: 'development',
@@ -133,8 +86,7 @@ module.exports = [
         shared: {
           ...data.dependencies
         }
-      }),
-      new CompileSchemasPlugin()
+      })
     ]
   }),
   merge(baseConfig, {
