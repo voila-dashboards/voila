@@ -69,9 +69,17 @@ async function main() {
     // @jupyterlab plugins
     require('@jupyterlab/codemirror-extension').default.filter(
       (p: any) => p.id === '@jupyterlab/codemirror-extension:languages'
-    ), // Needed for @jupyterlab/markedparser-extension
+    ),
     require('@jupyterlab/markedparser-extension'),
     require('@jupyterlab/rendermime-extension'),
+    require('@jupyterlab/apputils-extension').default.filter((m: any) =>
+      [
+        '@jupyterlab/apputils-extension:settings',
+        '@jupyterlab/apputils-extension:themes'
+      ].includes(m.id)
+    ),
+    require('@jupyterlab/theme-light-extension'),
+    require('@jupyterlab/theme-dark-extension'),
     // TODO: add the settings endpoint to re-enable the theme plugins?
     // This would also need the theme manager plugin and settings
     // require('@jupyterlab/theme-light-extension'),
@@ -199,7 +207,6 @@ async function main() {
   });
   app.registerPluginModules(mods);
   await app.start();
-
   window.jupyterapp = app;
 }
 

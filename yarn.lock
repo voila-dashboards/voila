@@ -2361,6 +2361,37 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@jupyterlab/apputils-extension@npm:^4.0.0":
+  version: 4.0.2
+  resolution: "@jupyterlab/apputils-extension@npm:4.0.2"
+  dependencies:
+    "@jupyterlab/application": ^4.0.2
+    "@jupyterlab/apputils": ^4.1.2
+    "@jupyterlab/coreutils": ^6.0.2
+    "@jupyterlab/docregistry": ^4.0.2
+    "@jupyterlab/filebrowser": ^4.0.2
+    "@jupyterlab/mainmenu": ^4.0.2
+    "@jupyterlab/rendermime-interfaces": ^3.8.2
+    "@jupyterlab/services": ^7.0.2
+    "@jupyterlab/settingregistry": ^4.0.2
+    "@jupyterlab/statedb": ^4.0.2
+    "@jupyterlab/statusbar": ^4.0.2
+    "@jupyterlab/translation": ^4.0.2
+    "@jupyterlab/ui-components": ^4.0.2
+    "@lumino/algorithm": ^2.0.0
+    "@lumino/commands": ^2.1.1
+    "@lumino/coreutils": ^2.1.1
+    "@lumino/disposable": ^2.1.1
+    "@lumino/domutils": ^2.0.0
+    "@lumino/polling": ^2.1.1
+    "@lumino/widgets": ^2.1.1
+    react: ^18.2.0
+    react-dom: ^18.2.0
+    react-toastify: ^9.0.8
+  checksum: 737b685bf5c8a5b828b61cfc06e3155fc35a0552d51a26833d5202efcc10caba5868a49ef7a1444a744ccfa39f07fcffe863d0b46cc56a427853440f2df9b58d
+  languageName: node
+  linkType: hard
+
 "@jupyterlab/apputils@npm:^4.0.0, @jupyterlab/apputils@npm:^4.1.2":
   version: 4.1.2
   resolution: "@jupyterlab/apputils@npm:4.1.2"
@@ -2775,7 +2806,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@jupyterlab/mainmenu@npm:^3.0.0 || ^4.0.0, @jupyterlab/mainmenu@npm:^4.0.0":
+"@jupyterlab/mainmenu@npm:^3.0.0 || ^4.0.0, @jupyterlab/mainmenu@npm:^4.0.0, @jupyterlab/mainmenu@npm:^4.0.2":
   version: 4.0.2
   resolution: "@jupyterlab/mainmenu@npm:4.0.2"
   dependencies:
@@ -3072,6 +3103,28 @@ __metadata:
     "@jupyterlab/rendermime": ^4.0.2
     "@jupyterlab/testing": ^4.0.2
   checksum: fdefc6f702057846db258b59a7a9e03fa6bcc3746c5604a6432c0136c35b392db88bb33bade5e74c975076e32a091ce649fa53bf86762629aa5f991b2439d663
+  languageName: node
+  linkType: hard
+
+"@jupyterlab/theme-dark-extension@npm:^4.0.2":
+  version: 4.0.2
+  resolution: "@jupyterlab/theme-dark-extension@npm:4.0.2"
+  dependencies:
+    "@jupyterlab/application": ^4.0.2
+    "@jupyterlab/apputils": ^4.1.2
+    "@jupyterlab/translation": ^4.0.2
+  checksum: ed11816629e0d96b72c3139823f091ed9848c8f67715f2e949f70436cebb52a9ea52dca0a9ec6ea4a9fd7ac07477acf4bfd6dea8130491aeca052be294453a0d
+  languageName: node
+  linkType: hard
+
+"@jupyterlab/theme-light-extension@npm:^4.0.2":
+  version: 4.0.2
+  resolution: "@jupyterlab/theme-light-extension@npm:4.0.2"
+  dependencies:
+    "@jupyterlab/application": ^4.0.2
+    "@jupyterlab/apputils": ^4.1.2
+    "@jupyterlab/translation": ^4.0.2
+  checksum: 79c4af4bc0142b9cbeea4c4e54feb7027bdf4967111d9a042dba82b9dd55f0975b6e229accecc838d3f41f87947370178d5308bb207faa7f81df341a6732ea64
   languageName: node
   linkType: hard
 
@@ -5134,6 +5187,7 @@ __metadata:
     "@jupyter-widgets/jupyterlab-manager": ^5.0.7
     "@jupyterlab/application": ^4.0.0
     "@jupyterlab/apputils": ^4.0.0
+    "@jupyterlab/apputils-extension": ^4.0.0
     "@jupyterlab/builder": ^4.0.0
     "@jupyterlab/codemirror-extension": ^4.0.0
     "@jupyterlab/coreutils": ^6.0.0
@@ -5152,6 +5206,8 @@ __metadata:
     "@jupyterlab/rendermime-extension": ^4.0.0
     "@jupyterlab/services": ^7.0.0
     "@jupyterlab/settingregistry": ^4.0.0
+    "@jupyterlab/theme-dark-extension": ^4.0.2
+    "@jupyterlab/theme-light-extension": ^4.0.2
     "@jupyterlab/translation": ^4.0.0
     "@jupyterlab/ui-components": ^4.0.0
     "@jupyterlab/vega5-extension": ^4.0.0
@@ -6628,6 +6684,13 @@ __metadata:
   version: 2.1.2
   resolution: "clone@npm:2.1.2"
   checksum: aaf106e9bc025b21333e2f4c12da539b568db4925c0501a1bf4070836c9e848c892fa22c35548ce0d1132b08bbbfa17a00144fe58fccdab6fa900fec4250f67d
+  languageName: node
+  linkType: hard
+
+"clsx@npm:^1.1.1":
+  version: 1.2.1
+  resolution: "clsx@npm:1.2.1"
+  checksum: 30befca8019b2eb7dbad38cff6266cf543091dae2825c856a62a8ccf2c3ab9c2907c4d12b288b73101196767f66812365400a227581484a05f968b0307cfaf12
   languageName: node
   linkType: hard
 
@@ -13877,6 +13940,18 @@ __metadata:
     "@types/react": ^16.8.0 || ^17.0.0 || ^18.0.0
     react: ^16.8.0 || ^17.0.0 || ^18.0.0
   checksum: e59244b1f7866a3fec7b5fe83d68833583568e9ae217c261b09077de196a51cc96642e8b1d6826d963aaf910a496e1cf432240ee142ce7efa965345915bb57ac
+  languageName: node
+  linkType: hard
+
+"react-toastify@npm:^9.0.8":
+  version: 9.1.3
+  resolution: "react-toastify@npm:9.1.3"
+  dependencies:
+    clsx: ^1.1.1
+  peerDependencies:
+    react: ">=16"
+    react-dom: ">=16"
+  checksum: e8bd92c5cbf831b43a042644ab9bc69abe6ceb3ce91ba71f5cd2d8b6a2c9885ca52770e1f1ba64c5632607f6df962db344a26c7fba57606faf5aa0e7bfc8535f
   languageName: node
   linkType: hard
 

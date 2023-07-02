@@ -78,6 +78,8 @@ async def _get_request_info(ws_url: str) -> Awaitable:
 def get_page_config(base_url, settings, log):
     page_config = {
         "appVersion": __version__,
+        "appUrl": "voila/",
+        "themesUrl": "/voila/api/themes",
         "baseUrl": base_url,
         "terminalsAvailable": False,
         "fullStaticUrl": url_path_join(base_url, "voila/static"),
@@ -94,6 +96,7 @@ def get_page_config(base_url, settings, log):
     page_config.setdefault("fullMathjaxUrl", mathjax_url)
 
     labextensions_path = jupyter_path("labextensions")
+
     recursive_update(
         page_config,
         gpc(
@@ -101,6 +104,14 @@ def get_page_config(base_url, settings, log):
             logger=log,
         ),
     )
+    disabled_extensions = [
+        "@voila-dashboards/jupyterlab-preview",
+        "@jupyter/collaboration-extension",
+    ]
+    federated_extensions = page_config["federated_extensions"]
+    page_config["federated_extensions"] = [
+        x for x in federated_extensions if x["name"] not in disabled_extensions
+    ]
     return page_config
 
 

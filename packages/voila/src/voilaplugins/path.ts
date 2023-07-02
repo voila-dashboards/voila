@@ -6,22 +6,23 @@
  *                                                                          *
  * The full license is in the file LICENSE, distributed with this software. *
  ****************************************************************************/
+import {
+  JupyterFrontEnd,
+  JupyterFrontEndPlugin
+} from '@jupyterlab/application';
 
-import { JupyterFrontEndPlugin } from '@jupyterlab/application';
-import { pathsPlugin } from './voilaplugins/path';
-import { translatorPlugin } from './voilaplugins/translator';
-import { renderOutputsPlugin, widgetManager } from './voilaplugins/widget';
+import { VoilaApp } from '../app';
 
 /**
- * Export the plugins as default.
+ * The default paths.
  */
-const plugins: JupyterFrontEndPlugin<any>[] = [
-  pathsPlugin,
-  translatorPlugin,
-  widgetManager,
-  renderOutputsPlugin
-];
-
-export default plugins;
-
-export { pathsPlugin, translatorPlugin, widgetManager, renderOutputsPlugin };
+export const pathsPlugin: JupyterFrontEndPlugin<JupyterFrontEnd.IPaths> = {
+  id: '@voila-dashboards/voila:paths',
+  activate: (
+    app: JupyterFrontEnd<JupyterFrontEnd.IShell>
+  ): JupyterFrontEnd.IPaths => {
+    return (app as VoilaApp).paths;
+  },
+  autoStart: true,
+  provides: JupyterFrontEnd.IPaths
+};
