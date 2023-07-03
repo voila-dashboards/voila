@@ -20,9 +20,6 @@ import tempfile
 import threading
 import webbrowser
 
-from .setting_handler import VoilaSettingHandler
-
-
 from .voila_identity_provider import VoilaLoginHandler
 
 try:
@@ -638,30 +635,6 @@ class Voila(Application):
                         self.server_url, r"/api/kernels/%s/channels" % _kernel_id_regex
                     ),
                     KernelWebsocketHandler,
-                ),
-                (
-                    url_path_join(self.server_url, r"/voila/api/settings", "?"),
-                    VoilaSettingHandler,
-                    {
-                        "name": self.name,
-                        "app_settings_dir": pjoin(self.data_dir, "settings"),
-                        "schemas_dir": self.schemas_dir,
-                        "labextensions_path": self.labextensions_path,
-                        "settings_dir": pjoin(self.data_dir, "user-settings"),
-                    },
-                ),
-                (
-                    url_path_join(
-                        self.server_url, r"/voila/api/settings", "(?P<schema_name>.+)"
-                    ),
-                    VoilaSettingHandler,
-                    {
-                        "name": self.name,
-                        "app_settings_dir": pjoin(self.data_dir, "settings"),
-                        "schemas_dir": self.schemas_dir,
-                        "labextensions_path": self.labextensions_path,
-                        "settings_dir": pjoin(self.data_dir, "user-settings"),
-                    },
                 ),
                 (
                     url_path_join(self.server_url, r"/voila/templates/(.*)"),

@@ -1,11 +1,6 @@
 // Copyright (c) Jupyter Development Team.
 // Distributed under the terms of the Modified BSD License.
-import {
-  Dialog,
-  ISplashScreen,
-  IThemeManager,
-  showDialog
-} from '@jupyterlab/apputils';
+import { Dialog, IThemeManager, showDialog } from '@jupyterlab/apputils';
 import { IChangedArgs, URLExt } from '@jupyterlab/coreutils';
 import {
   ITranslator,
@@ -43,13 +38,12 @@ export class ThemeManager implements IThemeManager {
    * Construct a new theme manager.
    */
   constructor(options: ThemeManager.IOptions) {
-    const { host, splash, url } = options;
+    const { host, url } = options;
     this.translator = options.translator || nullTranslator;
     this._trans = this.translator.load('jupyterlab');
 
     this._base = url;
     this._host = host;
-    this._splash = splash || null;
   }
 
   /**
@@ -290,9 +284,7 @@ export class ThemeManager implements IThemeManager {
     const current = this._current;
     const links = this._links;
     const themes = this._themes;
-    const splash = this._splash
-      ? this._splash.show(themes[theme].isLight)
-      : new DisposableDelegate(() => undefined);
+    const splash = new DisposableDelegate(() => undefined);
 
     // Unload any CSS files that have been loaded.
     links.forEach((link) => {
@@ -313,18 +305,19 @@ export class ThemeManager implements IThemeManager {
           oldValue: current,
           newValue: theme
         });
+        if (this._host) {
+          // Need to force a redraw of the app here to avoid a Chrome rendering
+          // bug that can leave the scrollbars in an invalid state
+          this._host.hide();
 
-        // Need to force a redraw of the app here to avoid a Chrome rendering
-        // bug that can leave the scrollbars in an invalid state
-        this._host.hide();
-
-        // If we hide/show the widget too quickly, no redraw will happen.
-        // requestAnimationFrame delays until after the next frame render.
-        requestAnimationFrame(() => {
-          this._host.show();
-          Private.fitAll(this._host);
-          splash.dispose();
-        });
+          // If we hide/show the widget too quickly, no redraw will happen.
+          // requestAnimationFrame delays until after the next frame render.
+          requestAnimationFrame(() => {
+            this._host!.show();
+            Private.fitAll(this._host!);
+            splash.dispose();
+          });
+        }
       })
       .catch((reason) => {
         this._onError(reason);
@@ -347,14 +340,13 @@ export class ThemeManager implements IThemeManager {
   private _trans: TranslationBundle;
   private _base: string;
   private _current: string | null = null;
-  private _host: Widget;
+  private _host?: Widget;
   private _links: HTMLLinkElement[] = [];
   private _overrides: Dict<string> = {};
   private _overrideProps: Dict<string> = {};
   private _outstanding: Promise<void> | null = null;
   private _pending = 0;
   private _requests: { [theme: string]: number } = {};
-  private _splash: ISplashScreen | null;
   private _themes: { [key: string]: IThemeManager.ITheme } = {};
   private _themeChanged = new Signal<this, IChangedArgs<string, string | null>>(
     this
@@ -370,17 +362,7 @@ export namespace ThemeManager {
     /**
      * The host widget for the theme manager.
      */
-    host: Widget;
-
-    /**
-     * The setting registry key that holds theme setting data.
-     */
-    key: string;
-
-    /**
-     * The splash screen to show when loading themes.
-     */
-    splash?: ISplashScreen;
+    host?: Widget;
 
     /**
      * The url for local theme loading.

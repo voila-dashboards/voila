@@ -10,3 +10,4 @@
 export * from './app';
 export * from './shell';
 export * from './plugins';
+export * from './tools';

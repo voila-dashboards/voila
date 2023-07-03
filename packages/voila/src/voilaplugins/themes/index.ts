@@ -10,7 +10,7 @@ import {
   JupyterFrontEnd,
   JupyterFrontEndPlugin
 } from '@jupyterlab/application';
-import { ISplashScreen, IThemeManager } from '@jupyterlab/apputils';
+import { IThemeManager } from '@jupyterlab/apputils';
 import { PageConfig, URLExt } from '@jupyterlab/coreutils';
 import { ThemeManager } from './thememanager';
 
@@ -21,19 +21,14 @@ export const themesManagerPlugin: JupyterFrontEndPlugin<IThemeManager> = {
   id: '@jupyterlab/apputils-extension:themes',
   description: 'Provides the theme manager.',
   requires: [JupyterFrontEnd.IPaths],
-  optional: [ISplashScreen],
   activate: (
     app: JupyterFrontEnd,
-    paths: JupyterFrontEnd.IPaths,
-    splash: ISplashScreen | null
+    paths: JupyterFrontEnd.IPaths
   ): IThemeManager => {
     const host = app.shell;
     const url = URLExt.join(PageConfig.getBaseUrl(), paths.urls.themes);
-    const key = themesManagerPlugin.id;
     const manager = new ThemeManager({
-      key,
       host,
-      splash: splash ?? undefined,
       url
     });
 

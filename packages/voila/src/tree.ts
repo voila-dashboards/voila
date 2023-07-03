@@ -8,21 +8,26 @@
  * Copyright (c) Jupyter Development Team.                                  *
  * Distributed under the terms of the Modified BSD License.                 *
  ****************************************************************************/
-import './sharedscope';
 
 import { PageConfig, URLExt } from '@jupyterlab/coreutils';
 
 import { VoilaApp } from './app';
-import plugins from './plugins';
+import {
+  pathsPlugin,
+  themePlugin,
+  themesManagerPlugin,
+  translatorPlugin
+} from './plugins';
 import { VoilaServiceManager } from './services/servicemanager';
 import { VoilaShell } from './shell';
 import { activePlugins, createModule, loadComponent } from './tools';
 
-//Inspired by: https://github.com/jupyterlab/jupyterlab/blob/master/dev_mode/index.js
-
 const disabled = [
   '@jupyter-widgets/jupyterlab-manager:plugin',
-  '@jupyter-widgets/jupyterlab-manager:saveWidgetState'
+  '@jupyter-widgets/jupyterlab-manager:saveWidgetState',
+  '@jupyter-widgets/jupyterlab-manager:base-2.0.0',
+  '@jupyter-widgets/jupyterlab-manager:controls-2.0.0',
+  '@jupyter-widgets/jupyterlab-manager:output-1.0.0'
 ];
 
 /**
@@ -30,22 +35,15 @@ const disabled = [
  */
 async function main() {
   const mods = [
-    // @jupyterlab plugins
-    require('@jupyterlab/codemirror-extension').default.filter(
-      (p: any) => p.id === '@jupyterlab/codemirror-extension:languages'
-    ),
-    require('@jupyterlab/markedparser-extension'),
-    require('@jupyterlab/rendermime-extension'),
     require('@jupyterlab/theme-light-extension'),
     require('@jupyterlab/theme-dark-extension'),
-    plugins
+    pathsPlugin,
+    translatorPlugin,
+    themePlugin,
+    themesManagerPlugin
   ];
 
-  const mimeExtensions = [
-    require('@jupyterlab/javascript-extension'),
-    require('@jupyterlab/json-extension'),
-    require('@jupyterlab/vega5-extension')
-  ];
+  const mimeExtensions: any[] = [];
 
   const extensionData: any[] = JSON.parse(
     PageConfig.getOption('federated_extensions')
@@ -131,8 +129,13 @@ async function main() {
     serviceManager: new VoilaServiceManager()
   });
   app.registerPluginModules(mods);
+  app.started.then(() => {
+    const el = document.getElementById('voila-tree-main');
+    if (el) {
+      el.style.display = 'unset';
+    }
+  });
   await app.start();
-  window.jupyterapp = app;
 }
 
 window.addEventListener('load', main);
