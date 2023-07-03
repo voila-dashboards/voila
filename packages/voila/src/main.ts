@@ -5,8 +5,10 @@
  * Distributed under the terms of the BSD 3-Clause License.                 *
  *                                                                          *
  * The full license is in the file LICENSE, distributed with this software. *
+ * Copyright (c) Jupyter Development Team.                                  *
+ * Distributed under the terms of the Modified BSD License.                 *
  ****************************************************************************/
-import 'react-dom';
+import './sharedscope';
 
 import { PageConfig, URLExt } from '@jupyterlab/coreutils';
 
@@ -15,10 +17,7 @@ import plugins from './plugins';
 import { VoilaServiceManager } from './services/servicemanager';
 import { VoilaShell } from './shell';
 
-// Copyright (c) Jupyter Development Team.
-// Distributed under the terms of the Modified BSD License.
-
-// Inspired by: https://github.com/jupyterlab/jupyterlab/blob/master/dev_mode/index.js
+//Inspired by: https://github.com/jupyterlab/jupyterlab/blob/master/dev_mode/index.js
 
 // Inject some packages in the shared scope
 function loadScript(url: string): Promise<any> {
@@ -72,18 +71,8 @@ async function main() {
     ),
     require('@jupyterlab/markedparser-extension'),
     require('@jupyterlab/rendermime-extension'),
-    require('@jupyterlab/apputils-extension').default.filter((m: any) =>
-      [
-        '@jupyterlab/apputils-extension:settings',
-        '@jupyterlab/apputils-extension:themes'
-      ].includes(m.id)
-    ),
     require('@jupyterlab/theme-light-extension'),
     require('@jupyterlab/theme-dark-extension'),
-    // TODO: add the settings endpoint to re-enable the theme plugins?
-    // This would also need the theme manager plugin and settings
-    // require('@jupyterlab/theme-light-extension'),
-    // require('@jupyterlab/theme-dark-extension'),
     plugins
   ];
 

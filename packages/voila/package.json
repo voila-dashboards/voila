@@ -37,6 +37,7 @@
     "@lumino/algorithm": "^2.0.0",
     "@lumino/commands": "^2.0.0",
     "@lumino/coreutils": "^2.0.0",
+    "@lumino/datagrid": "^2.1.2",
     "@lumino/disposable": "^2.0.0",
     "@lumino/domutils": "^2.0.0",
     "@lumino/dragdrop": "^2.0.0",

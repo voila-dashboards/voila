@@ -23,9 +23,7 @@ from jupyter_core.paths import jupyter_path
 from jupyter_server.utils import url_path_join
 from jupyterlab_server.config import get_page_config as gpc
 from jupyterlab_server.config import recursive_update
-from jupyterlab_server.themes_handler import ThemesHandler
 from markupsafe import Markup
-from nbconvert.exporters.html import find_lab_theme
 
 from ._version import __version__
 from .static_file_handler import TemplateStaticFileHandler
@@ -202,17 +200,8 @@ def include_url(template_name: str, base_url: str, name: str) -> str:
 
 
 def include_lab_theme(base_url: str, name: str) -> str:
-    # Try to find the theme with the given name, looking through the labextensions
-    theme_name, _ = find_lab_theme(name)
-
-    settings = {
-        "static_url_prefix": f"{base_url}voila/themes/",
-        "static_path": None,  # not used in TemplateStaticFileHandler.get_absolute_path
-    }
-    url = ThemesHandler.make_static_url(settings, f"{theme_name}/index.css")
-
-    code = f'<link rel="stylesheet" type="text/css" href="{url}">'
-    return Markup(code)
+    """Override the function from `nbconvert`"""
+    return ""
 
 
 def create_include_assets_functions(template_name: str, base_url: str) -> Dict:

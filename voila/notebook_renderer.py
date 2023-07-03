@@ -8,6 +8,7 @@
 #############################################################################
 
 
+from copy import deepcopy
 import os
 import sys
 import traceback
@@ -43,7 +44,7 @@ class NotebookRenderer(LoggingConfigurable):
         self.kernel_spec_manager = kwargs.get("kernel_spec_manager")
         self.prelaunch_hook = kwargs.get("prelaunch_hook")
         self.base_url = kwargs.get("base_url")
-        self.page_config = kwargs.get("page_config")
+        self.page_config = deepcopy(kwargs.get("page_config"))
         self.default_kernel_name = "python3"
         self.kernel_started = False
         self.stop_generator = False
@@ -105,6 +106,8 @@ class NotebookRenderer(LoggingConfigurable):
             theme_override = theme_arg if theme_arg is not None else theme_override
         self.theme = theme_override
         # render notebook to html
+        self.page_config["jupyterLabTheme"] = self.theme
+
         self.resources = {
             "base_url": self.base_url,
             "theme": self.theme,

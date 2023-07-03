@@ -20,6 +20,8 @@ import tempfile
 import threading
 import webbrowser
 
+from .setting_handler import VoilaSettingHandler
+
 
 from .voila_identity_provider import VoilaLoginHandler
 
@@ -58,7 +60,6 @@ from jupyter_server.utils import url_path_join
 from jupyter_core.utils import run_sync
 
 from jupyterlab_server.themes_handler import ThemesHandler
-from jupyterlab_server.settings_handler import SettingsHandler
 
 
 from traitlets import Bool, Callable, Dict, Integer, List, Unicode, default, Type, Bytes
@@ -616,7 +617,7 @@ class Voila(Application):
             kernel_websocket_connection_class=self.kernel_websocket_connection_class,
             login_url=url_path_join(self.base_url, "/login"),
         )
-        settings[self.name] = self
+        settings[self.name] = self  # Why???
 
         return settings
 
@@ -640,26 +641,26 @@ class Voila(Application):
                 ),
                 (
                     url_path_join(self.server_url, r"/voila/api/settings", "?"),
-                    SettingsHandler,
+                    VoilaSettingHandler,
                     {
                         "name": self.name,
                         "app_settings_dir": pjoin(self.data_dir, "settings"),
                         "schemas_dir": self.schemas_dir,
                         "labextensions_path": self.labextensions_path,
-                        "settings_dir": "",
+                        "settings_dir": pjoin(self.data_dir, "user-settings"),
                     },
                 ),
                 (
                     url_path_join(
                         self.server_url, r"/voila/api/settings", "(?P<schema_name>.+)"
                     ),
-                    SettingsHandler,
+                    VoilaSettingHandler,
                     {
                         "name": self.name,
                         "app_settings_dir": pjoin(self.data_dir, "settings"),
                         "schemas_dir": self.schemas_dir,
                         "labextensions_path": self.labextensions_path,
-                        "settings_dir": "",
+                        "settings_dir": pjoin(self.data_dir, "user-settings"),
                     },
                 ),
                 (

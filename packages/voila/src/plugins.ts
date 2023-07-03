@@ -11,6 +11,7 @@ import { JupyterFrontEndPlugin } from '@jupyterlab/application';
 import { pathsPlugin } from './voilaplugins/path';
 import { translatorPlugin } from './voilaplugins/translator';
 import { renderOutputsPlugin, widgetManager } from './voilaplugins/widget';
+import { themePlugin, themesManagerPlugin } from './voilaplugins/themes';
 
 /**
  * Export the plugins as default.
@@ -19,9 +20,18 @@ const plugins: JupyterFrontEndPlugin<any>[] = [
   pathsPlugin,
   translatorPlugin,
   widgetManager,
-  renderOutputsPlugin
+  renderOutputsPlugin,
+  themesManagerPlugin,
+  themePlugin
 ];
 
 export default plugins;
 
-export { pathsPlugin, translatorPlugin, widgetManager, renderOutputsPlugin };
+export {
+  pathsPlugin,
+  translatorPlugin,
+  widgetManager,
+  renderOutputsPlugin,
+  themesManagerPlugin,
+  themePlugin
+};
