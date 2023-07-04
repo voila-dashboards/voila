@@ -28,13 +28,6 @@
     "prettier:check": "prettier --list-different \"**/*{.ts,.tsx,.js,.jsx,.css,.json,.md}\"",
     "test": "lerna run test"
   },
-  "resolutions": {
-    "@jupyter-widgets/base-manager": "file:../ipywidgets/packages/base-manager",
-    "@jupyter-widgets/base": "file:../ipywidgets/packages/base",
-    "@jupyter-widgets/controls": "file:../ipywidgets/packages/controls",
-    "@jupyter-widgets/output": "file:../ipywidgets/packages/output",
-    "@jupyter-widgets/jupyterlab-manager": "file:../ipywidgets/python/jupyterlab_widgets"
-  },
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "^4.2.0",
     "@typescript-eslint/parser": "^4.2.0",

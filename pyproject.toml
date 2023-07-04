@@ -112,13 +112,13 @@ ensured-targets = [
     "voila/labextension/static/style.js",
     "share/jupyter/voila/templates/base/static/materialcolors.css",
     "share/jupyter/voila/templates/base/static/labvariables.css",
-    "share/jupyter/voila/style.js",
+    "share/jupyter/voila/themes/@jupyterlab/theme-dark-extension/index.css"
 ]
 skip-if-exists = [
     "voila/labextension/static/style.js",
     "share/jupyter/voila/templates/base/static/materialcolors.css",
     "share/jupyter/voila/templates/base/static/labvariables.css",
-    "share/jupyter/voila/style.js",
+    "share/jupyter/voila/themes/@jupyterlab/theme-dark-extension/index.css"
 ]
 
 [tool.hatch.build.hooks.jupyter-builder.editable-build-kwargs]
