@@ -22,6 +22,8 @@ from nbclient.util import ensure_async
 from nbconvert.preprocessors import ClearOutputPreprocessor
 from traitlets.config.configurable import LoggingConfigurable
 
+from voila.configuration import VoilaConfiguration
+
 from .execute import VoilaExecutor, strip_code_cell_warnings
 from .exporter import VoilaExporter
 from .paths import collect_template_paths
@@ -38,7 +40,7 @@ class NotebookRenderer(LoggingConfigurable):
         self.notebook_path = kwargs.get("notebook_path", [])  # should it be []
         self.template_paths = kwargs.get("template_paths", [])
         self.traitlet_config = kwargs.get("traitlet_config", None)
-        self.voila_configuration = kwargs.get("voila_configuration")
+        self.voila_configuration: VoilaConfiguration = kwargs.get("voila_configuration")
         self.config_manager = kwargs.get("config_manager")
         self.contents_manager = kwargs.get("contents_manager")
         self.kernel_spec_manager = kwargs.get("kernel_spec_manager")
@@ -107,7 +109,10 @@ class NotebookRenderer(LoggingConfigurable):
         self.theme = theme_override
         # render notebook to html
         self.page_config["jupyterLabTheme"] = self.theme
-
+        self.page_config["extensionConfig"] = {
+            "whiteList": self.voila_configuration.extension_whitelist,
+            "blackList": self.voila_configuration.extension_blacklist,
+        }
         self.resources = {
             "base_url": self.base_url,
             "theme": self.theme,

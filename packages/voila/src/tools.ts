@@ -69,3 +69,15 @@ export function* activePlugins(
     yield plugin;
   }
 }
+
+export interface IFederatedExtensionData {
+  name: string;
+  load: string;
+}
+export function resolveFederatedExtension(
+  pageConfigData: IFederatedExtensionData[],
+  blackList: string[],
+  whileList: string[]
+): IFederatedExtensionData[] {
+  return pageConfigData
+}
