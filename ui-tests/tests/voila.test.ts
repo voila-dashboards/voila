@@ -13,7 +13,7 @@ test.describe('Voila performance Tests', () => {
   });
   test('Render tree classic', async ({ page, browserName }, testInfo) => {
     const testFunction = async () => {
-      await page.goto('?voila-template=classic');
+      await page.goto('?template=classic');
       // wait for page to load
       await page.waitForSelector('.list-header');
     };
@@ -45,7 +45,7 @@ test.describe('Voila performance Tests', () => {
 
   test('Render tree dark theme', async ({ page, browserName }, testInfo) => {
     const testFunction = async () => {
-      await page.goto('?voila-theme=dark');
+      await page.goto('?theme=dark');
       // wait for page to load
       await page.waitForSelector('.list-header');
     };
@@ -61,7 +61,7 @@ test.describe('Voila performance Tests', () => {
 
   test('Render tree miami theme', async ({ page, browserName }, testInfo) => {
     const testFunction = async () => {
-      await page.goto('?voila-theme=jupyterlab_miami_nights');
+      await page.goto('?theme=jupyterlab_miami_nights');
       // wait for page to load
       await page.waitForSelector('.list-header');
     };
@@ -81,9 +81,7 @@ test.describe('Voila performance Tests', () => {
   }, testInfo) => {
     const notebookName = 'basics';
     const testFunction = async () => {
-      await page.goto(
-        `/voila/render/${notebookName}.ipynb?voila-template=classic`
-      );
+      await page.goto(`/voila/render/${notebookName}.ipynb?template=classic`);
       // wait for the widgets to load
       await page.waitForSelector('span[role="presentation"] >> text=x');
     };
@@ -128,7 +126,7 @@ test.describe('Voila performance Tests', () => {
   }, testInfo) => {
     const notebookName = 'basics';
     const testFunction = async () => {
-      await page.goto(`/voila/render/${notebookName}.ipynb?voila-theme=dark`);
+      await page.goto(`/voila/render/${notebookName}.ipynb?theme=dark`);
       // wait for the widgets to load
       await page.waitForSelector('span[role="presentation"] >> text=x');
     };
@@ -147,7 +145,7 @@ test.describe('Voila performance Tests', () => {
     const notebookName = 'basics';
     const testFunction = async () => {
       await page.goto(
-        `/voila/render/${notebookName}.ipynb?voila-theme=jupyterlab_miami_nights`
+        `/voila/render/${notebookName}.ipynb?theme=jupyterlab_miami_nights`
       );
       // wait for the widgets to load
       await page.waitForSelector('span[role="presentation"] >> text=x');
@@ -170,14 +168,14 @@ test.describe('Voila performance Tests', () => {
   });
 
   test('Render 404 error with classic template', async ({ page }) => {
-    await page.goto('/voila/render/unknown.ipynb?voila-template=classic');
+    await page.goto('/voila/render/unknown.ipynb?template=classic');
     await page.waitForSelector('.voila-error');
 
     expect(await page.screenshot()).toMatchSnapshot('404-classic.png');
   });
 
   test('Render 404 error with dark theme', async ({ page }) => {
-    await page.goto('/voila/render/unknown.ipynb?voila-theme=dark');
+    await page.goto('/voila/render/unknown.ipynb?theme=dark');
     await page.waitForSelector('.voila-error');
 
     expect(await page.screenshot()).toMatchSnapshot('404-dark.png');

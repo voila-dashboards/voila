@@ -32,12 +32,12 @@ class BaseVoilaHandler(JupyterHandler):
     def render_template(self, name, **ns):
         """Render the Voila HTML template, respecting the theme and nbconvert template."""
         template_arg = (
-            self.get_argument("voila-template", self.voila_configuration.template)
+            self.get_argument("template", self.voila_configuration.template)
             if self.voila_configuration.allow_template_override == "YES"
             else self.voila_configuration.template
         )
         theme_arg = (
-            self.get_argument("voila-theme", self.voila_configuration.theme)
+            self.get_argument("theme", self.voila_configuration.theme)
             if self.voila_configuration.allow_theme_override == "YES"
             else self.voila_configuration.theme
         )
@@ -111,8 +111,8 @@ class VoilaHandler(BaseVoilaHandler):
                     env_name = f'HTTP_{header_name.upper().replace("-", "_")}'
                     request_info[env_name] = self.request.headers.get(header_name)
 
-        template_arg = self.get_argument("voila-template", None)
-        theme_arg = self.get_argument("voila-theme", None)
+        template_arg = self.get_argument("template", None)
+        theme_arg = self.get_argument("theme", None)
 
         # Compose reply
         self.set_header("Content-Type", "text/html")

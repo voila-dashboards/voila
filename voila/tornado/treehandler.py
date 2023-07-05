@@ -41,7 +41,7 @@ class TornadoVoilaTreeHandler(VoilaTreeHandler):
             contents["content"] = filter(allowed_content, contents["content"])
 
             theme_arg = (
-                self.get_argument("voila-theme", self.voila_configuration.theme)
+                self.get_argument("theme", self.voila_configuration.theme)
                 if self.voila_configuration.allow_theme_override == "YES"
                 else self.voila_configuration.theme
             )

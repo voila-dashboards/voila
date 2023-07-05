@@ -24,7 +24,7 @@ the following option:
 
    voila <path-to-notebook> --theme=dark
 
-Or by passing in the query parameter ``voila-theme``, e.g. a URL like ``http://localhost:8867/voila/render/query-strings.ipynb?voila-theme=dark``.
+Or by passing in the query parameter ``theme``, e.g. a URL like ``http://localhost:8867/voila/render/query-strings.ipynb?theme=dark``.
 
 The theme can also be set in the notebook metadata, under ``metadata/voila/theme`` by editing the notebook file manually, or using the metadata editor in for instance the classical notebook
 
@@ -73,7 +73,7 @@ For example, to use the `gridstack <https://github.com/voila-dashboards/voila-gr
    voila <path-to-notebook> --template=gridstack
 
 
-Or by passing in the query parameter ``voila-template``, e.g. a URL like ``http://localhost:8867/voila/render/query-strings.ipynb?voila-template=material`` (Note that this requires installing voila-material).
+Or by passing in the query parameter ``template``, e.g. a URL like ``http://localhost:8867/voila/render/query-strings.ipynb?template=material`` (Note that this requires installing voila-material).
 
 The template can also set in the notebook metadata, under ``metadata/voila/template`` by editing the notebook file manually, or using the metadata editor in for instance the classical notebook
 
