@@ -77,42 +77,42 @@ export interface IFederatedExtensionData {
   style?: string;
   mimeExtension?: string;
 }
-/**
- * Create a list of extension to be loaded from the
- * available extensions and the black/white list
- * configuration
- *
- * @export
- * @param {IFederatedExtensionData[]} pageConfigData
- * @param {string[]} blackList
- * @param {string[]} whileList
- * @return {*}  {IFederatedExtensionData[]}
- */
-export function resolveFederatedExtension(options: {
-  pageConfigExtensionData: IFederatedExtensionData[];
-  blackList: string[];
-  whiteList: string[];
-}): IFederatedExtensionData[] {
-  const mustHave = ['@jupyter-widgets/jupyterlab-manager'];
-  const { pageConfigExtensionData, blackList, whiteList } = options;
-  if (blackList.length === 0) {
-    if (whiteList.length === 0) {
-      // No white and black list, return all
-      return pageConfigExtensionData;
-    }
-    /// White list is not empty, return white listed only
-    return pageConfigExtensionData.filter(
-      (item) => mustHave.includes(item.name) || whiteList.includes(item.name)
-    );
-  }
-  if (whiteList.length === 0) {
-    // No white list, return non black listed only
-    return pageConfigExtensionData.filter(
-      (item) => mustHave.includes(item.name) || !blackList.includes(item.name)
-    );
-  }
-  /// Have both black and white list, use only white list
-  return pageConfigExtensionData.filter(
-    (item) => mustHave.includes(item.name) || whiteList.includes(item.name)
-  );
-}
+// /**
+//  * Create a list of extension to be loaded from the
+//  * available extensions and the black/white list
+//  * configuration
+//  *
+//  * @export
+//  * @param {IFederatedExtensionData[]} pageConfigData
+//  * @param {string[]} blackList
+//  * @param {string[]} whileList
+//  * @return {*}  {IFederatedExtensionData[]}
+//  */
+// export function resolveFederatedExtension(options: {
+//   pageConfigExtensionData: IFederatedExtensionData[];
+//   blackList: string[];
+//   whiteList: string[];
+// }): IFederatedExtensionData[] {
+//   const mustHave = ['@jupyter-widgets/jupyterlab-manager'];
+//   const { pageConfigExtensionData, blackList, whiteList } = options;
+//   if (blackList.length === 0) {
+//     if (whiteList.length === 0) {
+//       // No white and black list, return all
+//       return pageConfigExtensionData;
+//     }
+//     /// White list is not empty, return white listed only
+//     return pageConfigExtensionData.filter(
+//       (item) => mustHave.includes(item.name) || whiteList.includes(item.name)
+//     );
+//   }
+//   if (whiteList.length === 0) {
+//     // No white list, return non black listed only
+//     return pageConfigExtensionData.filter(
+//       (item) => mustHave.includes(item.name) || !blackList.includes(item.name)
+//     );
+//   }
+//   /// Have both black and white list, use only white list
+//   return pageConfigExtensionData.filter(
+//     (item) => mustHave.includes(item.name) || whiteList.includes(item.name)
+//   );
+// }

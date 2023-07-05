@@ -137,5 +137,4 @@ async function main() {
   });
   await app.start();
 }
-
 window.addEventListener('load', main);

@@ -195,7 +195,11 @@ class VoilaHandler(BaseVoilaHandler):
                 kernel_spec_manager=self.kernel_spec_manager,
                 prelaunch_hook=self.prelaunch_hook,
                 page_config=get_page_config(
-                    base_url=self.base_url, settings=self.settings, log=self.log
+                    base_url=self.base_url,
+                    settings=self.settings,
+                    log=self.log,
+                    extension_whitelist=self.voila_configuration.extension_whitelist,
+                    extension_blacklist=self.voila_configuration.extension_blacklist,
                 ),
             )
 

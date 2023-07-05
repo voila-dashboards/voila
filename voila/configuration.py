@@ -145,7 +145,7 @@ class VoilaConfiguration(traitlets.config.Configurable):
         None,
         allow_none=True,
         config=True,
-        help="""The list of enabled JupyterLab extensions, if it is disabled, all extensions are loaded.
+        help="""The list of enabled JupyterLab extensions, if `None`, all extensions are loaded.
         This setting has higher priority than the `extension_blacklist`
         """,
     )
@@ -154,5 +154,5 @@ class VoilaConfiguration(traitlets.config.Configurable):
         None,
         allow_none=True,
         config=True,
-        help="""The list of disabled JupyterLab extensions, if it is disabled, all extensions are loaded""",
+        help="""The list of disabled JupyterLab extensions, if `None`, all extensions are loaded""",
     )

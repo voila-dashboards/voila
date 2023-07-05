@@ -8,18 +8,18 @@
 #############################################################################
 
 
-from copy import deepcopy
 import os
 import sys
 import traceback
+from copy import deepcopy
 from typing import Generator, List, Tuple, Union
 
 import nbformat
 import tornado.web
+from jupyter_core.utils import ensure_async
 from jupyter_server.config_manager import recursive_update
 from nbclient.exceptions import CellExecutionError
-from nbclient.util import ensure_async
-from nbconvert.preprocessors import ClearOutputPreprocessor
+from nbconvert.preprocessors.clearoutput import ClearOutputPreprocessor
 from traitlets.config.configurable import LoggingConfigurable
 
 from voila.configuration import VoilaConfiguration
@@ -109,10 +109,6 @@ class NotebookRenderer(LoggingConfigurable):
         self.theme = theme_override
         # render notebook to html
         self.page_config["jupyterLabTheme"] = self.theme
-        self.page_config["extensionConfig"] = {
-            "whiteList": self.voila_configuration.extension_whitelist,
-            "blackList": self.voila_configuration.extension_blacklist,
-        }
         self.resources = {
             "base_url": self.base_url,
             "theme": self.theme,

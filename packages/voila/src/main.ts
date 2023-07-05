@@ -20,8 +20,7 @@ import {
   IFederatedExtensionData,
   activePlugins,
   createModule,
-  loadComponent,
-  resolveFederatedExtension
+  loadComponent
 } from './tools';
 
 //Inspired by: https://github.com/jupyterlab/jupyterlab/blob/master/dev_mode/index.js
@@ -53,19 +52,9 @@ async function main() {
     require('@jupyterlab/vega5-extension')
   ];
 
-  const pageConfigExtensionData: IFederatedExtensionData[] = JSON.parse(
+  const extensionData: IFederatedExtensionData[] = JSON.parse(
     PageConfig.getOption('federated_extensions')
   );
-  const { blackList, whiteList } = JSON.parse(
-    PageConfig.getOption('extensionConfig')
-  ) as { blackList: string[]; whiteList: string[] };
-  const extensionData = resolveFederatedExtension({
-    pageConfigExtensionData,
-    blackList,
-    whiteList
-  });
-  console.log('extensionData', extensionData);
-
   const federatedExtensionPromises: Promise<any>[] = [];
   const federatedMimeExtensionPromises: Promise<any>[] = [];
   const federatedStylePromises: Promise<any>[] = [];

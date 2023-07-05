@@ -12,11 +12,12 @@ import asyncio
 import os
 import re
 from pathlib import Path
-from typing import Awaitable, Tuple, Type, TypeVar, Union
+from typing import Awaitable
 from typing import Dict as TypeDict
 from typing import List as TypeList
+from typing import Tuple, Type, TypeVar, Union
 
-from nbclient.util import ensure_async
+from jupyter_core.utils import ensure_async
 from traitlets.traitlets import Dict, Float, List, default
 
 from .notebook_renderer import NotebookRenderer
@@ -365,8 +366,9 @@ def voila_kernel_manager_factory(
                     - notebook_path (Union[str, None], optional): Path to the
                     notebook. Defaults to None.
                 """
+                voila_configuration = self.parent.voila_configuration
                 return NotebookRenderer(
-                    voila_configuration=self.parent.voila_configuration,
+                    voila_configuration=voila_configuration,
                     traitlet_config=self.parent.config,
                     notebook_path=notebook_path,
                     template_paths=self.parent.template_paths,
@@ -378,6 +380,8 @@ def voila_kernel_manager_factory(
                         base_url=self.parent.base_url,
                         settings=self.parent.app.settings,
                         log=self.parent.log,
+                        extension_whitelist=voila_configuration.extension_whitelist,
+                        extension_blacklist=voila_configuration.extension_blacklist,
                     ),
                 )
 

@@ -8,21 +8,22 @@
 #############################################################################
 
 import asyncio
+from copy import deepcopy
 import json
 import os
-from pathlib import Path
 import sys
 import threading
 import warnings
 from enum import Enum
 from functools import partial
-from typing import Awaitable, Dict
-import site
+from pathlib import Path
+from typing import Awaitable, Dict, List
+
 import websockets
 from jupyter_core.paths import jupyter_path
+from jupyter_server.config_manager import recursive_update
 from jupyter_server.utils import url_path_join
 from jupyterlab_server.config import get_page_config as gpc
-from jupyterlab_server.config import recursive_update
 from markupsafe import Markup
 
 from ._version import __version__
@@ -75,7 +76,13 @@ async def _get_request_info(ws_url: str) -> Awaitable:
         return ri
 
 
-def get_page_config(base_url, settings, log):
+def get_page_config(
+    base_url,
+    settings,
+    log,
+    extension_whitelist: List[str] = [],
+    extension_blacklist: List[str] = [],
+):
     page_config = {
         "appVersion": __version__,
         "appUrl": "voila/",
@@ -108,11 +115,72 @@ def get_page_config(base_url, settings, log):
         "@voila-dashboards/jupyterlab-preview",
         "@jupyter/collaboration-extension",
     ]
-    federated_extensions = page_config["federated_extensions"]
-    page_config["federated_extensions"] = [
+    must_have_extensions = ["@jupyter-widgets/jupyterlab-manager"]
+    federated_extensions = deepcopy(page_config["federated_extensions"])
+
+    page_config["federated_extensions"] = filter_extension(
+        federated_extensions=federated_extensions,
+        disabled_extensions=disabled_extensions,
+        must_have_extensions=must_have_extensions,
+        extension_whitelist=extension_whitelist,
+        extension_blacklist=extension_blacklist,
+    )
+    return page_config
+
+
+def filter_extension(
+    federated_extensions: List[Dict],
+    disabled_extensions: List[str] = [],
+    must_have_extensions: List[str] = [],
+    extension_whitelist: List[str] = [],
+    extension_blacklist: List[str] = [],
+) -> List[Dict]:
+    """Create a list of extension to be loaded from available extensions and the
+    black/white list configuration.
+
+    Args:
+        - federated_extensions (List[Dict]): List of available extension
+        - disabled_extensions (List[str], optional): List of extension disabled by default.
+        Defaults to [].
+        - must_have_extensions (List[str], optional): List of extension must be enabled.
+        Defaults to [].
+        - extension_whitelist (List[str], optional): The white listed extensions.
+        Defaults to [].
+        - extension_blacklist (List[str], optional): The black listed extensions.
+        Defaults to [].
+
+    Returns:
+        List[Dict]: The filtered extensions
+    """
+    filtered_extensions = [
         x for x in federated_extensions if x["name"] not in disabled_extensions
     ]
-    return page_config
+    if len(extension_blacklist) == 0:
+        if len(extension_whitelist) == 0:
+            # No white and black list, return all
+            return filtered_extensions
+
+        # White list is not empty, return white listed only
+        return [
+            x
+            for x in filtered_extensions
+            if x["name"] in must_have_extensions or x["name"] in extension_whitelist
+        ]
+
+    if len(extension_whitelist) == 0:
+        # No white list, return non black listed only
+        return [
+            x
+            for x in filtered_extensions
+            if x["name"] in must_have_extensions or x["name"] not in extension_blacklist
+        ]
+
+    # Have both black and white list, use only white list
+    return [
+        x
+        for x in filtered_extensions
+        if x["name"] in must_have_extensions or x["name"] in extension_whitelist
+    ]
 
 
 def wait_for_request(url: str = None) -> str:
@@ -221,27 +289,11 @@ def pjoin(*args):
 def get_data_dir():
     """Get the Voila data directory."""
 
-    from .app import HERE
+    app_dirs = jupyter_path("voila")
+    for path in app_dirs:
+        if os.path.exists(path):
+            return str(Path(path).resolve())
 
     # Use the default locations for data_files.
     app_dir = pjoin(sys.prefix, "share", "jupyter", "voila")
-
-    # Check for a user level install.
-    # Ensure that USER_BASE is defined
-    if hasattr(site, "getuserbase"):
-        site.getuserbase()
-    userbase = getattr(site, "USER_BASE", None)
-    if HERE.startswith(userbase) and not app_dir.startswith(userbase):
-        app_dir = pjoin(userbase, "share", "jupyter", "lab")
-
-    # Check for a system install in '/usr/local/share'.
-    elif (
-        sys.prefix.startswith("/usr")
-        and not os.path.exists(app_dir)
-        and os.path.exists("/usr/local/share/jupyter/voila")
-    ):
-        app_dir = "/usr/local/share/jupyter/voila"
-
-    # We must resolve the path to get the canonical case of the path for
-    # case-sensitive systems
     return str(Path(app_dir).resolve())
