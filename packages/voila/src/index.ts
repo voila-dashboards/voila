@@ -9,5 +9,5 @@
 
 export * from './app';
 export * from './shell';
-export * from './plugins';
+export * from './voilaplugins';
 export * from './tools';

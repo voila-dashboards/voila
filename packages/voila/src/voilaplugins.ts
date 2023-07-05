@@ -8,10 +8,10 @@
  ****************************************************************************/
 
 import { JupyterFrontEndPlugin } from '@jupyterlab/application';
-import { pathsPlugin } from './voilaplugins/path';
-import { translatorPlugin } from './voilaplugins/translator';
-import { renderOutputsPlugin, widgetManager } from './voilaplugins/widget';
-import { themePlugin, themesManagerPlugin } from './voilaplugins/themes';
+import { pathsPlugin } from './plugins/path';
+import { translatorPlugin } from './plugins/translator';
+import { renderOutputsPlugin, widgetManager } from './plugins/widget';
+import { themePlugin, themesManagerPlugin } from './plugins/themes';
 
 /**
  * Export the plugins as default.

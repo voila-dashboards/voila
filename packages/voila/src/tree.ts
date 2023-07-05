@@ -17,7 +17,7 @@ import {
   themePlugin,
   themesManagerPlugin,
   translatorPlugin
-} from './plugins';
+} from './voilaplugins';
 import { VoilaServiceManager } from './services/servicemanager';
 import { VoilaShell } from './shell';
 import { activePlugins, createModule, loadComponent } from './tools';

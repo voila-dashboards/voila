@@ -13,7 +13,7 @@ import './sharedscope';
 import { PageConfig, URLExt } from '@jupyterlab/coreutils';
 
 import { VoilaApp } from './app';
-import plugins from './plugins';
+import plugins from './voilaplugins';
 import { VoilaServiceManager } from './services/servicemanager';
 import { VoilaShell } from './shell';
 import {
