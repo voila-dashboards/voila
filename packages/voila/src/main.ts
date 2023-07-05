@@ -16,7 +16,13 @@ import { VoilaApp } from './app';
 import plugins from './plugins';
 import { VoilaServiceManager } from './services/servicemanager';
 import { VoilaShell } from './shell';
-import { activePlugins, createModule, loadComponent } from './tools';
+import {
+  IFederatedExtensionData,
+  activePlugins,
+  createModule,
+  loadComponent,
+  resolveFederatedExtension
+} from './tools';
 
 //Inspired by: https://github.com/jupyterlab/jupyterlab/blob/master/dev_mode/index.js
 
@@ -47,9 +53,18 @@ async function main() {
     require('@jupyterlab/vega5-extension')
   ];
 
-  const extensionData: any[] = JSON.parse(
+  const pageConfigExtensionData: IFederatedExtensionData[] = JSON.parse(
     PageConfig.getOption('federated_extensions')
   );
+  const { blackList, whiteList } = JSON.parse(
+    PageConfig.getOption('extensionConfig')
+  ) as { blackList: string[]; whiteList: string[] };
+  const extensionData = resolveFederatedExtension({
+    pageConfigExtensionData,
+    blackList,
+    whiteList
+  });
+  console.log('extensionData', extensionData);
 
   const federatedExtensionPromises: Promise<any>[] = [];
   const federatedMimeExtensionPromises: Promise<any>[] = [];

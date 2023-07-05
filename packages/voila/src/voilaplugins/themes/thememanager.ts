@@ -167,7 +167,11 @@ export class ThemeManager implements IThemeManager {
     }
 
     themes[name] = theme;
-
+    this._themeChanged.emit({
+      name: '',
+      oldValue: null,
+      newValue: ''
+    });
     return new DisposableDelegate(() => {
       delete themes[name];
     });

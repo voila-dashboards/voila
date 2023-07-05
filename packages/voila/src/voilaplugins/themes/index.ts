@@ -32,18 +32,17 @@ export const themesManagerPlugin: JupyterFrontEndPlugin<IThemeManager> = {
       url
     });
 
-    // Keep a synchronously set reference to the current theme,
-    // since the asynchronous setting of the theme in `changeTheme`
-    // can lead to an incorrect toggle on the currently used theme.
     let currentTheme: string;
 
     manager.themeChanged.connect((sender, args) => {
       // Set data attributes on the application shell for the current theme.
       currentTheme = args.newValue;
-      document.body.dataset.jpThemeLight = String(
-        manager.isLight(currentTheme)
-      );
-      document.body.dataset.jpThemeName = currentTheme;
+      if (currentTheme.length > 0) {
+        document.body.dataset.jpThemeLight = String(
+          manager.isLight(currentTheme)
+        );
+        document.body.dataset.jpThemeName = currentTheme;
+      }
     });
 
     return manager;
