@@ -25,7 +25,7 @@ from .static_file_handler import (
     WhiteListFileHandler,
 )
 from .tornado.treehandler import TornadoVoilaTreeHandler
-from .utils import get_server_root_dir
+from .utils import get_data_dir, get_server_root_dir, pjoin
 
 
 def _jupyter_server_extension_points():
@@ -61,6 +61,8 @@ def _load_jupyter_server_extension(server_app):
     base_url = url_path_join(web_app.settings["base_url"])
 
     tree_handler_conf = {"voila_configuration": voila_configuration}
+
+    themes_dir = pjoin(get_data_dir(), "themes")
     web_app.add_handlers(
         host_pattern,
         [
@@ -88,11 +90,11 @@ def _load_jupyter_server_extension(server_app):
                 TemplateStaticFileHandler,
             ),
             (
-                url_path_join(base_url, r"/voila/themes/(.*)"),
+                url_path_join(base_url, r"/voila/api/themes/(.*)"),
                 ThemesHandler,
                 {
-                    "themes_url": "/voila/themes",
-                    "path": "",
+                    "themes_url": "/voila/api/themes",
+                    "path": themes_dir,
                     "labextensions_path": jupyter_path("labextensions"),
                     "no_cache_paths": ["/"],
                 },

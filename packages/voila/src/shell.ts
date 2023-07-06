@@ -11,8 +11,6 @@ import { JupyterFrontEnd } from '@jupyterlab/application';
 
 import { DocumentRegistry } from '@jupyterlab/docregistry';
 
-import { IIterator, iter } from '@lumino/algorithm';
-
 import { Widget } from '@lumino/widgets';
 
 export type IShell = VoilaShell;
@@ -65,7 +63,7 @@ export class VoilaShell extends Widget implements JupyterFrontEnd.IShell {
     return null;
   }
 
-  widgets(area: IShell.Area): IIterator<Widget> {
-    return iter([]);
+  widgets(area: IShell.Area): IterableIterator<Widget> {
+    return [][Symbol.iterator]();
   }
 }

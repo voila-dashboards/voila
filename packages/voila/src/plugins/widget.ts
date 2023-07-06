@@ -20,8 +20,6 @@ import { KernelAPI, ServerConnection } from '@jupyterlab/services';
 
 import { KernelConnection } from '@jupyterlab/services/lib/kernel/default';
 
-import { ITranslator, TranslationManager } from '@jupyterlab/translation';
-
 import {
   WidgetRenderer,
   KernelWidgetManager
@@ -32,59 +30,11 @@ import {
   IWidgetRegistryData
 } from '@jupyter-widgets/base';
 
-import { VoilaApp } from './app';
+import { VoilaApp } from '../app';
 
 import { Widget } from '@lumino/widgets';
 
 const WIDGET_MIMETYPE = 'application/vnd.jupyter.widget-view+json';
-
-/**
- * The default paths.
- */
-export const pathsPlugin: JupyterFrontEndPlugin<JupyterFrontEnd.IPaths> = {
-  id: '@voila-dashboards/voila:paths',
-  activate: (
-    app: JupyterFrontEnd<JupyterFrontEnd.IShell>
-  ): JupyterFrontEnd.IPaths => {
-    return (app as VoilaApp).paths;
-  },
-  autoStart: true,
-  provides: JupyterFrontEnd.IPaths
-};
-
-/**
- * A plugin to stop polling the kernels, sessions and kernel specs.
- *
- * TODO: a cleaner solution would involve a custom ServiceManager to the VoilaApp
- * to prevent the default behavior of polling the /api endpoints.
- */
-export const stopPollingPlugin: JupyterFrontEndPlugin<void> = {
-  id: '@voila-dashboards/voila:stop-polling',
-  autoStart: true,
-  activate: (app: JupyterFrontEnd): void => {
-    app.serviceManager.sessions?.ready.then((value) => {
-      app.serviceManager.sessions['_kernelManager']['_pollModels']?.stop();
-      void app.serviceManager.sessions['_pollModels'].stop();
-    });
-
-    app.serviceManager.kernelspecs?.ready.then((value) => {
-      void app.serviceManager.kernelspecs.dispose();
-    });
-  }
-};
-
-/**
- * A simplified Translator
- */
-export const translatorPlugin: JupyterFrontEndPlugin<ITranslator> = {
-  id: '@voila-dashboards/voila:translator',
-  activate: (app: JupyterFrontEnd<JupyterFrontEnd.IShell>): ITranslator => {
-    const translationManager = new TranslationManager();
-    return translationManager;
-  },
-  autoStart: true,
-  provides: ITranslator
-};
 
 /**
  * The Voila widgets manager plugin.
@@ -155,7 +105,7 @@ export const widgetManager: JupyterFrontEndPlugin<IJupyterWidgetRegistry> = {
 /**
  * The plugin that renders outputs.
  */
-const renderOutputsPlugin: JupyterFrontEndPlugin<void> = {
+export const renderOutputsPlugin: JupyterFrontEndPlugin<void> = {
   id: '@voila-dashboards/voila:render-outputs',
   autoStart: true,
   requires: [IRenderMimeRegistry, IJupyterWidgetRegistry],
@@ -201,16 +151,3 @@ const renderOutputsPlugin: JupyterFrontEndPlugin<void> = {
     });
   }
 };
-
-/**
- * Export the plugins as default.
- */
-const plugins: JupyterFrontEndPlugin<any>[] = [
-  pathsPlugin,
-  stopPollingPlugin,
-  translatorPlugin,
-  widgetManager,
-  renderOutputsPlugin
-];
-
-export default plugins;

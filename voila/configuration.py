@@ -140,3 +140,19 @@ class VoilaConfiguration(traitlets.config.Configurable):
         help="""Size of pre-heated kernel pool for each notebook. Zero or negative number means disabled.
         """,
     )
+
+    extension_whitelist = List(
+        None,
+        allow_none=True,
+        config=True,
+        help="""The list of enabled JupyterLab extensions, if `None`, all extensions are loaded.
+        This setting has higher priority than the `extension_blacklist`
+        """,
+    )
+
+    extension_blacklist = List(
+        None,
+        allow_none=True,
+        config=True,
+        help="""The list of disabled JupyterLab extensions, if `None`, all extensions are loaded""",
+    )

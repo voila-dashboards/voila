@@ -25,6 +25,11 @@
     }
   }
   window.display_cells = function() {
+    // TODO Apply the same logic to Voici
+    if(!window.themeLoaded){
+      window.cellLoaded = true;
+      return;
+    }
     // remove the loading element
     var el = document.getElementById("loading");
     if(el){

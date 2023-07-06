@@ -6,8 +6,21 @@
  *                                                                          *
  * The full license is in the file LICENSE, distributed with this software. *
  ****************************************************************************/
+import {
+  JupyterFrontEnd,
+  JupyterFrontEndPlugin
+} from '@jupyterlab/application';
+import { ITranslator, TranslationManager } from '@jupyterlab/translation';
 
-export * from './app';
-export * from './shell';
-export * from './voilaplugins';
-export * from './tools';
+/**
+ * A simplified Translator
+ */
+export const translatorPlugin: JupyterFrontEndPlugin<ITranslator> = {
+  id: '@voila-dashboards/voila:translator',
+  activate: (app: JupyterFrontEnd<JupyterFrontEnd.IShell>): ITranslator => {
+    const translationManager = new TranslationManager();
+    return translationManager;
+  },
+  autoStart: true,
+  provides: ITranslator
+};

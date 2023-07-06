@@ -9,11 +9,11 @@
 import os
 
 from jupyter_server.utils import url_escape, url_path_join
-from nbclient.util import ensure_async
+from jupyter_core.utils import ensure_async
 from tornado import web
 
 from ..treehandler import VoilaTreeHandler
-from ..utils import get_server_root_dir
+from ..utils import get_page_config, get_server_root_dir
 
 
 class TornadoVoilaTreeHandler(VoilaTreeHandler):
@@ -40,6 +40,20 @@ class TornadoVoilaTreeHandler(VoilaTreeHandler):
             contents["content"] = sorted(contents["content"], key=lambda i: i["name"])
             contents["content"] = filter(allowed_content, contents["content"])
 
+            theme_arg = (
+                self.get_argument("theme", self.voila_configuration.theme)
+                if self.voila_configuration.allow_theme_override == "YES"
+                else self.voila_configuration.theme
+            )
+            page_config = get_page_config(
+                base_url=self.base_url,
+                settings=self.settings,
+                log=self.log,
+                extension_whitelist=self.voila_configuration.extension_whitelist,
+                extension_blacklist=self.voila_configuration.extension_blacklist,
+            )
+            page_config["jupyterLabTheme"] = theme_arg
+
             self.write(
                 self.render_template(
                     "tree.html",
@@ -52,6 +66,7 @@ class TornadoVoilaTreeHandler(VoilaTreeHandler):
                     terminals_available=False,
                     server_root=get_server_root_dir(self.settings),
                     query=self.request.query,
+                    page_config=page_config,
                 )
             )
         elif file_exists:

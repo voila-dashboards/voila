@@ -11,15 +11,18 @@
 import os
 import sys
 import traceback
+from copy import deepcopy
 from typing import Generator, List, Tuple, Union
 
 import nbformat
 import tornado.web
+from jupyter_core.utils import ensure_async
 from jupyter_server.config_manager import recursive_update
 from nbclient.exceptions import CellExecutionError
-from nbclient.util import ensure_async
-from nbconvert.preprocessors import ClearOutputPreprocessor
+from nbconvert.preprocessors.clearoutput import ClearOutputPreprocessor
 from traitlets.config.configurable import LoggingConfigurable
+
+from voila.configuration import VoilaConfiguration
 
 from .execute import VoilaExecutor, strip_code_cell_warnings
 from .exporter import VoilaExporter
@@ -37,13 +40,13 @@ class NotebookRenderer(LoggingConfigurable):
         self.notebook_path = kwargs.get("notebook_path", [])  # should it be []
         self.template_paths = kwargs.get("template_paths", [])
         self.traitlet_config = kwargs.get("traitlet_config", None)
-        self.voila_configuration = kwargs.get("voila_configuration")
+        self.voila_configuration: VoilaConfiguration = kwargs.get("voila_configuration")
         self.config_manager = kwargs.get("config_manager")
         self.contents_manager = kwargs.get("contents_manager")
         self.kernel_spec_manager = kwargs.get("kernel_spec_manager")
         self.prelaunch_hook = kwargs.get("prelaunch_hook")
         self.base_url = kwargs.get("base_url")
-        self.page_config = kwargs.get("page_config")
+        self.page_config = deepcopy(kwargs.get("page_config"))
         self.default_kernel_name = "python3"
         self.kernel_started = False
         self.stop_generator = False
@@ -105,6 +108,7 @@ class NotebookRenderer(LoggingConfigurable):
             theme_override = theme_arg if theme_arg is not None else theme_override
         self.theme = theme_override
         # render notebook to html
+        self.page_config["jupyterLabTheme"] = self.theme
         self.resources = {
             "base_url": self.base_url,
             "theme": self.theme,
