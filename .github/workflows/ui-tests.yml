@@ -20,6 +20,7 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install -r requirements-visual-test.txt
+          python -m pip install jupyterlab_miami_nights --no-deps
           python -m pip install ".[test]"
           jlpm
           jlpm build

@@ -61,7 +61,7 @@ test.describe('Voila performance Tests', () => {
 
   test('Render tree miami theme', async ({ page, browserName }, testInfo) => {
     const testFunction = async () => {
-      await page.goto('?theme=jupyterlab_miami_nights');
+      await page.goto('?theme=JupyterLab%20Miami%20Nights');
       // wait for page to load
       await page.waitForSelector('.list-header');
     };
@@ -145,7 +145,7 @@ test.describe('Voila performance Tests', () => {
     const notebookName = 'basics';
     const testFunction = async () => {
       await page.goto(
-        `/voila/render/${notebookName}.ipynb?theme=jupyterlab_miami_nights`
+        `/voila/render/${notebookName}.ipynb?theme=JupyterLab%20Miami%20Nights`
       );
       // wait for the widgets to load
       await page.waitForSelector('span[role="presentation"] >> text=x');
