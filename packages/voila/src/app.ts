@@ -13,7 +13,6 @@ import { IRenderMime } from '@jupyterlab/rendermime';
 import { KernelWidgetManager } from '@jupyter-widgets/jupyterlab-manager';
 
 import { IShell, VoilaShell } from './shell';
-// import { ServiceManager } from '@jupyterlab/services';
 
 const PACKAGE = require('../package.json');
 
