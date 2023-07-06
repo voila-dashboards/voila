@@ -2,6 +2,41 @@
 
 <!-- <START NEW CHANGELOG ENTRY> -->
 
+## 0.5.0a5
+
+([Full Changelog](https://github.com/voila-dashboards/voila/compare/@voila-dashboards/jupyterlab-preview@2.3.0-alpha.4...ea11d94f9ee4eece6f517e1d8ef6191e4334c927))
+
+### Enhancements made
+
+- JupyterLab 4 support [#1343](https://github.com/voila-dashboards/voila/pull/1343) ([@trungleduc](https://github.com/trungleduc))
+- Separate Tornado handlers into their own class [#1330](https://github.com/voila-dashboards/voila/pull/1330) ([@davidbrochart](https://github.com/davidbrochart))
+
+### Bugs fixed
+
+- Do not clean up kernel resources after execution [#1334](https://github.com/voila-dashboards/voila/pull/1334) ([@martinRenou](https://github.com/martinRenou))
+- Add nbconvert version check [#1333](https://github.com/voila-dashboards/voila/pull/1333) ([@trungleduc](https://github.com/trungleduc))
+- Inject react-dom in the shared scope [#1320](https://github.com/voila-dashboards/voila/pull/1320) ([@martinRenou](https://github.com/martinRenou))
+
+### Maintenance and upkeep improvements
+
+- Install yarn\<3 in dev env [#1328](https://github.com/voila-dashboards/voila/pull/1328) ([@davidbrochart](https://github.com/davidbrochart))
+
+### API and Breaking Changes
+
+- JupyterLab 4 support [#1343](https://github.com/voila-dashboards/voila/pull/1343) ([@trungleduc](https://github.com/trungleduc))
+
+### Other merged PRs
+
+- Fix typo \[skip ci\] [#1326](https://github.com/voila-dashboards/voila/pull/1326) ([@davidbrochart](https://github.com/davidbrochart))
+
+### Contributors to this release
+
+([GitHub contributors page for this release](https://github.com/voila-dashboards/voila/graphs/contributors?from=2023-04-19&to=2023-07-06&type=c))
+
+[@bsyouness](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Absyouness+updated%3A2023-04-19..2023-07-06&type=Issues) | [@davidbrochart](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Adavidbrochart+updated%3A2023-04-19..2023-07-06&type=Issues) | [@github-actions](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Agithub-actions+updated%3A2023-04-19..2023-07-06&type=Issues) | [@jtpio](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Ajtpio+updated%3A2023-04-19..2023-07-06&type=Issues) | [@maartenbreddels](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Amaartenbreddels+updated%3A2023-04-19..2023-07-06&type=Issues) | [@martinRenou](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3AmartinRenou+updated%3A2023-04-19..2023-07-06&type=Issues) | [@pre-commit-ci](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Apre-commit-ci+updated%3A2023-04-19..2023-07-06&type=Issues) | [@SylvainCorlay](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3ASylvainCorlay+updated%3A2023-04-19..2023-07-06&type=Issues) | [@trungleduc](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Atrungleduc+updated%3A2023-04-19..2023-07-06&type=Issues)
+
+<!-- <END NEW CHANGELOG ENTRY> -->
+
 ## 0.5.0a4
 
 ([Full Changelog](https://github.com/voila-dashboards/voila/compare/v0.5.0a3...6663f0b1c4f8abe09a6c8fee10899a7e2da59a53))
@@ -22,8 +57,6 @@
 ([GitHub contributors page for this release](https://github.com/voila-dashboards/voila/graphs/contributors?from=2023-03-23&to=2023-04-19&type=c))
 
 [@github-actions](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Agithub-actions+updated%3A2023-03-23..2023-04-19&type=Issues) | [@jtpio](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Ajtpio+updated%3A2023-03-23..2023-04-19&type=Issues) | [@pre-commit-ci](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Apre-commit-ci+updated%3A2023-03-23..2023-04-19&type=Issues) | [@trungleduc](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Atrungleduc+updated%3A2023-03-23..2023-04-19&type=Issues)
-
-<!-- <END NEW CHANGELOG ENTRY> -->
 
 ## 0.5.0a3
 
