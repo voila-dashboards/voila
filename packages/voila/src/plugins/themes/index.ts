@@ -18,7 +18,7 @@ import { ThemeManager } from './thememanager';
  * The voila theme manager provider.
  */
 export const themesManagerPlugin: JupyterFrontEndPlugin<IThemeManager> = {
-  id: '@jupyterlab/apputils-extension:themes',
+  id: '@voila-dashboards/voila:theme-manager',
   description: 'Provides the theme manager.',
   requires: [JupyterFrontEnd.IPaths],
   activate: (
@@ -55,7 +55,7 @@ export const themesManagerPlugin: JupyterFrontEndPlugin<IThemeManager> = {
  * A plugin to handler the theme
  */
 export const themePlugin: JupyterFrontEndPlugin<void> = {
-  id: '@voila-dashboards/voila:theme-manager',
+  id: '@voila-dashboards/voila:theme',
   autoStart: true,
   optional: [IThemeManager],
   activate: async (
