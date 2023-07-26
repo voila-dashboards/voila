@@ -6,6 +6,7 @@
 
 Rendering of live Jupyter notebooks with interactive widgets.
 
+
 ## Introduction
 
 Voilà turns Jupyter notebooks into standalone web applications.
