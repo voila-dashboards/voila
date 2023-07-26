@@ -6,11 +6,13 @@
  *                                                                          *
  * The full license is in the file LICENSE, distributed with this software. *
  ****************************************************************************/
+import { StyleModule } from 'style-mod';
 import {
   JupyterFrontEnd,
   JupyterFrontEndPlugin
 } from '@jupyterlab/application';
 import { IThemeManager } from '@jupyterlab/apputils';
+import { jupyterHighlightStyle } from '@jupyterlab/codemirror';
 import { PageConfig, URLExt } from '@jupyterlab/coreutils';
 import { ThemeManager } from './thememanager';
 
@@ -62,6 +64,10 @@ export const themePlugin: JupyterFrontEndPlugin<void> = {
     app: JupyterFrontEnd,
     themeManager: IThemeManager | null
   ) => {
+    if (jupyterHighlightStyle.module) {
+      StyleModule.mount(document, jupyterHighlightStyle.module);
+    }
+
     if (!themeManager) {
       return;
     }

@@ -5199,6 +5199,7 @@ __metadata:
     "@jupyterlab/apputils": ^4.0.0
     "@jupyterlab/apputils-extension": ^4.0.0
     "@jupyterlab/builder": ^4.0.0
+    "@jupyterlab/codemirror": ^4.0.3
     "@jupyterlab/codemirror-extension": ^4.0.0
     "@jupyterlab/coreutils": ^6.0.0
     "@jupyterlab/docregistry": ^4.0.0
@@ -5243,6 +5244,7 @@ __metadata:
     react-dom: ^18.2.0
     rimraf: ^3.0.2
     style-loader: ~3.3.1
+    style-mod: ^4.0.3
     tsc-watch: ^6.0.0
     typescript: ~5.0.2
     watch: ^1.0.2
@@ -15358,7 +15360,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"style-mod@npm:^4.0.0":
+"style-mod@npm:^4.0.0, style-mod@npm:^4.0.3":
   version: 4.0.3
   resolution: "style-mod@npm:4.0.3"
   checksum: 934556e720bd29026ff8fef43a1a35b58957813025b91f996d886e9405acf934ddb1934def4400b174bd7784c9263eb9c71f07ae83925af9271b7d921d546854
