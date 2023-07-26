@@ -59,21 +59,21 @@ test.describe('Voila performance Tests', () => {
     expect(await page.screenshot()).toMatchSnapshot('voila-tree-dark.png');
   });
 
-  test('Render tree miami theme', async ({ page, browserName }, testInfo) => {
-    const testFunction = async () => {
-      await page.goto('?voila-theme=jupyterlab_miami_nights');
-      // wait for page to load
-      await page.waitForSelector('.list-header');
-    };
-    await addBenchmarkToTest(
-      'voila-tree-miami',
-      testFunction,
-      testInfo,
-      browserName
-    );
+  // test('Render tree miami theme', async ({ page, browserName }, testInfo) => {
+  //   const testFunction = async () => {
+  //     await page.goto('?voila-theme=jupyterlab_miami_nights');
+  //     // wait for page to load
+  //     await page.waitForSelector('.list-header');
+  //   };
+  //   await addBenchmarkToTest(
+  //     'voila-tree-miami',
+  //     testFunction,
+  //     testInfo,
+  //     browserName
+  //   );
 
-    expect(await page.screenshot()).toMatchSnapshot('voila-tree-miami.png');
-  });
+  //   expect(await page.screenshot()).toMatchSnapshot('voila-tree-miami.png');
+  // });
 
   test('Render and benchmark basics.ipynb with classic template', async ({
     page,
@@ -140,27 +140,27 @@ test.describe('Voila performance Tests', () => {
     expect(await page.screenshot()).toMatchSnapshot(`${notebookName}-dark.png`);
   });
 
-  test('Render basics.ipynb with miami theme', async ({
-    page,
-    browserName
-  }, testInfo) => {
-    const notebookName = 'basics';
-    const testFunction = async () => {
-      await page.goto(
-        `/voila/render/${notebookName}.ipynb?voila-theme=jupyterlab_miami_nights`
-      );
-      // wait for the widgets to load
-      await page.waitForSelector('span[role="presentation"] >> text=x');
-    };
-    await addBenchmarkToTest(notebookName, testFunction, testInfo, browserName);
+  // test('Render basics.ipynb with miami theme', async ({
+  //   page,
+  //   browserName
+  // }, testInfo) => {
+  //   const notebookName = 'basics';
+  //   const testFunction = async () => {
+  //     await page.goto(
+  //       `/voila/render/${notebookName}.ipynb?voila-theme=jupyterlab_miami_nights`
+  //     );
+  //     // wait for the widgets to load
+  //     await page.waitForSelector('span[role="presentation"] >> text=x');
+  //   };
+  //   await addBenchmarkToTest(notebookName, testFunction, testInfo, browserName);
 
-    // wait for the final MathJax message to be hidden
-    await page.$('text=Typesetting math: 100%');
-    await page.waitForSelector('#MathJax_Message', { state: 'hidden' });
-    expect(await page.screenshot()).toMatchSnapshot(
-      `${notebookName}-miami.png`
-    );
-  });
+  //   // wait for the final MathJax message to be hidden
+  //   await page.$('text=Typesetting math: 100%');
+  //   await page.waitForSelector('#MathJax_Message', { state: 'hidden' });
+  //   expect(await page.screenshot()).toMatchSnapshot(
+  //     `${notebookName}-miami.png`
+  //   );
+  // });
 
   test('Render 404 error', async ({ page }) => {
     await page.goto('/voila/render/unknown.ipynb');

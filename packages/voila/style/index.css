@@ -1,3 +1,5 @@
+@import '@jupyter-widgets/controls/css/widgets-base.css';
+
 @font-face /* 0 */ {
   font-family: MJXZERO;
   src: url('~mathjax-full/es5/output/chtml/fonts/woff-v2/MathJax_Zero.woff')
