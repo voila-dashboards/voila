@@ -339,4 +339,11 @@ test.describe('Voila performance Tests', () => {
     await addBenchmarkToTest(notebookName, testFunction, testInfo, browserName);
     expect(await page.screenshot()).toMatchSnapshot(`${notebookName}.png`);
   });
+
+  test('Render yaml.ipynb', async ({ page, browserName }, testInfo) => {
+    const notebookName = 'yaml';
+    await page.goto(`/voila/render/${notebookName}.ipynb`);
+    await page.waitForSelector('span >> text=hey');
+    expect(await page.screenshot()).toMatchSnapshot(`${notebookName}.png`);
+  });
 });

@@ -12,6 +12,7 @@
     "@jupyterlab/application": "^4.0.0",
     "@jupyterlab/apputils": "^4.0.0",
     "@jupyterlab/apputils-extension": "^4.0.0",
+    "@jupyterlab/codemirror": "^4.0.3",
     "@jupyterlab/codemirror-extension": "^4.0.0",
     "@jupyterlab/coreutils": "^6.0.0",
     "@jupyterlab/docregistry": "^4.0.0",
@@ -47,7 +48,8 @@
     "@lumino/virtualdom": "^2.0.0",
     "@lumino/widgets": "^2.0.0",
     "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "react-dom": "^18.2.0",
+    "style-mod": "^4.0.3"
   },
   "devDependencies": {
     "@jupyterlab/builder": "^4.0.0",
