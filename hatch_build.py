@@ -5,8 +5,8 @@ from hatchling.builders.hooks.plugin.interface import BuildHookInterface
 from urllib.request import urlopen
 
 
-JUPYTERLAB_APPUTILS_VERSION = "3.2.8"
-JUPYTERLAB_THEME_LIGHT_VERSION = "3.2.8"
+JUPYTERLAB_APPUTILS_VERSION = "4.1.2"
+JUPYTERLAB_THEME_LIGHT_VERSION = "4.0.2"
 
 CSS_FILES = [
     (

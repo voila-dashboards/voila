@@ -26,7 +26,7 @@ from .utils import get_server_root_dir
 from .shutdown_kernel_handler import VoilaShutdownKernelHandler
 
 
-def _jupyter_server_extension_paths():
+def _jupyter_server_extension_points():
     """
     Returns a list of dictionaries with metadata describing
     where to find the `_load_jupyter_server_extension` function.
@@ -38,9 +38,12 @@ def _jupyter_server_extension_paths():
     ]
 
 
+# Backward compatibility with jupyter_server 1
+_jupyter_server_extension_paths = _jupyter_server_extension_points
+
+
 def _load_jupyter_server_extension(server_app):
     web_app = server_app.web_app
-
     # common configuration options between the server extension and the application
     voila_configuration = VoilaConfiguration(parent=server_app)
     template_name = voila_configuration.template

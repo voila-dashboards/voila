@@ -39,7 +39,7 @@ def test_execute_output():
     path = os.path.join(BASE_DIR, 'notebooks/output.ipynb')
     nb = read(path, NO_CONVERT)
     nb_voila = deepcopy(nb)
-    executenb(nb_voila)
+    executenb(nb_voila, timeout=30)
 
     widget_states = nb.metadata.widgets[WIDGET_MIME_TYPE_STATE]['state']
     widget_states_voila = nb_voila.metadata.widgets[WIDGET_MIME_TYPE_STATE][

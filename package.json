@@ -22,9 +22,8 @@
     "build:prod": "lerna run build:prod",
     "build:test": "lerna run build:test",
     "clean": "lerna run clean",
-    "eslint": "eslint . --ext .ts,.tsx,.js,.jsx --fix",
-    "eslint:check": "eslint . --ext .ts,.tsx,.js,.jsx",
-    "install": "lerna bootstrap",
+    "eslint": "eslint . --ext .ts,.tsx --fix",
+    "eslint:check": "eslint . --ext .ts,.tsx",
     "prettier": "prettier --write \"**/*{.ts,.tsx,.js,.jsx,.css,.json,.md}\"",
     "prettier:check": "prettier --list-different \"**/*{.ts,.tsx,.js,.jsx,.css,.json,.md}\"",
     "test": "lerna run test"

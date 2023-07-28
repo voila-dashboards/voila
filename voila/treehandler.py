@@ -12,6 +12,8 @@ from tornado import web
 
 from jupyter_server.utils import url_path_join, url_escape
 
+from nbclient.util import ensure_async
+
 from .utils import get_server_root_dir
 from .handler import BaseVoilaHandler
 
@@ -48,16 +50,18 @@ class VoilaTreeHandler(BaseVoilaHandler):
             return 'Voilà Home'
 
     @web.authenticated
-    def get(self, path=''):
+    async def get(self, path=''):
         cm = self.contents_manager
-
-        if cm.dir_exists(path=path):
-            if cm.is_hidden(path) and not cm.allow_hidden:
+        dir_exists = await ensure_async(cm.dir_exists(path=path))
+        file_exists = await ensure_async(cm.file_exists(path))
+        if dir_exists:
+            is_hidden = await ensure_async(cm.is_hidden(path))
+            if is_hidden and not cm.allow_hidden:
                 self.log.info("Refusing to serve hidden directory, via 404 Error")
                 raise web.HTTPError(404)
             breadcrumbs = self.generate_breadcrumbs(path)
             page_title = self.generate_page_title(path)
-            contents = cm.get(path)
+            contents = await ensure_async(cm.get(path))
 
             def allowed_content(content):
                 if content['type'] in ['directory', 'notebook']:
@@ -78,9 +82,9 @@ class VoilaTreeHandler(BaseVoilaHandler):
                 server_root=get_server_root_dir(self.settings),
                 query=self.request.query,
             ))
-        elif cm.file_exists(path):
+        elif file_exists:
             # it's not a directory, we have redirecting to do
-            model = cm.get(path, content=False)
+            model = await ensure_async(cm.get(path, content=False))
             # redirect to /api/notebooks if it's a notebook, otherwise /api/files
             service = 'notebooks' if model['type'] == 'notebook' else 'files'
             url = url_path_join(

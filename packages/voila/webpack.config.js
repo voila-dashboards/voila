@@ -56,7 +56,6 @@ module.exports = [
       path: distRoot,
       libraryTarget: 'amd'
     },
-    module: { rules: rules },
-    devtool: 'source-map'
+    module: { rules: rules }
   }
 ];
