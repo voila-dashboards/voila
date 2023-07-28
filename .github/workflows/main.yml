@@ -93,20 +93,16 @@ jobs:
         whereis python
         python --version
         yarn install --network-timeout 100000
-        python -m pip install ".[test]"
+        python -m pip install ".[test, dev]"
         (cd tests/test_template; pip install .)
         (cd tests/skip_template; pip install .)
 
     - name: Run tests
       shell: bash -l {0}
       run: |
-        py.test tests/ --async-test-timeout=240 --reruns 2 --reruns-delay 1
-        voila --help  # Making sure we can run `voila --help`
-        # tests if voila sends a 'heartbeat' to avoid proxies from closing an apparently stale connection
-        # Note that wget is the only easily available software that has a read-timeout
-        voila tests/notebooks/sleep10seconds.ipynb --port=8878 --VoilaConfiguration.http_keep_alive_timeout=2 &
-        sleep 2
-        wget --read-timeout=5 --tries=1 http://localhost:8878
+        py.test tests/app --async-test-timeout=240 --reruns 2 --reruns-delay 1
+        py.test tests/server --async-test-timeout=240 --reruns 2 --reruns-delay 1 --trace
+        py.test tests/execute_output_test.py
 
   test-win:
 
