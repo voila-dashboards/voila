@@ -37,8 +37,10 @@ def _jupyter_server_extension_points():
         }
     ]
 
+
 # Backward compatibility with jupyter_server 1
 _jupyter_server_extension_paths = _jupyter_server_extension_points
+
 
 def _load_jupyter_server_extension(server_app):
     web_app = server_app.web_app

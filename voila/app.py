@@ -123,9 +123,11 @@ class Voila(Application):
         flags = {
             **flags,
             "token": (
-                {"Voila": {"auto_token": True}},
-                    _(""),
-                )
+                {
+                    "Voila": {"auto_token": True}
+                },
+                _(""),
+            )
         }
 
     description = Unicode(
