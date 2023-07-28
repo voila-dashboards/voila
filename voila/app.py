@@ -606,11 +606,11 @@ class Voila(Application):
         if JUPYTER_SERVER_2:
             settings = {
                 **settings,
-                cookie_secret: self.cookie_secret,
-                authorizer: self.authorizer,
-                identity_provider: self.identity_provider,
-                kernel_websocket_connection_class: self.kernel_websocket_connection_class,
-                login_url: url_path_join(self.base_url, "/login"),
+                "cookie_secret": self.cookie_secret,
+                "authorizer": self.authorizer,
+                "identity_provider": self.identity_provider,
+                "kernel_websocket_connection_class": self.kernel_websocket_connection_class,
+                "login_url": url_path_join(self.base_url, "/login"),
             }
 
         return settings
