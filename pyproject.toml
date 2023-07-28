@@ -54,6 +54,7 @@ file = "LICENSE"
 [project.optional-dependencies]
 dev = [
     "black",
+    "flake8",
     "hatch",
     "jupyter_releaser",
 ]
