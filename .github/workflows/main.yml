@@ -47,7 +47,9 @@ jobs:
     - name: Run tests
       shell: bash -l {0}
       run: |
-        VOILA_TEST_XEUS_CLING=1 py.test tests/ --async-test-timeout=240 --reruns 2 --reruns-delay 1
+        VOILA_TEST_XEUS_CLING=1 py.test tests/app --async-test-timeout=240 --reruns 2 --reruns-delay 1
+        VOILA_TEST_XEUS_CLING=1 py.test tests/server --async-test-timeout=240 --reruns 2 --reruns-delay 1 --trace
+        py.test tests/execute_output_test.py
         voila --help  # Making sure we can run `voila --help`
         # tests if voila sends a 'heartbeat' to avoid proxies from closing an apparently stale connection
         # Note that wget is the only easily available software that has a read-timeout
@@ -71,7 +73,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [macos-10.15]
+        os: [macos-12]
         python_version: ['3.8', '3.9', '3.10']
 
     steps:
@@ -138,4 +140,6 @@ jobs:
       - name: Run test
         run: |
           set VOILA_TEST_DEBUG=1
-          py.test tests/ --async-test-timeout=240 --reruns 2 --reruns-delay 1
+          py.test tests/app --async-test-timeout=240 --reruns 2 --reruns-delay 1
+          py.test tests/server --async-test-timeout=240 --reruns 2 --reruns-delay 1 --trace
+          py.test tests/execute_output_test.py
