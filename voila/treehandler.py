@@ -82,7 +82,7 @@ class VoilaTreeHandler(BaseVoilaHandler):
                 server_root=get_server_root_dir(self.settings),
                 query=self.request.query,
             ))
-        elif cm.file_exists(path):
+        elif file_exists:
             # it's not a directory, we have redirecting to do
             model = await ensure_async(cm.get(path, content=False))
             # redirect to /api/notebooks if it's a notebook, otherwise /api/files

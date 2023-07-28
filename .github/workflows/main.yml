@@ -40,7 +40,7 @@ jobs:
         whereis python
         python --version
         yarn install --network-timeout 100000
-        python -m pip install ".[test]"
+        python -m pip install ".[test,dev]"
         (cd tests/test_template; pip install .)
         (cd tests/skip_template; pip install .)
 
