@@ -21,8 +21,6 @@ import webbrowser
 import errno
 import random
 
-from .voila_identity_provider import VoilaLoginHandler
-
 try:
     from urllib.parse import urljoin
     from urllib.request import pathname2url
@@ -65,7 +63,7 @@ try:
     from jupyter_core.utils import run_sync
     from jupyter_server.services.config.manager import ConfigManager
 
-    from jupyterlab_server.themes_handler import ThemesHandler
+    from .voila_identity_provider import VoilaLoginHandler
 except ImportError:
     JUPYTER_SERVER_2 = False
 
@@ -73,6 +71,7 @@ except ImportError:
     from jupyter_server.utils import url_path_join, run_sync
     from jupyter_server.services.config import ConfigManager
 
+from jupyterlab_server.themes_handler import ThemesHandler
 
 from jupyter_client.kernelspec import KernelSpecManager
 
@@ -502,7 +501,8 @@ class Voila(Application):
             template_name = self.voila_configuration.template
             self.template_paths = collect_template_paths(['voila', 'nbconvert'], template_name, prune=True)
             self.static_paths = collect_static_paths(['voila', 'nbconvert'], template_name)
-            self.static_paths.append(DEFAULT_STATIC_FILES_PATH)
+            if JUPYTER_SERVER_2:
+                self.static_paths.append(DEFAULT_STATIC_FILES_PATH)
             conf_paths = [os.path.join(d, 'conf.json') for d in self.template_paths]
             for p in conf_paths:
                 # see if config file exists
@@ -650,6 +650,8 @@ class Voila(Application):
         ])
 
         if JUPYTER_SERVER_2:
+
+
             handlers.extend(self.identity_provider.get_handlers())
 
         if self.voila_configuration.preheat_kernel:
