@@ -21,8 +21,6 @@ import webbrowser
 import errno
 import random
 
-from .voila_identity_provider import VoilaLoginHandler
-
 try:
     from urllib.parse import urljoin
     from urllib.request import pathname2url
@@ -66,6 +64,8 @@ try:
     from jupyter_server.services.config.manager import ConfigManager
 
     from jupyterlab_server.themes_handler import ThemesHandler
+
+    from .voila_identity_provider import VoilaLoginHandler
 except ImportError:
     JUPYTER_SERVER_2 = False
 
