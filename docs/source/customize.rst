@@ -584,3 +584,18 @@ By default, Voilà does not have an execution timeout, meaning there is no limit
     voila --VoilaExecutor.timeout=30 your_notebook.ipynb
 
 With this setting, if any cell takes longer than 30 seconds to run, a ``TimeoutError`` will be raised.  You can further customize this behavior using the ``VoilaExecutor.timeout_func`` and ``VoilaExecutor.interrupt_on_timeout`` options.
+
+Customizing the Voila Preview widget
+=========================================
+
+By using the `layout customization system <https://jupyterlab.readthedocs.io/en/latest/user/interface_customization.html>`_ of JupyterLab, users can configure the position of the Voila preview widget to open it in a different area than `main`.
+
+``Voila Preview`` is the setting key of the preview widget. For example, the following configuration will open this widget in the right panel of JupyterLab
+
+.. code-block:: javascript
+
+   "layout": {
+      "multiple": {
+         "Voila Preview": { "area": "right" }
+      }
+   }
