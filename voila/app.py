@@ -63,8 +63,6 @@ try:
     from jupyter_core.utils import run_sync
     from jupyter_server.services.config.manager import ConfigManager
 
-    from jupyterlab_server.themes_handler import ThemesHandler
-
     from .voila_identity_provider import VoilaLoginHandler
 except ImportError:
     JUPYTER_SERVER_2 = False
@@ -73,6 +71,7 @@ except ImportError:
     from jupyter_server.utils import url_path_join, run_sync
     from jupyter_server.services.config import ConfigManager
 
+from jupyterlab_server.themes_handler import ThemesHandler
 
 from jupyter_client.kernelspec import KernelSpecManager
 
@@ -651,6 +650,8 @@ class Voila(Application):
         ])
 
         if JUPYTER_SERVER_2:
+
+
             handlers.extend(self.identity_provider.get_handlers())
 
         if self.voila_configuration.preheat_kernel:
