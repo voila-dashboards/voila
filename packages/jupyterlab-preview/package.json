@@ -67,6 +67,7 @@
     "@jupyterlab/testutils": "^4.0.0",
     "@types/react": "^18.0.0",
     "@types/react-dom": "^18.0.0",
+    "npm-run-all": "^4.1.5",
     "rimraf": "^2.6.1",
     "source-map-loader": "~1.0.2",
     "typescript": "~5.0.2"

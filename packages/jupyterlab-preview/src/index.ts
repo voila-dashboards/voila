@@ -106,7 +106,6 @@ const extension: JupyterFrontEndPlugin<IVoilaPreviewTracker> = {
     const tracker = new WidgetTracker<VoilaPreview>({
       namespace: 'voila-preview'
     });
-
     if (restorer) {
       restorer.restore(tracker, {
         command: 'docmanager:open',
@@ -193,7 +192,7 @@ const extension: JupyterFrontEndPlugin<IVoilaPreviewTracker> = {
             path: context.path,
             factory: 'Voila Preview',
             options: {
-              mode: 'split-right',
+              mode: 'split-right'
             }
           });
         }
