@@ -80,8 +80,8 @@ def get_page_config(
     base_url,
     settings,
     log,
-    extension_whitelist: List[str] = [],
-    extension_blacklist: List[str] = [],
+    extension_allowlist: List[str] = [],
+    extension_denylist: List[str] = [],
 ):
     page_config = {
         "appVersion": __version__,
@@ -110,15 +110,15 @@ def get_page_config(
         "@voila-dashboards/jupyterlab-preview",
         "@jupyter/collaboration-extension",
     ]
-    must_have_extensions = ["@jupyter-widgets/jupyterlab-manager"]
+    required_extensions = ["@jupyter-widgets/jupyterlab-manager"]
     federated_extensions = deepcopy(page_config["federated_extensions"])
 
     page_config["federated_extensions"] = filter_extension(
         federated_extensions=federated_extensions,
         disabled_extensions=disabled_extensions,
-        must_have_extensions=must_have_extensions,
-        extension_whitelist=extension_whitelist,
-        extension_blacklist=extension_blacklist,
+        required_extensions=required_extensions,
+        extension_allowlist=extension_allowlist,
+        extension_denylist=extension_denylist,
     )
     return page_config
 
@@ -126,22 +126,22 @@ def get_page_config(
 def filter_extension(
     federated_extensions: List[Dict],
     disabled_extensions: List[str] = [],
-    must_have_extensions: List[str] = [],
-    extension_whitelist: List[str] = [],
-    extension_blacklist: List[str] = [],
+    required_extensions: List[str] = [],
+    extension_allowlist: List[str] = [],
+    extension_denylist: List[str] = [],
 ) -> List[Dict]:
     """Create a list of extension to be loaded from available extensions and the
-    black/white list configuration.
+    allow/deny list configuration.
 
     Args:
         - federated_extensions (List[Dict]): List of available extension
         - disabled_extensions (List[str], optional): List of extension disabled by default.
         Defaults to [].
-        - must_have_extensions (List[str], optional): List of extension must be enabled.
+        - required_extensions (List[str], optional): List of required extensions.
         Defaults to [].
-        - extension_whitelist (List[str], optional): The white listed extensions.
+        - extension_allowlist (List[str], optional): The allowlisted extensions.
         Defaults to [].
-        - extension_blacklist (List[str], optional): The black listed extensions.
+        - extension_denylist (List[str], optional): The denylisted extensions.
         Defaults to [].
 
     Returns:
@@ -150,31 +150,31 @@ def filter_extension(
     filtered_extensions = [
         x for x in federated_extensions if x["name"] not in disabled_extensions
     ]
-    if len(extension_blacklist) == 0:
-        if len(extension_whitelist) == 0:
-            # No white and black list, return all
+    if len(extension_denylist) == 0:
+        if len(extension_allowlist) == 0:
+            # No allow and deny list, return all
             return filtered_extensions
 
-        # White list is not empty, return white listed only
+        # Allow list is not empty, return allow listed only
         return [
             x
             for x in filtered_extensions
-            if x["name"] in must_have_extensions or x["name"] in extension_whitelist
+            if x["name"] in required_extensions or x["name"] in extension_allowlist
         ]
 
-    if len(extension_whitelist) == 0:
-        # No white list, return non black listed only
+    if len(extension_allowlist) == 0:
+        # No allow list, return non deny listed only
         return [
             x
             for x in filtered_extensions
-            if x["name"] in must_have_extensions or x["name"] not in extension_blacklist
+            if x["name"] in required_extensions or x["name"] not in extension_denylist
         ]
 
-    # Have both black and white list, use only white list
+    # Have both allow and deny list, use only allow list
     return [
         x
         for x in filtered_extensions
-        if x["name"] in must_have_extensions or x["name"] in extension_whitelist
+        if x["name"] in required_extensions or x["name"] in extension_allowlist
     ]
 
 
