@@ -8,10 +8,10 @@
 }
 
 /*use voila palette for title coloring*/
-html[data-theme="light"] {
+html[data-theme='light'] {
   --pst-color-primary: #5dbcaf;
 }
 
-html[data-theme="dark"] {
+html[data-theme='dark'] {
   --pst-color-primary: #5dbcaf;
 }
