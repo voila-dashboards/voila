@@ -11,6 +11,7 @@
 import os
 import sys
 import traceback
+from functools import partial
 from copy import deepcopy
 from typing import Generator, List, Tuple, Union
 
@@ -154,23 +155,21 @@ class NotebookRenderer(LoggingConfigurable):
         kernel_id: Union[str, None] = None,
         kernel_future=None,
     ) -> Generator:
-        async def inner_kernel_start(nb):
-            return await self._jinja_kernel_start(nb, kernel_id, kernel_future)
+        inner_kernel_start = partial(
+            self._jinja_kernel_start, kernel_id=kernel_id, kernel_future=kernel_future
+        )
 
-        def inner_cell_generator(nb, kernel_id):
-            return self._jinja_cell_generator(nb, kernel_id)
-
-        # These functions allow the start of a kernel and execution of the
-        # notebook after (parts of) the template has been rendered and send
+        # kernel_start and cell_generator allow starting the kernel and executing the
+        # notebook after (parts of) the template has been rendered and sent
         # to the client to allow progressive rendering.
         # Template should first call kernel_start, and then decide to use
-        # notebook_executer cell_generator to implement progressive cell rendering
+        # notebook_executer cell_generator to implement progressive cell rendering.
 
         extra_context = {
             "frontend": "voila",
             "main_js": "voila.js",
             "kernel_start": inner_kernel_start,
-            "cell_generator": inner_cell_generator,
+            "cell_generator": self._jinja_cell_generator,
             "notebook_execute": self._jinja_notebook_execute,
         }
         # render notebook in snippets, then return an iterator so we can flush
