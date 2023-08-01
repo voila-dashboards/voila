@@ -363,17 +363,17 @@ Serving static files
 
 Unlike JupyterLab or the classic notebook server, ``voila`` does not serve
 all files that are present in the directory of the notebook. Only files that
-match one of the whitelists and none of the blacklist regular expression are
+match one of the allowlist and none of the denylist regular expression are
 served by Voilà::
 
-    voila mydir --VoilaConfiguration.file_whitelist="['.*']" \
-      --VoilaConfiguration.file_blacklist="['private.*', '.*\.(ipynb)']"
+    voila mydir --VoilaConfiguration.file_allowlist="['.*']" \
+      --VoilaConfiguration.file_denylist="['private.*', '.*\.(ipynb)']"
 
 Which will serve all files, except anything starting with private, or notebook files::
 
-   voila mydir --VoilaConfiguration.file_whitelist="['.*\.(png|jpg|gif|svg|mp4|avi|ogg)']"
+   voila mydir --VoilaConfiguration.file_allowlist="['.*\.(png|jpg|gif|svg|mp4|avi|ogg)']"
 
-Will serve many media files, and also never serve notebook files (which is the default blacklist).
+Will serve many media files, and also never serve notebook files (which is the default denylist).
 
 Run scripts
 ===========
@@ -466,7 +466,7 @@ Here is an example of settings with explanations for preheating kernel option.
       },
       "VoilaKernelManager": {
          # A list of notebook name or regex patterns to exclude notebooks from using preheat kernel.
-         "preheat_blacklist": [
+         "preheat_denylist": [
             "notebook-does-not-need-preheat.ipynb",
             "^.*foo.*$",
             ...

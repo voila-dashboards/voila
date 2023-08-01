@@ -71,9 +71,9 @@ from .paths import ROOT, STATIC_ROOT, collect_static_paths, collect_template_pat
 from .request_info_handler import RequestInfoSocketHandler
 from .shutdown_kernel_handler import VoilaShutdownKernelHandler
 from .static_file_handler import (
+    AllowListFileHandler,
     MultiStaticFileHandler,
     TemplateStaticFileHandler,
-    WhiteListFileHandler,
 )
 from .tornado.handler import TornadoVoilaHandler
 from .tornado.treehandler import TornadoVoilaTreeHandler
@@ -701,10 +701,10 @@ class Voila(Application):
         handlers.append(
             (
                 url_path_join(self.server_url, r"/voila/files/(.*)"),
-                WhiteListFileHandler,
+                AllowListFileHandler,
                 {
-                    "whitelist": self.voila_configuration.file_whitelist,
-                    "blacklist": self.voila_configuration.file_blacklist,
+                    "allowlist": self.voila_configuration.file_allowlist,
+                    "denylist": self.voila_configuration.file_denylist,
                     "path": self.root_dir,
                 },
             )

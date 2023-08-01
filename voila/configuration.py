@@ -8,7 +8,9 @@
 #############################################################################
 
 import traitlets.config
-from traitlets import Bool, Dict, Enum, Int, List, Type, Unicode
+from traitlets import Bool, Dict, Enum, Int, List, Type, Unicode, validate
+
+from warnings import warn
 
 
 class VoilaConfiguration(traitlets.config.Configurable):
@@ -52,14 +54,43 @@ class VoilaConfiguration(traitlets.config.Configurable):
     )
     strip_sources = Bool(True, config=True, help="Strip sources from rendered html")
 
-    file_whitelist = List(
+    file_allowlist = List(
         Unicode(),
         [r".*\.(png|jpg|gif|svg)"],
         config=True,
         help=r"""
     List of regular expressions for controlling which static files are served.
-    All files that are served should at least match 1 whitelist rule, and no blacklist rule
-    Example: --VoilaConfiguration.file_whitelist="['.*\.(png|jpg|gif|svg)', 'public.*']"
+    All files that are served should at least match 1 allowlist rule, and no denylist rule
+    Example: --VoilaConfiguration.file_allowlist="['.*\.(png|jpg|gif|svg)', 'public.*']"
+    """,
+    )
+
+    file_whitelist = List(
+        Unicode(),
+        [r".*\.(png|jpg|gif|svg)"],
+        config=True,
+        help="""Deprecated, use `file_allowlist`""",
+    )
+
+    @validate("file_whitelist")
+    def _valid_file_whitelist(self, proposal):
+        warn(
+            "Deprecated, use VoilaConfiguration.file_allowlist instead.",
+            DeprecationWarning,
+            stacklevel=2,
+        )
+        return proposal["value"]
+
+    file_denylist = List(
+        Unicode(),
+        [r".*\.(ipynb|py)"],
+        config=True,
+        help=r"""
+        List of regular expressions for controlling which static files are forbidden to be served.
+        All files that are served should at least match 1 allowlist rule, and no denylist rule
+        Example:
+        --VoilaConfiguration.file_allowlist="['.*']" # all files
+        --VoilaConfiguration.file_denylist="['private.*', '.*\.(ipynb)']" # except files in the private dir and notebook files
     """,
     )
 
@@ -67,14 +98,17 @@ class VoilaConfiguration(traitlets.config.Configurable):
         Unicode(),
         [r".*\.(ipynb|py)"],
         config=True,
-        help=r"""
-    List of regular expressions for controlling which static files are forbidden to be served.
-    All files that are served should at least match 1 whitelist rule, and no blacklist rule
-    Example:
-    --VoilaConfiguration.file_whitelist="['.*']" # all files
-    --VoilaConfiguration.file_blacklist="['private.*', '.*\.(ipynb)']" # except files in the private dir and notebook files
-    """,
+        help="""Deprecated, use `file_denylist`""",
     )
+
+    @validate("file_blacklist")
+    def _valid_file_blacklist(self, proposal):
+        warn(
+            "Deprecated, use VoilaConfiguration.file_denylist instead.",
+            DeprecationWarning,
+            stacklevel=2,
+        )
+        return proposal["value"]
 
     language_kernel_mapping = Dict(
         {},
@@ -141,16 +175,16 @@ class VoilaConfiguration(traitlets.config.Configurable):
         """,
     )
 
-    extension_whitelist = List(
+    extension_allowlist = List(
         None,
         allow_none=True,
         config=True,
         help="""The list of enabled JupyterLab extensions, if `None`, all extensions are loaded.
-        This setting has higher priority than the `extension_blacklist`
+        This setting has higher priority than the `extension_denylist`
         """,
     )
 
-    extension_blacklist = List(
+    extension_denylist = List(
         None,
         allow_none=True,
         config=True,
