@@ -3,7 +3,7 @@
     "preheat_kernel": true
   },
   "VoilaKernelManager": {
-    "preheat_blacklist": ["blacklisted.ipynb"],
+    "preheat_denylist": ["denylisted.ipynb"],
     "kernel_pools_config": {
       "default": {
         "pool_size": 1

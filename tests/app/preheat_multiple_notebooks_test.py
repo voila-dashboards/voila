@@ -46,12 +46,12 @@ async def test_render_notebook_with_heated_kernel(http_server_client, base_url):
     await asyncio.sleep(NOTEBOOK_EXECUTION_TIME + 1)
 
 
-async def test_render_blacklisted_notebook_with_nornal_kernel(
+async def test_render_denylisted_notebook_with_nornal_kernel(
     http_server_client, base_url
 ):
     await asyncio.sleep(NUMBER_PREHEATED_KERNEL * NOTEBOOK_EXECUTION_TIME + 1)
     time, text = await send_request(
-        sc=http_server_client, url=f"{base_url}voila/render/blacklisted.ipynb"
+        sc=http_server_client, url=f"{base_url}voila/render/denylisted.ipynb"
     )
 
     assert "hello world" in text

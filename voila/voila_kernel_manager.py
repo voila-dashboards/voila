@@ -16,8 +16,10 @@ from typing import Awaitable
 from typing import Dict as TypeDict
 from typing import List as TypeList
 from typing import Tuple, Type, TypeVar, Union
+from warnings import warn
 
 from jupyter_core.utils import ensure_async
+from traitlets import validate
 from traitlets.traitlets import Dict, Float, List, default
 
 from .notebook_renderer import NotebookRenderer
@@ -86,11 +88,26 @@ def voila_kernel_manager_factory(
                 """,
             )
 
-            preheat_blacklist = List(
+            preheat_denylist = List(
                 [],
                 config=True,
                 help="List of notebooks which do not use pre-heated kernel.",
             )
+
+            preheat_blacklist = List(
+                [],
+                config=True,
+                help="Deprecated, use `preheat_denylist`.",
+            )
+
+            @validate("preheat_blacklist")
+            def _valid_preheat_blacklist(self, proposal):
+                warn(
+                    "Deprecated, use preheat_denylist instead.",
+                    DeprecationWarning,
+                    stacklevel=2,
+                )
+                return proposal["value"]
 
             fill_delay = Float(
                 1,
@@ -391,19 +408,19 @@ def voila_kernel_manager_factory(
                 )
 
             def _notebook_filter(self, nb_path: Path) -> bool:
-                """Helper to filter blacklisted notebooks.
+                """Helper to filter denylisted notebooks.
 
                 Args:
                     nb_path (Path): Path to notebook
 
                 Returns:
                     bool: return `False` if notebook is in `ipynb_checkpoints` folder or
-                    is blacklisted, `True` otherwise.
+                    is denylisted, `True` otherwise.
                 """
                 nb_name = str(nb_path)
                 if ".ipynb_checkpoints" in nb_name:
                     return False
-                for nb_pattern in self.preheat_blacklist:
+                for nb_pattern in self.preheat_denylist:
                     pattern = re.compile(nb_pattern)
                     if (nb_pattern in nb_name) or bool(pattern.match(nb_name)):
                         return False
