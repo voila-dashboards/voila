@@ -52,6 +52,8 @@ class NotebookRenderer(LoggingConfigurable):
         self.kernel_started = False
         self.stop_generator = False
         self.rendered_cache: List[str] = []
+        self.mathjax_url = kwargs.get("mathjax_url")
+        self.mathjax_config = kwargs.get("mathjax_config")
 
     async def initialize(self, **kwargs) -> None:
         """Initialize the notebook generator."""
@@ -133,7 +135,7 @@ class NotebookRenderer(LoggingConfigurable):
             extra_resources = extra_resources.to_dict()
         if extra_resources:
             recursive_update(self.resources, extra_resources)
-
+        mathjax_full_url = f"{self.mathjax_url}?config={self.mathjax_config}"
         self.exporter = VoilaExporter(
             template_paths=self.template_paths,
             template_name=self.template_name,
@@ -143,6 +145,7 @@ class NotebookRenderer(LoggingConfigurable):
             base_url=self.base_url,
             page_config=self.page_config,
             show_margins=self.voila_configuration.show_margins,
+            mathjax_url=mathjax_full_url,
         )
 
         if self.voila_configuration.strip_sources:

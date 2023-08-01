@@ -82,8 +82,6 @@ from .voila_kernel_manager import voila_kernel_manager_factory
 
 _kernel_id_regex = r"(?P<kernel_id>\w+-\w+-\w+-\w+-\w+)"
 
-HERE = os.path.dirname(os.path.abspath(__file__))
-
 
 def _(x):
     return x
@@ -204,6 +202,22 @@ class Voila(Application):
     template_paths = List([], config=True, help=_("path to jinja2 templates"))
 
     static_paths = List([STATIC_ROOT], config=True, help=_("paths to static assets"))
+
+    mathjax_config = Unicode(
+        "TeX-AMS_CHTML-full,Safe",
+        help="""
+        Mathjax default configuration
+        """,
+    ).tag(config=True)
+
+    mathjax_url = Unicode(
+        "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js",
+        help="""
+        URL to load Mathjax from.
+
+        Defaults to loading from cdnjs.
+        """,
+    ).tag(config=True)
 
     port_retries = Integer(
         50,
@@ -613,6 +627,8 @@ class Voila(Application):
             identity_provider=self.identity_provider,
             kernel_websocket_connection_class=self.kernel_websocket_connection_class,
             login_url=url_path_join(self.base_url, "/login"),
+            mathjax_config=self.mathjax_config,
+            mathjax_url=self.mathjax_url,
         )
         settings[self.name] = self  # Why???
 

@@ -70,7 +70,6 @@ class VoilaHandler(BaseVoilaHandler):
         self.traitlet_config = kwargs.pop("config", None)
         self.voila_configuration = kwargs["voila_configuration"]
         self.prelaunch_hook = kwargs.get("prelaunch_hook", None)
-
         # we want to avoid starting multiple kernels due to template mistakes
         self.kernel_started = False
 
@@ -182,7 +181,8 @@ class VoilaHandler(BaseVoilaHandler):
             if file_extenstion not in supported_file_extensions:
                 self.redirect_to_file(path)
                 return
-
+            mathjax_config = self.settings.get("mathjax_config")
+            mathjax_url = self.settings.get("mathjax_url")
             gen = NotebookRenderer(
                 request_handler=self,
                 voila_configuration=self.voila_configuration,
@@ -201,6 +201,8 @@ class VoilaHandler(BaseVoilaHandler):
                     extension_whitelist=self.voila_configuration.extension_whitelist,
                     extension_blacklist=self.voila_configuration.extension_blacklist,
                 ),
+                mathjax_config=mathjax_config,
+                mathjax_url=mathjax_url,
             )
 
             await gen.initialize(template=template_arg, theme=theme_arg)

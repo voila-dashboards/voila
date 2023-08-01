@@ -367,6 +367,9 @@ def voila_kernel_manager_factory(
                     notebook. Defaults to None.
                 """
                 voila_configuration = self.parent.voila_configuration
+                settings = self.parent.app.settings
+                mathjax_config = settings.get("mathjax_config")
+                mathjax_url = settings.get("mathjax_url")
                 return NotebookRenderer(
                     voila_configuration=voila_configuration,
                     traitlet_config=self.parent.config,
@@ -383,6 +386,8 @@ def voila_kernel_manager_factory(
                         extension_whitelist=voila_configuration.extension_whitelist,
                         extension_blacklist=voila_configuration.extension_blacklist,
                     ),
+                    mathjax_config=mathjax_config,
+                    mathjax_url=mathjax_url,
                 )
 
             def _notebook_filter(self, nb_path: Path) -> bool:
