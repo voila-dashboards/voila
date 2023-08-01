@@ -5,56 +5,30 @@
  * Distributed under the terms of the BSD 3-Clause License.                 *
  *                                                                          *
  * The full license is in the file LICENSE, distributed with this software. *
+ * Copyright (c) Jupyter Development Team.                                  *
+ * Distributed under the terms of the Modified BSD License.                 *
  ****************************************************************************/
-
-// Copyright (c) Jupyter Development Team.
-// Distributed under the terms of the Modified BSD License.
-
-// Inspired by: https://github.com/jupyterlab/jupyterlab/blob/master/dev_mode/index.js
-
-import './style.css';
+import './sharedscope';
 
 import { PageConfig, URLExt } from '@jupyterlab/coreutils';
 
 import { VoilaApp } from './app';
+import plugins from './voilaplugins';
+import { VoilaServiceManager } from './services/servicemanager';
 import { VoilaShell } from './shell';
-import plugins from './plugins';
+import {
+  IFederatedExtensionData,
+  activePlugins,
+  createModule,
+  loadComponent
+} from './tools';
 
-function loadScript(url: string): Promise<any> {
-  return new Promise((resolve, reject) => {
-    const newScript = document.createElement('script');
-    newScript.onerror = reject;
-    newScript.onload = resolve;
-    newScript.async = true;
-    document.head.appendChild(newScript);
-    newScript.src = url;
-  });
-}
-async function loadComponent(url: string, scope: string): Promise<void> {
-  await loadScript(url);
+//Inspired by: https://github.com/jupyterlab/jupyterlab/blob/master/dev_mode/index.js
 
-  // From MIT-licensed https://github.com/module-federation/module-federation-examples/blob/af043acd6be1718ee195b2511adf6011fba4233c/advanced-api/dynamic-remotes/app1/src/App.js#L6-L12
-  // eslint-disable-next-line no-undef
-  await __webpack_init_sharing__('default');
-  const container = window._JUPYTERLAB[scope];
-  // Initialize the container, it may provide shared modules and may need ours
-  // eslint-disable-next-line no-undef
-  await container.init(__webpack_share_scopes__.default);
-}
-
-async function createModule(scope: string, module: string) {
-  try {
-    const factory = await window._JUPYTERLAB[scope].get(module);
-    return factory();
-  } catch (e) {
-    console.warn(
-      `Failed to create module: package: ${scope}; module: ${module}`
-    );
-    throw e;
-  }
-}
-
-const disabled = ['@jupyter-widgets/jupyterlab-manager'];
+const disabled = [
+  '@jupyter-widgets/jupyterlab-manager:plugin',
+  '@jupyter-widgets/jupyterlab-manager:saveWidgetState'
+];
 
 /**
  * The main function
@@ -62,57 +36,31 @@ const disabled = ['@jupyter-widgets/jupyterlab-manager'];
 async function main() {
   const mods = [
     // @jupyterlab plugins
-    require('@jupyterlab/markdownviewer-extension'),
-    require('@jupyterlab/mathjax2-extension'),
+    require('@jupyterlab/codemirror-extension').default.filter(
+      (p: any) => p.id === '@jupyterlab/codemirror-extension:languages'
+    ),
+    require('@jupyterlab/markedparser-extension'),
     require('@jupyterlab/rendermime-extension'),
-    // TODO: add the settings endpoint to re-enable the theme plugins?
-    // This would also need the theme manager plugin and settings
-    // require('@jupyterlab/theme-light-extension'),
-    // require('@jupyterlab/theme-dark-extension'),
+    require('@jupyterlab/theme-light-extension'),
+    require('@jupyterlab/theme-dark-extension'),
     plugins
   ];
 
-  const mimeExtensions = [require('@jupyterlab/json-extension')];
+  const mimeExtensions = [
+    require('@jupyterlab/javascript-extension'),
+    require('@jupyterlab/json-extension'),
+    require('@jupyterlab/vega5-extension')
+  ];
 
-  /**
-   * Iterate over active plugins in an extension.
-   *
-   * #### Notes
-   * This also populates the disabled
-   */
-  function* activePlugins(extension: any) {
-    // Handle commonjs or es2015 modules
-    let exports;
-    if (Object.prototype.hasOwnProperty.call(extension, '__esModule')) {
-      exports = extension.default;
-    } else {
-      // CommonJS exports.
-      exports = extension;
-    }
-
-    const plugins = Array.isArray(exports) ? exports : [exports];
-    for (const plugin of plugins) {
-      if (
-        PageConfig.Extension.isDisabled(plugin.id) ||
-        disabled.includes(plugin.id) ||
-        disabled.includes(plugin.id.split(':')[0])
-      ) {
-        continue;
-      }
-      yield plugin;
-    }
-  }
-
-  const extensionData: any[] = JSON.parse(
+  const extensionData: IFederatedExtensionData[] = JSON.parse(
     PageConfig.getOption('federated_extensions')
   );
-
   const federatedExtensionPromises: Promise<any>[] = [];
   const federatedMimeExtensionPromises: Promise<any>[] = [];
   const federatedStylePromises: Promise<any>[] = [];
 
   const extensions = await Promise.allSettled(
-    extensionData.map(async data => {
+    extensionData.map(async (data) => {
       await loadComponent(
         `${URLExt.join(
           PageConfig.getOption('fullLabextensionsUrl'),
@@ -125,7 +73,7 @@ async function main() {
     })
   );
 
-  extensions.forEach(p => {
+  extensions.forEach((p) => {
     if (p.status === 'rejected') {
       // There was an error loading the component
       console.error(p.reason);
@@ -150,9 +98,9 @@ async function main() {
   const federatedExtensions = await Promise.allSettled(
     federatedExtensionPromises
   );
-  federatedExtensions.forEach(p => {
+  federatedExtensions.forEach((p) => {
     if (p.status === 'fulfilled') {
-      for (const plugin of activePlugins(p.value)) {
+      for (const plugin of activePlugins(p.value, disabled)) {
         mods.push(plugin);
       }
     } else {
@@ -164,9 +112,9 @@ async function main() {
   const federatedMimeExtensions = await Promise.allSettled(
     federatedMimeExtensionPromises
   );
-  federatedMimeExtensions.forEach(p => {
+  federatedMimeExtensions.forEach((p) => {
     if (p.status === 'fulfilled') {
-      for (const plugin of activePlugins(p.value)) {
+      for (const plugin of activePlugins(p.value, disabled)) {
         mimeExtensions.push(plugin);
       }
     } else {
@@ -177,14 +125,17 @@ async function main() {
   // Load all federated component styles and log errors for any that do not
   (await Promise.allSettled(federatedStylePromises))
     .filter(({ status }) => status === 'rejected')
-    .forEach(p => {
+    .forEach((p) => {
       console.error((p as PromiseRejectedResult).reason);
     });
 
-  const app = new VoilaApp({ mimeExtensions, shell: new VoilaShell() });
+  const app = new VoilaApp({
+    mimeExtensions,
+    shell: new VoilaShell(),
+    serviceManager: new VoilaServiceManager()
+  });
   app.registerPluginModules(mods);
   await app.start();
-
   window.jupyterapp = app;
 }
 

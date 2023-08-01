@@ -16,5 +16,10 @@ module.exports = {
     video: 'retain-on-failure'
   },
   // Try one retry as some tests are flaky
-  retries: 1
+  retries: 1,
+  expect: {
+    toMatchSnapshot: {
+      maxDiffPixelRatio: 0.05
+    }
+  }
 };

@@ -51,7 +51,8 @@ export namespace CommandIDs {
  * A notebook widget extension that adds a voila preview button to the toolbar.
  */
 class VoilaRenderButton
-  implements DocumentRegistry.IWidgetExtension<NotebookPanel, INotebookModel> {
+  implements DocumentRegistry.IWidgetExtension<NotebookPanel, INotebookModel>
+{
   /**
    * Instantiate a new VoilaRenderButton.
    * @param commands The command registry.
@@ -105,15 +106,14 @@ const extension: JupyterFrontEndPlugin<IVoilaPreviewTracker> = {
     const tracker = new WidgetTracker<VoilaPreview>({
       namespace: 'voila-preview'
     });
-
     if (restorer) {
       restorer.restore(tracker, {
         command: 'docmanager:open',
-        args: panel => ({
+        args: (panel) => ({
           path: panel.context.path,
           factory: factory.name
         }),
-        name: panel => panel.context.path,
+        name: (panel) => panel.context.path,
         when: app.serviceManager.ready
       });
     }
@@ -142,7 +142,7 @@ const extension: JupyterFrontEndPlugin<IVoilaPreviewTracker> = {
     }
 
     const factory = new VoilaPreviewFactory(getVoilaUrl, {
-      name: 'Voila-preview',
+      name: 'Voila Preview',
       fileTypes: ['notebook'],
       modelName: 'notebook'
     });
@@ -178,7 +178,7 @@ const extension: JupyterFrontEndPlugin<IVoilaPreviewTracker> = {
 
     commands.addCommand(CommandIDs.voilaRender, {
       label: 'Render Notebook with Voilà',
-      execute: async args => {
+      execute: async (args) => {
         const current = getCurrent(args);
         let context: DocumentRegistry.IContext<INotebookModel>;
         if (current) {
@@ -190,7 +190,7 @@ const extension: JupyterFrontEndPlugin<IVoilaPreviewTracker> = {
           }
           commands.execute('docmanager:open', {
             path: context.path,
-            factory: 'Voila-preview',
+            factory: 'Voila Preview',
             options: {
               mode: 'split-right'
             }
@@ -202,7 +202,7 @@ const extension: JupyterFrontEndPlugin<IVoilaPreviewTracker> = {
 
     commands.addCommand(CommandIDs.voilaOpen, {
       label: 'Open with Voilà in New Browser Tab',
-      execute: async args => {
+      execute: async (args) => {
         const current = getCurrent(args);
         if (!current) {
           return;
@@ -220,7 +220,7 @@ const extension: JupyterFrontEndPlugin<IVoilaPreviewTracker> = {
 
     if (palette) {
       const category = 'Notebook Operations';
-      [CommandIDs.voilaRender, CommandIDs.voilaOpen].forEach(command => {
+      [CommandIDs.voilaRender, CommandIDs.voilaOpen].forEach((command) => {
         palette.addItem({ command, category });
       });
     }

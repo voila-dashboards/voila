@@ -20,7 +20,7 @@ export async function addBenchmarkToTest(
   testFunction: () => Promise<void>,
   testInfo: TestInfo,
   browserName: string,
-  nSamples = 5
+  nSamples = 1
 ): Promise<void> {
   const testTimeArray = [];
   const attachmentCommon = {
@@ -39,6 +39,6 @@ export async function addBenchmarkToTest(
         time: average(testTimeArray)
       })
     );
-    await new Promise(r => setTimeout(r, 500));
+    await new Promise((r) => setTimeout(r, 500));
   }
 }

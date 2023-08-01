@@ -8,24 +8,30 @@
 #############################################################################
 
 import traitlets.config
-from traitlets import Unicode, Bool, Dict, List, Int, Enum, Type
+from traitlets import Bool, Dict, Enum, Int, List, Type, Unicode
 
 
 class VoilaConfiguration(traitlets.config.Configurable):
     """Common configuration options between the server extension and the application."""
-    allow_template_override = Enum(['YES', 'NOTEBOOK', 'NO'], 'YES', help='''
+
+    allow_template_override = Enum(
+        ["YES", "NOTEBOOK", "NO"],
+        "YES",
+        help="""
     Allow overriding the template (YES), or not (NO), or only from the notebook metadata.
-    ''', config=True)
-    allow_theme_override = Enum(['YES', 'NOTEBOOK', 'NO'], 'YES', help='''
-    Allow overriding the theme (YES), or not (NO), or only from the notebook metadata.
-    ''', config=True)
-    template = Unicode(
-        'lab',
+    """,
         config=True,
-        allow_none=True,
-        help=(
-            'template name to be used by voila.'
-        )
+    )
+    allow_theme_override = Enum(
+        ["YES", "NOTEBOOK", "NO"],
+        "YES",
+        help="""
+    Allow overriding the theme (YES), or not (NO), or only from the notebook metadata.
+    """,
+        config=True,
+    )
+    template = Unicode(
+        "lab", config=True, allow_none=True, help=("template name to be used by voila.")
     )
     resources = Dict(
         allow_none=True,
@@ -34,21 +40,21 @@ class VoilaConfiguration(traitlets.config.Configurable):
         extra resources used by templates;
         example use with --template=reveal
         --VoilaConfiguration.resources="{'reveal': {'transition': 'fade', 'scroll': True}}"
-        """
+        """,
     )
-    theme = Unicode('light', config=True)
+    theme = Unicode("light", config=True)
     show_margins = Bool(
         False,
         config=True,
         help=(
             'Show left and right margins for the "lab" template, this gives a "classic" template look'
-        )
+        ),
     )
-    strip_sources = Bool(True, config=True, help='Strip sources from rendered html')
+    strip_sources = Bool(True, config=True, help="Strip sources from rendered html")
 
     file_whitelist = List(
         Unicode(),
-        [r'.*\.(png|jpg|gif|svg)'],
+        [r".*\.(png|jpg|gif|svg)"],
         config=True,
         help=r"""
     List of regular expressions for controlling which static files are served.
@@ -59,7 +65,7 @@ class VoilaConfiguration(traitlets.config.Configurable):
 
     file_blacklist = List(
         Unicode(),
-        [r'.*\.(ipynb|py)'],
+        [r".*\.(ipynb|py)"],
         config=True,
         help=r"""
     List of regular expressions for controlling which static files are forbidden to be served.
@@ -67,7 +73,7 @@ class VoilaConfiguration(traitlets.config.Configurable):
     Example:
     --VoilaConfiguration.file_whitelist="['.*']" # all files
     --VoilaConfiguration.file_blacklist="['private.*', '.*\.(ipynb)']" # except files in the private dir and notebook files
-    """
+    """,
     )
 
     language_kernel_mapping = Dict(
@@ -82,29 +88,35 @@ class VoilaConfiguration(traitlets.config.Configurable):
     extension_language_mapping = Dict(
         {},
         config=True,
-        help='''Mapping of file extension to kernel language
+        help="""Mapping of file extension to kernel language
         Example mapping .py files to a python language kernel, and .cpp to a C++11 language kernel:
         --VoilaConfiguration.extension_language_mapping='{".py": "python", ".cpp": "C++11"}'
-        ''',
+        """,
     )
 
-    http_keep_alive_timeout = Int(10, config=True, help="""
+    http_keep_alive_timeout = Int(
+        10,
+        config=True,
+        help="""
     When a cell takes a long time to execute, the http connection can timeout (possibly because of a proxy).
     Voila sends a 'heartbeat' message after the timeout is passed to keep the http connection alive.
-    """)
+    """,
+    )
 
-    show_tracebacks = Bool(False, config=True, help=(
-        'Whether to send tracebacks to clients on exceptions.'
-    ))
+    show_tracebacks = Bool(
+        False,
+        config=True,
+        help=("Whether to send tracebacks to clients on exceptions."),
+    )
 
     multi_kernel_manager_class = Type(
         config=True,
-        default_value='jupyter_server.services.kernels.kernelmanager.AsyncMappingKernelManager',
+        default_value="jupyter_server.services.kernels.kernelmanager.AsyncMappingKernelManager",
         # default_value='voila.voila_kernel_manager.VoilaKernelManager',
-        klass='jupyter_client.multikernelmanager.MultiKernelManager',
+        klass="jupyter_client.multikernelmanager.MultiKernelManager",
         help="""The kernel manager class. This is useful to specify a different kernel manager,
         for example a kernel manager with support for pooling.
-        """
+        """,
     )
 
     http_header_envs = List(
@@ -120,11 +132,27 @@ class VoilaConfiguration(traitlets.config.Configurable):
         False,
         config=True,
         help="""Flag to enable or disable pre-heat kernel option.
-        """
+        """,
     )
     default_pool_size = Int(
         1,
         config=True,
         help="""Size of pre-heated kernel pool for each notebook. Zero or negative number means disabled.
-        """
+        """,
+    )
+
+    extension_whitelist = List(
+        None,
+        allow_none=True,
+        config=True,
+        help="""The list of enabled JupyterLab extensions, if `None`, all extensions are loaded.
+        This setting has higher priority than the `extension_blacklist`
+        """,
+    )
+
+    extension_blacklist = List(
+        None,
+        allow_none=True,
+        config=True,
+        help="""The list of disabled JupyterLab extensions, if `None`, all extensions are loaded""",
     )

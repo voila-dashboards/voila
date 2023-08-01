@@ -1,3 +1,5 @@
+import { PromiseDelegate } from '@lumino/coreutils';
+
 import {
   JupyterFrontEnd,
   JupyterFrontEndPlugin,
@@ -7,6 +9,8 @@ import {
 import { PageConfig } from '@jupyterlab/coreutils';
 
 import { IRenderMime } from '@jupyterlab/rendermime';
+
+import { KernelWidgetManager } from '@jupyter-widgets/jupyterlab-manager';
 
 import { IShell, VoilaShell } from './shell';
 
@@ -94,7 +98,7 @@ export class VoilaApp extends JupyterFrontEnd<IShell> {
     if (!Array.isArray(data)) {
       data = [data];
     }
-    data.forEach(item => {
+    data.forEach((item) => {
       try {
         this.registerPlugin(item);
       } catch (error) {
@@ -109,10 +113,31 @@ export class VoilaApp extends JupyterFrontEnd<IShell> {
    * @param mods - The plugin modules to register.
    */
   registerPluginModules(mods: App.IPluginModule[]): void {
-    mods.forEach(mod => {
+    mods.forEach((mod) => {
       this.registerPluginModule(mod);
     });
   }
+
+  /**
+   * A promise that resolves when the Voila Widget Manager is created
+   */
+  get widgetManagerPromise(): PromiseDelegate<KernelWidgetManager> {
+    return this._widgetManagerPromise;
+  }
+
+  set widgetManager(manager: KernelWidgetManager | null) {
+    this._widgetManager = manager;
+    if (this._widgetManager) {
+      this._widgetManagerPromise.resolve(this._widgetManager);
+    }
+  }
+
+  get widgetManager(): KernelWidgetManager | null {
+    return this._widgetManager;
+  }
+
+  private _widgetManager: KernelWidgetManager | null = null;
+  private _widgetManagerPromise = new PromiseDelegate<KernelWidgetManager>();
 }
 
 /**

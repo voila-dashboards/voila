@@ -1,7 +1,6 @@
 # Commenting on a PR requires write access
 # This script is taken from jupyterlab project.
 
-
 name: Comment on the pull request
 
 on:
@@ -41,7 +40,6 @@ jobs:
             var fs = require('fs');
             fs.writeFileSync('${{github.workspace}}/benchmark-assets.zip', Buffer.from(download.data));
       - run: unzip benchmark-assets.zip
-
       - name: 'Comment on PR'
         uses: actions/github-script@v3
         with:

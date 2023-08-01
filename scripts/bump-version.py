@@ -6,8 +6,7 @@
 # - https://github.com/jupyterlab/retrolab/blob/main/buildutils/src/release-bump.ts
 
 import click
-from jupyter_releaser.util import is_prerelease, get_version, run
-
+from jupyter_releaser.util import get_version, is_prerelease, run
 
 OPTIONS = ["major", "minor", "release", "build", "patch", "next"]
 
@@ -45,26 +44,26 @@ def update(spec, force=False):
     lerna_version = "preminor"
     if spec == "build":
         lerna_version = "prerelease"
-        if 'a' in prev:
-            py_spec = 'a'
-        elif 'b' in prev:
-            py_spec = 'b'
-        elif 'rc' in prev:
-            py_spec = 'rc'
+        if "a" in prev:
+            py_spec = "a"
+        elif "b" in prev:
+            py_spec = "b"
+        elif "rc" in prev:
+            py_spec = "rc"
     # a -> b
     elif spec == "release" and "a" in prev:
         lerna_version = "prerelease --preid=beta"
-        py_spec = 'beta'
+        py_spec = "beta"
     # b -> rc
     elif spec == "release" and "b" in prev:
         lerna_version = "prerelease --preid=rc"
-        py_spec = 'rc'
+        py_spec = "rc"
     # rc -> final
     elif spec == "release" and "c" in prev:
         lerna_version = "patch"
-        py_spec = 'release'
+        py_spec = "release"
     elif spec == "release":
-        py_spec = 'minor,alpha'
+        py_spec = "minor,alpha"
 
     if lerna_version == "preminor":
         lerna_version += " --preid=alpha"
@@ -76,7 +75,7 @@ def update(spec, force=False):
     # For a preminor release, we bump 10 minor versions so that we do
     # not conflict with versions during minor releases of the top level package.
     if lerna_version == "preminor":
-        for i in range(10):
+        for _i in range(10):
             run(cmd)
     else:
         run(cmd)

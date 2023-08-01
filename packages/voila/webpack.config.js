@@ -7,13 +7,16 @@ const path = require('path');
 const webpack = require('webpack');
 const merge = require('webpack-merge').default;
 const { ModuleFederationPlugin } = webpack.container;
-
 const Build = require('@jupyterlab/builder').Build;
 const baseConfig = require('@jupyterlab/builder/lib/webpack.config.base');
 
 const data = require('./package.json');
 
-const names = Object.keys(data.dependencies).filter(name => {
+const names = Object.keys(data.dependencies).filter((name) => {
+  if (name === 'style-mod') {
+    return false;
+  }
+
   const packageData = require(path.join(name, 'package.json'));
   return packageData.jupyterlab !== undefined;
 });
@@ -27,17 +30,28 @@ fs.ensureDirSync(buildDir);
 
 // Copy files to the build directory
 const libDir = path.resolve(__dirname, 'lib');
-const style = path.resolve(__dirname, 'style.css');
 fs.copySync(libDir, buildDir);
-fs.copySync(style, path.resolve(buildDir, 'style.css'));
 
+const assetDir = path.resolve(
+  __dirname,
+  '..',
+  '..',
+  'share',
+  'jupyter',
+  'voila'
+);
 const extras = Build.ensureAssets({
   packageNames: names,
-  output: buildDir
+  output: assetDir
 });
 
 // Make a bootstrap entrypoint
 const entryPoint = path.join(buildDir, 'bootstrap.js');
+const treeEntryPoint = path.join(buildDir, 'treebootstrap.js');
+
+// Also build the style bundle
+const styleDir = path.resolve(__dirname, 'style');
+const styleEntryPoint = path.join(styleDir, 'index.js');
 
 if (process.env.NODE_ENV === 'production') {
   baseConfig.mode = 'production';
@@ -58,14 +72,21 @@ const distRoot = path.resolve(
 module.exports = [
   merge(baseConfig, {
     mode: 'development',
-    entry: ['./publicpath.js', './' + path.relative(__dirname, entryPoint)],
+    entry: {
+      voila: ['./publicpath.js', './' + path.relative(__dirname, entryPoint)],
+      treepage: [
+        './publicpath.js',
+        './' + path.relative(__dirname, treeEntryPoint)
+      ]
+    },
     output: {
       path: distRoot,
       library: {
         type: 'var',
         name: ['_JUPYTERLAB', 'CORE_OUTPUT']
       },
-      filename: 'voila.js'
+      filename: '[name].js',
+      chunkFilename: '[name].voila.js'
     },
     plugins: [
       new ModuleFederationPlugin({
@@ -79,5 +100,13 @@ module.exports = [
         }
       })
     ]
+  }),
+  merge(baseConfig, {
+    entry: './' + path.relative(__dirname, styleEntryPoint),
+    mode: 'production',
+    output: {
+      path: distRoot,
+      filename: 'voila-style.js'
+    }
   })
 ].concat(extras);

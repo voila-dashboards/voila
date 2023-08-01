@@ -1,6 +1,6 @@
 {
   "name": "@voila-dashboards/jupyterlab-preview",
-  "version": "2.3.0-alpha.1",
+  "version": "2.3.0-alpha.5",
   "description": "A JupyterLab preview extension for Voilà",
   "keywords": [
     "jupyter",
@@ -46,29 +46,31 @@
     "watch:src": "tsc -w"
   },
   "dependencies": {
-    "@jupyterlab/application": "^3.0.0",
-    "@jupyterlab/apputils": "^3.0.0",
-    "@jupyterlab/coreutils": "^5.0.0",
-    "@jupyterlab/docregistry": "^3.0.0",
-    "@jupyterlab/fileeditor": "^3.0.0",
-    "@jupyterlab/mainmenu": "^3.0.0",
-    "@jupyterlab/notebook": "^3.0.0",
-    "@jupyterlab/settingregistry": "^3.0.0",
-    "@jupyterlab/ui-components": "^3.0.0",
-    "@lumino/coreutils": "^1.5.3",
-    "@lumino/signaling": "^1.4.3",
-    "react": "^17.0.1",
-    "react-dom": "^17.0.1"
+    "@jupyterlab/application": "^4.0.0",
+    "@jupyterlab/apputils": "^4.0.0",
+    "@jupyterlab/coreutils": "^6.0.0",
+    "@jupyterlab/docregistry": "^4.0.0",
+    "@jupyterlab/fileeditor": "^4.0.0",
+    "@jupyterlab/mainmenu": "^4.0.0",
+    "@jupyterlab/notebook": "^4.0.0",
+    "@jupyterlab/settingregistry": "^4.0.0",
+    "@jupyterlab/ui-components": "^4.0.0",
+    "@lumino/coreutils": "^2.0.0",
+    "@lumino/signaling": "^2.0.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
   },
   "devDependencies": {
     "@babel/core": "^7.10.2",
     "@babel/preset-env": "^7.10.2",
-    "@jupyterlab/builder": "^3.0.0",
-    "@jupyterlab/testutils": "^3.0.0",
-    "@types/react": "^17.0.0",
-    "@types/react-dom": "^17.0.0",
+    "@jupyterlab/builder": "^4.0.0",
+    "@jupyterlab/testutils": "^4.0.0",
+    "@types/react": "^18.0.0",
+    "@types/react-dom": "^18.0.0",
+    "npm-run-all": "^4.1.5",
     "rimraf": "^2.6.1",
-    "typescript": "~4.1.3"
+    "source-map-loader": "~1.0.2",
+    "typescript": "~5.0.2"
   },
   "jupyterlab": {
     "extension": true,

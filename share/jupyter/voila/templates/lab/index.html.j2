@@ -9,11 +9,11 @@
 {%- endblock html_head_js_logs -%}
 {%- endblock html_head_js -%}
 
-{%- block html_head_css -%}
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@^5/css/all.min.css" type="text/css" />
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@^5/css/v4-shims.min.css" type="text/css" />
-{{ super() }}
-{{ spinner.css() }}
+{%- block notebook_css -%}
+  {{ resources.include_js("static/voila-style.js") }}
+
+  {{ spinner.css() }}
+
   <style>
     /*Hide empty cells*/
     .jp-mod-noOutputs.jp-mod-noInput {
@@ -39,13 +39,19 @@
     }
   </style>
 {% endif %}
-{%- endblock html_head_css -%}
+
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@^5/css/all.min.css" type="text/css" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@^5/css/v4-shims.min.css" type="text/css" />
+
+  {{ super() }}
+{%- endblock notebook_css -%}
 
 {# this overrides the default behaviour of rendering static widgets #}
 {% block jupyter_widgets %}
 {% endblock jupyter_widgets %}
 
 {%- block body_header -%}
+<link rel="icon" href="data:;base64,=">
 {% if resources.theme == 'dark' %}
 <body class="jp-Notebook theme-dark" data-base-url="{{resources.base_url}}voila/" data-jp-theme-light="false" data-jp-theme-name="JupyterLab Dark">
 {% else %}
@@ -56,6 +62,14 @@
 <div id="rendered_cells" style="display: none">
   <div>
 {%- endblock body_header -%}
+
+{% block data_priority scoped %}
+{% if output %}
+  <script type="application/vnd.voila.cell-output+json">
+    {{ output | trusted | tojson }}
+  </script>
+{% endif %}
+{% endblock data_priority %}
 
 {%- block body_loop -%}
   {# from this point on, the kernel is started #}
@@ -82,7 +96,7 @@
     {%- for cell in cell_generator(nb, kernel_id) -%}
       {% set cellloop = loop %}
       {%- block any_cell scoped -%}
-        <div cell-index={{cellloop.index}}>
+        <div cell-index="{{cellloop.index}}">
           <script>
             voila_process({{ cellloop.index }}, {{ cell_count }})
           </script>

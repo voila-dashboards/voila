@@ -17,8 +17,15 @@ jobs:
     name: Update Galata References
     if: ${{ github.event.issue.pull_request && contains(github.event.comment.body, 'update galata references') }}
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: [3.8]
+        node-version: [16.x]
 
     steps:
+      - name: Base Setup
+        uses: jupyterlab/maintainer-tools/.github/actions/base-setup@v1
+
       - name: Checkout
         uses: actions/checkout@v2
         with:
@@ -40,7 +47,7 @@ jobs:
           jlpm build
           jupyter labextension develop . --overwrite
           cd ui-tests
-          jlpm install --frozen-lockfile
+          jlpm install
 
       - uses: jupyterlab/maintainer-tools/.github/actions/update-snapshots@main
         with:
