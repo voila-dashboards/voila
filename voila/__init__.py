@@ -14,6 +14,7 @@ import warnings
 
 warnings.filterwarnings("default", category=DeprecationWarning, module="traitlets")
 
+
 def _jupyter_nbextension_paths():
     return [
         {
