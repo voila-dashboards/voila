@@ -115,7 +115,7 @@ High level instructions, specific to Voilà can be found below:
 1. Follow the steps of the official documentation to install the Railway
    CLI and login on your machine.
 
-2. Add a file named runtime.txt to the project directory with a 
+2. Add a file named runtime.txt to the project directory with a
    `valid Python runtime <https://devcenter.heroku.com/articles/python-support#supported-runtimes>`__:
 
    .. code:: text
@@ -253,13 +253,13 @@ Steps
               proxy_set_header Host $host;
               proxy_set_header X-Real-IP $remote_addr;
               proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-              
+
               proxy_http_version 1.1;
               proxy_set_header Upgrade $http_upgrade;
               proxy_set_header Connection "upgrade";
               proxy_read_timeout 86400;
           }
-          
+
           client_max_body_size 100M;
           error_log /var/log/nginx/error.log;
       }
@@ -289,7 +289,7 @@ Steps
 
       [Unit]
       Description=Voila
-      
+
       [Service]
       Type=simple
       PIDFile=/run/voila.pid
@@ -298,7 +298,7 @@ Steps
       WorkingDirectory=/home/ubuntu/
       Restart=always
       RestartSec=10
-      
+
       [Install]
       WantedBy=multi-user.target
 
@@ -337,7 +337,7 @@ Enable HTTPS with Let's Encrypt
 2. Obtain the certificates from Let's Encrypt. The ``--nginx`` flag will edit the nginx configuration automatically:
 
    .. code:: text
-    
+
       sudo certbot --nginx -d yourdomain.com
 
 3. ``/etc/nginx/sites-enabled/yourdomain.com`` should now contain a few more entries:
@@ -345,7 +345,7 @@ Enable HTTPS with Let's Encrypt
    .. code :: text
 
       $ cat /etc/nginx/sites-enabled/yourdomain.com
-      
+
       ...
       listen 443 ssl; # managed by Certbot
       ssl_certificate /etc/letsencrypt/live/yourdomain.com/fullchain.pem; # managed by Certbot
