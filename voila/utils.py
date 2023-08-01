@@ -92,13 +92,8 @@ def get_page_config(
         "fullStaticUrl": url_path_join(base_url, "voila/static"),
         "fullLabextensionsUrl": url_path_join(base_url, "voila/labextensions"),
     }
-
-    mathjax_config = settings.get("mathjax_config", "TeX-AMS_HTML-full,Safe")
-    # TODO Remove CDN usage.
-    mathjax_url = settings.get(
-        "mathjax_url",
-        "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js",
-    )
+    mathjax_config = settings.get("mathjax_config")
+    mathjax_url = settings.get("mathjax_url")
     page_config.setdefault("mathjaxConfig", mathjax_config)
     page_config.setdefault("fullMathjaxUrl", mathjax_url)
 
