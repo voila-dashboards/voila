@@ -24,7 +24,7 @@ the following option:
 
    voila <path-to-notebook> --theme=dark
 
-Or by passing in the query parameter ``voila-theme``, e.g. a URL like ``http://localhost:8867/voila/render/query-strings.ipynb?voila-theme=dark``.
+Or by passing in the query parameter ``theme``, e.g. a URL like ``http://localhost:8867/voila/render/query-strings.ipynb?theme=dark``.
 
 The theme can also be set in the notebook metadata, under ``metadata/voila/theme`` by editing the notebook file manually, or using the metadata editor in for instance the classical notebook
 
@@ -73,7 +73,7 @@ For example, to use the `gridstack <https://github.com/voila-dashboards/voila-gr
    voila <path-to-notebook> --template=gridstack
 
 
-Or by passing in the query parameter ``voila-template``, e.g. a URL like ``http://localhost:8867/voila/render/query-strings.ipynb?voila-template=material`` (Note that this requires installing voila-material).
+Or by passing in the query parameter ``template``, e.g. a URL like ``http://localhost:8867/voila/render/query-strings.ipynb?template=material`` (Note that this requires installing voila-material).
 
 The template can also set in the notebook metadata, under ``metadata/voila/template`` by editing the notebook file manually, or using the metadata editor in for instance the classical notebook
 
@@ -584,3 +584,18 @@ By default, Voilà does not have an execution timeout, meaning there is no limit
     voila --VoilaExecutor.timeout=30 your_notebook.ipynb
 
 With this setting, if any cell takes longer than 30 seconds to run, a ``TimeoutError`` will be raised.  You can further customize this behavior using the ``VoilaExecutor.timeout_func`` and ``VoilaExecutor.interrupt_on_timeout`` options.
+
+Customizing the Voila Preview widget
+=========================================
+
+By using the `layout customization system <https://jupyterlab.readthedocs.io/en/latest/user/interface_customization.html>`_ of JupyterLab, users can configure the position of the Voila preview widget to open it in a different area than `main`.
+
+``Voila Preview`` is the setting key of the preview widget. For example, the following configuration will open this widget in the right panel of JupyterLab
+
+.. code-block:: javascript
+
+   "layout": {
+      "multiple": {
+         "Voila Preview": { "area": "right" }
+      }
+   }

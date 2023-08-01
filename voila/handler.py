@@ -13,7 +13,6 @@ import os
 from pathlib import Path
 from typing import Dict
 
-import tornado.web
 from jupyter_server.base.handlers import JupyterHandler
 from jupyter_server.utils import url_path_join
 from nbclient.util import ensure_async
@@ -33,12 +32,12 @@ class BaseVoilaHandler(JupyterHandler):
     def render_template(self, name, **ns):
         """Render the Voila HTML template, respecting the theme and nbconvert template."""
         template_arg = (
-            self.get_argument("voila-template", self.voila_configuration.template)
+            self.get_argument("template", self.voila_configuration.template)
             if self.voila_configuration.allow_template_override == "YES"
             else self.voila_configuration.template
         )
         theme_arg = (
-            self.get_argument("voila-theme", self.voila_configuration.theme)
+            self.get_argument("theme", self.voila_configuration.theme)
             if self.voila_configuration.allow_theme_override == "YES"
             else self.voila_configuration.theme
         )
@@ -112,8 +111,8 @@ class VoilaHandler(BaseVoilaHandler):
                     env_name = f'HTTP_{header_name.upper().replace("-", "_")}'
                     request_info[env_name] = self.request.headers.get(header_name)
 
-        template_arg = self.get_argument("voila-template", None)
-        theme_arg = self.get_argument("voila-theme", None)
+        template_arg = self.get_argument("template", None)
+        theme_arg = self.get_argument("theme", None)
 
         # Compose reply
         self.set_header("Content-Type", "text/html")
@@ -196,7 +195,11 @@ class VoilaHandler(BaseVoilaHandler):
                 kernel_spec_manager=self.kernel_spec_manager,
                 prelaunch_hook=self.prelaunch_hook,
                 page_config=get_page_config(
-                    base_url=self.base_url, settings=self.settings, log=self.log
+                    base_url=self.base_url,
+                    settings=self.settings,
+                    log=self.log,
+                    extension_whitelist=self.voila_configuration.extension_whitelist,
+                    extension_blacklist=self.voila_configuration.extension_blacklist,
                 ),
             )
 
@@ -254,13 +257,6 @@ class VoilaHandler(BaseVoilaHandler):
                     if html_snippet is None:
                         break
                     yield html_snippet
-
-    @tornado.web.authenticated
-    async def get(self, path=None):
-        gen = self.get_generator(path=path)
-        async for html in gen:
-            self.write(html)
-            self.flush()
 
     def redirect_to_file(self, path):
         self.redirect(url_path_join(self.base_url, "voila", "files", path))

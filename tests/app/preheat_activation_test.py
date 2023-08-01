@@ -89,11 +89,11 @@ async def test_request_with_theme_parameter(http_server_client, base_url):
     """
     wait = NOTEBOOK_EXECUTION_TIME + 2
 
-    url = f"{base_url}?voila-theme=dark"
+    url = f"{base_url}?theme=dark"
     time, _ = await send_request(sc=http_server_client, url=url, wait=wait)
     assert time > TIME_THRESHOLD
 
-    url = f"{base_url}?voila-theme=light"
+    url = f"{base_url}?theme=light"
     time, _ = await send_request(sc=http_server_client, url=url, wait=wait)
     assert time < TIME_THRESHOLD
 
@@ -105,6 +105,6 @@ async def test_request_with_template_parameter(http_server_client, base_url):
     """
     wait = NOTEBOOK_EXECUTION_TIME + 2
 
-    url = f"{base_url}?voila-template=lab"
+    url = f"{base_url}?template=lab"
     time, _ = await send_request(sc=http_server_client, url=url, wait=wait)
     assert time < TIME_THRESHOLD

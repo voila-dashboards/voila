@@ -8,22 +8,23 @@
 #############################################################################
 
 import asyncio
+from copy import deepcopy
 import json
 import os
+import sys
 import threading
 import warnings
 from enum import Enum
 from functools import partial
-from typing import Awaitable, Dict
+from pathlib import Path
+from typing import Awaitable, Dict, List
 
 import websockets
 from jupyter_core.paths import jupyter_path
+from jupyter_server.config_manager import recursive_update
 from jupyter_server.utils import url_path_join
 from jupyterlab_server.config import get_page_config as gpc
-from jupyterlab_server.config import recursive_update
-from jupyterlab_server.themes_handler import ThemesHandler
 from markupsafe import Markup
-from nbconvert.exporters.html import find_lab_theme
 
 from ._version import __version__
 from .static_file_handler import TemplateStaticFileHandler
@@ -75,9 +76,17 @@ async def _get_request_info(ws_url: str) -> Awaitable:
         return ri
 
 
-def get_page_config(base_url, settings, log):
+def get_page_config(
+    base_url,
+    settings,
+    log,
+    extension_whitelist: List[str] = [],
+    extension_blacklist: List[str] = [],
+):
     page_config = {
         "appVersion": __version__,
+        "appUrl": "voila/",
+        "themesUrl": "/voila/api/themes",
         "baseUrl": base_url,
         "terminalsAvailable": False,
         "fullStaticUrl": url_path_join(base_url, "voila/static"),
@@ -94,6 +103,7 @@ def get_page_config(base_url, settings, log):
     page_config.setdefault("fullMathjaxUrl", mathjax_url)
 
     labextensions_path = jupyter_path("labextensions")
+
     recursive_update(
         page_config,
         gpc(
@@ -101,7 +111,76 @@ def get_page_config(base_url, settings, log):
             logger=log,
         ),
     )
+    disabled_extensions = [
+        "@voila-dashboards/jupyterlab-preview",
+        "@jupyter/collaboration-extension",
+    ]
+    must_have_extensions = ["@jupyter-widgets/jupyterlab-manager"]
+    federated_extensions = deepcopy(page_config["federated_extensions"])
+
+    page_config["federated_extensions"] = filter_extension(
+        federated_extensions=federated_extensions,
+        disabled_extensions=disabled_extensions,
+        must_have_extensions=must_have_extensions,
+        extension_whitelist=extension_whitelist,
+        extension_blacklist=extension_blacklist,
+    )
     return page_config
+
+
+def filter_extension(
+    federated_extensions: List[Dict],
+    disabled_extensions: List[str] = [],
+    must_have_extensions: List[str] = [],
+    extension_whitelist: List[str] = [],
+    extension_blacklist: List[str] = [],
+) -> List[Dict]:
+    """Create a list of extension to be loaded from available extensions and the
+    black/white list configuration.
+
+    Args:
+        - federated_extensions (List[Dict]): List of available extension
+        - disabled_extensions (List[str], optional): List of extension disabled by default.
+        Defaults to [].
+        - must_have_extensions (List[str], optional): List of extension must be enabled.
+        Defaults to [].
+        - extension_whitelist (List[str], optional): The white listed extensions.
+        Defaults to [].
+        - extension_blacklist (List[str], optional): The black listed extensions.
+        Defaults to [].
+
+    Returns:
+        List[Dict]: The filtered extensions
+    """
+    filtered_extensions = [
+        x for x in federated_extensions if x["name"] not in disabled_extensions
+    ]
+    if len(extension_blacklist) == 0:
+        if len(extension_whitelist) == 0:
+            # No white and black list, return all
+            return filtered_extensions
+
+        # White list is not empty, return white listed only
+        return [
+            x
+            for x in filtered_extensions
+            if x["name"] in must_have_extensions or x["name"] in extension_whitelist
+        ]
+
+    if len(extension_whitelist) == 0:
+        # No white list, return non black listed only
+        return [
+            x
+            for x in filtered_extensions
+            if x["name"] in must_have_extensions or x["name"] not in extension_blacklist
+        ]
+
+    # Have both black and white list, use only white list
+    return [
+        x
+        for x in filtered_extensions
+        if x["name"] in must_have_extensions or x["name"] in extension_whitelist
+    ]
 
 
 def wait_for_request(url: str = None) -> str:
@@ -189,17 +268,8 @@ def include_url(template_name: str, base_url: str, name: str) -> str:
 
 
 def include_lab_theme(base_url: str, name: str) -> str:
-    # Try to find the theme with the given name, looking through the labextensions
-    theme_name, _ = find_lab_theme(name)
-
-    settings = {
-        "static_url_prefix": f"{base_url}voila/themes/",
-        "static_path": None,  # not used in TemplateStaticFileHandler.get_absolute_path
-    }
-    url = ThemesHandler.make_static_url(settings, f"{theme_name}/index.css")
-
-    code = f'<link rel="stylesheet" type="text/css" href="{url}">'
-    return Markup(code)
+    """Override the function from `nbconvert`"""
+    return ""
 
 
 def create_include_assets_functions(template_name: str, base_url: str) -> Dict:
@@ -209,3 +279,21 @@ def create_include_assets_functions(template_name: str, base_url: str) -> Dict:
         "include_url": partial(include_url, template_name, base_url),
         "include_lab_theme": partial(include_lab_theme, base_url),
     }
+
+
+def pjoin(*args):
+    """Join paths to create a real path."""
+    return os.path.abspath(os.path.join(*args))
+
+
+def get_data_dir():
+    """Get the Voila data directory."""
+
+    app_dirs = jupyter_path("voila")
+    for path in app_dirs:
+        if os.path.exists(path):
+            return str(Path(path).resolve())
+
+    # Use the default locations for data_files.
+    app_dir = pjoin(sys.prefix, "share", "jupyter", "voila")
+    return str(Path(app_dir).resolve())

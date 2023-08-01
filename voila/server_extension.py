@@ -16,7 +16,7 @@ from jupyter_server.utils import url_path_join
 from jupyterlab_server.themes_handler import ThemesHandler
 
 from .configuration import VoilaConfiguration
-from .handler import VoilaHandler
+from .tornado.handler import TornadoVoilaHandler
 from .paths import ROOT, collect_static_paths, collect_template_paths, jupyter_path
 from .shutdown_kernel_handler import VoilaShutdownKernelHandler
 from .static_file_handler import (
@@ -24,8 +24,8 @@ from .static_file_handler import (
     TemplateStaticFileHandler,
     WhiteListFileHandler,
 )
-from .treehandler import VoilaTreeHandler
-from .utils import get_server_root_dir
+from .tornado.treehandler import TornadoVoilaTreeHandler
+from .utils import get_data_dir, get_server_root_dir, pjoin
 
 
 def _jupyter_server_extension_points():
@@ -61,22 +61,28 @@ def _load_jupyter_server_extension(server_app):
     base_url = url_path_join(web_app.settings["base_url"])
 
     tree_handler_conf = {"voila_configuration": voila_configuration}
+
+    themes_dir = pjoin(get_data_dir(), "themes")
     web_app.add_handlers(
         host_pattern,
         [
             (
                 url_path_join(base_url, "/voila/render/(.*)"),
-                VoilaHandler,
+                TornadoVoilaHandler,
                 {
                     "config": server_app.config,
                     "template_paths": template_paths,
                     "voila_configuration": voila_configuration,
                 },
             ),
-            (url_path_join(base_url, "/voila"), VoilaTreeHandler, tree_handler_conf),
+            (
+                url_path_join(base_url, "/voila"),
+                TornadoVoilaTreeHandler,
+                tree_handler_conf,
+            ),
             (
                 url_path_join(base_url, "/voila/tree" + path_regex),
-                VoilaTreeHandler,
+                TornadoVoilaTreeHandler,
                 tree_handler_conf,
             ),
             (
@@ -84,11 +90,11 @@ def _load_jupyter_server_extension(server_app):
                 TemplateStaticFileHandler,
             ),
             (
-                url_path_join(base_url, r"/voila/themes/(.*)"),
+                url_path_join(base_url, r"/voila/api/themes/(.*)"),
                 ThemesHandler,
                 {
-                    "themes_url": "/voila/themes",
-                    "path": "",
+                    "themes_url": "/voila/api/themes",
+                    "path": themes_dir,
                     "labextensions_path": jupyter_path("labextensions"),
                     "no_cache_paths": ["/"],
                 },
