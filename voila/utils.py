@@ -8,12 +8,12 @@
 #############################################################################
 
 import asyncio
-from copy import deepcopy
 import json
 import os
 import sys
 import threading
 import warnings
+from copy import deepcopy
 from functools import partial
 from pathlib import Path
 from typing import Awaitable, Dict, List
@@ -26,6 +26,7 @@ from jupyterlab_server.config import get_page_config as gpc
 from markupsafe import Markup
 
 from ._version import __version__
+from .configuration import VoilaConfiguration
 from .static_file_handler import TemplateStaticFileHandler
 
 try:
@@ -88,13 +89,7 @@ async def _get_request_info(ws_url: str) -> Awaitable:
         return ri
 
 
-def get_page_config(
-    base_url,
-    settings,
-    log,
-    extension_allowlist: List[str] = [],
-    extension_denylist: List[str] = [],
-):
+def get_page_config(base_url, settings, log, voila_configuration: VoilaConfiguration):
     page_config = {
         "appVersion": __version__,
         "appUrl": "voila/",
@@ -103,6 +98,7 @@ def get_page_config(
         "terminalsAvailable": False,
         "fullStaticUrl": url_path_join(base_url, "voila/static"),
         "fullLabextensionsUrl": url_path_join(base_url, "voila/labextensions"),
+        "extensionConfig": voila_configuration.extension_config,
     }
     mathjax_config = settings.get("mathjax_config")
     mathjax_url = settings.get("mathjax_url")
@@ -129,8 +125,8 @@ def get_page_config(
         federated_extensions=federated_extensions,
         disabled_extensions=disabled_extensions,
         required_extensions=required_extensions,
-        extension_allowlist=extension_allowlist,
-        extension_denylist=extension_denylist,
+        extension_allowlist=voila_configuration.extension_allowlist,
+        extension_denylist=voila_configuration.extension_denylist,
     )
     return page_config
 

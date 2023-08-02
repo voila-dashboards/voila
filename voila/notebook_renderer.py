@@ -143,7 +143,6 @@ class NotebookRenderer(LoggingConfigurable):
             contents_manager=self.contents_manager,  # for the image inlining
             theme=self.theme,  # we now have the theme in two places
             base_url=self.base_url,
-            page_config=self.page_config,
             show_margins=self.voila_configuration.show_margins,
             mathjax_url=mathjax_full_url,
         )
