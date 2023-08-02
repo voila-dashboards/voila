@@ -22,7 +22,7 @@ from .shutdown_kernel_handler import VoilaShutdownKernelHandler
 from .static_file_handler import (
     MultiStaticFileHandler,
     TemplateStaticFileHandler,
-    WhiteListFileHandler,
+    AllowListFileHandler,
 )
 from .tornado.treehandler import TornadoVoilaTreeHandler
 from .utils import get_data_dir, get_server_root_dir, pjoin
@@ -110,10 +110,10 @@ def _load_jupyter_server_extension(server_app):
             ),
             (
                 url_path_join(base_url, r"/voila/files/(.*)"),
-                WhiteListFileHandler,
+                AllowListFileHandler,
                 {
-                    "whitelist": voila_configuration.file_whitelist,
-                    "blacklist": voila_configuration.file_blacklist,
+                    "allowlist": voila_configuration.file_allowlist,
+                    "denylist": voila_configuration.file_denylist,
                     "path": os.path.expanduser(get_server_root_dir(web_app.settings)),
                 },
             ),

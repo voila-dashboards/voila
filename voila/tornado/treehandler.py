@@ -49,8 +49,8 @@ class TornadoVoilaTreeHandler(VoilaTreeHandler):
                 base_url=self.base_url,
                 settings=self.settings,
                 log=self.log,
-                extension_whitelist=self.voila_configuration.extension_whitelist,
-                extension_blacklist=self.voila_configuration.extension_blacklist,
+                extension_allowlist=self.voila_configuration.extension_allowlist,
+                extension_denylist=self.voila_configuration.extension_denylist,
             )
             page_config["jupyterLabTheme"] = theme_arg
 

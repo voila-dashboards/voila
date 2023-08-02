@@ -19,6 +19,8 @@ from nbclient.util import ensure_async
 from tornado.httputil import split_host_and_port
 from traitlets.traitlets import Bool
 
+from .configuration import VoilaConfiguration
+
 from ._version import __version__
 from .notebook_renderer import NotebookRenderer
 from .request_info_handler import RequestInfoSocketHandler
@@ -68,7 +70,7 @@ class VoilaHandler(BaseVoilaHandler):
         self.notebook_path = kwargs.pop("notebook_path", [])  # should it be []
         self.template_paths = kwargs.pop("template_paths", [])
         self.traitlet_config = kwargs.pop("config", None)
-        self.voila_configuration = kwargs["voila_configuration"]
+        self.voila_configuration: VoilaConfiguration = kwargs["voila_configuration"]
         self.prelaunch_hook = kwargs.get("prelaunch_hook", None)
         # we want to avoid starting multiple kernels due to template mistakes
         self.kernel_started = False
@@ -198,8 +200,8 @@ class VoilaHandler(BaseVoilaHandler):
                     base_url=self.base_url,
                     settings=self.settings,
                     log=self.log,
-                    extension_whitelist=self.voila_configuration.extension_whitelist,
-                    extension_blacklist=self.voila_configuration.extension_blacklist,
+                    extension_allowlist=self.voila_configuration.extension_allowlist,
+                    extension_denylist=self.voila_configuration.extension_denylist,
                 ),
                 mathjax_config=mathjax_config,
                 mathjax_url=mathjax_url,
