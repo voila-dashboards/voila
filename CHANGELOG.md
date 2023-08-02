@@ -2,6 +2,41 @@
 
 <!-- <START NEW CHANGELOG ENTRY> -->
 
+## 0.5.0b0
+
+([Full Changelog](https://github.com/voila-dashboards/voila/compare/@voila-dashboards/jupyterlab-preview@2.3.0-alpha.5...72a7e5662b1d81c178674b30cde7741a0662df94))
+
+### Enhancements made
+
+- Update mathjax setting [#1362](https://github.com/voila-dashboards/voila/pull/1362) ([@trungleduc](https://github.com/trungleduc))
+- Document how to customize the Voila Preview widget shell area [#1327](https://github.com/voila-dashboards/voila/pull/1327) ([@jtpio](https://github.com/jtpio))
+
+### Bugs fixed
+
+- Update mathjax setting [#1362](https://github.com/voila-dashboards/voila/pull/1362) ([@trungleduc](https://github.com/trungleduc))
+- Fix json/yaml rendering [#1353](https://github.com/voila-dashboards/voila/pull/1353) ([@martinRenou](https://github.com/martinRenou))
+
+### Maintenance and upkeep improvements
+
+- Update `blacklist` and `whitelist` keywords [#1367](https://github.com/voila-dashboards/voila/pull/1367) ([@trungleduc](https://github.com/trungleduc))
+- Fix linting [#1364](https://github.com/voila-dashboards/voila/pull/1364) ([@martinRenou](https://github.com/martinRenou))
+- Cleanup npm dependencies [#1354](https://github.com/voila-dashboards/voila/pull/1354) ([@martinRenou](https://github.com/martinRenou))
+- Rename plugins for consistency [#1350](https://github.com/voila-dashboards/voila/pull/1350) ([@jtpio](https://github.com/jtpio))
+- Simplify some code [#1329](https://github.com/voila-dashboards/voila/pull/1329) ([@davidbrochart](https://github.com/davidbrochart))
+
+### Documentation improvements
+
+- Document how to customize the Voila Preview widget shell area [#1327](https://github.com/voila-dashboards/voila/pull/1327) ([@jtpio](https://github.com/jtpio))
+- Update deployment documentation [#1277](https://github.com/voila-dashboards/voila/pull/1277) ([@12rambau](https://github.com/12rambau))
+
+### Contributors to this release
+
+([GitHub contributors page for this release](https://github.com/voila-dashboards/voila/graphs/contributors?from=2023-07-06&to=2023-08-02&type=c))
+
+[@12rambau](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3A12rambau+updated%3A2023-07-06..2023-08-02&type=Issues) | [@davidbrochart](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Adavidbrochart+updated%3A2023-07-06..2023-08-02&type=Issues) | [@github-actions](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Agithub-actions+updated%3A2023-07-06..2023-08-02&type=Issues) | [@jtpio](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Ajtpio+updated%3A2023-07-06..2023-08-02&type=Issues) | [@martinRenou](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3AmartinRenou+updated%3A2023-07-06..2023-08-02&type=Issues) | [@pre-commit-ci](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Apre-commit-ci+updated%3A2023-07-06..2023-08-02&type=Issues) | [@SylvainCorlay](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3ASylvainCorlay+updated%3A2023-07-06..2023-08-02&type=Issues) | [@trungleduc](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Atrungleduc+updated%3A2023-07-06..2023-08-02&type=Issues) | [@Zsailer](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3AZsailer+updated%3A2023-07-06..2023-08-02&type=Issues)
+
+<!-- <END NEW CHANGELOG ENTRY> -->
+
 ## 0.5.0a5
 
 ([Full Changelog](https://github.com/voila-dashboards/voila/compare/@voila-dashboards/jupyterlab-preview@2.3.0-alpha.4...ea11d94f9ee4eece6f517e1d8ef6191e4334c927))
@@ -34,8 +69,6 @@
 ([GitHub contributors page for this release](https://github.com/voila-dashboards/voila/graphs/contributors?from=2023-04-19&to=2023-07-06&type=c))
 
 [@bsyouness](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Absyouness+updated%3A2023-04-19..2023-07-06&type=Issues) | [@davidbrochart](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Adavidbrochart+updated%3A2023-04-19..2023-07-06&type=Issues) | [@github-actions](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Agithub-actions+updated%3A2023-04-19..2023-07-06&type=Issues) | [@jtpio](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Ajtpio+updated%3A2023-04-19..2023-07-06&type=Issues) | [@maartenbreddels](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Amaartenbreddels+updated%3A2023-04-19..2023-07-06&type=Issues) | [@martinRenou](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3AmartinRenou+updated%3A2023-04-19..2023-07-06&type=Issues) | [@pre-commit-ci](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Apre-commit-ci+updated%3A2023-04-19..2023-07-06&type=Issues) | [@SylvainCorlay](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3ASylvainCorlay+updated%3A2023-04-19..2023-07-06&type=Issues) | [@trungleduc](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Atrungleduc+updated%3A2023-04-19..2023-07-06&type=Issues)
-
-<!-- <END NEW CHANGELOG ENTRY> -->
 
 ## 0.5.0a4
 
