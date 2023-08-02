@@ -22,7 +22,7 @@ export namespace IShell {
   /**
    * The areas of the application shell where widgets can reside.
    */
-  export type Area = 'main';
+  export type Area = 'top' | 'bottom';
 }
 
 /**
@@ -30,8 +30,8 @@ export namespace IShell {
  */
 export class VoilaShell extends Widget implements JupyterFrontEnd.IShell {
   constructor() {
-    super();
-    this.id = 'main';
+    const node = document.getElementById('rendered_cells');
+    super(node ? { node } : undefined);
   }
 
   activateById(id: string): void {
@@ -52,8 +52,20 @@ export class VoilaShell extends Widget implements JupyterFrontEnd.IShell {
     area?: IShell.Area,
     options?: DocumentRegistry.IOpenOptions
   ): void {
-    // no-op for now
-    // TODO: support adding widgets to areas?
+    switch (area) {
+      case 'top':
+        Widget.attach(
+          widget,
+          this.node,
+          this.node.firstElementChild as HTMLElement
+        );
+        break;
+      case 'bottom':
+        Widget.attach(widget, this.node);
+        break;
+      default:
+        break;
+    }
   }
 
   /**

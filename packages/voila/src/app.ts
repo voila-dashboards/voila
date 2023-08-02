@@ -37,6 +37,13 @@ export class VoilaApp extends JupyterFrontEnd<IShell> {
     }
   }
 
+  protected attachShell(id: string): void {
+    if (this.shell.isAttached || this.shell.node.isConnected) {
+      // no-op
+      return;
+    }
+    super.attachShell(id);
+  }
   /**
    * The name of the application.
    */
