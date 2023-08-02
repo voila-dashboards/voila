@@ -32,12 +32,11 @@ try:
     # Only exists in Python 3.11
     from enum import StrEnum
 
-
     class StringEnum(StrEnum):
         pass
+
 except ImportError:
     from enum import Enum
-
 
     class StringEnum(str, Enum):
         pass
