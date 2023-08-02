@@ -11,7 +11,7 @@ import { JupyterFrontEnd } from '@jupyterlab/application';
 
 import { DocumentRegistry } from '@jupyterlab/docregistry';
 
-import { Widget } from '@lumino/widgets';
+import { BoxLayout, Widget } from '@lumino/widgets';
 
 export type IShell = VoilaShell;
 
@@ -22,7 +22,7 @@ export namespace IShell {
   /**
    * The areas of the application shell where widgets can reside.
    */
-  export type Area = 'top' | 'bottom';
+  export type Area = 'top' | 'bottom' | 'main';
 }
 
 /**
@@ -30,8 +30,11 @@ export namespace IShell {
  */
 export class VoilaShell extends Widget implements JupyterFrontEnd.IShell {
   constructor() {
-    const node = document.getElementById('rendered_cells');
-    super(node ? { node } : undefined);
+    super();
+    this.id = 'main';
+    const rootLayout = new BoxLayout();
+    rootLayout.alignment = 'start';
+    this.layout = rootLayout;
   }
 
   activateById(id: string): void {
@@ -62,6 +65,9 @@ export class VoilaShell extends Widget implements JupyterFrontEnd.IShell {
         break;
       case 'bottom':
         Widget.attach(widget, this.node);
+        break;
+      case 'main':
+        (this.layout as BoxLayout).addWidget(widget);
         break;
       default:
         break;

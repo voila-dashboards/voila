@@ -1,0 +1,10 @@
+body {
+  padding: 0 !important;
+}
+div#main {
+  height: 100vh;
+}
+div#rendered_cells {
+  padding: var(--jp-notebook-padding);
+  overflow: auto;
+}

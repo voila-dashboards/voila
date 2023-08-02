@@ -149,5 +149,10 @@ export const renderOutputsPlugin: JupyterFrontEndPlugin<void> = {
         Widget.attach(output, container);
       }
     });
+    const node = document.getElementById('rendered_cells');
+    if (node) {
+      const cells = new Widget({ node });
+      app.shell.add(cells, 'main');
+    }
   }
 };
