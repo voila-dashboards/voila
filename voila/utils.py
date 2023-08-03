@@ -118,6 +118,7 @@ def get_page_config(base_url, settings, log, voila_configuration: VoilaConfigura
         "@voila-dashboards/jupyterlab-preview",
         "@jupyter/collaboration-extension",
     ]
+    disabled_extensions.extend(page_config.get("disabledExtensions", []))
     required_extensions = ["@jupyter-widgets/jupyterlab-manager"]
     federated_extensions = deepcopy(page_config["federated_extensions"])
 
