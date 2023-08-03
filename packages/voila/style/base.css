@@ -1,0 +1,18 @@
+body {
+  padding: 0 !important;
+}
+div#main {
+  height: 100vh;
+}
+div#voila-top-panel {
+  min-height: var(--jp-private-menubar-height);
+  display: flex;
+}
+div#voila-bottom-panel {
+  min-height: var(--jp-private-menubar-height);
+  display: flex;
+}
+div#rendered_cells {
+  padding: var(--jp-notebook-padding);
+  overflow: auto;
+}

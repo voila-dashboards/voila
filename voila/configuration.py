@@ -190,3 +190,11 @@ class VoilaConfiguration(traitlets.config.Configurable):
         config=True,
         help="""The list of disabled JupyterLab extensions, if `None`, all extensions are loaded""",
     )
+
+    extension_config = Dict(
+        None,
+        allow_none=True,
+        config=True,
+        help="""The dictionary of extension configuration, this dict is passed to the frontend
+        through the PageConfig""",
+    )
