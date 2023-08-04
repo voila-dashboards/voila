@@ -5,6 +5,12 @@
 
    The full license is in the file LICENSE, distributed with this software.
 
+.. note::
+
+   Want to turn your Voilà dashboard into a static webpage? Check out `Voici <https://github.com/voila-dashboards/voici>`_!
+   The combination of `JupyterLite <https://jupyterlite.readthedocs.io>`_ and Voilà
+
+
 .. image:: voila-logo.svg
    :alt: voila
 
