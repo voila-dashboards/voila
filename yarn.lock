@@ -2328,7 +2328,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@jupyterlab/application@npm:^3.0.0 || ^4.0.0, @jupyterlab/application@npm:^4.0.0, @jupyterlab/application@npm:^4.0.0-alpha.21, @jupyterlab/application@npm:^4.0.3":
+"@jupyterlab/application@npm:^3.0.0 || ^4.0.0, @jupyterlab/application@npm:^4.0.0, @jupyterlab/application@npm:^4.0.3":
   version: 4.0.3
   resolution: "@jupyterlab/application@npm:4.0.3"
   dependencies:
@@ -2596,7 +2596,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@jupyterlab/coreutils@npm:^6.0.0, @jupyterlab/coreutils@npm:^6.0.0-alpha.21, @jupyterlab/coreutils@npm:^6.0.3":
+"@jupyterlab/coreutils@npm:^6.0.0, @jupyterlab/coreutils@npm:^6.0.3":
   version: 6.0.3
   resolution: "@jupyterlab/coreutils@npm:6.0.3"
   dependencies:
@@ -2862,25 +2862,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@jupyterlab/mathjax2-extension@npm:^4.0.0-alpha.21":
-  version: 4.0.0-alpha.21
-  resolution: "@jupyterlab/mathjax2-extension@npm:4.0.0-alpha.21"
+"@jupyterlab/mathjax2-extension@npm:^4.0.0":
+  version: 4.0.0
+  resolution: "@jupyterlab/mathjax2-extension@npm:4.0.0"
   dependencies:
-    "@jupyterlab/application": ^4.0.0-alpha.21
-    "@jupyterlab/coreutils": ^6.0.0-alpha.21
-    "@jupyterlab/mathjax2": ^4.0.0-alpha.21
-    "@jupyterlab/rendermime": ^4.0.0-alpha.21
-  checksum: 6d29ce7df31887252160200668bb7b45a534d55c77365882b53d1a9784b7017ac1949899f7536b62dac6d6d848e77c2e7823f50d9e764821ecf775c31666ec19
-  languageName: node
-  linkType: hard
-
-"@jupyterlab/mathjax2@npm:^4.0.0-alpha.21":
-  version: 4.0.0-alpha.21
-  resolution: "@jupyterlab/mathjax2@npm:4.0.0-alpha.21"
-  dependencies:
-    "@jupyterlab/rendermime-interfaces": ^3.8.0-alpha.21
-    "@lumino/coreutils": ^2.0.0-rc.1
-  checksum: 12d5a9647b81c8b84b921464cef879bb6bddbd763ea385498908789344eeeb12e7abb053bcb3abde93c7797c553403d17379d3b5408ce302dd4592fdc8df5c51
+    "@jupyterlab/application": ^4.0.0
+    "@jupyterlab/coreutils": ^6.0.0
+    "@jupyterlab/rendermime": ^4.0.0
+    "@jupyterlab/rendermime-interfaces": ^3.8.0
+    "@jupyterlab/translation": ^4.0.0
+    "@lumino/coreutils": ^2.1.0
+  checksum: 1bf0c5c9ce128c5785bfe3014c40023aeac62dc7a18dd5c7780b0214f8b35452581050a5003994b97007c13431b6dd7d8540ef2b4a23714c7bacfa460487bacf
   languageName: node
   linkType: hard
 
@@ -2977,7 +2969,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@jupyterlab/rendermime-interfaces@npm:^3.0.0 || ^4.0.0, @jupyterlab/rendermime-interfaces@npm:^3.8.0-alpha.21, @jupyterlab/rendermime-interfaces@npm:^3.8.3":
+"@jupyterlab/rendermime-interfaces@npm:^3.0.0 || ^4.0.0, @jupyterlab/rendermime-interfaces@npm:^3.8.3":
   version: 3.8.3
   resolution: "@jupyterlab/rendermime-interfaces@npm:3.8.3"
   dependencies:
@@ -2987,7 +2979,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@jupyterlab/rendermime@npm:^3.0.0 || ^4.0.0, @jupyterlab/rendermime@npm:^4.0.0, @jupyterlab/rendermime@npm:^4.0.0-alpha.21, @jupyterlab/rendermime@npm:^4.0.3":
+"@jupyterlab/rendermime-interfaces@npm:^3.8.0":
+  version: 3.8.4
+  resolution: "@jupyterlab/rendermime-interfaces@npm:3.8.4"
+  dependencies:
+    "@lumino/coreutils": ^1.11.0 || ^2.1.1
+    "@lumino/widgets": ^1.37.2 || ^2.1.1
+  checksum: 5cd8cef14e0716e14f77c724937fa9f9d33bfc079e75a005b933601057675b660eebae69f53e2e369ee5665902501a547e8aac3f0eda9a79a8c82fe95fe01a27
+  languageName: node
+  linkType: hard
+
+"@jupyterlab/rendermime@npm:^3.0.0 || ^4.0.0, @jupyterlab/rendermime@npm:^4.0.0, @jupyterlab/rendermime@npm:^4.0.3":
   version: 4.0.3
   resolution: "@jupyterlab/rendermime@npm:4.0.3"
   dependencies:
@@ -4206,7 +4208,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@lumino/coreutils@npm:^1.11.0 || ^2.0.0, @lumino/coreutils@npm:^1.11.0 || ^2.1.1, @lumino/coreutils@npm:^1.11.1 || ^2, @lumino/coreutils@npm:^1.11.1 || ^2.1, @lumino/coreutils@npm:^2.0.0, @lumino/coreutils@npm:^2.0.0-rc.1, @lumino/coreutils@npm:^2.1.1, @lumino/coreutils@npm:^2.1.2":
+"@lumino/coreutils@npm:^1.11.0 || ^2.0.0, @lumino/coreutils@npm:^1.11.0 || ^2.1.1, @lumino/coreutils@npm:^1.11.1 || ^2, @lumino/coreutils@npm:^1.11.1 || ^2.1, @lumino/coreutils@npm:^2.0.0, @lumino/coreutils@npm:^2.1.0, @lumino/coreutils@npm:^2.1.1, @lumino/coreutils@npm:^2.1.2":
   version: 2.1.2
   resolution: "@lumino/coreutils@npm:2.1.2"
   checksum: 7865317ac0676b448d108eb57ab5d8b2a17c101995c0f7a7106662d9fe6c859570104525f83ee3cda12ae2e326803372206d6f4c1f415a5b59e4158a7b81066f
@@ -5221,7 +5223,7 @@ __metadata:
     "@jupyterlab/mainmenu": ^4.0.0
     "@jupyterlab/markdownviewer-extension": ^4.0.0
     "@jupyterlab/markedparser-extension": ^4.0.0
-    "@jupyterlab/mathjax2-extension": ^4.0.0-alpha.21
+    "@jupyterlab/mathjax2-extension": ^4.0.0
     "@jupyterlab/nbformat": ^4.0.0
     "@jupyterlab/notebook": ^4.0.0
     "@jupyterlab/outputarea": ^4.0.0
@@ -15938,11 +15940,11 @@ __metadata:
 
 "typescript@patch:typescript@~5.0.2#~builtin<compat/typescript>":
   version: 5.0.4
-  resolution: "typescript@patch:typescript@npm%3A5.0.4#~builtin<compat/typescript>::version=5.0.4&hash=85af82"
+  resolution: "typescript@patch:typescript@npm%3A5.0.4#~builtin<compat/typescript>::version=5.0.4&hash=b5f058"
   bin:
     tsc: bin/tsc
     tsserver: bin/tsserver
-  checksum: bb309d320c59a26565fb3793dba550576ab861018ff3fd1b7fccabbe46ae4a35546bc45f342c0a0b6f265c801ccdf64ffd68f548f117ceb7f0eac4b805cd52a9
+  checksum: d26b6ba97b6d163c55dbdffd9bbb4c211667ebebc743accfeb2c8c0154aace7afd097b51165a72a5bad2cf65a4612259344ff60f8e642362aa1695c760d303ac
   languageName: node
   linkType: hard
 

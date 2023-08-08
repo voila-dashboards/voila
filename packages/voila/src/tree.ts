@@ -21,6 +21,11 @@ import {
 import { VoilaServiceManager } from './services/servicemanager';
 import { VoilaShell } from './shell';
 import { activePlugins, createModule, loadComponent } from './tools';
+import '../style/index.js';
+import '@jupyterlab/filebrowser/style/index.js';
+import { treeWidgetPlugin } from './plugins/tree';
+import { Drive } from '@jupyterlab/services';
+import { ContentsManager } from '@jupyterlab/services';
 
 const disabled = [
   '@jupyter-widgets/jupyterlab-manager:plugin',
@@ -40,7 +45,8 @@ async function main() {
     pathsPlugin,
     translatorPlugin,
     themePlugin,
-    themesManagerPlugin
+    themesManagerPlugin,
+    treeWidgetPlugin
   ];
 
   const mimeExtensions: any[] = [];
@@ -122,11 +128,12 @@ async function main() {
     .forEach((p) => {
       console.error((p as PromiseRejectedResult).reason);
     });
-
+  const drive = new Drive({ apiEndpoint: 'voila/api/contents' });
+  const cm = new ContentsManager({ defaultDrive: drive });
   const app = new VoilaApp({
     mimeExtensions,
     shell: new VoilaShell(),
-    serviceManager: new VoilaServiceManager()
+    serviceManager: new VoilaServiceManager({ contents: cm })
   });
   app.registerPluginModules(mods);
   app.started.then(() => {

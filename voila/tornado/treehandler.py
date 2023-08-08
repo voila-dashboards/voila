@@ -39,7 +39,6 @@ class TornadoVoilaTreeHandler(VoilaTreeHandler):
 
             contents["content"] = sorted(contents["content"], key=lambda i: i["name"])
             contents["content"] = filter(allowed_content, contents["content"])
-
             theme_arg = (
                 self.get_argument("theme", self.voila_configuration.theme)
                 if self.voila_configuration.allow_theme_override == "YES"
@@ -52,10 +51,12 @@ class TornadoVoilaTreeHandler(VoilaTreeHandler):
                 voila_configuration=self.voila_configuration,
             )
             page_config["jupyterLabTheme"] = theme_arg
+            page_config["frontend"] = "voila"
+            page_config["query"] = self.request.query
 
             self.write(
                 self.render_template(
-                    "tree.html",
+                    "tree-lab.html",
                     frontend="voila",
                     main_js="voila.js",
                     page_title=page_title,

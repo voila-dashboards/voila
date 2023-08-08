@@ -20,6 +20,8 @@ import tempfile
 import threading
 import webbrowser
 
+from .tornado.contentshandler import VoilaContentsHandler
+
 from .voila_identity_provider import VoilaLoginHandler
 
 try:
@@ -637,7 +639,7 @@ class Voila(Application):
     def init_handlers(self) -> List:
         """Initialize handlers for Voila application."""
         handlers = []
-
+        tree_handler_conf = {"voila_configuration": self.voila_configuration}
         handlers.extend(
             [
                 (
@@ -670,6 +672,13 @@ class Voila(Application):
                         "labextensions_path": jupyter_path("labextensions"),
                         "no_cache_paths": ["/"],
                     },
+                ),
+                (
+                    url_path_join(
+                        self.server_url, r"/voila/api/contents%s" % path_regex
+                    ),
+                    VoilaContentsHandler,
+                    tree_handler_conf,
                 ),
                 (
                     url_path_join(self.server_url, r"/voila/api/shutdown/(.*)"),
@@ -710,7 +719,6 @@ class Voila(Application):
             )
         )
 
-        tree_handler_conf = {"voila_configuration": self.voila_configuration}
         if self.notebook_path:
             handlers.append(
                 (

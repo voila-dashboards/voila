@@ -4,6 +4,9 @@ body {
 div#main {
   height: 100vh;
 }
+div#jp-main-content-panel {
+  background-color: var(--jp-layout-color1);
+}
 div#voila-top-panel {
   min-height: var(--jp-private-menubar-height);
   display: flex;

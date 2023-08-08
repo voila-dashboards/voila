@@ -2,6 +2,7 @@ import { ServiceManager } from '@jupyterlab/services';
 import { VoilaEventManager } from './event';
 import { VoilaUserManager } from './user';
 import { VoilaKernelSpecManager } from './kernelspec';
+import { ContentsManager } from '@jupyterlab/services';
 
 const alwaysTrue = () => true;
 
@@ -18,7 +19,8 @@ export class VoilaServiceManager extends ServiceManager {
       standby: options?.standby ?? alwaysTrue,
       kernelspecs: options?.kernelspecs ?? new VoilaKernelSpecManager({}),
       events: options?.events ?? new VoilaEventManager(),
-      user: options?.user ?? new VoilaUserManager({})
+      user: options?.user ?? new VoilaUserManager({}),
+      contents: options?.contents ?? new ContentsManager()
     });
   }
 }
