@@ -24,4 +24,10 @@ export class VoilaDirListing extends DirListing {
       window.open(url, '_blank');
     }
   }
+
+  handleEvent(event: Event): void {
+    if (event.type === 'click') {
+      this.evtDblClick(event as MouseEvent);
+    }
+  }
 }

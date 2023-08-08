@@ -6,16 +6,17 @@
  *                                                                          *
  * The full license is in the file LICENSE, distributed with this software. *
  ****************************************************************************/
-
 import {
   JupyterFrontEnd,
   JupyterFrontEndPlugin
 } from '@jupyterlab/application';
-import { FilterFileBrowserModel } from '@jupyterlab/filebrowser';
 import { DocumentManager } from '@jupyterlab/docmanager';
-
 import { DocumentRegistry } from '@jupyterlab/docregistry';
+import { FilterFileBrowserModel } from '@jupyterlab/filebrowser';
+
 import { VoilaFileBrowser } from './browser';
+import { Widget } from '@lumino/widgets';
+
 /**
  * The voila file browser provider.
  */
@@ -37,9 +38,25 @@ export const treeWidgetPlugin: JupyterFrontEndPlugin<void> = {
       id: 'filebrowser',
       model: fbModel
     });
+
+    fb.addClass('voila-FileBrowser');
     fb.showFileCheckboxes = false;
     fb.showLastModifiedColumn = false;
+
+    const title = new Widget();
+    title.node.innerText = 'Select items to open with Voilà.';
+    fb.toolbar.addItem('title', title);
+
+    const spacerTop = new Widget();
+    spacerTop.addClass('spacer-top-widget');
+    app.shell.add(spacerTop, 'main');
+
     app.shell.add(fb, 'main');
+
+    const spacerBottom = new Widget();
+    spacerBottom.addClass('spacer-bottom-widget');
+    app.shell.add(spacerBottom, 'main');
   },
+
   autoStart: true
 };
