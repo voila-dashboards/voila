@@ -3,7 +3,7 @@ body {
 }
 div#main {
   height: 100vh;
-  background-color: var(--jp-layout-color3);
+  background-color: var(--jp-layout-color2);
 }
 div#rendered_cells {
   background-color: var(--jp-layout-color1);

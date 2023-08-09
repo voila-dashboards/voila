@@ -35,6 +35,11 @@ class VoilaConfiguration(traitlets.config.Configurable):
     template = Unicode(
         "lab", config=True, allow_none=True, help=("template name to be used by voila.")
     )
+    classic_tree = Bool(
+        False,
+        config=True,
+        help=("Use the jija2-based tree page instead of the new JupyterLab-based one"),
+    )
     resources = Dict(
         allow_none=True,
         config=True,

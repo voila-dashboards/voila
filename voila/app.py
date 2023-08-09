@@ -120,6 +120,12 @@ class Voila(Application):
             {"Voila": {"auto_token": True}},
             _(""),
         ),
+        "classic-tree": (
+            {
+                "VoilaConfiguration": {"classic_tree": True},
+            },
+            _("Use the jija2-based tree page instead of the new JupyterLab-based one"),
+        ),
     }
 
     description = Unicode(
@@ -162,6 +168,7 @@ class Voila(Application):
         "strip_sources": "VoilaConfiguration.strip_sources",
         "template": "VoilaConfiguration.template",
         "theme": "VoilaConfiguration.theme",
+        "classic_tree": "VoilaConfiguration.classic_tree",
     }
     classes = [VoilaConfiguration, VoilaExecutor, VoilaExporter]
     connection_dir_root = Unicode(

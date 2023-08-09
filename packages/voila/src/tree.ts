@@ -8,24 +8,24 @@
  * Copyright (c) Jupyter Development Team.                                  *
  * Distributed under the terms of the Modified BSD License.                 *
  ****************************************************************************/
+import '../style/index.js';
+import '@jupyterlab/filebrowser/style/index.js';
 
 import { PageConfig, URLExt } from '@jupyterlab/coreutils';
+import { ContentsManager, Drive } from '@jupyterlab/services';
 
 import { VoilaApp } from './app';
+import { treeWidgetPlugin } from './plugins/tree';
+import { VoilaServiceManager } from './services/servicemanager';
+import { VoilaShell } from './shell';
+import { activePlugins, createModule, loadComponent } from './tools';
 import {
   pathsPlugin,
   themePlugin,
   themesManagerPlugin,
-  translatorPlugin
+  translatorPlugin,
+  widgetManager
 } from './voilaplugins';
-import { VoilaServiceManager } from './services/servicemanager';
-import { VoilaShell } from './shell';
-import { activePlugins, createModule, loadComponent } from './tools';
-import '../style/index.js';
-import '@jupyterlab/filebrowser/style/index.js';
-import { treeWidgetPlugin } from './plugins/tree';
-import { Drive } from '@jupyterlab/services';
-import { ContentsManager } from '@jupyterlab/services';
 
 const disabled = [
   '@jupyter-widgets/jupyterlab-manager:plugin',
@@ -42,9 +42,11 @@ async function main() {
   const mods = [
     require('@jupyterlab/theme-light-extension'),
     require('@jupyterlab/theme-dark-extension'),
+    require('@jupyterlab/rendermime-extension'),
     pathsPlugin,
     translatorPlugin,
     themePlugin,
+    widgetManager,
     themesManagerPlugin,
     treeWidgetPlugin
   ];
@@ -75,7 +77,6 @@ async function main() {
 
   extensions.forEach((p) => {
     if (p.status === 'rejected') {
-      // There was an error loading the component
       console.error(p.reason);
       return;
     }

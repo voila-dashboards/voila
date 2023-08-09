@@ -69,6 +69,7 @@ class VoilaContentsHandler(APIHandler):
             model["content"] = sorted(model["content"], key=lambda i: i["name"])
             model["content"] = list(filter(allowed_content, model["content"]))
         else:
+            # Make sure we don't leak the file content.
             model["content"] = None
 
         self._finish_model(model, location=False)
