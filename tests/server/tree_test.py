@@ -9,7 +9,10 @@ def voila_args(notebook_directory, voila_args_extra):
 
 @pytest.fixture
 def jupyter_server_args_extra():
-    return ['--VoilaConfiguration.extension_language_mapping={".xcpp": "C++11"}']
+    return [
+        '--VoilaConfiguration.extension_language_mapping={".xcpp": "C++11"}',
+        "--classic-tree",
+    ]
 
 
 async def test_tree(http_server_client, base_url):

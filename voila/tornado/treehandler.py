@@ -44,7 +44,14 @@ class TornadoVoilaTreeHandler(VoilaTreeHandler):
                 if self.voila_configuration.allow_theme_override == "YES"
                 else self.voila_configuration.theme
             )
-            classic_tree = self.voila_configuration.classic_tree
+            classic_tree_arg = self.get_argument("classic-tree", "").lower()
+            if classic_tree_arg == "true":
+                classic_tree = True
+            elif classic_tree_arg == "false":
+                classic_tree = False
+            else:
+                classic_tree = self.voila_configuration.classic_tree
+
             theme_arg = self.validate_theme(theme_arg, classic_tree)
 
             page_config = get_page_config(

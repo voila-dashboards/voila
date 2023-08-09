@@ -100,11 +100,12 @@ def get_page_config(base_url, settings, log, voila_configuration: VoilaConfigura
         "fullLabextensionsUrl": url_path_join(base_url, "voila/labextensions"),
         "extensionConfig": voila_configuration.extension_config,
     }
-    mathjax_config = settings.get("mathjax_config")
-    mathjax_url = settings.get("mathjax_url")
+    mathjax_config = settings.get("mathjax_config", "TeX-AMS_CHTML-full,Safe")
+    mathjax_url = settings.get(
+        "mathjax_url", "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js"
+    )
     page_config.setdefault("mathjaxConfig", mathjax_config)
     page_config.setdefault("fullMathjaxUrl", mathjax_url)
-
     labextensions_path = jupyter_path("labextensions")
 
     recursive_update(

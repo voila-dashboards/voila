@@ -136,6 +136,6 @@ jobs:
       - name: Run test
         run: |
           set VOILA_TEST_DEBUG=1
-          py.test tests/app --async-test-timeout=240 --reruns 2 --reruns-delay 1
-          py.test tests/server --async-test-timeout=240 --reruns 2 --reruns-delay 1 --trace
-          py.test tests/execute_output_test.py
+          py.test tests/app --async-test-timeout=240 --reruns 2 --reruns-delay 1 -x
+          py.test tests/server --async-test-timeout=240 --reruns 2 --reruns-delay 1 --trace -x
+          py.test tests/execute_output_test.py -x
