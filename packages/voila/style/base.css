@@ -3,6 +3,10 @@ body {
 }
 div#main {
   height: 100vh;
+  background-color: var(--jp-layout-color2);
+}
+div#rendered_cells {
+  background-color: var(--jp-layout-color1);
 }
 div#voila-top-panel {
   min-height: var(--jp-private-menubar-height);
@@ -15,4 +19,28 @@ div#voila-bottom-panel {
 div#rendered_cells {
   padding: var(--jp-notebook-padding);
   overflow: auto;
+}
+
+.voila-FileBrowser {
+  max-width: 1000px;
+  box-shadow: var(--jp-elevation-z4);
+}
+
+.voila-FileBrowser .jp-DirListing-item {
+  border-bottom-style: solid;
+  border-bottom-width: var(--jp-border-width);
+  border-bottom-color: var(--jp-border-color0);
+  padding: 10px 12px;
+}
+
+.voila-FileBrowser .jp-DirListing-itemText:focus {
+  outline-style: none;
+}
+
+.spacer-top-widget {
+  max-height: 50px;
+}
+
+.spacer-bottom-widget {
+  max-height: 50px;
 }

@@ -8,19 +8,24 @@
  * Copyright (c) Jupyter Development Team.                                  *
  * Distributed under the terms of the Modified BSD License.                 *
  ****************************************************************************/
+import '../style/index.js';
+import '@jupyterlab/filebrowser/style/index.js';
 
 import { PageConfig, URLExt } from '@jupyterlab/coreutils';
+import { ContentsManager, Drive } from '@jupyterlab/services';
 
 import { VoilaApp } from './app';
+import { treeWidgetPlugin } from './plugins/tree';
+import { VoilaServiceManager } from './services/servicemanager';
+import { VoilaShell } from './shell';
+import { activePlugins, createModule, loadComponent } from './tools';
 import {
   pathsPlugin,
   themePlugin,
   themesManagerPlugin,
-  translatorPlugin
+  translatorPlugin,
+  widgetManager
 } from './voilaplugins';
-import { VoilaServiceManager } from './services/servicemanager';
-import { VoilaShell } from './shell';
-import { activePlugins, createModule, loadComponent } from './tools';
 
 const disabled = [
   '@jupyter-widgets/jupyterlab-manager:plugin',
@@ -37,10 +42,13 @@ async function main() {
   const mods = [
     require('@jupyterlab/theme-light-extension'),
     require('@jupyterlab/theme-dark-extension'),
+    require('@jupyterlab/rendermime-extension'),
     pathsPlugin,
     translatorPlugin,
     themePlugin,
-    themesManagerPlugin
+    widgetManager,
+    themesManagerPlugin,
+    treeWidgetPlugin
   ];
 
   const mimeExtensions: any[] = [];
@@ -69,7 +77,6 @@ async function main() {
 
   extensions.forEach((p) => {
     if (p.status === 'rejected') {
-      // There was an error loading the component
       console.error(p.reason);
       return;
     }
@@ -122,11 +129,12 @@ async function main() {
     .forEach((p) => {
       console.error((p as PromiseRejectedResult).reason);
     });
-
+  const drive = new Drive({ apiEndpoint: 'voila/api/contents' });
+  const cm = new ContentsManager({ defaultDrive: drive });
   const app = new VoilaApp({
     mimeExtensions,
     shell: new VoilaShell(),
-    serviceManager: new VoilaServiceManager()
+    serviceManager: new VoilaServiceManager({ contents: cm })
   });
   app.registerPluginModules(mods);
   app.started.then(() => {

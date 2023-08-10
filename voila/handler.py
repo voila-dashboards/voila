@@ -38,18 +38,19 @@ class BaseVoilaHandler(JupyterHandler):
             if self.voila_configuration.allow_template_override == "YES"
             else self.voila_configuration.template
         )
-        theme_arg = (
-            self.get_argument("theme", self.voila_configuration.theme)
-            if self.voila_configuration.allow_theme_override == "YES"
-            else self.voila_configuration.theme
-        )
 
         ns = {
             **ns,
             **self.template_namespace,
             **create_include_assets_functions(template_arg, self.base_url),
-            "theme": theme_arg,
         }
+        if "theme" not in ns:
+            theme_arg = (
+                self.get_argument("theme", self.voila_configuration.theme)
+                if self.voila_configuration.allow_theme_override == "YES"
+                else self.voila_configuration.theme
+            )
+            ns["theme"] = theme_arg
 
         template = self.get_template(name)
         return template.render(**ns)

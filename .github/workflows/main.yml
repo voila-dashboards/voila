@@ -84,7 +84,8 @@ jobs:
 
       - name: Create the conda environment
         shell: bash -l {0}
-        run: mamba install -q python=${{ matrix.python_version }} pip jupyterlab_pygments==0.1.0 pytest-cov pytest-rerunfailures nodejs=18 yarn ipywidgets matplotlib xeus-cling "traitlets>=5.0.3,<6" ipykernel
+        # TODO unpin pyzmq
+        run: mamba install -q python=${{ matrix.python_version }} pip jupyterlab_pygments==0.1.0 pytest-cov pytest-rerunfailures nodejs=18 yarn ipywidgets matplotlib xeus-cling "traitlets>=5.0.3,<6" ipykernel pyzmq==25.1.0
 
       - name: Install dependencies
         shell: bash -l {0}
@@ -136,6 +137,6 @@ jobs:
       - name: Run test
         run: |
           set VOILA_TEST_DEBUG=1
-          py.test tests/app --async-test-timeout=240 --reruns 2 --reruns-delay 1
-          py.test tests/server --async-test-timeout=240 --reruns 2 --reruns-delay 1 --trace
-          py.test tests/execute_output_test.py
+          py.test tests/app --async-test-timeout=240 --reruns 2 --reruns-delay 1 -x
+          py.test tests/server --async-test-timeout=240 --reruns 2 --reruns-delay 1 --trace -x
+          py.test tests/execute_output_test.py -x

@@ -20,6 +20,8 @@ import tempfile
 import threading
 import webbrowser
 
+from .tornado.contentshandler import VoilaContentsHandler
+
 from .voila_identity_provider import VoilaLoginHandler
 
 try:
@@ -118,6 +120,12 @@ class Voila(Application):
             {"Voila": {"auto_token": True}},
             _(""),
         ),
+        "classic-tree": (
+            {
+                "VoilaConfiguration": {"classic_tree": True},
+            },
+            _("Use the jinja2-based tree page instead of the new JupyterLab-based one"),
+        ),
     }
 
     description = Unicode(
@@ -160,6 +168,7 @@ class Voila(Application):
         "strip_sources": "VoilaConfiguration.strip_sources",
         "template": "VoilaConfiguration.template",
         "theme": "VoilaConfiguration.theme",
+        "classic_tree": "VoilaConfiguration.classic_tree",
     }
     classes = [VoilaConfiguration, VoilaExecutor, VoilaExporter]
     connection_dir_root = Unicode(
@@ -637,7 +646,7 @@ class Voila(Application):
     def init_handlers(self) -> List:
         """Initialize handlers for Voila application."""
         handlers = []
-
+        tree_handler_conf = {"voila_configuration": self.voila_configuration}
         handlers.extend(
             [
                 (
@@ -710,7 +719,6 @@ class Voila(Application):
             )
         )
 
-        tree_handler_conf = {"voila_configuration": self.voila_configuration}
         if self.notebook_path:
             handlers.append(
                 (
@@ -746,6 +754,14 @@ class Voila(Application):
                             "voila_configuration": self.voila_configuration,
                             "prelaunch_hook": self.prelaunch_hook,
                         },
+                    ),
+                    # On serving a directory, expose the content handler.
+                    (
+                        url_path_join(
+                            self.server_url, r"/voila/api/contents%s" % path_regex
+                        ),
+                        VoilaContentsHandler,
+                        tree_handler_conf,
                     ),
                 ]
             )

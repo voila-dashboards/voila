@@ -13,7 +13,7 @@ test.describe('Voila performance Tests', () => {
   });
   test('Render tree classic', async ({ page, browserName }, testInfo) => {
     const testFunction = async () => {
-      await page.goto('?template=classic');
+      await page.goto('?classic-tree=true');
       // wait for page to load
       await page.waitForSelector('.list-header');
     };
@@ -31,7 +31,7 @@ test.describe('Voila performance Tests', () => {
     const testFunction = async () => {
       await page.goto('');
       // wait for page to load
-      await page.waitForSelector('.list-header');
+      await page.waitForSelector('.voila-FileBrowser');
     };
     await addBenchmarkToTest(
       'voila-tree-light',
@@ -47,7 +47,7 @@ test.describe('Voila performance Tests', () => {
     const testFunction = async () => {
       await page.goto('?theme=dark');
       // wait for page to load
-      await page.waitForSelector('.list-header');
+      await page.waitForSelector('.voila-FileBrowser');
     };
     await addBenchmarkToTest(
       'voila-tree-dark',
@@ -63,7 +63,7 @@ test.describe('Voila performance Tests', () => {
     const testFunction = async () => {
       await page.goto('?theme=JupyterLab%20Miami%20Nights');
       // wait for page to load
-      await page.waitForSelector('.list-header');
+      await page.waitForSelector('.voila-FileBrowser');
     };
     await addBenchmarkToTest(
       'voila-tree-miami',

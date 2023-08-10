@@ -15,6 +15,8 @@ from jupyter_server.base.handlers import FileFindHandler, path_regex
 from jupyter_server.utils import url_path_join
 from jupyterlab_server.themes_handler import ThemesHandler
 
+from .tornado.contentshandler import VoilaContentsHandler
+
 from .configuration import VoilaConfiguration
 from .tornado.handler import TornadoVoilaHandler
 from .paths import ROOT, collect_static_paths, collect_template_paths, jupyter_path
@@ -116,6 +118,11 @@ def _load_jupyter_server_extension(server_app):
                     "denylist": voila_configuration.file_denylist,
                     "path": os.path.expanduser(get_server_root_dir(web_app.settings)),
                 },
+            ),
+            (
+                url_path_join(base_url, r"/voila/api/contents%s" % path_regex),
+                VoilaContentsHandler,
+                tree_handler_conf,
             ),
         ],
     )

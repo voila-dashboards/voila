@@ -19,6 +19,22 @@ class VoilaTreeHandler(BaseVoilaHandler):
             ".ipynb",
         ]
 
+    def validate_theme(self, theme: str, classic_tree: bool) -> str:
+        """Check the compatibility between the requested theme and the tree page"""
+        if classic_tree:
+            supported_themes = ["dark", "light", "JupyterLab Dark", "JupyterLab Light"]
+            if theme not in supported_themes:
+                self.log.warn(
+                    "Custom JupyterLab theme is not supported in the classic tree, failback to the light theme!"
+                )
+                return "light"
+            else:
+                if theme == "JupyterLab Dark":
+                    return "dark"
+                if theme == "JupyterLab Light":
+                    return "light"
+        return theme
+
     def get_template(self, name):
         """Return the jinja template object for a given name"""
         return self.settings["voila_jinja2_env"].get_template(name)

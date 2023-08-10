@@ -39,12 +39,21 @@ class TornadoVoilaTreeHandler(VoilaTreeHandler):
 
             contents["content"] = sorted(contents["content"], key=lambda i: i["name"])
             contents["content"] = filter(allowed_content, contents["content"])
-
             theme_arg = (
                 self.get_argument("theme", self.voila_configuration.theme)
                 if self.voila_configuration.allow_theme_override == "YES"
                 else self.voila_configuration.theme
             )
+            classic_tree_arg = self.get_argument("classic-tree", "").lower()
+            if classic_tree_arg == "true":
+                classic_tree = True
+            elif classic_tree_arg == "false":
+                classic_tree = False
+            else:
+                classic_tree = self.voila_configuration.classic_tree
+
+            theme_arg = self.validate_theme(theme_arg, classic_tree)
+
             page_config = get_page_config(
                 base_url=self.base_url,
                 settings=self.settings,
@@ -52,10 +61,12 @@ class TornadoVoilaTreeHandler(VoilaTreeHandler):
                 voila_configuration=self.voila_configuration,
             )
             page_config["jupyterLabTheme"] = theme_arg
-
+            page_config["frontend"] = "voila"
+            page_config["query"] = self.request.query
+            template_name = "tree-lab.html" if not classic_tree else "tree.html"
             self.write(
                 self.render_template(
-                    "tree.html",
+                    template_name,
                     frontend="voila",
                     main_js="voila.js",
                     page_title=page_title,
@@ -66,6 +77,7 @@ class TornadoVoilaTreeHandler(VoilaTreeHandler):
                     server_root=get_server_root_dir(self.settings),
                     query=self.request.query,
                     page_config=page_config,
+                    theme=theme_arg,
                 )
             )
         elif file_exists:
