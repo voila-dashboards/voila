@@ -2,6 +2,30 @@
 
 <!-- <START NEW CHANGELOG ENTRY> -->
 
+## 0.5.0rc0
+
+([Full Changelog](https://github.com/voila-dashboards/voila/compare/v0.5.0b1...8a46a250263e2d54ed252fdf01ba2e9be573f59d))
+
+### Enhancements made
+
+- Create tree plugin [#1374](https://github.com/voila-dashboards/voila/pull/1374) ([@trungleduc](https://github.com/trungleduc))
+
+### Bugs fixed
+
+- Do not load disabled extension. [#1370](https://github.com/voila-dashboards/voila/pull/1370) ([@trungleduc](https://github.com/trungleduc))
+
+### Documentation improvements
+
+- Mention Voici in documentation [#1371](https://github.com/voila-dashboards/voila/pull/1371) ([@martinRenou](https://github.com/martinRenou))
+
+### Contributors to this release
+
+([GitHub contributors page for this release](https://github.com/voila-dashboards/voila/graphs/contributors?from=2023-08-03&to=2023-08-10&type=c))
+
+[@github-actions](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Agithub-actions+updated%3A2023-08-03..2023-08-10&type=Issues) | [@jtpio](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Ajtpio+updated%3A2023-08-03..2023-08-10&type=Issues) | [@martinRenou](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3AmartinRenou+updated%3A2023-08-03..2023-08-10&type=Issues) | [@trungleduc](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Atrungleduc+updated%3A2023-08-03..2023-08-10&type=Issues)
+
+<!-- <END NEW CHANGELOG ENTRY> -->
+
 ## 0.5.0b1
 
 ([Full Changelog](https://github.com/voila-dashboards/voila/compare/@voila-dashboards/jupyterlab-preview@2.3.0-beta.0...a9c29a8f8f07f08ad165fc1bcbf87ca9bd09895e))
@@ -20,8 +44,6 @@
 ([GitHub contributors page for this release](https://github.com/voila-dashboards/voila/graphs/contributors?from=2023-08-02&to=2023-08-03&type=c))
 
 [@dependabot](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Adependabot+updated%3A2023-08-02..2023-08-03&type=Issues) | [@github-actions](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Agithub-actions+updated%3A2023-08-02..2023-08-03&type=Issues) | [@jtpio](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Ajtpio+updated%3A2023-08-02..2023-08-03&type=Issues) | [@martinRenou](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3AmartinRenou+updated%3A2023-08-02..2023-08-03&type=Issues) | [@trungleduc](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Atrungleduc+updated%3A2023-08-02..2023-08-03&type=Issues)
-
-<!-- <END NEW CHANGELOG ENTRY> -->
 
 ## 0.5.0b0
 
