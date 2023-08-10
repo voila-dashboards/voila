@@ -124,7 +124,7 @@ class Voila(Application):
             {
                 "VoilaConfiguration": {"classic_tree": True},
             },
-            _("Use the jija2-based tree page instead of the new JupyterLab-based one"),
+            _("Use the jinja2-based tree page instead of the new JupyterLab-based one"),
         ),
     }
 

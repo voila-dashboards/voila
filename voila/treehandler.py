@@ -20,7 +20,7 @@ class VoilaTreeHandler(BaseVoilaHandler):
         ]
 
     def validate_theme(self, theme: str, classic_tree: bool) -> str:
-        """Check the compability between the requested theme and the tree page"""
+        """Check the compatibility between the requested theme and the tree page"""
         if classic_tree:
             supported_themes = ["dark", "light", "JupyterLab Dark", "JupyterLab Light"]
             if theme not in supported_themes:
