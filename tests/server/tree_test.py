@@ -11,7 +11,7 @@ def voila_args(notebook_directory, voila_args_extra):
 def jupyter_server_args_extra():
     return [
         '--VoilaConfiguration.extension_language_mapping={".xcpp": "C++11"}',
-        "--classic-tree",
+        "--VoilaConfiguration.classic_tree=true",
     ]
 
 

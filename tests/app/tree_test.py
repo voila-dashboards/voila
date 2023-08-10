@@ -17,7 +17,7 @@ def voila_args_extra():
     return [
         '--VoilaConfiguration.extension_language_mapping={".xcpp": "C++11"}',
         "--VoilaExecutor.timeout=240",
-        "--classic-tree",
+        "--VoilaConfiguration.classic_tree=true",
     ]
 
 
