@@ -681,13 +681,6 @@ class Voila(Application):
                     },
                 ),
                 (
-                    url_path_join(
-                        self.server_url, r"/voila/api/contents%s" % path_regex
-                    ),
-                    VoilaContentsHandler,
-                    tree_handler_conf,
-                ),
-                (
                     url_path_join(self.server_url, r"/voila/api/shutdown/(.*)"),
                     VoilaShutdownKernelHandler,
                 ),
@@ -761,6 +754,14 @@ class Voila(Application):
                             "voila_configuration": self.voila_configuration,
                             "prelaunch_hook": self.prelaunch_hook,
                         },
+                    ),
+                    # On serving a directory, expose the content handler.
+                    (
+                        url_path_join(
+                            self.server_url, r"/voila/api/contents%s" % path_regex
+                        ),
+                        VoilaContentsHandler,
+                        tree_handler_conf,
                     ),
                 ]
             )

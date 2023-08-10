@@ -32,11 +32,6 @@ class VoilaContentsHandler(APIHandler):
         path = path or ""
         cm = self.contents_manager
 
-        type = self.get_query_argument("type", default=None)
-        if type not in {None, "directory", "file", "notebook"}:
-            # fall back to file if unknown type
-            type = "file"
-
         format = self.get_query_argument("format", default=None)
         if format not in {None, "text", "base64"}:
             raise web.HTTPError(400, "Format %r is invalid" % format)
@@ -51,23 +46,29 @@ class VoilaContentsHandler(APIHandler):
         model = await ensure_async(
             self.contents_manager.get(
                 path=path,
-                type=type,
+                type=None,
                 format=format,
                 content=content,
             )
         )
 
         validate_model(model, expect_content=content)
-        if type is None or type == "directory":
 
-            def allowed_content(content):
-                if content["type"] in ["directory", "notebook"]:
-                    return True
-                __, ext = os.path.splitext(content.get("path"))
-                return ext in self.allowed_extensions
+        def allowed_content(content):
+            if content["type"] in ["directory", "notebook"]:
+                return True
+            __, ext = os.path.splitext(content.get("path"))
+            return ext in self.allowed_extensions
 
-            model["content"] = sorted(model["content"], key=lambda i: i["name"])
-            model["content"] = list(filter(allowed_content, model["content"]))
+        if not allowed_content(model):
+            raise web.HTTPError(404, f"file or directory {path!r} does not exist")
+
+        if model["type"] == "directory":
+            try:
+                model["content"] = sorted(model["content"], key=lambda i: i["name"])
+                model["content"] = list(filter(allowed_content, model["content"]))
+            except Exception:
+                model["content"] = None
         else:
             # Make sure we don't leak the file content.
             model["content"] = None
