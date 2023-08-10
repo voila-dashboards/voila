@@ -38,7 +38,7 @@ class VoilaConfiguration(traitlets.config.Configurable):
     classic_tree = Bool(
         False,
         config=True,
-        help=("Use the jija2-based tree page instead of the new JupyterLab-based one"),
+        help=("Use the jinja2-based tree page instead of the new JupyterLab-based one"),
     )
     resources = Dict(
         allow_none=True,
