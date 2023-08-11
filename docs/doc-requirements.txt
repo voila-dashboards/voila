@@ -1,2 +1,0 @@
-pydata-sphinx-theme
-sphinx_copybutton
