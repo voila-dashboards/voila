@@ -4,6 +4,8 @@ channels:
   - conda
 dependencies:
   - myst-parser
+  - nodejs
+  - jupyterlab
   - sphinx
   - pydata-sphinx-theme
   - pip:
