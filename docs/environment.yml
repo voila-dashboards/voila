@@ -3,5 +3,9 @@ channels:
   - conda-forge
   - conda
 dependencies:
+  - myst-parser
   - sphinx
   - pydata-sphinx-theme
+  - pip:
+    - sphinxcontrib-video
+    - ..

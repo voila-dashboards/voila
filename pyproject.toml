@@ -69,6 +69,13 @@ test = [
     "pytest",
     "pytest-tornasync",
 ]
+docs = [
+    "myst-parser",
+    "pydata-sphinx-theme",
+    "sphinx",
+    "sphinx-autobuild",
+    "sphinxcontrib-video",
+]
 
 [project.scripts]
 voila = "voila.app:main"
@@ -134,6 +141,14 @@ build_cmd = "build:prod"
 npm = [
     "jlpm",
 ]
+
+[tool.hatch.envs.docs]
+features = ["docs"]
+
+[tool.hatch.envs.docs.scripts]
+build = "sphinx-build -W -b html docs docs/build/html"
+watch = "sphinx-autobuild -W -b html docs docs/build/html --host 0.0.0.0"
+serve = "python -m http.server --directory docs/build/html"
 
 [tool.jupyter-releaser]
 skip = [
