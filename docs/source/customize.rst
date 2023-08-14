@@ -14,6 +14,14 @@ Customizing Voilà
 There are many ways you can customize Voilà to control the look and feel
 of the dashboards you create.
 
+Adding style rules (CSS)
+========================
+
+You can create a file called `custom/custom.css` in your project directory (wherever you launch ``voila`` from), which will be used for dashboard output.
+
+.. warning::
+   This functionality relies on `a possibly-undocumented nbconvert feature <https://github.com/jupyter/nbconvert/issues/1823>`_, and may change in future versions.
+
 Changing the theme
 ==================
 
