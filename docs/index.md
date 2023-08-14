@@ -14,7 +14,7 @@ The combination of [JupyterLite](https://jupyterlite.readthedocs.io) and Voilà
 :alt: voila
 ```
 
-*From notebooks to standalone web applications and dashboards.*
+_From notebooks to standalone web applications and dashboards._
 
 Voilà allows you to convert a Jupyter Notebook into an
 interactive dashboard that allows you to share your work with others. It
@@ -29,6 +29,7 @@ try it interactively at the following Binder link)
 ```
 
 ```{image} ../voila-basics.gif
+
 ```
 
 # Table of contents

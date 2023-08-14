@@ -191,6 +191,10 @@ High level instructions specific to Voilà can be found below:
    gcloud app browse
    ```
 
+### Deployment on Hugging Face Spaces
+
+You can follow the instruction from [here](https://github.com/voila-dashboards/voila-huggingface) to deploy Voila dashboards to Hugging Face Spaces
+
 ## Running Voilà on a private server
 
 ### Prerequisites
@@ -298,6 +302,7 @@ To check the logs for Voilà:
 ```text
 journalctl -u voila.service
 ```
+
 :::
 
 10. Now go to `yourdomain.com` to access the Voilà application.

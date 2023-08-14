@@ -29,6 +29,7 @@ extensions = [
     "myst_parser",
 ]
 
+myst_enable_extensions = ["colon_fence"]
 source_suffix = ".md"
 master_doc = "index"
 project = "voila"

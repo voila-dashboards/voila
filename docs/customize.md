@@ -445,7 +445,7 @@ This option will enable two features:
 - A pool of kernels is started for each notebook and kept in standby, then the notebook is executed in every kernel of its pool. When a new client requests a kernel, the preheated kernel in this pool is used and another kernel is started asynchronously to refill the pool.
 - The HTML version of the notebook is rendered in each preheated kernel and stored, when a client connects to Voila, under some conditions, the cached HTML is served instead of re-rendering the notebook.
 
-The preheating kernel option works with any kernel manager, it is deactivated by default, re-activate it by setting `preheat_kernel = True`.  For example, with this command, for each notebook Voilà started with, a pool of 5 kernels is created and will be used for new connections.
+The preheating kernel option works with any kernel manager, it is deactivated by default, re-activate it by setting `preheat_kernel = True`. For example, with this command, for each notebook Voilà started with, a pool of 5 kernels is created and will be used for new connections.
 
 ```bash
 voila --preheat_kernel=True --pool_size=5
@@ -459,7 +459,7 @@ voila --preheat_kernel=True --VoilaKernelManager.default_env_variables='{"FOO": 
 
 will set the variable "FOO" in all preheated kernels.
 
-If the pool size does not match the user's requirements, or some notebooks need to use specific environment variables..., additional settings are needed.  The easiest way to change these settings is to provide a file named `voila.json` in the same folder containing the notebooks. Settings for preheating kernel ( list of notebooks does not need preheated kernels, number of kernels in pool, refilling delay, environment variables for starting kernel...) can be set under the `VoilaKernelManager` class name.
+If the pool size does not match the user's requirements, or some notebooks need to use specific environment variables..., additional settings are needed. The easiest way to change these settings is to provide a file named `voila.json` in the same folder containing the notebooks. Settings for preheating kernel ( list of notebooks does not need preheated kernels, number of kernels in pool, refilling delay, environment variables for starting kernel...) can be set under the `VoilaKernelManager` class name.
 
 Here is an example of settings with explanations for preheating kernel option.
 
@@ -586,13 +586,13 @@ And please note that this functionality will only hide the cells in Voilà but w
 
 ## Cell execution timeouts
 
-By default, Voilà does not have an execution timeout, meaning there is no limit for how long it takes for Voilà to execute and render your notebook.  If you have potentially long-running cells, you may wish to set a cell execution timeout so that users of your dashboard will get an error if it takes longer than expected to execute the notebook.  For example:
+By default, Voilà does not have an execution timeout, meaning there is no limit for how long it takes for Voilà to execute and render your notebook. If you have potentially long-running cells, you may wish to set a cell execution timeout so that users of your dashboard will get an error if it takes longer than expected to execute the notebook. For example:
 
 ```bash
 voila --VoilaExecutor.timeout=30 your_notebook.ipynb
 ```
 
-With this setting, if any cell takes longer than 30 seconds to run, a `TimeoutError` will be raised.  You can further customize this behavior using the `VoilaExecutor.timeout_func` and `VoilaExecutor.interrupt_on_timeout` options.
+With this setting, if any cell takes longer than 30 seconds to run, a `TimeoutError` will be raised. You can further customize this behavior using the `VoilaExecutor.timeout_func` and `VoilaExecutor.interrupt_on_timeout` options.
 
 ## Customizing the Voila Preview widget
 
