@@ -12,6 +12,18 @@
 There are many ways you can customize Voilà to control the look and feel
 of the dashboards you create.
 
+## Switching to the classic tree page
+
+The default tree page of Voilà is now a JupyterLab-based application using the file browser widget.
+
+The jinja-based tree page is still supported, but users need to activate it with the `--classic-tree` CLI option, the `VoilaConfiguration.classic_tree` config, or `?classic-tree=True` in the query string, for example:
+
+```bash
+voila <path-to-notebook> --classic-tree
+```
+
+JupyterLab custom themes are supported with the new tree page, for the classic tree page, only the light and dark themes are supported.
+
 ## Changing the theme
 
 By default, Voilà uses the **light** theme, but you can set the theme to **dark** by passing
@@ -36,15 +48,15 @@ Like nbconvert, Voilà supports the **light** and **dark** themes by default, bu
 
 ```bash
 pip install jupyterlab_miami_nights
-voila <path-to-notebook> --theme=jupyterlab_miami_nights
+voila <path-to-notebook> --theme="JupyterLab Miami Nights"
 ```
 
-:::{warning}
-Theme are specific to the "lab" template, they will not work for the "classic" template
+:::{note}
+The theme argument is the theme name displayed in JupyterLab, not the name of the python package. Changing the theme from the notebook metadata may change in the future if this features moves to nbconvert.
 :::
 
-:::{note}
-Changing the theme from the notebook metadata may change in the future if this features moves to nbconvert.
+:::{warning}
+Theme are specific to the "lab" template, they will not work for the "classic" template. Custom JupyterLab themes work only with the default tree page, the classic tree page supports only the light and dark theme.
 :::
 
 ## Controlling the nbconvert template
@@ -153,6 +165,10 @@ own HTML files of the same name.
 **To configure your Voilà template**, you should add a `config.json` file to the root of your template
 folder.
 
+:::{warning}
+Custom tree page templates work only with the classic tree page.
+:::
+
 % todo: Add information on config.json
 
 ### An example custom template
@@ -236,7 +252,7 @@ def hook(req: tornado.web.RequestHandler,
 
 #### Adding the hook function to Voilà
 
-There are two ways to add the hook function to Voila:
+There are two ways to add the hook function to Voilà:
 
 - Using the `voila.py` configuration file:
 
@@ -250,7 +266,7 @@ def hook_function(req, notebook, cwd):
 c.Voila.prelaunch_hook = hook_function
 ```
 
-- Start Voila from a python script:
+- Start Voilà from a python script:
 
 Here is an example of a custom `prelaunch-hook` to execute a notebook with `papermill`:
 
@@ -362,6 +378,22 @@ jupyter lab --VoilaConfiguration.template=distill
 When users run `voila` by hitting the `voila/` endpoint, this configuration
 will be used.
 
+## Activating token authentication
+
+By using `jupyter-server` 2, Voilà supports token authentication, but it is disabled by default.
+
+- To start Voila with auto-generated token:
+
+```
+voila --token notebook.ipynb
+```
+
+- To start Voila with a personalized token:
+
+```
+voila --token=my-secret-token notebook.ipynb
+```
+
 ## Serving static files
 
 Unlike JupyterLab or the classic notebook server, `voila` does not serve
@@ -443,7 +475,7 @@ Because preheated kernels are not executed on request, this feature is incompati
 This option will enable two features:
 
 - A pool of kernels is started for each notebook and kept in standby, then the notebook is executed in every kernel of its pool. When a new client requests a kernel, the preheated kernel in this pool is used and another kernel is started asynchronously to refill the pool.
-- The HTML version of the notebook is rendered in each preheated kernel and stored, when a client connects to Voila, under some conditions, the cached HTML is served instead of re-rendering the notebook.
+- The HTML version of the notebook is rendered in each preheated kernel and stored, when a client connects to Voilà, under some conditions, the cached HTML is served instead of re-rendering the notebook.
 
 The preheating kernel option works with any kernel manager, it is deactivated by default, re-activate it by setting `preheat_kernel = True`. For example, with this command, for each notebook Voilà started with, a pool of 5 kernels is created and will be used for new connections.
 
@@ -510,7 +542,7 @@ Notebook HTML will be pre-rendered with template and theme defined in VoilaConfi
 - There is an available preheated kernel in the kernel pool.
 - If user overrides the template/theme with query string, it must match the template/theme used to pre-render the notebook.
 
-If the kernel pool is empty or the request does not match these conditions, Voila will fail back to start a normal kernel and render the notebook as usual.
+If the kernel pool is empty or the request does not match these conditions, Voilà will fail back to start a normal kernel and render the notebook as usual.
 
 ### Partially pre-render notebook
 
@@ -594,9 +626,9 @@ voila --VoilaExecutor.timeout=30 your_notebook.ipynb
 
 With this setting, if any cell takes longer than 30 seconds to run, a `TimeoutError` will be raised. You can further customize this behavior using the `VoilaExecutor.timeout_func` and `VoilaExecutor.interrupt_on_timeout` options.
 
-## Customizing the Voila Preview widget
+## Customizing the Voilà Preview widget
 
-By using the [layout customization system](https://jupyterlab.readthedocs.io/en/latest/user/interface_customization.html) of JupyterLab, users can configure the position of the Voila preview widget to open it in a different area than `main`.
+By using the [layout customization system](https://jupyterlab.readthedocs.io/en/latest/user/interface_customization.html) of JupyterLab, users can configure the position of the Voilà preview widget to open it in a different area than `main`.
 
 `Voila Preview` is the setting key of the preview widget. For example, the following configuration will open this widget in the right panel of JupyterLab
 
