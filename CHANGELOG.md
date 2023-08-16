@@ -20,7 +20,7 @@ And moreover, we can start creating extensions for Voila in the same fashion as 
 In 0.5.0, the logic for rendering cell outputs is switched from relying on nbconvert for handling different mimetypes to relying on JupyterLab mimetype renderers.
 This adds support for many custom JupyterLab renderers like `jupyterlab-fasta`, `vega`, `jupyterlab-geojson`...
 
-### New tree page
+### New tree page.
 
 The default tree page of Voila is now a JupyterLab-based application using the file browser widget.
 
@@ -44,7 +44,7 @@ voila --token notebook.ipynb
 voila --token=my-secret-token notebook.ipynb
 ```
 
-### Backwards-incompatible changes
+### Backwards-incompatible changes.
 
 - The new tree page no longer supports templates, users need to activate the classic tree to use existing tree templates.
 - Theme argument now is the theme name displayed in JupyterLab and not the name of the theme python package.
