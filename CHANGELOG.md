@@ -4,15 +4,15 @@
 
 Below are the major highlights in Voila 0.5.0
 
-### New JupyterLab-based frontend.
+### New JupyterLab-based frontend
 
 In 0.5.0, the frontend of Voila is rebuilt from scratch with JupyterLab 4.0 components. The current `requirejs` + `nbextensions` approach is replaced by a JupyterLab plugin-based application.
 This allows Voila to profit from all the upstream features and improvements.
 
 ### New extension loading system.
 
-This is a direct benefit of the new frontend, now Voila will use the same federated extension system of JupyterLab.
-The extension assets are loaded from the local path instead of the CDN. This improves greatly the extension compatibility of Voila.
+This is a direct benefit of the new frontend, now Voila will use the same prebuilt extension system as in JupyterLab.
+The extension assets are loaded from the local path instead of the CDN. This greatly improves the extension compatibility of Voila and avoid making requests to external services.
 And moreover, we can start creating extensions for Voila in the same fashion as JupyterLab extensions.
 
 ### Make use of JupyterLab mimetype renderers.
