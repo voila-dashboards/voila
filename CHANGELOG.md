@@ -53,6 +53,23 @@ voila --token=my-secret-token notebook.ipynb
 
 <!-- <START NEW CHANGELOG ENTRY> -->
 
+## 0.5.0
+
+([Full Changelog](https://github.com/voila-dashboards/voila/compare/v0.5.0rc0...96bffae6b5885b2bfd80983cf7026e177270ff80))
+
+### Documentation improvements
+
+- Add highlights section to changelog [#1382](https://github.com/voila-dashboards/voila/pull/1382) ([@trungleduc](https://github.com/trungleduc))
+- Update documentation [#1381](https://github.com/voila-dashboards/voila/pull/1381) ([@trungleduc](https://github.com/trungleduc))
+
+### Contributors to this release
+
+([GitHub contributors page for this release](https://github.com/voila-dashboards/voila/graphs/contributors?from=2023-08-10&to=2023-08-17&type=c))
+
+[@github-actions](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Agithub-actions+updated%3A2023-08-10..2023-08-17&type=Issues) | [@trungleduc](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Atrungleduc+updated%3A2023-08-10..2023-08-17&type=Issues)
+
+<!-- <END NEW CHANGELOG ENTRY> -->
+
 ## 0.5.0rc0
 
 ([Full Changelog](https://github.com/voila-dashboards/voila/compare/v0.5.0b1...8a46a250263e2d54ed252fdf01ba2e9be573f59d))
@@ -74,8 +91,6 @@ voila --token=my-secret-token notebook.ipynb
 ([GitHub contributors page for this release](https://github.com/voila-dashboards/voila/graphs/contributors?from=2023-08-03&to=2023-08-10&type=c))
 
 [@github-actions](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Agithub-actions+updated%3A2023-08-03..2023-08-10&type=Issues) | [@jtpio](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Ajtpio+updated%3A2023-08-03..2023-08-10&type=Issues) | [@martinRenou](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3AmartinRenou+updated%3A2023-08-03..2023-08-10&type=Issues) | [@trungleduc](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Atrungleduc+updated%3A2023-08-03..2023-08-10&type=Issues)
-
-<!-- <END NEW CHANGELOG ENTRY> -->
 
 ## 0.5.0b1
 
