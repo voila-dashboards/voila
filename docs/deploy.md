@@ -92,6 +92,13 @@ this section remain valid for other services.
 out deployment for free. You have limited computing hours, however the app will
 also automatically shutdown if it is idle.
 
+::{note}
+Even easier than going through the following steps, you can just press on this button
+to make your own deployment from the available template. This will create a fork of the Github template
+that you can then fill with your Notebooks and dependencies:
+[![Deploy on Railway](https://railway.app/button.svg)](https://railway.app/template/3u09WA?referralCode=jQGRe8)
+::
+
 The general steps for deployment at Railway can be found
 [here](https://nixpacks.com/docs/providers/python).
 High level instructions, specific to Voilà can be found below:
