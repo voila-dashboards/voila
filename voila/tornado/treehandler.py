@@ -13,7 +13,11 @@ from jupyter_core.utils import ensure_async
 from tornado import web
 
 from ..treehandler import VoilaTreeHandler
-from ..utils import get_page_config, get_server_root_dir
+from ..utils import (
+    create_include_assets_functions,
+    get_page_config,
+    get_server_root_dir,
+)
 
 
 class TornadoVoilaTreeHandler(VoilaTreeHandler):
@@ -64,6 +68,8 @@ class TornadoVoilaTreeHandler(VoilaTreeHandler):
             page_config["frontend"] = "voila"
             page_config["query"] = self.request.query
             template_name = "tree-lab.html" if not classic_tree else "tree.html"
+
+            resources = create_include_assets_functions(template_name, self.base_url)
             self.write(
                 self.render_template(
                     template_name,
@@ -78,6 +84,7 @@ class TornadoVoilaTreeHandler(VoilaTreeHandler):
                     query=self.request.query,
                     page_config=page_config,
                     theme=theme_arg,
+                    resources=resources,
                 )
             )
         elif file_exists:

@@ -5,6 +5,9 @@
 {% block stylesheets %}
   {{ super() }}
 
+  {% if frontend == "voila" %}
+    {{ resources.include_js("static/voila-style.js") }}
+  {% endif %}
   <style>
     body {
       background-color: var(--jp-layout-color0);

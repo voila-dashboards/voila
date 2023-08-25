@@ -36,7 +36,9 @@
 {%- block notebook_css -%}
   {{ resources.include_css("static/materialcolors.css") }}
   {{ resources.include_css("static/labvariables.css") }}
-  {{ resources.include_js("static/voila-style.js") }}
+  {% if frontend == "voila" %}
+    {{ resources.include_js("static/voila-style.js") }}
+  {% endif %}
 
   {{ spinner.css() }}
 
