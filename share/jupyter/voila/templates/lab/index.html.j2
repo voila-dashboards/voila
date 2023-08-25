@@ -54,10 +54,12 @@
 
 {%- block body_header -%}
 <link rel="icon" href="data:;base64,=">
-{% if resources.theme == 'dark' %}
+{% if resources.theme == 'dark' or resources.theme == 'JupyterLab Dark' %}
 <body class="jp-Notebook theme-dark" data-base-url="{{resources.base_url}}voila/" data-jp-theme-light="false" data-jp-theme-name="JupyterLab Dark">
-{% else %}
+{% elif resources.theme == 'light' or resources.theme == 'JupyterLab Light' %}
 <body class="jp-Notebook theme-light" data-base-url="{{resources.base_url}}voila/" data-jp-theme-light="true" data-jp-theme-name="JupyterLab Light">
+{% else %}
+<body class="jp-Notebook" data-base-url="{{resources.base_url}}voila/" data-jp-theme-name="{{resources.theme}}">
 {% endif %}
 {{ spinner.html() }}
 {{ voila_setup_helper_functions() }}
