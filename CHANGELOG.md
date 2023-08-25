@@ -53,6 +53,26 @@ voila --token=my-secret-token notebook.ipynb
 
 <!-- <START NEW CHANGELOG ENTRY> -->
 
+## 0.5.1
+
+([Full Changelog](https://github.com/voila-dashboards/voila/compare/v0.5.0...e854c3047a1bba6d26b0a4bde07b52133c511d56))
+
+### Bugs fixed
+
+- Add voila style to tree page [#1385](https://github.com/voila-dashboards/voila/pull/1385) ([@trungleduc](https://github.com/trungleduc))
+
+### Documentation improvements
+
+- Add link to use the railway template [#1383](https://github.com/voila-dashboards/voila/pull/1383) ([@martinRenou](https://github.com/martinRenou))
+
+### Contributors to this release
+
+([GitHub contributors page for this release](https://github.com/voila-dashboards/voila/graphs/contributors?from=2023-08-17&to=2023-08-25&type=c))
+
+[@github-actions](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Agithub-actions+updated%3A2023-08-17..2023-08-25&type=Issues) | [@martinRenou](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3AmartinRenou+updated%3A2023-08-17..2023-08-25&type=Issues) | [@trungleduc](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Atrungleduc+updated%3A2023-08-17..2023-08-25&type=Issues)
+
+<!-- <END NEW CHANGELOG ENTRY> -->
+
 ## 0.5.0
 
 ([Full Changelog](https://github.com/voila-dashboards/voila/compare/v0.5.0rc0...96bffae6b5885b2bfd80983cf7026e177270ff80))
@@ -67,8 +87,6 @@ voila --token=my-secret-token notebook.ipynb
 ([GitHub contributors page for this release](https://github.com/voila-dashboards/voila/graphs/contributors?from=2023-08-10&to=2023-08-17&type=c))
 
 [@github-actions](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Agithub-actions+updated%3A2023-08-10..2023-08-17&type=Issues) | [@trungleduc](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Atrungleduc+updated%3A2023-08-10..2023-08-17&type=Issues)
-
-<!-- <END NEW CHANGELOG ENTRY> -->
 
 ## 0.5.0rc0
 
