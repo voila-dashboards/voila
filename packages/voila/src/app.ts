@@ -40,7 +40,7 @@ export class VoilaApp extends JupyterFrontEnd<IShell> {
   /**
    * The name of the application.
    */
-  readonly name = 'Voila';
+  readonly name: string = 'Voila';
 
   /**
    * A namespace/prefix plugins may use to denote their provenance.
@@ -136,8 +136,8 @@ export class VoilaApp extends JupyterFrontEnd<IShell> {
     return this._widgetManager;
   }
 
-  private _widgetManager: KernelWidgetManager | null = null;
-  private _widgetManagerPromise = new PromiseDelegate<KernelWidgetManager>();
+  protected _widgetManager: KernelWidgetManager | null = null;
+  protected _widgetManagerPromise = new PromiseDelegate<KernelWidgetManager>();
 }
 
 /**
