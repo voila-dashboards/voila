@@ -53,6 +53,22 @@ voila --token=my-secret-token notebook.ipynb
 
 <!-- <START NEW CHANGELOG ENTRY> -->
 
+## 0.5.2
+
+([Full Changelog](https://github.com/voila-dashboards/voila/compare/@voila-dashboards/jupyterlab-preview@2.3.1...253ba77a00302e59b5a6093d7d635eff52690440))
+
+### Maintenance and upkeep improvements
+
+- Refactor Voila plugins so that it's easily reusable in Voici [#1387](https://github.com/voila-dashboards/voila/pull/1387) ([@trungleduc](https://github.com/trungleduc))
+
+### Contributors to this release
+
+([GitHub contributors page for this release](https://github.com/voila-dashboards/voila/graphs/contributors?from=2023-08-25&to=2023-09-04&type=c))
+
+[@trungleduc](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Atrungleduc+updated%3A2023-08-25..2023-09-04&type=Issues)
+
+<!-- <END NEW CHANGELOG ENTRY> -->
+
 ## 0.5.1
 
 ([Full Changelog](https://github.com/voila-dashboards/voila/compare/v0.5.0...e854c3047a1bba6d26b0a4bde07b52133c511d56))
@@ -70,8 +86,6 @@ voila --token=my-secret-token notebook.ipynb
 ([GitHub contributors page for this release](https://github.com/voila-dashboards/voila/graphs/contributors?from=2023-08-17&to=2023-08-25&type=c))
 
 [@github-actions](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Agithub-actions+updated%3A2023-08-17..2023-08-25&type=Issues) | [@martinRenou](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3AmartinRenou+updated%3A2023-08-17..2023-08-25&type=Issues) | [@trungleduc](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Atrungleduc+updated%3A2023-08-17..2023-08-25&type=Issues)
-
-<!-- <END NEW CHANGELOG ENTRY> -->
 
 ## 0.5.0
 
