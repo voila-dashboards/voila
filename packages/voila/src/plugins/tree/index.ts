@@ -10,12 +10,13 @@ import {
   JupyterFrontEnd,
   JupyterFrontEndPlugin
 } from '@jupyterlab/application';
+import { PageConfig, URLExt } from '@jupyterlab/coreutils';
 import { DocumentManager } from '@jupyterlab/docmanager';
 import { DocumentRegistry } from '@jupyterlab/docregistry';
 import { FilterFileBrowserModel } from '@jupyterlab/filebrowser';
+import { Widget } from '@lumino/widgets';
 
 import { VoilaFileBrowser } from './browser';
-import { Widget } from '@lumino/widgets';
 
 /**
  * The voila file browser provider.
@@ -34,18 +35,21 @@ export const treeWidgetPlugin: JupyterFrontEndPlugin<void> = {
       manager: docManager,
       refreshInterval: 2147483646
     });
+    const urlFactory = (path: string) => {
+      const baseUrl = PageConfig.getBaseUrl();
+      const frontend = PageConfig.getOption('frontend');
+      const query = PageConfig.getOption('query');
+      return URLExt.join(baseUrl, frontend, 'render', path) + `?${query}`;
+    };
     const fb = new VoilaFileBrowser({
       id: 'filebrowser',
-      model: fbModel
+      model: fbModel,
+      urlFactory,
+      title: 'Select items to open with Voilà.'
     });
 
-    fb.addClass('voila-FileBrowser');
     fb.showFileCheckboxes = false;
     fb.showLastModifiedColumn = false;
-
-    const title = new Widget();
-    title.node.innerText = 'Select items to open with Voilà.';
-    fb.toolbar.addItem('title', title);
 
     const spacerTop = new Widget();
     spacerTop.addClass('spacer-top-widget');

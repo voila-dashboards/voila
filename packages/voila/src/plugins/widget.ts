@@ -117,7 +117,6 @@ export const renderOutputsPlugin: JupyterFrontEndPlugin<void> = {
     const cellOutputs = document.body.querySelectorAll(
       'script[type="application/vnd.voila.cell-output+json"]'
     );
-
     cellOutputs.forEach(async (cellOutput) => {
       const model = JSON.parse(cellOutput.innerHTML);
 

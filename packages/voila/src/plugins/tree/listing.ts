@@ -1,9 +1,15 @@
 import { DirListing } from '@jupyterlab/filebrowser';
 import { Contents } from '@jupyterlab/services';
 import { showErrorMessage } from '@jupyterlab/apputils';
-import { PageConfig, URLExt } from '@jupyterlab/coreutils';
 
 export class VoilaDirListing extends DirListing {
+  get urlFactory(): VoilaDirListing.IUrlFactory | undefined {
+    return this._urlFactory;
+  }
+  set urlFactory(f: VoilaDirListing.IUrlFactory | undefined) {
+    this._urlFactory = f;
+  }
+
   /**
    * Handle the opening of an item.
    */
@@ -17,11 +23,11 @@ export class VoilaDirListing extends DirListing {
         .catch((error) => showErrorMessage('Open directory', error));
     } else {
       const path = item.path;
-      const baseUrl = PageConfig.getBaseUrl();
-      const frontend = PageConfig.getOption('frontend');
-      const query = PageConfig.getOption('query');
-      const url = URLExt.join(baseUrl, frontend, 'render', path) + `?${query}`;
-      window.open(url, '_blank');
+      if (this.urlFactory) {
+        window.open(this.urlFactory(path), '_blank');
+      } else {
+        showErrorMessage('Open file', 'URL Factory is not defined');
+      }
     }
   }
 
@@ -30,4 +36,9 @@ export class VoilaDirListing extends DirListing {
       this.evtDblClick(event as MouseEvent);
     }
   }
+  private _urlFactory: VoilaDirListing.IUrlFactory | undefined;
+}
+
+export namespace VoilaDirListing {
+  export type IUrlFactory = (path: string) => string;
 }
