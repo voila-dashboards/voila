@@ -1,0 +1,48 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "fps_voila"
+description = "An FPS plugin for the Voilà  API"
+readme = "README.md"
+requires-python = ">=3.8"
+authors = [
+    { name = "Voila Development Team" },
+]
+keywords = [
+    "Jupyter",
+    "JupyterLab",
+    "Voila",
+]
+classifiers = [
+    "Framework :: Jupyter",
+    "Framework :: Jupyter :: JupyterLab",
+    "Framework :: Jupyter :: JupyterLab :: 3",
+    "Framework :: Jupyter :: JupyterLab :: Extensions",
+    "Framework :: Jupyter :: JupyterLab :: Extensions :: Prebuilt",
+    "License :: OSI Approved :: BSD License",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+]
+dependencies = [
+    "fps-contents >0.2.4,<1"
+]
+dynamic = [ "version",]
+
+[project.license]
+file = "LICENSE"
+
+[project.entry-points]
+"asphalt.components"   = {voila = "fps_voila.main:VoilaComponent"}
+"jupyverse.components" = {voila = "fps_voila.main:VoilaComponent"}
+
+[project.urls]
+Homepage = "https://github.com/voila-dashboards/voila"
+
+[tool.hatch.version]
+path = "fps_voila/__init__.py"

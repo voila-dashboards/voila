@@ -95,6 +95,10 @@ class Voila(Application):
     examples = "voila example.ipynb --port 8888"
 
     flags = {
+        "jupyverse": (
+            {"Voila": {"jupyverse": True}},
+            _("Use Jupyverse backend."),
+        ),
         "debug": (
             {
                 "Voila": {"log_level": logging.DEBUG},
@@ -128,6 +132,11 @@ class Voila(Application):
         ),
     }
 
+    jupyverse = Bool(
+        False,
+        config=True,
+        help=_("Use Jupyverse backend"),
+    )
     description = Unicode(
         """voila [OPTIONS] NOTEBOOK_FILENAME
 
@@ -776,11 +785,28 @@ class Voila(Application):
 
         settings = self.init_settings()
 
-        self.app = tornado.web.Application(**settings)
-        self.app.settings.update(self.tornado_settings)
-        handlers = self.init_handlers()
-        self.app.add_handlers(".*$", handlers)
-        self.listen()
+        if self.jupyverse:
+            try:
+                from fps_voila import run_application
+            except ImportError:
+                raise RuntimeError(
+                    "Please install fps-voila in order to use the Jupyverse backend"
+                )
+
+            run_application(
+                settings,
+                self.voila_configuration,
+                self.static_paths,
+                self.base_url,
+                self.ip,
+                self.port,
+            )
+        else:
+            self.app = tornado.web.Application(**settings)
+            self.app.settings.update(self.tornado_settings)
+            handlers = self.init_handlers()
+            self.app.add_handlers(".*$", handlers)
+            self.listen()
 
     def _handle_signal_stop(self, sig, frame):
         self.log.info("Handle signal %s." % sig)
