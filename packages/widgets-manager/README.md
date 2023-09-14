@@ -1,7 +1,3 @@
-# @voila-dashboards/jupyterlab-preview
+# @voila-dashboards/widgets-manager
 
-A JupyterLab preview extension for Voilà.
-
-## Prerequisites
-
-- JupyterLab 1.0+
+The Jupyter-widgets manager for Voilà.
