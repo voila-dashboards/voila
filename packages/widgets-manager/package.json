@@ -1,6 +1,6 @@
 {
   "name": "@voila-dashboards/widgets-manager",
-  "version": "0.1.0",
+  "version": "0.5.3",
   "description": "The Voilà jupyter-widgets manager",
   "keywords": [
     "jupyter",
@@ -14,8 +14,7 @@
   "license": "BSD-3-Clause",
   "author": "Voilà contributors",
   "files": [
-    "lib/**/*.{d.ts,eot,gif,html,jpg,js,js.map,json,png,svg,woff2,ttf}",
-    "schema/*.json"
+    "lib/**/*.{d.ts,eot,gif,html,jpg,js,js.map,json,png,svg,woff2,ttf}"
   ],
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
