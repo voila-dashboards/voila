@@ -37,6 +37,7 @@ jobs:
 
       - name: Browser check
         run: |
+          npx playwright install
           python -m jupyterlab.browser_check
 
       - name: Lint
