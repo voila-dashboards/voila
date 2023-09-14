@@ -8,10 +8,10 @@
  ****************************************************************************/
 
 import { JupyterFrontEndPlugin } from '@jupyterlab/application';
-import { pathsPlugin } from './plugins/path';
-import { translatorPlugin } from './plugins/translator';
-import { renderOutputsPlugin, widgetManager } from './plugins/widget';
-import { themePlugin, themesManagerPlugin } from './plugins/themes';
+import { pathsPlugin } from './path';
+import { translatorPlugin } from './translator';
+import { renderOutputsPlugin } from './outputs_rendering';
+import { themePlugin, themesManagerPlugin } from './themes';
 
 /**
  * Export the plugins as default.
@@ -19,7 +19,6 @@ import { themePlugin, themesManagerPlugin } from './plugins/themes';
 const plugins: JupyterFrontEndPlugin<any>[] = [
   pathsPlugin,
   translatorPlugin,
-  widgetManager,
   renderOutputsPlugin,
   themesManagerPlugin,
   themePlugin
@@ -30,7 +29,6 @@ export default plugins;
 export {
   pathsPlugin,
   translatorPlugin,
-  widgetManager,
   renderOutputsPlugin,
   themesManagerPlugin,
   themePlugin

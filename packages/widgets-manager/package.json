@@ -1,7 +1,7 @@
 {
-  "name": "@voila-dashboards/jupyterlab-preview",
-  "version": "2.3.3",
-  "description": "A JupyterLab preview extension for Voilà",
+  "name": "@voila-dashboards/widgets-manager",
+  "version": "0.1.0",
+  "description": "The Voilà jupyter-widgets manager",
   "keywords": [
     "jupyter",
     "jupyterlab",
@@ -15,7 +15,6 @@
   "author": "Voilà contributors",
   "files": [
     "lib/**/*.{d.ts,eot,gif,html,jpg,js,js.map,json,png,svg,woff2,ttf}",
-    "style/**/*.{css,eot,gif,html,jpg,json,png,svg,woff2,ttf}",
     "schema/*.json"
   ],
   "main": "lib/index.js",
@@ -24,12 +23,6 @@
     "type": "git",
     "url": "https://github.com/voila-dashboards/voila.git"
   },
-  "style": "style/index.css",
-  "styleModule": "style/index.js",
-  "sideEffects": [
-    "style/*.css",
-    "style/index.js"
-  ],
   "scripts": {
     "build": "jlpm run build:lib && jlpm run build:labextension:dev",
     "build:labextension": "jupyter labextension build .",
@@ -38,7 +31,7 @@
     "build:prod": "jlpm run build:lib && jlpm run build:labextension",
     "build:test": "tsc --build tsconfig.test.json",
     "clean": "jlpm run clean:lib && jlpm run clean:labextension",
-    "clean:labextension": "rimraf ../../voila/labextensions/jupyterlab-preview",
+    "clean:labextension": "rimraf ../../voila/labextensions/widgets-manager",
     "clean:lib": "rimraf lib tsconfig.tsbuildinfo",
     "test": "jest",
     "watch": "run-p watch:src watch:labextension",
@@ -46,27 +39,19 @@
     "watch:src": "tsc -w"
   },
   "dependencies": {
+    "@jupyter-widgets/base": "^6.0.6",
+    "@jupyter-widgets/jupyterlab-manager": "^5.0.9",
     "@jupyterlab/application": "^4.0.0",
-    "@jupyterlab/apputils": "^4.0.0",
-    "@jupyterlab/coreutils": "^6.0.0",
-    "@jupyterlab/docregistry": "^4.0.0",
-    "@jupyterlab/fileeditor": "^4.0.0",
-    "@jupyterlab/mainmenu": "^4.0.0",
-    "@jupyterlab/notebook": "^4.0.0",
-    "@jupyterlab/settingregistry": "^4.0.0",
-    "@jupyterlab/ui-components": "^4.0.0",
-    "@lumino/coreutils": "^2.0.0",
-    "@lumino/signaling": "^2.0.0",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "@jupyterlab/coreutils": "^6.0.5",
+    "@jupyterlab/rendermime": "^4.0.0",
+    "@jupyterlab/services": "^7.0.0",
+    "@voila-dashboards/voila": "^0.5"
   },
   "devDependencies": {
     "@babel/core": "^7.10.2",
     "@babel/preset-env": "^7.10.2",
     "@jupyterlab/builder": "^4.0.0",
     "@jupyterlab/testutils": "^4.0.0",
-    "@types/react": "^18.0.0",
-    "@types/react-dom": "^18.0.0",
     "npm-run-all": "^4.1.5",
     "rimraf": "^2.6.1",
     "source-map-loader": "~1.0.2",
@@ -74,17 +59,15 @@
   },
   "jupyterlab": {
     "extension": true,
-    "schemaDir": "schema",
-    "outputDir": "../../voila/labextensions/jupyterlab-preview",
-    "discovery": {
-      "server": {
-        "managers": [
-          "conda",
-          "pip"
-        ],
-        "base": {
-          "name": "voila"
-        }
+    "outputDir": "../../voila/labextensions/widgets-manager",
+    "sharedPackages": {
+      "@jupyter-widgets/base": {
+        "bundled": false,
+        "singleton": true
+      },
+      "@jupyter-widgets/jupyterlab-manager": {
+        "bundled": false,
+        "singleton": true
       }
     }
   }

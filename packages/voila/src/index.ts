@@ -9,7 +9,7 @@
 
 export * from './app';
 export * from './shell';
-export * from './voilaplugins';
+export * from './plugins';
 export * from './tools';
 export * from './plugins/tree/browser';
 export * from './plugins/tree/listing';

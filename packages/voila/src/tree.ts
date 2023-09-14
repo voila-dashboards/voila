@@ -22,9 +22,8 @@ import {
   pathsPlugin,
   themePlugin,
   themesManagerPlugin,
-  translatorPlugin,
-  widgetManager
-} from './voilaplugins';
+  translatorPlugin
+} from './plugins';
 
 export const TREE_DISABLED_EXTENSIONS = [
   '@jupyter-widgets/jupyterlab-manager:plugin',
@@ -45,7 +44,6 @@ async function main() {
     pathsPlugin,
     translatorPlugin,
     themePlugin,
-    widgetManager,
     themesManagerPlugin,
     treeWidgetPlugin
   ];

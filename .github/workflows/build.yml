@@ -32,6 +32,7 @@ jobs:
         run: |
           jupyter nbextension list 2>&1 | grep -ie "voila/extension.*enabled" -
           jupyter labextension list 2>&1 | grep -ie "@voila-dashboards/jupyterlab-preview.*enabled.*ok" -
+          jupyter labextension list 2>&1 | grep -ie "@voila-dashboards/widgets-manager.*enabled.*ok" -
           jupyter server extension list 2>&1 | grep -ie "voila\.server_extension.*enabled" -
 
       - name: Browser check
