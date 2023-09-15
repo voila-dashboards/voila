@@ -13,7 +13,7 @@ import './sharedscope';
 import { PageConfig, URLExt } from '@jupyterlab/coreutils';
 
 import { VoilaApp } from './app';
-import plugins from './voilaplugins';
+import plugins from './plugins';
 import { VoilaServiceManager } from './services/servicemanager';
 import { VoilaShell } from './shell';
 import {
@@ -23,7 +23,7 @@ import {
   loadComponent
 } from './tools';
 
-//Inspired by: https://github.com/jupyterlab/jupyterlab/blob/master/dev_mode/index.js
+// Inspired by: https://github.com/jupyterlab/jupyterlab/blob/master/dev_mode/index.js
 
 const disabled = [
   '@jupyter-widgets/jupyterlab-manager:plugin',
@@ -137,6 +137,7 @@ async function main() {
   });
   app.registerPluginModules(mods);
   await app.start();
+
   window.jupyterapp = app;
 }
 
