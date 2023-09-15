@@ -34,6 +34,6 @@ def _jupyter_labextension_paths():
         },
         {
             "src": "labextensions/widgets-manager",
-            "dest": "@voila-dashboards/widgets-manager",
+            "dest": "../voila/labextensions/@voila-dashboards/widgets-manager",
         },
     ]
