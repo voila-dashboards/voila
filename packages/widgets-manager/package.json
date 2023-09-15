@@ -43,8 +43,7 @@
     "@jupyterlab/application": "^4.0.0",
     "@jupyterlab/coreutils": "^6.0.5",
     "@jupyterlab/rendermime": "^4.0.0",
-    "@jupyterlab/services": "^7.0.0",
-    "@voila-dashboards/voila": "^0.5"
+    "@jupyterlab/services": "^7.0.0"
   },
   "devDependencies": {
     "@babel/core": "^7.10.2",
