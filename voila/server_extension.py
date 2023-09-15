@@ -19,7 +19,7 @@ from .tornado.contentshandler import VoilaContentsHandler
 
 from .configuration import VoilaConfiguration
 from .tornado.handler import TornadoVoilaHandler
-from .paths import ROOT, collect_static_paths, collect_template_paths, jupyter_path
+from .paths import ROOT, collect_static_paths, collect_template_paths
 from .shutdown_kernel_handler import VoilaShutdownKernelHandler
 from .static_file_handler import (
     MultiStaticFileHandler,
