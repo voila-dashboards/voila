@@ -25,11 +25,6 @@ import {
 
 //Inspired by: https://github.com/jupyterlab/jupyterlab/blob/master/dev_mode/index.js
 
-const disabled = [
-  '@jupyter-widgets/jupyterlab-manager:plugin',
-  '@jupyter-widgets/jupyterlab-manager:saveWidgetState'
-];
-
 /**
  * The main function
  */
@@ -44,6 +39,9 @@ async function main() {
     require('@jupyterlab/rendermime-extension'),
     require('@jupyterlab/theme-light-extension'),
     require('@jupyterlab/theme-dark-extension'),
+    require('@jupyter-widgets/jupyterlab-manager/lib/plugin').default.filter(
+      (p: any) => p.id !== '@jupyter-widgets/jupyterlab-manager:plugin'
+    ),
     plugins
   ];
 
@@ -101,7 +99,7 @@ async function main() {
   );
   federatedExtensions.forEach((p) => {
     if (p.status === 'fulfilled') {
-      for (const plugin of activePlugins(p.value, disabled)) {
+      for (const plugin of activePlugins(p.value, [])) {
         mods.push(plugin);
       }
     } else {
@@ -115,7 +113,7 @@ async function main() {
   );
   federatedMimeExtensions.forEach((p) => {
     if (p.status === 'fulfilled') {
-      for (const plugin of activePlugins(p.value, disabled)) {
+      for (const plugin of activePlugins(p.value, [])) {
         mimeExtensions.push(plugin);
       }
     } else {
