@@ -79,7 +79,12 @@ from .static_file_handler import (
 )
 from .tornado.handler import TornadoVoilaHandler
 from .tornado.treehandler import TornadoVoilaTreeHandler
-from .utils import create_include_assets_functions, get_data_dir, pjoin
+from .utils import (
+    create_include_assets_functions,
+    get_data_dir,
+    pjoin,
+    get_voila_labextensions_path,
+)
 from .voila_kernel_manager import voila_kernel_manager_factory
 
 _kernel_id_regex = r"(?P<kernel_id>\w+-\w+-\w+-\w+-\w+)"
@@ -427,7 +432,7 @@ class Voila(Application):
 
     @property
     def labextensions_path(self):
-        return jupyter_path("labextensions")
+        return get_voila_labextensions_path()
 
     @property
     def data_dir(self):

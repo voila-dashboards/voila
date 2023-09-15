@@ -101,7 +101,7 @@ path = "hatch_build.py"
 [tool.hatch.build.targets.wheel.shared-data]
 "etc/jupyter" = "etc/jupyter"
 "voila/labextensions/jupyterlab-preview" = "share/jupyter/labextensions/@voila-dashboards/jupyterlab-preview"
-"voila/labextensions/widgets-manager" = "share/jupyter/labextensions/@voila-dashboards/widgets-manager"
+"voila/labextensions/widgets-manager" = "share/jupyter/voila/labextensions/@voila-dashboards/widgets-manager"
 "install.json" = "share/jupyter/labextensions/@voila-dashboards/jupyterlab-preview/install.json"
 "share/jupyter/voila/templates" = "share/jupyter/voila/templates"
 "share/jupyter/voila/schemas" = "share/jupyter/voila/schemas"

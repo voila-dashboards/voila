@@ -89,6 +89,18 @@ async def _get_request_info(ws_url: str) -> Awaitable:
         return ri
 
 
+def get_voila_labextensions_path():
+    labextensions_path = jupyter_path("labextensions")
+
+    # Paths to labextensions specific to Voila
+    voila_labextensions = [
+        str(Path(path) / "labextensions") for path in jupyter_path("voila")
+    ]
+    labextensions_path = labextensions_path + voila_labextensions
+
+    return labextensions_path
+
+
 def get_page_config(base_url, settings, log, voila_configuration: VoilaConfiguration):
     page_config = {
         "appVersion": __version__,
@@ -106,7 +118,7 @@ def get_page_config(base_url, settings, log, voila_configuration: VoilaConfigura
     )
     page_config.setdefault("mathjaxConfig", mathjax_config)
     page_config.setdefault("fullMathjaxUrl", mathjax_url)
-    labextensions_path = jupyter_path("labextensions")
+    labextensions_path = get_voila_labextensions_path()
 
     recursive_update(
         page_config,
@@ -130,6 +142,7 @@ def get_page_config(base_url, settings, log, voila_configuration: VoilaConfigura
         extension_allowlist=voila_configuration.extension_allowlist,
         extension_denylist=voila_configuration.extension_denylist,
     )
+
     return page_config
 
 
