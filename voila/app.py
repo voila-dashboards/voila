@@ -35,7 +35,6 @@ except ImportError:
 import jinja2
 import tornado.ioloop
 import tornado.web
-from jupyter_client.kernelspec import KernelSpecManager
 from jupyter_core.paths import jupyter_config_path, jupyter_path
 from jupyter_server.base.handlers import FileFindHandler, path_regex
 from jupyter_server.config_manager import recursive_update
@@ -169,6 +168,7 @@ class Voila(Application):
         "template": "VoilaConfiguration.template",
         "theme": "VoilaConfiguration.theme",
         "classic_tree": "VoilaConfiguration.classic_tree",
+        "kernel_spec_manager_class": "VoilaConfiguration.kernel_spec_manager_class"
     }
     classes = [VoilaConfiguration, VoilaExecutor, VoilaExporter]
     connection_dir_root = Unicode(
@@ -544,7 +544,7 @@ class Voila(Application):
         # default server_url to base_url
         self.server_url = self.server_url or self.base_url
 
-        self.kernel_spec_manager = KernelSpecManager(parent=self)
+        self.kernel_spec_manager = self.voila_configuration.kernel_spec_manager_class(parent=self)
 
         # we create a config manager that load both the serverconfig and nbconfig (classical notebook)
         read_config_path = [
