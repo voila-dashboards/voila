@@ -80,6 +80,20 @@ To specify different options (such as the theme and template), create a
 An example can be found in the
 [voila-demo](https://github.com/maartenbreddels/voila-demo) repository.
 
+### Deployment on Ploomber Cloud
+
+Ploomber Cloud offers a [free deployment](https://platform.ploomber.io) option for
+Voilà apps. Once you create an account and log in, follow these steps:
+
+1. Click on the "NEW" button
+2. In the "Framework" section, click on Voilà
+3. In the "Source code" section, click on "Upload your files"
+4. Upload your `.ipynb` file and `requirements.txt` file
+5. Click on "CREATE"
+6. Wait until deployment finishes. To see your app, click on the "VIEW" button
+
+Full instructions for deploying Voilà apps are available [here.](https://docs.cloud.ploomber.io/en/latest/apps/voila.html)
+
 ### Deployment on Railway
 
 :::{note}
