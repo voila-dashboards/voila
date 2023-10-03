@@ -10,7 +10,7 @@
 from nbclient.client import NotebookClient
 from nbclient.exceptions import CellExecutionError
 from nbconvert.preprocessors.clearoutput import ClearOutputPreprocessor
-from traitlets import Bool, Unicode
+from traitlets import Bool, Unicode, Integer
 
 
 def strip_code_cell_warnings(cell):
@@ -48,6 +48,18 @@ class VoilaExecutor(NotebookClient):
         False,
         config=True,
         help=("Whether to send tracebacks to clients on exceptions."),
+    )
+
+    startup_timeout: int = Integer(
+        60,
+        config=True,
+        help=(
+            """
+            The time to wait (in seconds) for the kernel to start.
+            If kernel startup takes longer, a RuntimeError is
+            raised.
+            """
+        ),
     )
 
     def execute(self, nb, resources, km=None):
