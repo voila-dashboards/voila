@@ -158,6 +158,14 @@ class VoilaConfiguration(traitlets.config.Configurable):
         """,
     )
 
+    kernel_spec_manager_class = Type(
+        config=True,
+        default_value="jupyter_client.kernelspec.KernelSpecManager",
+        klass="jupyter_client.kernelspec.KernelSpecManager",
+        help="""The kernel spec manager class.  Allows for setting a custom kernel spec manager for finding and running kernels
+        """,
+    )
+
     http_header_envs = List(
         Unicode(),
         [],

@@ -639,3 +639,21 @@ By using the [layout customization system](https://jupyterlab.readthedocs.io/en/
    }
 }
 ```
+
+## Custom kernel_spec_manager class
+
+By default, Voilà uses `jupyter_client`'s KernelSpecManager. To change this class, add the following to your config like so:
+
+```py
+import CustomKernelSpecManager
+
+c.VoilaConfiguration.kernel_spec_manager_class = CustomKernelSpecManager
+```
+
+## Kernel startup_timeout
+
+By default, Voilà's grace period for kernel startup time is 60 seconds. It can be adjusted as such, in seconds
+
+```sh
+voila --VoilaExecutor.startup_timeout=60
+```
