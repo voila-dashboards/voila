@@ -53,6 +53,10 @@
   {{ super() }}
 {%- endblock notebook_css -%}
 
+{%- block html_head_js_mathjax -%}
+{# remove mathjax CDN #}
+{%- endblock html_head_js_mathjax -%}
+
 {% block body_header %}
 <body data-base-url="{{resources.base_url}}voila/">
   {{ spinner.html() }}

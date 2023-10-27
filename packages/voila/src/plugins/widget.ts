@@ -78,7 +78,6 @@ export const widgetManager: JupyterFrontEndPlugin<IJupyterWidgetRegistry> = {
       },
       -10
     );
-
     window.addEventListener('beforeunload', (e) => {
       const data = new FormData();
       // it seems if we attach this to early, it will not be called
@@ -113,7 +112,12 @@ export const renderOutputsPlugin: JupyterFrontEndPlugin<void> = {
     app: JupyterFrontEnd,
     rendermime: IRenderMimeRegistry
   ): Promise<void> => {
-    // Render outputs
+    // Render latex in markdown cells
+    const mdOutput = document.body.querySelectorAll('div.jp-MarkdownOutput');
+    mdOutput.forEach((md) => {
+      rendermime.latexTypesetter?.typeset(md as HTMLElement);
+    });
+    // Render code cell
     const cellOutputs = document.body.querySelectorAll(
       'script[type="application/vnd.voila.cell-output+json"]'
     );

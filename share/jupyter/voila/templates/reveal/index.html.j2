@@ -58,6 +58,10 @@
   {{ super() }}
 {%- endblock notebook_css -%}
 
+{%- block html_head_js_mathjax -%}
+{# remove mathjax CDN #}
+{%- endblock html_head_js_mathjax -%}
+
 {% block body_header %}
 {% if resources.theme == 'dark' %}
 <body class="jp-Notebook" data-base-url="{{resources.base_url}}voila/" data-jp-theme-light="false" data-jp-theme-name="JupyterLab Dark">

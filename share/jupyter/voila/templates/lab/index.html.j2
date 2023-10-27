@@ -48,6 +48,10 @@
   {{ super() }}
 {%- endblock notebook_css -%}
 
+{%- block html_head_js_mathjax -%}
+{# remove mathjax CDN #}
+{%- endblock html_head_js_mathjax -%}
+
 {# this overrides the default behaviour of rendering static widgets #}
 {% block jupyter_widgets %}
 {% endblock jupyter_widgets %}

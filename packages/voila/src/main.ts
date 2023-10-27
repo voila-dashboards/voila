@@ -35,7 +35,7 @@ async function main() {
       (p: any) => p.id === '@jupyterlab/codemirror-extension:languages'
     ),
     require('@jupyterlab/markedparser-extension'),
-    require('@jupyterlab/mathjax2-extension'),
+    require('@jupyterlab/mathjax-extension'),
     require('@jupyterlab/rendermime-extension'),
     require('@jupyterlab/theme-light-extension'),
     require('@jupyterlab/theme-dark-extension'),
@@ -50,7 +50,6 @@ async function main() {
     require('@jupyterlab/json-extension'),
     require('@jupyterlab/vega5-extension')
   ];
-
   const extensionData: IFederatedExtensionData[] = JSON.parse(
     PageConfig.getOption('federated_extensions')
   );
