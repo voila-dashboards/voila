@@ -60,9 +60,21 @@ from jupyter_core.utils import run_sync
 from jupyterlab_server.themes_handler import ThemesHandler
 
 
-from traitlets import Bool, Callable, Dict, Integer, List, Unicode, default, Type, Bytes
+from traitlets import (
+    Bool,
+    Callable,
+    Dict,
+    Integer,
+    List,
+    Unicode,
+    default,
+    Type,
+    Bytes,
+    validate,
+)
 from traitlets.config.application import Application
 from traitlets.config.loader import Config
+from warnings import warn
 
 from ._version import __version__
 from .configuration import VoilaConfiguration
@@ -212,15 +224,17 @@ class Voila(Application):
 
     static_paths = List([STATIC_ROOT], config=True, help=_("paths to static assets"))
 
-    mathjax_config = Unicode(
-        "TeX-AMS_CHTML-full,Safe",
+    mathjax_config = Unicode(  # TODO remove in 1.0.0
+        None,
+        allow_none=True,
         help="""
         Mathjax default configuration
         """,
     ).tag(config=True)
 
-    mathjax_url = Unicode(
-        "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js",
+    mathjax_url = Unicode(  # TODO remove in 1.0.0
+        None,
+        allow_none=True,
         help="""
         URL to load Mathjax from.
 
@@ -447,6 +461,24 @@ class Voila(Application):
             return os.path.dirname(os.path.abspath(self.notebook_path))
         else:
             return os.getcwd()
+
+    @validate("mathjax_url")
+    def _valid_mathjax_url(self, proposal):
+        warn(
+            "Voila.mathjax_url is deprecated, this option will be removed in the next major release.",
+            DeprecationWarning,
+            stacklevel=2,
+        )
+        return proposal["value"]
+
+    @validate("mathjax_config")
+    def _valid_mathjax_config(self, proposal):
+        warn(
+            "Voila.mathjax_config is deprecated, this option will be removed in the next major release.",
+            DeprecationWarning,
+            stacklevel=2,
+        )
+        return proposal["value"]
 
     def _init_asyncio_patch(self):
         """set default asyncio policy to be compatible with tornado

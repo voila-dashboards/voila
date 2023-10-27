@@ -2818,6 +2818,20 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@jupyterlab/mathjax2-extension@npm:^4.0.0":
+  version: 4.0.0
+  resolution: "@jupyterlab/mathjax2-extension@npm:4.0.0"
+  dependencies:
+    "@jupyterlab/application": ^4.0.0
+    "@jupyterlab/coreutils": ^6.0.0
+    "@jupyterlab/rendermime": ^4.0.0
+    "@jupyterlab/rendermime-interfaces": ^3.8.0
+    "@jupyterlab/translation": ^4.0.0
+    "@lumino/coreutils": ^2.1.0
+  checksum: 1bf0c5c9ce128c5785bfe3014c40023aeac62dc7a18dd5c7780b0214f8b35452581050a5003994b97007c13431b6dd7d8540ef2b4a23714c7bacfa460487bacf
+  languageName: node
+  linkType: hard
+
 "@jupyterlab/nbformat@npm:^3.0.0 || ^4.0.0, @jupyterlab/nbformat@npm:^3.0.0 || ^4.0.0-alpha.21 || ^4.0.0, @jupyterlab/nbformat@npm:^4.0.0, @jupyterlab/nbformat@npm:^4.0.7":
   version: 4.0.7
   resolution: "@jupyterlab/nbformat@npm:4.0.7"
@@ -2911,7 +2925,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@jupyterlab/rendermime-interfaces@npm:^3.0.0 || ^4.0.0, @jupyterlab/rendermime-interfaces@npm:^3.8.7":
+"@jupyterlab/rendermime-interfaces@npm:^3.0.0 || ^4.0.0, @jupyterlab/rendermime-interfaces@npm:^3.8.0, @jupyterlab/rendermime-interfaces@npm:^3.8.7":
   version: 3.8.7
   resolution: "@jupyterlab/rendermime-interfaces@npm:3.8.7"
   dependencies:
@@ -4140,7 +4154,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@lumino/coreutils@npm:^1.11.0 || ^2.0.0, @lumino/coreutils@npm:^1.11.0 || ^2.1.2, @lumino/coreutils@npm:^1.11.1 || ^2, @lumino/coreutils@npm:^1.11.1 || ^2.1, @lumino/coreutils@npm:^2.0.0, @lumino/coreutils@npm:^2.1.2":
+"@lumino/coreutils@npm:^1.11.0 || ^2.0.0, @lumino/coreutils@npm:^1.11.0 || ^2.1.2, @lumino/coreutils@npm:^1.11.1 || ^2, @lumino/coreutils@npm:^1.11.1 || ^2.1, @lumino/coreutils@npm:^2.0.0, @lumino/coreutils@npm:^2.1.0, @lumino/coreutils@npm:^2.1.2":
   version: 2.1.2
   resolution: "@lumino/coreutils@npm:2.1.2"
   checksum: 7865317ac0676b448d108eb57ab5d8b2a17c101995c0f7a7106662d9fe6c859570104525f83ee3cda12ae2e326803372206d6f4c1f415a5b59e4158a7b81066f
@@ -5150,6 +5164,7 @@ __metadata:
     "@jupyterlab/mainmenu": ^4.0.0
     "@jupyterlab/markedparser-extension": ^4.0.0
     "@jupyterlab/mathjax-extension": ^4.0.0
+    "@jupyterlab/mathjax2-extension": ^4.0.0
     "@jupyterlab/nbformat": ^4.0.0
     "@jupyterlab/notebook": ^4.0.0
     "@jupyterlab/outputarea": ^4.0.0
