@@ -30,9 +30,10 @@ import {
   IWidgetRegistryData
 } from '@jupyter-widgets/base';
 
-import { VoilaApp } from '../app';
+import { VoilaApp } from '../../app';
 
 import { Widget } from '@lumino/widgets';
+import { RenderedCells } from './renderedcells';
 
 const WIDGET_MIMETYPE = 'application/vnd.jupyter.widget-view+json';
 
@@ -112,6 +113,10 @@ export const renderOutputsPlugin: JupyterFrontEndPlugin<void> = {
     app: JupyterFrontEnd,
     rendermime: IRenderMimeRegistry
   ): Promise<void> => {
+    // TODO: Typeset a fake element to get MathJax loaded, remove this hack once
+    // MathJax 2 is removed.
+    await rendermime.latexTypesetter?.typeset(document.createElement('div'));
+
     // Render latex in markdown cells
     const mdOutput = document.body.querySelectorAll('div.jp-MarkdownOutput');
     mdOutput.forEach((md) => {
@@ -154,7 +159,7 @@ export const renderOutputsPlugin: JupyterFrontEndPlugin<void> = {
     });
     const node = document.getElementById('rendered_cells');
     if (node) {
-      const cells = new Widget({ node });
+      const cells = new RenderedCells({ node });
       app.shell.add(cells, 'main');
     }
   }
