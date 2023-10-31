@@ -30,9 +30,10 @@ import {
   IWidgetRegistryData
 } from '@jupyter-widgets/base';
 
-import { VoilaApp } from '../app';
+import { VoilaApp } from '../../app';
 
 import { Widget } from '@lumino/widgets';
+import { RenderedCells } from './renderedcells';
 
 const WIDGET_MIMETYPE = 'application/vnd.jupyter.widget-view+json';
 
@@ -78,7 +79,6 @@ export const widgetManager: JupyterFrontEndPlugin<IJupyterWidgetRegistry> = {
       },
       -10
     );
-
     window.addEventListener('beforeunload', (e) => {
       const data = new FormData();
       // it seems if we attach this to early, it will not be called
@@ -113,7 +113,16 @@ export const renderOutputsPlugin: JupyterFrontEndPlugin<void> = {
     app: JupyterFrontEnd,
     rendermime: IRenderMimeRegistry
   ): Promise<void> => {
-    // Render outputs
+    // TODO: Typeset a fake element to get MathJax loaded, remove this hack once
+    // MathJax 2 is removed.
+    await rendermime.latexTypesetter?.typeset(document.createElement('div'));
+
+    // Render latex in markdown cells
+    const mdOutput = document.body.querySelectorAll('div.jp-MarkdownOutput');
+    mdOutput.forEach((md) => {
+      rendermime.latexTypesetter?.typeset(md as HTMLElement);
+    });
+    // Render code cell
     const cellOutputs = document.body.querySelectorAll(
       'script[type="application/vnd.voila.cell-output+json"]'
     );
@@ -150,7 +159,7 @@ export const renderOutputsPlugin: JupyterFrontEndPlugin<void> = {
     });
     const node = document.getElementById('rendered_cells');
     if (node) {
-      const cells = new Widget({ node });
+      const cells = new RenderedCells({ node });
       app.shell.add(cells, 'main');
     }
   }

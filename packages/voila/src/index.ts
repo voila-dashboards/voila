@@ -14,3 +14,4 @@ export * from './tools';
 export * from './plugins/tree/browser';
 export * from './plugins/tree/listing';
 export * from './plugins/themes/thememanager';
+export * from './plugins/widget/renderedcells';

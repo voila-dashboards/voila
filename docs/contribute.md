@@ -25,7 +25,7 @@ First, you need to fork the project. Then setup your environment:
 
 ```bash
 # create a new conda environment
-conda create -n voila -c conda-forge notebook jupyterlab nodejs "yarn<3" pip
+conda create -n voila -c conda-forge notebook jupyterlab nodejs "yarn<4" pip
 conda activate voila
 
 # download voila from your GitHub fork

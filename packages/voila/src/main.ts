@@ -20,7 +20,8 @@ import {
   IFederatedExtensionData,
   activePlugins,
   createModule,
-  loadComponent
+  loadComponent,
+  shouldUseMathJax2
 } from './tools';
 
 //Inspired by: https://github.com/jupyterlab/jupyterlab/blob/master/dev_mode/index.js
@@ -35,7 +36,6 @@ async function main() {
       (p: any) => p.id === '@jupyterlab/codemirror-extension:languages'
     ),
     require('@jupyterlab/markedparser-extension'),
-    require('@jupyterlab/mathjax2-extension'),
     require('@jupyterlab/rendermime-extension'),
     require('@jupyterlab/theme-light-extension'),
     require('@jupyterlab/theme-dark-extension'),
@@ -45,12 +45,17 @@ async function main() {
     plugins
   ];
 
+  if (shouldUseMathJax2()) {
+    mods.push(require('@jupyterlab/mathjax2-extension'));
+  } else {
+    mods.push(require('@jupyterlab/mathjax-extension'));
+  }
+
   const mimeExtensions = [
     require('@jupyterlab/javascript-extension'),
     require('@jupyterlab/json-extension'),
     require('@jupyterlab/vega5-extension')
   ];
-
   const extensionData: IFederatedExtensionData[] = JSON.parse(
     PageConfig.getOption('federated_extensions')
   );

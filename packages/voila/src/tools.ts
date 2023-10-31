@@ -77,3 +77,27 @@ export interface IFederatedExtensionData {
   style?: string;
   mimeExtension?: string;
 }
+
+/**
+ * Check if Voila app should use MathJax 2 or MathJax 3
+ * @TODO remove in 1.0.0
+ */
+export function shouldUseMathJax2() {
+  const [urlParam, configParam] = ['fullMathjaxUrl', 'mathjaxConfig'];
+  const url = PageConfig.getOption(urlParam);
+  const config = PageConfig.getOption(configParam);
+  if (url !== 'null' || config !== 'null') {
+    PageConfig.setOption(
+      urlParam,
+      url === 'null'
+        ? 'https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js'
+        : url
+    );
+    PageConfig.setOption(
+      configParam,
+      config === 'null' ? 'TeX-AMS_CHTML-full,Safe' : config
+    );
+    return true;
+  }
+  return false;
+}
