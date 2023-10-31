@@ -53,6 +53,37 @@ voila --token=my-secret-token notebook.ipynb
 
 <!-- <START NEW CHANGELOG ENTRY> -->
 
+## 0.5.5
+
+([Full Changelog](https://github.com/voila-dashboards/voila/compare/v0.5.4...560dbc18e999048a6cd5a6962fb9fd72bb88b7ac))
+
+### Enhancements made
+
+- Use mathjax-extension to render latex in markdown cells [#1410](https://github.com/voila-dashboards/voila/pull/1410) ([@trungleduc](https://github.com/trungleduc))
+- Allow for custom kernel_spec_manager class [#1404](https://github.com/voila-dashboards/voila/pull/1404) ([@ClaytonAstrom](https://github.com/ClaytonAstrom))
+
+### Maintenance and upkeep improvements
+
+- Bump postcss from 8.4.27 to 8.4.31 [#1406](https://github.com/voila-dashboards/voila/pull/1406) ([@dependabot](https://github.com/dependabot))
+- Bump postcss from 8.4.21 to 8.4.31 in /ui-tests [#1405](https://github.com/voila-dashboards/voila/pull/1405) ([@dependabot](https://github.com/dependabot))
+
+### Documentation improvements
+
+- adds ploomber cloud deploy option [#1401](https://github.com/voila-dashboards/voila/pull/1401) ([@edublancas](https://github.com/edublancas))
+
+### Other merged PRs
+
+- Bump @babel/traverse from 7.22.8 to 7.23.2 [#1408](https://github.com/voila-dashboards/voila/pull/1408) ([@dependabot](https://github.com/dependabot))
+- Bump systeminformation from 5.17.12 to 5.21.8 in /ui-tests [#1398](https://github.com/voila-dashboards/voila/pull/1398) ([@dependabot](https://github.com/dependabot))
+
+### Contributors to this release
+
+([GitHub contributors page for this release](https://github.com/voila-dashboards/voila/graphs/contributors?from=2023-09-18&to=2023-10-31&type=c))
+
+[@ClaytonAstrom](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3AClaytonAstrom+updated%3A2023-09-18..2023-10-31&type=Issues) | [@dependabot](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Adependabot+updated%3A2023-09-18..2023-10-31&type=Issues) | [@edublancas](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Aedublancas+updated%3A2023-09-18..2023-10-31&type=Issues) | [@github-actions](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Agithub-actions+updated%3A2023-09-18..2023-10-31&type=Issues) | [@pre-commit-ci](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Apre-commit-ci+updated%3A2023-09-18..2023-10-31&type=Issues) | [@trungleduc](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Atrungleduc+updated%3A2023-09-18..2023-10-31&type=Issues)
+
+<!-- <END NEW CHANGELOG ENTRY> -->
+
 ## 0.5.4
 
 ([Full Changelog](https://github.com/voila-dashboards/voila/compare/@voila-dashboards/jupyterlab-preview@2.3.3...17d0ea31942c61a68d06be75f4d3bd0e6ce1eb5d))
@@ -66,8 +97,6 @@ voila --token=my-secret-token notebook.ipynb
 ([GitHub contributors page for this release](https://github.com/voila-dashboards/voila/graphs/contributors?from=2023-09-13&to=2023-09-18&type=c))
 
 [@github-actions](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Agithub-actions+updated%3A2023-09-13..2023-09-18&type=Issues) | [@martinRenou](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3AmartinRenou+updated%3A2023-09-13..2023-09-18&type=Issues) | [@trungleduc](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Atrungleduc+updated%3A2023-09-13..2023-09-18&type=Issues)
-
-<!-- <END NEW CHANGELOG ENTRY> -->
 
 ## 0.5.3
 
