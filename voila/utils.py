@@ -264,8 +264,9 @@ def include_css(template_name: str, base_url: str, name: str) -> str:
     return Markup(code)
 
 
-def include_js(template_name: str, base_url: str, name: str) -> str:
-    code = f'<script src="{make_url(template_name, base_url, name)}"></script>'
+def include_js(template_name: str, base_url: str, name: str, module: bool = False) -> str:
+    type = 'type="module"' if module else ""
+    code = f'<script src="{make_url(template_name, base_url, name)}" {type}></script>'
     return Markup(code)
 
 
