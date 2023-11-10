@@ -376,6 +376,41 @@ journalctl -u voila.service
 
 For more information, you can also follow [the guide on the nginx blog](https://www.nginx.com/blog/using-free-ssltls-certificates-from-lets-encrypt-with-nginx/).
 
+### Using Apache2 as reverse proxy
+
+Apache can also be used to serve voilà. These Apache modules need to be installed and enabled:
+- mod_proxy
+- mod_rewrite
+- mod_proxy_http
+- mod_proxy_wstunnel
+
+With the following configuration:
+
+```
+<VirtualHost *:443>
+   # ...
+   ProxyRequests Off
+   ProxyPreserveHost Off
+
+	<LocationMatch  "/voila/">
+      RewriteEngine on
+      RewriteCond %{REQUEST_URI} /voila/api/kernels/
+      RewriteRule .*/voila/(.*) "ws://127.0.0.1:50001/voila/$1" [P,L]
+      ProxyPreserveHost On
+      ProxyPass http://127.0.0.1:50001/voila/
+      ProxyPassReverse  http://127.0.0.1:50001/voila/
+	</LocationMatch>
+</VirtualHost>
+```
+
+For the record, Voila was instanciated with the following command line:
+
+```
+$ voila --autoreload=True --port=50001 --base_url=/voila/
+```
+
+And clients can access the instance using https://myhost/voila/
+
 ## Sharing Voilà applications with ngrok
 
 [ngrok](https://ngrok.com) is a useful tool to expose local servers to the public internet over secure tunnels.
