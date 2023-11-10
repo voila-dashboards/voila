@@ -392,14 +392,14 @@ With the following configuration:
    ProxyRequests Off
    ProxyPreserveHost Off
 
-	<LocationMatch  "/voila/">
+   <LocationMatch  "/voila/">
       RewriteEngine on
       RewriteCond %{REQUEST_URI} /voila/api/kernels/
       RewriteRule .*/voila/(.*) "ws://127.0.0.1:50001/voila/$1" [P,L]
       ProxyPreserveHost On
       ProxyPass http://127.0.0.1:50001/voila/
       ProxyPassReverse  http://127.0.0.1:50001/voila/
-	</LocationMatch>
+   </LocationMatch>
 </VirtualHost>
 ```
 
