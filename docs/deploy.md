@@ -411,9 +411,29 @@ $ voila --autoreload=True --port=50001 --base_url=/voila/
 
 And clients can access the instance using https://myhost/voila/
 
+## Sharing Voilà applications with Tunnelmole
+[Tunnelmole](https://github.com/robbie-cahill/tunnelmole-client) is an open source tunneling tool which you can use to get a Public URL for your locally running Voilà project without the need to deploy it to an external host. See the GitHub repo for more info on how it works.
+
+### Install Tunnelmole with one of the following options
+- NPM:  `npm install -g tunnelmole`
+- Linux: `curl -s https://tunnelmole.com/sh/install-linux.sh | sudo bash`
+- Mac:  `curl -s https://tunnelmole.com/sh/install-mac.sh --output install-mac.sh && sudo bash install-mac.sh`
+- Windows: Install with NPM, or if you don't have NodeJS installed, download the `exe` file for Windows [here](https://tunnelmole.com/downloads/tmole.exe) and put it somewhere in your PATH.
+
+### Get a public URL
+Then assuming `voila` is running on port `50001` as per the above example, run `tmole 50001`
+
+```
+➜  ~ tmole 50001
+http://bvdo5f-ip-49-183-170-144.tunnelmole.net is forwarding to localhost:50001
+https://bvdo5f-ip-49-183-170-144.tunnelmole.net is forwarding to localhost:50001
+```
+
+You can then access `voila` with one of the URLs shown in the output. Remember that the URL is public - anyone on the internet can access it, so keep it short lived, make sure you're not exposing any sensitive info and shut it down when its no longer needed. To shut down the tunnel press `CTRL+C`.
+
 ## Sharing Voilà applications with ngrok
 
-[ngrok](https://ngrok.com) is a useful tool to expose local servers to the public internet over secure tunnels.
+[ngrok](https://ngrok.com) is a popular closed source tunneling tool to expose local servers to the public internet over secure tunnels.
 It can be used to share Voilà applications served by a local instance of Voilà.
 
 The main use case for using Voilà with ngrok is to quickly share a notebook as an interactive application without
@@ -425,7 +445,7 @@ Don't forget to exercise caution before exposing local apps and data to the publ
 While Voilà does not permit arbitrary code execution, be aware that sensitive information could be exposed,
 depending on the content and the logic of the notebook.
 
-It's good practice to keep the ngrok tunnel connection short-lived, and limit its use to quick sharing purposes.
+It's good practice to keep a tunnelmole or ngrok tunnel connection short-lived, and limit its use to quick sharing purposes.
 :::
 
 ### Setup ngrok
