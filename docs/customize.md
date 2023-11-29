@@ -657,3 +657,11 @@ By default, Voilà's grace period for kernel startup time is 60 seconds. It can 
 ```sh
 voila --VoilaExecutor.startup_timeout=60
 ```
+
+## Have voila attempt to solve a best fit kernel spec
+
+By default, Voilà will attempt to resolve a kernel spec to the best fit, based on the available environments. You can disable this functionality as follows:
+
+```py
+c.VoilaConfiguration.attempt_fix_notebook = False
+```

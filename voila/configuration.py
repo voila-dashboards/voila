@@ -211,3 +211,9 @@ class VoilaConfiguration(traitlets.config.Configurable):
         help="""The dictionary of extension configuration, this dict is passed to the frontend
         through the PageConfig""",
     )
+
+    attempt_fix_notebook = Bool(
+        True,
+        config=True,
+        help="""Whether or not voila should attempt to fix and resolve a notebooks kernelspec metadata""",
+    )
