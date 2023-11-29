@@ -379,6 +379,7 @@ For more information, you can also follow [the guide on the nginx blog](https://
 ### Using Apache2 as reverse proxy
 
 Apache can also be used to serve voilà. These Apache modules need to be installed and enabled:
+
 - mod_proxy
 - mod_rewrite
 - mod_proxy_http

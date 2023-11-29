@@ -10,10 +10,6 @@ Want to turn your Voilà dashboard into a static webpage? Check out [Voici](http
 The combination of [JupyterLite](https://jupyterlite.readthedocs.io) and Voilà
 :::
 
-```{image} voila-logo.svg
-:alt: voila
-```
-
 _From notebooks to standalone web applications and dashboards._
 
 Voilà allows you to convert a Jupyter Notebook into an
