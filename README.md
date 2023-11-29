@@ -1,4 +1,4 @@
-# ![voila](docs/source/voila-logo.svg)
+# ![voila](docs/voila-logo.svg)
 
 [![Documentation](http://readthedocs.org/projects/voila/badge/?version=latest)](https://voila.readthedocs.io/en/latest/?badge=latest)
 [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/voila-dashboards/voila/stable?urlpath=voila%2Ftree%2Fnotebooks)
