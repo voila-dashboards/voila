@@ -312,7 +312,8 @@ class NotebookRenderer(LoggingConfigurable):
         __, extension = os.path.splitext(model.get("path", ""))
         if model.get("type") == "notebook":
             notebook = model["content"]
-            notebook = await self.fix_notebook(notebook)
+            if self.voila_configuration.attempt_fix_notebook:
+                notebook = await self.fix_notebook(notebook)
             return notebook
         elif extension in self.voila_configuration.extension_language_mapping:
             language = self.voila_configuration.extension_language_mapping[extension]
