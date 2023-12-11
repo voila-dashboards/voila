@@ -5,6 +5,10 @@
   "author": "Voilà contributors",
   "license": "BSD-3-Clause",
   "main": "lib/index.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/voila-dashboards/voila"
+  },
   "browserslist": ">0.8%, not ie 11, not op_mini all, not dead",
   "dependencies": {
     "@jupyter-widgets/base": "^6.0.6",
