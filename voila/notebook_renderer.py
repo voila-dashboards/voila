@@ -266,7 +266,7 @@ class NotebookRenderer(LoggingConfigurable):
                 break
             except CellExecutionError:
                 self.log.exception(
-                    "Error at server while executing cell: %r", input_cell
+                    f"Error at server while executing cell: {input_cell!r}",
                 )
                 if self.executor.should_strip_error():
                     strip_code_cell_warnings(input_cell)
@@ -275,7 +275,7 @@ class NotebookRenderer(LoggingConfigurable):
                 break
             except Exception as e:
                 self.log.exception(
-                    "Error at server while executing cell: %r", input_cell
+                    f"Error at server while executing cell: {input_cell!r}",
                 )
                 output_cell = nbformat.v4.new_code_cell()
                 if self.executor.should_strip_error():
@@ -345,9 +345,7 @@ class NotebookRenderer(LoggingConfigurable):
                 language.lower(), kernel_specs=all_kernel_specs
             )
             self.log.warning(
-                "Could not find a kernel named %r, will use  %r",
-                missing_kernel_name,
-                kernel_name,
+                f"Could not find a kernel named {missing_kernel_name!r}, will use  {kernel_name!r}",
             )
         # We make sure the notebook's kernelspec is correct
         notebook.metadata.kernelspec.name = kernel_name
@@ -397,5 +395,5 @@ class NotebookRenderer(LoggingConfigurable):
             return matches[0]
         else:
             raise tornado.web.HTTPError(
-                500, "No Jupyter kernel for language %r found" % kernel_language
+                500, f"No Jupyter kernel for language {kernel_language!r} found"
             )

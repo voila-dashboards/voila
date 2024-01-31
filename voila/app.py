@@ -435,7 +435,7 @@ class Voila(Application):
     @default("connection_dir_root")
     def _default_connection_dir(self):
         connection_dir = tempfile.gettempdir()
-        self.log.info("Using %s to store connection files" % connection_dir)
+        self.log.info(f"Using {connection_dir} to store connection files")
         return connection_dir
 
     @default("log_level")
@@ -532,7 +532,7 @@ class Voila(Application):
                         f"argument is neither a file nor a directory: {arg!r}"
                     )
         elif len(self.extra_args) != 0:
-            raise ValueError("provided more than 1 argument: %r" % self.extra_args)
+            raise ValueError(f"provided more than 1 argument: {self.extra_args!r}")
 
         # then we load the config
         self.load_config_file("voila", path=self.config_file_paths)
@@ -568,7 +568,7 @@ class Voila(Application):
                         self.voila_configuration.config.VoilaConfiguration = Config(
                             conf["traitlet_configuration"]
                         )
-        self.log.debug("using template: %s", self.voila_configuration.template)
+        self.log.debug(f"using template: {self.voila_configuration.template}")
         self.log.debug("template paths:\n\t%s", "\n\t".join(self.template_paths))
         self.log.debug("static paths:\n\t%s", "\n\t".join(self.static_paths))
         if self.notebook_path and not os.path.exists(self.notebook_path):
@@ -844,14 +844,14 @@ class Voila(Application):
             except OSError as e:
                 if e.errno == errno.EADDRINUSE:
                     self.log.info(
-                        _("The port %i is already in use, trying another port.") % port
+                        _(f"The port {port} is already in use, trying another port.")
                     )
                     continue
                 elif e.errno in (
                     errno.EACCES,
                     getattr(errno, "WSAEACCES", errno.EACCES),
                 ):
-                    self.log.warning(_("Permission to listen on port %i denied") % port)
+                    self.log.warning(_(f"Permission to listen on port {port} denied"))
                     continue
                 else:
                     raise
@@ -884,7 +884,7 @@ class Voila(Application):
         try:
             browser = webbrowser.get(self.browser or None)
         except webbrowser.Error as e:
-            self.log.warning(_("No web browser found: %s.") % e)
+            self.log.warning(_(f"No web browser found: {e}."))
             browser = None
 
         if not browser:

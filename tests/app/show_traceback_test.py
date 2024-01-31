@@ -16,7 +16,7 @@ def notebook_show_traceback_path(base_url):
 @pytest.fixture
 def voila_args(notebook_directory, voila_args_extra, show_tracebacks):
     return [
-        "--VoilaTest.root_dir=%r" % notebook_directory,
+        f"--VoilaTest.root_dir={notebook_directory!r}",
         f"--VoilaConfiguration.show_tracebacks={show_tracebacks}",
         *voila_args_extra,
     ]
