@@ -387,7 +387,7 @@ class Voila(Application):
             if not url.endswith("/"):
                 url += "/"
         else:
-            if self.ip in ('', '0.0.0.0'):
+            if self.ip in ("", "0.0.0.0"):
                 ip = socket.gethostname()
             else:
                 ip = self.ip
@@ -413,7 +413,7 @@ class Voila(Application):
     def _url(self, ip):
         # TODO: https / certfile
         # proto = 'https' if self.certfile else 'http'
-        proto = 'http'
+        proto = "http"
         return f"{proto}://{ip}:{self.port}{self.base_url}"
 
     config_file_paths = List(
@@ -572,7 +572,7 @@ class Voila(Application):
         self.log.debug("template paths:\n\t%s", "\n\t".join(self.template_paths))
         self.log.debug("static paths:\n\t%s", "\n\t".join(self.static_paths))
         if self.notebook_path and not os.path.exists(self.notebook_path):
-            raise ValueError(f'Notebook not found: {self.notebook_path}')
+            raise ValueError(f"Notebook not found: {self.notebook_path}")
 
     def init_settings(self) -> Dict:
         """Initialize settings for Voila application."""
@@ -687,14 +687,12 @@ class Voila(Application):
         handlers.extend(
             [
                 (
-                    url_path_join(
-                        self.server_url, fr"/api/kernels/{_kernel_id_regex}"
-                    ),
+                    url_path_join(self.server_url, rf"/api/kernels/{_kernel_id_regex}"),
                     KernelHandler,
                 ),
                 (
                     url_path_join(
-                        self.server_url, fr"/api/kernels/{_kernel_id_regex}/channels"
+                        self.server_url, rf"/api/kernels/{_kernel_id_regex}/channels"
                     ),
                     KernelWebsocketHandler,
                 ),
@@ -727,9 +725,7 @@ class Voila(Application):
         if self.voila_configuration.preheat_kernel:
             handlers.append(
                 (
-                    url_path_join(
-                        self.server_url, fr"/voila/query/{_kernel_id_regex}"
-                    ),
+                    url_path_join(self.server_url, rf"/voila/query/{_kernel_id_regex}"),
                     RequestInfoSocketHandler,
                 )
             )
@@ -778,7 +774,7 @@ class Voila(Application):
                 [
                     (self.server_url, TornadoVoilaTreeHandler, tree_handler_conf),
                     (
-                        url_path_join(self.server_url, fr"/voila/tree{path_regex}"),
+                        url_path_join(self.server_url, rf"/voila/tree{path_regex}"),
                         TornadoVoilaTreeHandler,
                         tree_handler_conf,
                     ),
@@ -795,7 +791,7 @@ class Voila(Application):
                     # On serving a directory, expose the content handler.
                     (
                         url_path_join(
-                            self.server_url, fr"/voila/api/contents{path_regex}"
+                            self.server_url, rf"/voila/api/contents{path_regex}"
                         ),
                         VoilaContentsHandler,
                         tree_handler_conf,

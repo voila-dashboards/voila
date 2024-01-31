@@ -16,7 +16,7 @@ def jupyter_server_args_extra():
 
 
 async def test_tree(http_server_client, base_url):
-    response = await http_server_client.fetch(f'{base_url}voila/tree')
+    response = await http_server_client.fetch(f"{base_url}voila/tree")
     assert response.code == 200
     text = response.body.decode("utf-8")
     assert "print.ipynb" in text, "tree handler should render ipynb files"

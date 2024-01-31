@@ -8,8 +8,8 @@ BASE_DIR = os.path.dirname(__file__)
 
 @pytest.fixture
 def voila_config_file_paths_arg():
-    path = os.path.join(BASE_DIR, '..', 'configs', 'general')
-    return f'--VoilaTest.config_file_paths=[{path!r}]'
+    path = os.path.join(BASE_DIR, "..", "configs", "general")
+    return f"--VoilaTest.config_file_paths=[{path!r}]"
 
 
 def test_config_app(voila_app):

@@ -19,8 +19,8 @@ def voila_config():
 @pytest.fixture
 def voila_config_file_paths_arg():
     # we don't want the tests to use any configuration on the system
-    path = os.path.abspath(os.path.join(BASE_DIR, '../configs/general'))
-    return f'--VoilaTest.config_file_paths=[{path!r}]'
+    path = os.path.abspath(os.path.join(BASE_DIR, "../configs/general"))
+    return f"--VoilaTest.config_file_paths=[{path!r}]"
 
 
 @pytest.mark.skip(reason="TODO: update for JupyterLab extensions")
