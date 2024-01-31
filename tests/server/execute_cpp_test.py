@@ -1,7 +1,8 @@
 import os
+
 import pytest
 
-TEST_XEUS_CLING = os.environ.get('VOILA_TEST_XEUS_CLING', '') == '1'
+TEST_XEUS_CLING = os.environ.get("VOILA_TEST_XEUS_CLING", "") == "1"
 
 
 @pytest.fixture
@@ -16,11 +17,13 @@ def jupyter_server_args_extra():
 
 @pytest.fixture
 def voila_args(notebook_directory, voila_args_extra):
-    return [f'--VoilaTest.root_dir={notebook_directory!r}'] + voila_args_extra
+    return [f"--VoilaTest.root_dir={notebook_directory!r}", *voila_args_extra]
 
 
-@pytest.mark.skipif(not TEST_XEUS_CLING, reason='opt in to avoid having to install xeus-cling')
+@pytest.mark.skipif(
+    not TEST_XEUS_CLING, reason="opt in to avoid having to install xeus-cling"
+)
 async def test_non_existing_kernel(http_server_client, cpp_file_url):
     response = await http_server_client.fetch(cpp_file_url)
     assert response.code == 200
-    assert 'Hello voila, from c++' in response.body.decode('utf-8')
+    assert "Hello Voilà, from c++" in response.body.decode("utf-8")

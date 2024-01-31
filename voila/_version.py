@@ -1,5 +1,5 @@
 #############################################################################
-# Copyright (c) 2018, Voila Contributors                                    #
+# Copyright (c) 2018, Voilà Contributors                                    #
 # Copyright (c) 2018, QuantStack                                            #
 #                                                                           #
 # Distributed under the terms of the BSD 3-Clause License.                  #
@@ -7,9 +7,41 @@
 # The full license is in the file LICENSE, distributed with this software.  #
 #############################################################################
 
-version_info = (0, 2, 0, 'alpha', 1)
+# Copyright (c) Jupyter Development Team.
+# Distributed under the terms of the Modified BSD License.
 
-_specifier_ = {'alpha': 'a', 'beta': 'b', 'candidate': 'rc', 'final': ''}
+import re
+from collections import namedtuple
 
-__version__ = '%s.%s.%s%s' % (version_info[0], version_info[1], version_info[2],
-                              '' if version_info[3] == 'final' else _specifier_[version_info[3]] + str(version_info[4]))
+# Use "hatch version xx.yy.zz" to handle version changes
+__version__ = "0.5.5"
+
+# PEP440 version parser
+_version_regex = re.compile(
+    r"""
+  (?P<major>\d+)
+  \.
+  (?P<minor>\d+)
+  \.
+  (?P<micro>\d+)
+  (?P<releaselevel>((a|b|rc|\.dev)))?
+  (?P<serial>\d+)?
+  """,
+    re.VERBOSE,
+)
+
+_version_fields = _version_regex.match(__version__).groupdict()  # type:ignore
+
+VersionInfo = namedtuple(
+    "VersionInfo", ["major", "minor", "micro", "releaselevel", "serial"]
+)
+
+version_info = VersionInfo(
+    *[
+        int(_version_fields["major"]),
+        int(_version_fields["minor"]),
+        int(_version_fields["micro"]),
+        _version_fields["releaselevel"] or "",
+        _version_fields["serial"] or "",
+    ]
+)

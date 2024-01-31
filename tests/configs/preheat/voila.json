@@ -1,0 +1,20 @@
+{
+  "VoilaConfiguration": {
+    "preheat_kernel": true
+  },
+  "VoilaKernelManager": {
+    "preheat_denylist": ["denylisted.ipynb"],
+    "kernel_pools_config": {
+      "default": {
+        "pool_size": 1
+      },
+      "pre_heat.ipynb": {
+        "pool_size": 2,
+        "kernel_env_variables": {
+          "foo": "bar"
+        }
+      }
+    },
+    "fill_delay": 0
+  }
+}

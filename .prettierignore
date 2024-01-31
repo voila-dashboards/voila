@@ -1,0 +1,13 @@
+node_modules
+**/node_modules
+**/lib
+**/package.json
+**/labextension
+**/static
+build
+notebooks/
+.vscode/
+.pytest_cache
+share/
+
+ui-tests/playwright-report

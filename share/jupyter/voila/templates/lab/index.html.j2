@@ -1,47 +1,102 @@
 {%- extends 'nbconvert/templates/lab/index.html.j2' -%}
 {% import "spinner.macro.html.j2" as spinner %}
+{% import "log.macro.html.j2" as log %}
+{% from 'voila_setup.macro.html.j2' import voila_setup_helper_functions, voila_setup_labextensions with context %}
 
 {%- block html_head_js -%}
+{%- block html_head_js_logs -%}
+{{ log.js() }}
+{%- endblock html_head_js_logs -%}
 {%- endblock html_head_js -%}
 
-{%- block html_head_css -%}
-<link rel="stylesheet" href="https://unpkg.com/font-awesome@4.5.0/css/font-awesome.min.css" type="text/css" />
-{{ super() }}
-{{ spinner.css() }}
-{%- endblock html_head_css -%}
+{%- block notebook_css -%}
+  {% if frontend == "voila" %}
+    {{ resources.include_js("static/voila-style.js") }}
+  {% endif %}
+
+  {{ spinner.css() }}
+
+  <style>
+    /*Hide empty cells*/
+    .jp-mod-noOutputs.jp-mod-noInput {
+      display: none;
+    }
+  </style>
+{% if resources.show_margins %}
+  <style>
+    body {
+      background: var(--jp-layout-color1);
+    }
+
+    #rendered_cells {
+      padding-left: calc(calc(100% - 1200px) * 0.5);
+      padding-right: calc( calc( 100% - 1200px - 20px ) * 0.5 );
+    }
+
+    #rendered_cells > div {
+      background: var(--jp-layout-color0);
+      padding: 6ex 12ex 8ex 12ex;
+      border-radius: var(--jp-border-radius);
+      box-shadow: var(--jp-elevation-z4);
+    }
+  </style>
+{% endif %}
+
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@^5/css/all.min.css" type="text/css" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@^5/css/v4-shims.min.css" type="text/css" />
+
+  {{ super() }}
+{%- endblock notebook_css -%}
+
+{%- block html_head_js_mathjax -%}
+{# remove mathjax CDN #}
+{%- endblock html_head_js_mathjax -%}
 
 {# this overrides the default behaviour of rendering static widgets #}
 {% block jupyter_widgets %}
 {% endblock jupyter_widgets %}
 
 {%- block body_header -%}
-{% if resources.theme == 'dark' %}
-<body class="jp-Notebook theme-dark" data-base-url="{{resources.base_url}}voila/">
+<link rel="icon" href="data:;base64,=">
+{% if resources.theme == 'dark' or resources.theme == 'JupyterLab Dark' %}
+<body class="jp-Notebook theme-dark" data-base-url="{{resources.base_url}}voila/" data-jp-theme-light="false" data-jp-theme-name="JupyterLab Dark">
+{% elif resources.theme == 'light' or resources.theme == 'JupyterLab Light' %}
+<body class="jp-Notebook theme-light" data-base-url="{{resources.base_url}}voila/" data-jp-theme-light="true" data-jp-theme-name="JupyterLab Light">
 {% else %}
-<body class="jp-Notebook theme-light" data-base-url="{{resources.base_url}}voila/">
+<body class="jp-Notebook" data-base-url="{{resources.base_url}}voila/" data-jp-theme-name="{{resources.theme}}">
 {% endif %}
 {{ spinner.html() }}
-<script>
-var voila_process = function(cell_index, cell_count) {
-  var el = document.getElementById("loading_text")
-  el.innerHTML = `Executing ${cell_index} of ${cell_count}`
-}
-</script>
+{{ voila_setup_helper_functions() }}
 <div id="rendered_cells" style="display: none">
+  <div>
 {%- endblock body_header -%}
+
+{% block data_priority scoped %}
+{% if output %}
+  <script type="application/vnd.voila.cell-output+json">
+    {{ output | trusted | tojson }}
+  </script>
+{% endif %}
+{% endblock data_priority %}
 
 {%- block body_loop -%}
   {# from this point on, the kernel is started #}
-  {%- with kernel_id = kernel_start() -%}
+
+  {# Copy so we do not modify the page_config with updates. #}
+  {% set page_config_full = page_config.copy() %}
+
+  {%- with kernel_id = kernel_start(nb) -%}
+    {# Set a dummy variable - we just want the side effect of the update. #}
+    {% set _ = page_config_full.update(baseUrl=resources.base_url, kernelId=kernel_id) %}
+
     <script id="jupyter-config-data" type="application/json">
-    {
-        "baseUrl": "{{resources.base_url}}",
-        "kernelId": "{{kernel_id}}"
-    }
+      {{ page_config_full | tojson }}
     </script>
+
     {% set cell_count = nb.cells|length %}
+
     {#
-    Voila is using Jinja's Template.generate method to not render the whole template in one go.
+    Voilà is using Jinja's Template.generate method to not render the whole template in one go.
     The current implementation of Jinja will however not yield template snippets if we call a blocks' super()
     Therefore it is important to have the cell loop in the template.
     The issue for Jinja is: https://github.com/pallets/jinja/issues/1044
@@ -49,46 +104,29 @@ var voila_process = function(cell_index, cell_count) {
     {%- for cell in cell_generator(nb, kernel_id) -%}
       {% set cellloop = loop %}
       {%- block any_cell scoped -%}
-      <script>
-        voila_process({{ cellloop.index }}, {{ cell_count }})
-      </script>
-        {{ super() }}
+        <div cell-index="{{cellloop.index}}">
+          <script>
+            voila_process({{ cellloop.index }}, {{ cell_count }})
+          </script>
+          {{ super() }}
+        </div>
       {%- endblock any_cell -%}
     {%- endfor -%}
   {% endwith %}
 {%- endblock body_loop -%}
 
 {%- block body_footer -%}
-{{ super() }}
+  </div>
 </div>
 <script type="text/javascript">
-  (function() {
-    // remove the loading element
-    var el = document.getElementById("loading")
-    el.parentNode.removeChild(el)
-    // show the cell output
-    el = document.getElementById("rendered_cells")
-    el.style.display = 'unset'
-  })();
+  window.voila_finish();
 </script>
-</body>
+{{ voila_setup_labextensions(resources.base_url, resources.labextensions) }}
+{{ super() }}
 {%- endblock body_footer -%}
 
+{%- block footer %}
 {% block footer_js %}
-<script
-    src="{{resources.base_url}}voila/static/require.min.js"
-    integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA="
-    crossorigin="anonymous">
-</script>
-<script>
-requirejs.config({ baseUrl: '{{resources.base_url}}voila/', waitSeconds: 30})
-requirejs(
-    [
-        "static/main",
-    {% for ext in resources.nbextensions -%}
-        "{{resources.base_url}}voila/nbextensions/{{ ext }}.js",
-    {% endfor %}
-    ]
-)
-</script>
 {% endblock footer_js %}
+</html>
+{%- endblock footer-%}

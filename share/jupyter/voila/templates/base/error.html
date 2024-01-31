@@ -1,7 +1,17 @@
 {% extends "page.html" %}
 
+{% block stylesheets %}
+  {{ super() }}
+
+  <style>
+    .voila-error {
+      text-align: center;
+    }
+  </style>
+{% endblock %}
+
 {% block body %}
-  <div>
+  <div class="voila-error">
     <h1>{{ status_code }}: {{ status_message }}</h1>
 
     {% block error_detail %}

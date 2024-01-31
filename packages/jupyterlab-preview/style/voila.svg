@@ -1,0 +1,15 @@
+<svg width="308.95" height="308.95" data-name="Calque 1" version="1.1" viewBox="0 0 308.95 308.95" xmlns="http://www.w3.org/2000/svg">
+ <defs>
+  <style>
+    [data-jp-theme-light='true'] .jp-VoilaColor1 {fill:#268380;}
+    [data-jp-theme-light='true'] .jp-VoilaColor2 {fill:#f8e14b;}
+    [data-jp-theme-light='false'] .jp-VoilaColor1 {fill:#555454;}
+    [data-jp-theme-light='false'] .jp-VoilaColor2 {fill:#f38c02;}
+  </style>
+ </defs>
+ <title>Voila</title>
+ <g class="jp-icon3" transform="translate(-95.032 -95.527)">
+  <path class="jp-VoilaColor1" d="m391.05 343h-282.05a14 14 0 0 1 0-27.91h282.1a14 14 0 0 1 0 27.91z"/>
+  <path class="jp-VoilaColor2" d="m108.94 276.18a14 14 0 0 1-12.41-20.3l35.81-70.07c12.77-25.09 29.66-28.81 38.53-28.81s25.75 3.75 38.53 28.86l24.25 47.64c5.11 10.06 10.56 13.62 13.67 13.62s8.55-3.56 13.66-13.62l24.25-47.64c12.77-25.14 29.63-28.86 38.53-28.86 8.91 0 25.76 3.76 38.54 28.87a14 14 0 0 1-24.87 12.66c-5.11-10.06-10.56-13.62-13.67-13.62s-8.55 3.56-13.66 13.62l-24.25 47.64c-12.78 25.08-29.63 28.83-38.53 28.83s-25.76-3.75-38.54-28.87l-24.24-47.64c-5.12-10.06-10.56-13.62-13.67-13.62s-8.55 3.56-13.67 13.62l-35.82 70.09a14 14 0 0 1-12.44 7.6z"/>
+ </g>
+</svg>

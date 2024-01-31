@@ -1,5 +1,5 @@
 {
-    "load_extensions": {
-      "ipytest/extension": true
-    }
+  "load_extensions": {
+    "ipytest/extension": true
   }
+}

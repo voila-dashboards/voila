@@ -1,0 +1,193 @@
+[build-system]
+requires = [
+    "hatchling>=1.8.1",
+    "jupyterlab~=4.0",
+    "jupyter_core",
+]
+build-backend = "hatchling.build"
+
+[project]
+name = "voila"
+description = "Voilà turns Jupyter notebooks into standalone web applications"
+readme = "README.md"
+requires-python = ">=3.8"
+authors = [
+    { name = "Voila Development Team" },
+]
+keywords = [
+    "Jupyter",
+    "JupyterLab",
+    "Voila",
+]
+classifiers = [
+    "Framework :: Jupyter",
+    "Framework :: Jupyter :: JupyterLab",
+    "Framework :: Jupyter :: JupyterLab :: 3",
+    "Framework :: Jupyter :: JupyterLab :: Extensions",
+    "Framework :: Jupyter :: JupyterLab :: Extensions :: Prebuilt",
+    "License :: OSI Approved :: BSD License",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.7",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+]
+dependencies = [
+    "jupyter_client>=7.4.4,<9",
+    "jupyter_core>=4.11.0",
+    "jupyter_server>=2.0.0,<3",
+    "jupyterlab_server>=2.3.0,<3",
+    "nbclient>=0.4.0,<0.8",
+    "nbconvert>=6.4.5,<8",
+    "traitlets>=5.0.3,<6",
+    "websockets>=9.0",
+]
+dynamic = [
+    "version",
+]
+
+[project.license]
+file = "LICENSE"
+
+[project.optional-dependencies]
+dev = [
+    "black",
+    "hatch",
+    "pre-commit",
+    "jupyter_releaser",
+]
+test = [
+    "ipykernel",
+    "ipywidgets",
+    "matplotlib",
+    "mock",
+    "numpy",
+    "pandas",
+    "papermill",
+    "pytest",
+    "pytest-tornasync",
+]
+docs = [
+    "myst-parser",
+    "pydata-sphinx-theme",
+    "sphinx",
+    "sphinx-autobuild",
+    "sphinxcontrib-video",
+]
+
+[project.scripts]
+voila = "voila.app:main"
+
+[project.urls]
+Homepage = "https://github.com/voila-dashboards/voila"
+
+[tool.hatch.version]
+path = "voila/_version.py"
+
+[tool.hatch.build]
+artifacts = [
+    "voila/labextension",
+    "share/jupyter/voila/templates",
+    "share/jupyter/voila/schemas",
+    "share/jupyter/voila/themes"
+]
+
+[tool.hatch.build.hooks.custom]
+path = "hatch_build.py"
+
+[tool.hatch.build.targets.wheel.shared-data]
+"etc/jupyter" = "etc/jupyter"
+"voila/labextension" = "share/jupyter/labextensions/@voila-dashboards/jupyterlab-preview"
+"install.json" = "share/jupyter/labextensions/@voila-dashboards/jupyterlab-preview/install.json"
+"share/jupyter/voila/templates" = "share/jupyter/voila/templates"
+"share/jupyter/voila/schemas" = "share/jupyter/voila/schemas"
+"share/jupyter/voila/themes" = "share/jupyter/voila/themes"
+
+[tool.hatch.build.targets.sdist]
+exclude = [
+    ".github",
+    "*.gif",
+]
+
+[tool.hatch.build.hooks.jupyter-builder]
+dependencies = [
+    "hatch-jupyter-builder>=0.5.3",
+]
+build-function = "hatch_jupyter_builder.npm_builder"
+ensured-targets = [
+    "voila/labextension/static/style.js",
+    "share/jupyter/voila/templates/base/static/materialcolors.css",
+    "share/jupyter/voila/templates/base/static/labvariables.css",
+    "share/jupyter/voila/themes/@jupyterlab/theme-dark-extension/index.css"
+]
+skip-if-exists = [
+    "voila/labextension/static/style.js",
+    "share/jupyter/voila/templates/base/static/materialcolors.css",
+    "share/jupyter/voila/templates/base/static/labvariables.css",
+    "share/jupyter/voila/themes/@jupyterlab/theme-dark-extension/index.css"
+]
+
+[tool.hatch.build.hooks.jupyter-builder.editable-build-kwargs]
+build_cmd = "build"
+npm = [
+    "jlpm",
+]
+force = true
+
+[tool.hatch.build.hooks.jupyter-builder.build-kwargs]
+build_cmd = "build:prod"
+npm = [
+    "jlpm",
+]
+
+[tool.hatch.envs.docs]
+features = ["docs"]
+
+[tool.hatch.envs.docs.scripts]
+build = "sphinx-build -W -b html docs docs/build/html"
+watch = "sphinx-autobuild -W -b html docs docs/build/html --host 0.0.0.0"
+serve = "python -m http.server --directory docs/build/html"
+
+[tool.jupyter-releaser]
+skip = [
+    "check-links",
+]
+
+[tool.jupyter-releaser.hooks]
+before-bump-version = [
+    "python -m pip install hatch jupyterlab~=4.0",
+]
+before-build-npm = [
+    "python -m pip install jupyterlab~=4.0",
+    "jlpm",
+    "jlpm clean",
+    "jlpm build:prod",
+]
+before-build-python = [
+    "jlpm clean",
+]
+after-draft-release = "bash ./scripts/reset-stable.sh"
+
+[tool.jupyter-releaser.options]
+version-cmd = "python scripts/bump-version.py --force"
+
+[tool.check-wheel-contents]
+ignore = ["W002"]
+
+[tool.ruff]
+target-version = "py37"
+line-length = 100
+ignore = [
+# Q000 Single quotes found but double quotes preferred
+"Q000",
+# FBT001 Boolean positional arg in function definition
+"FBT001", "FBT002", "FBT003",
+# E501 Line too long (158 > 100 characters)
+"E501",
+# PLR0913 Too many arguments to function call
+"PLR0913",
+# SIM105 Use `contextlib.suppress(...)`
+"SIM105",
+]

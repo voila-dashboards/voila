@@ -30,9 +30,30 @@ config.rst
 package-lock.json
 
 share/jupyter/voila/templates/base/static/*voila.js
-share/jupyter/voila/templates/base/static/*[woff|woff2|eot|svg]
+share/jupyter/voila/templates/base/static/*treepage.js
+share/jupyter/voila/templates/base/static/*voila-style.js
+share/jupyter/voila/templates/base/static/*.woff
+share/jupyter/voila/templates/base/static/*.woff2
+share/jupyter/voila/templates/base/static/*.eot
+share/jupyter/voila/templates/base/static/*.svg
+share/jupyter/voila/templates/base/static/*.ttf
+share/jupyter/voila/templates/base/static/labvariables.css
+share/jupyter/voila/templates/base/static/materialcolors.css
+share/jupyter/voila/templates/base/static/*.LICENSE.txt
 
-js/lib/
 
-packages/jupyterlab-voila/lib/
+lib
+
+voila/labextension
 tsconfig.tsbuildinfo
+
+ui-tests/playwright-report
+ui-tests/test-results
+ui-tests/benchmark-results
+ui-tests/jlab_root
+
+.yarn/
+
+share/jupyter/voila/schemas
+share/jupyter/voila/themes
+share/jupyter/voila/style.js

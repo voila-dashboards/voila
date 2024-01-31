@@ -1,5 +1,5 @@
 #############################################################################
-# Copyright (c) 2018, Voila Contributors                                    #
+# Copyright (c) 2018, Voilà Contributors                                    #
 # Copyright (c) 2018, QuantStack                                            #
 #                                                                           #
 # Distributed under the terms of the BSD 3-Clause License.                  #
@@ -8,12 +8,23 @@
 #############################################################################
 
 from ._version import __version__  # noqa
-from .server_extension import _load_jupyter_server_extension, load_jupyter_server_extension  # noqa
+from .server_extension import _load_jupyter_server_extension  # noqa
+from .server_extension import load_jupyter_server_extension  # noqa
+import warnings
+
+warnings.filterwarnings("default", category=DeprecationWarning, module="traitlets")
 
 
 def _jupyter_nbextension_paths():
-    return [dict(
-        section="notebook",
-        src="static",
-        dest="voila",
-        require="voila/extension")]
+    return [
+        {
+            "section": "notebook",
+            "src": "static",
+            "dest": "voila",
+            "require": "voila/extension",
+        }
+    ]
+
+
+def _jupyter_labextension_paths():
+    return [{"src": "labextension", "dest": "@voila-dashboards/jupyterlab-preview"}]

@@ -1,0 +1,7 @@
+{
+  "extends": "./tsconfigbase",
+  "include": ["packages/**/*", "ui-tests"],
+  "compilerOptions": {
+    "types": ["jest"]
+  }
+}

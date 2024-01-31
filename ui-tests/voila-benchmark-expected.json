@@ -1,0 +1,463 @@
+{
+  "values": [
+    {
+      "nSamples": 5,
+      "browser": "chromium",
+      "file": "basics.ipynb",
+      "project": "",
+      "test": "Render",
+      "time": "3875.800",
+      "reference": "expected"
+    },
+    {
+      "nSamples": 5,
+      "browser": "chromium",
+      "file": "basics.ipynb",
+      "project": "",
+      "test": "Render",
+      "time": "3700.950",
+      "reference": "expected"
+    },
+    {
+      "nSamples": 5,
+      "browser": "chromium",
+      "file": "basics.ipynb",
+      "project": "",
+      "test": "Render",
+      "time": "3517.367",
+      "reference": "expected"
+    },
+    {
+      "nSamples": 5,
+      "browser": "chromium",
+      "file": "basics.ipynb",
+      "project": "",
+      "test": "Render",
+      "time": "3441.575",
+      "reference": "expected"
+    },
+    {
+      "nSamples": 5,
+      "browser": "chromium",
+      "file": "basics.ipynb",
+      "project": "",
+      "test": "Render",
+      "time": "3379.120",
+      "reference": "expected"
+    },
+    {
+      "nSamples": 5,
+      "browser": "chromium",
+      "file": "bqplot.ipynb",
+      "project": "",
+      "test": "Render",
+      "time": "2976.100",
+      "reference": "expected"
+    },
+    {
+      "nSamples": 5,
+      "browser": "chromium",
+      "file": "bqplot.ipynb",
+      "project": "",
+      "test": "Render",
+      "time": "3603.900",
+      "reference": "expected"
+    },
+    {
+      "nSamples": 5,
+      "browser": "chromium",
+      "file": "bqplot.ipynb",
+      "project": "",
+      "test": "Render",
+      "time": "3420.933",
+      "reference": "expected"
+    },
+    {
+      "nSamples": 5,
+      "browser": "chromium",
+      "file": "bqplot.ipynb",
+      "project": "",
+      "test": "Render",
+      "time": "3320.925",
+      "reference": "expected"
+    },
+    {
+      "nSamples": 5,
+      "browser": "chromium",
+      "file": "bqplot.ipynb",
+      "project": "",
+      "test": "Render",
+      "time": "3226.740",
+      "reference": "expected"
+    },
+    {
+      "nSamples": 5,
+      "browser": "chromium",
+      "file": "dashboard.ipynb",
+      "project": "",
+      "test": "Render",
+      "time": "3792.800",
+      "reference": "expected"
+    },
+    {
+      "nSamples": 5,
+      "browser": "chromium",
+      "file": "dashboard.ipynb",
+      "project": "",
+      "test": "Render",
+      "time": "3824.650",
+      "reference": "expected"
+    },
+    {
+      "nSamples": 5,
+      "browser": "chromium",
+      "file": "dashboard.ipynb",
+      "project": "",
+      "test": "Render",
+      "time": "3708.767",
+      "reference": "expected"
+    },
+    {
+      "nSamples": 5,
+      "browser": "chromium",
+      "file": "dashboard.ipynb",
+      "project": "",
+      "test": "Render",
+      "time": "3607.525",
+      "reference": "expected"
+    },
+    {
+      "nSamples": 5,
+      "browser": "chromium",
+      "file": "dashboard.ipynb",
+      "project": "",
+      "test": "Render",
+      "time": "3622.720",
+      "reference": "expected"
+    },
+    {
+      "nSamples": 5,
+      "browser": "chromium",
+      "file": "gridspecLayout.ipynb",
+      "project": "",
+      "test": "Render",
+      "time": "4747.900",
+      "reference": "expected"
+    },
+    {
+      "nSamples": 5,
+      "browser": "chromium",
+      "file": "gridspecLayout.ipynb",
+      "project": "",
+      "test": "Render",
+      "time": "4661.000",
+      "reference": "expected"
+    },
+    {
+      "nSamples": 5,
+      "browser": "chromium",
+      "file": "gridspecLayout.ipynb",
+      "project": "",
+      "test": "Render",
+      "time": "4523.467",
+      "reference": "expected"
+    },
+    {
+      "nSamples": 5,
+      "browser": "chromium",
+      "file": "gridspecLayout.ipynb",
+      "project": "",
+      "test": "Render",
+      "time": "4452.750",
+      "reference": "expected"
+    },
+    {
+      "nSamples": 5,
+      "browser": "chromium",
+      "file": "gridspecLayout.ipynb",
+      "project": "",
+      "test": "Render",
+      "time": "4452.660",
+      "reference": "expected"
+    },
+    {
+      "nSamples": 5,
+      "browser": "chromium",
+      "file": "interactive.ipynb",
+      "project": "",
+      "test": "Render",
+      "time": "2558.900",
+      "reference": "expected"
+    },
+    {
+      "nSamples": 5,
+      "browser": "chromium",
+      "file": "interactive.ipynb",
+      "project": "",
+      "test": "Render",
+      "time": "2660.100",
+      "reference": "expected"
+    },
+    {
+      "nSamples": 5,
+      "browser": "chromium",
+      "file": "interactive.ipynb",
+      "project": "",
+      "test": "Render",
+      "time": "2673.867",
+      "reference": "expected"
+    },
+    {
+      "nSamples": 5,
+      "browser": "chromium",
+      "file": "interactive.ipynb",
+      "project": "",
+      "test": "Render",
+      "time": "2656.250",
+      "reference": "expected"
+    },
+    {
+      "nSamples": 5,
+      "browser": "chromium",
+      "file": "interactive.ipynb",
+      "project": "",
+      "test": "Render",
+      "time": "2654.520",
+      "reference": "expected"
+    },
+    {
+      "nSamples": 5,
+      "browser": "chromium",
+      "file": "ipympl.ipynb",
+      "project": "",
+      "test": "Render",
+      "time": "4743.400",
+      "reference": "expected"
+    },
+    {
+      "nSamples": 5,
+      "browser": "chromium",
+      "file": "ipympl.ipynb",
+      "project": "",
+      "test": "Render",
+      "time": "4356.000",
+      "reference": "expected"
+    },
+    {
+      "nSamples": 5,
+      "browser": "chromium",
+      "file": "ipympl.ipynb",
+      "project": "",
+      "test": "Render",
+      "time": "4212.700",
+      "reference": "expected"
+    },
+    {
+      "nSamples": 5,
+      "browser": "chromium",
+      "file": "ipympl.ipynb",
+      "project": "",
+      "test": "Render",
+      "time": "4079.000",
+      "reference": "expected"
+    },
+    {
+      "nSamples": 5,
+      "browser": "chromium",
+      "file": "ipympl.ipynb",
+      "project": "",
+      "test": "Render",
+      "time": "3982.220",
+      "reference": "expected"
+    },
+    {
+      "nSamples": 5,
+      "browser": "chromium",
+      "file": "ipyvolume.ipynb",
+      "project": "",
+      "test": "Render",
+      "time": "12182.500",
+      "reference": "expected"
+    },
+    {
+      "nSamples": 5,
+      "browser": "chromium",
+      "file": "ipyvolume.ipynb",
+      "project": "",
+      "test": "Render",
+      "time": "18508.600",
+      "reference": "expected"
+    },
+    {
+      "nSamples": 5,
+      "browser": "chromium",
+      "file": "ipyvolume.ipynb",
+      "project": "",
+      "test": "Render",
+      "time": "19553.200",
+      "reference": "expected"
+    },
+    {
+      "nSamples": 5,
+      "browser": "chromium",
+      "file": "ipyvolume.ipynb",
+      "project": "",
+      "test": "Render",
+      "time": "20811.075",
+      "reference": "expected"
+    },
+    {
+      "nSamples": 5,
+      "browser": "chromium",
+      "file": "ipyvolume.ipynb",
+      "project": "",
+      "test": "Render",
+      "time": "21515.260",
+      "reference": "expected"
+    },
+    {
+      "nSamples": 5,
+      "browser": "chromium",
+      "file": "multiple_widgets.ipynb",
+      "project": "",
+      "test": "Render",
+      "time": "15319.200",
+      "reference": "expected"
+    },
+    {
+      "nSamples": 5,
+      "browser": "chromium",
+      "file": "multiple_widgets.ipynb",
+      "project": "",
+      "test": "Render",
+      "time": "15659.550",
+      "reference": "expected"
+    },
+    {
+      "nSamples": 5,
+      "browser": "chromium",
+      "file": "multiple_widgets.ipynb",
+      "project": "",
+      "test": "Render",
+      "time": "15796.300",
+      "reference": "expected"
+    },
+    {
+      "nSamples": 5,
+      "browser": "chromium",
+      "file": "multiple_widgets.ipynb",
+      "project": "",
+      "test": "Render",
+      "time": "15912.400",
+      "reference": "expected"
+    },
+    {
+      "nSamples": 5,
+      "browser": "chromium",
+      "file": "multiple_widgets.ipynb",
+      "project": "",
+      "test": "Render",
+      "time": "16055.700",
+      "reference": "expected"
+    },
+    {
+      "nSamples": 5,
+      "browser": "chromium",
+      "file": "query-strings.ipynb",
+      "project": "",
+      "test": "Render",
+      "time": "1516.800",
+      "reference": "expected"
+    },
+    {
+      "nSamples": 5,
+      "browser": "chromium",
+      "file": "query-strings.ipynb",
+      "project": "",
+      "test": "Render",
+      "time": "1920.000",
+      "reference": "expected"
+    },
+    {
+      "nSamples": 5,
+      "browser": "chromium",
+      "file": "query-strings.ipynb",
+      "project": "",
+      "test": "Render",
+      "time": "1997.067",
+      "reference": "expected"
+    },
+    {
+      "nSamples": 5,
+      "browser": "chromium",
+      "file": "query-strings.ipynb",
+      "project": "",
+      "test": "Render",
+      "time": "2113.000",
+      "reference": "expected"
+    },
+    {
+      "nSamples": 5,
+      "browser": "chromium",
+      "file": "query-strings.ipynb",
+      "project": "",
+      "test": "Render",
+      "time": "2102.500",
+      "reference": "expected"
+    }
+  ],
+  "metadata": {
+    "browsers": {
+      "chromium": "94.0.4595.0"
+    },
+    "benchmark": {
+      "BENCHMARK_OUTPUTFILE": "voila-benchmark.json",
+      "BENCHMARK_REFERENCE": "actual"
+    },
+    "systemInformation": {
+      "cpu": {
+        "manufacturer": "Intel®",
+        "brand": "Xeon® E5-2673 v3",
+        "vendor": "GenuineIntel",
+        "family": "6",
+        "model": "63",
+        "stepping": "2",
+        "revision": "",
+        "voltage": "",
+        "speed": 2.4,
+        "speedMin": null,
+        "speedMax": null,
+        "governor": "",
+        "cores": 2,
+        "physicalCores": 2,
+        "processors": 1,
+        "socket": "",
+        "flags": "fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush mmx fxsr sse sse2 ss ht syscall nx pdpe1gb rdtscp lm constant_tsc rep_good nopl xtopology cpuid pni pclmulqdq ssse3 fma cx16 pcid sse4_1 sse4_2 movbe popcnt aes xsave avx f16c rdrand hypervisor lahf_lm abm invpcid_single pti fsgsbase bmi1 avx2 smep bmi2 erms invpcid xsaveopt md_clear",
+        "virtualization": false,
+        "cache": {
+          "l1d": 65536,
+          "l1i": 65536,
+          "l2": 524288,
+          "l3": 31457280
+        }
+      },
+      "mem": {
+        "total": 7291699200
+      },
+      "osInfo": {
+        "platform": "linux",
+        "distro": "Ubuntu",
+        "release": "20.04.3 LTS",
+        "codename": "Focal Fossa",
+        "kernel": "5.8.0-1040-azure",
+        "arch": "x64",
+        "codepage": "UTF-8",
+        "logofile": "ubuntu",
+        "serial": "cfc067bfcb844f35865e279a1b0e66c5",
+        "build": "",
+        "servicepack": "",
+        "uefi": false
+      }
+    }
+  }
+}
