@@ -435,7 +435,7 @@ class Voila(Application):
     @default("connection_dir_root")
     def _default_connection_dir(self):
         connection_dir = tempfile.gettempdir()
-        self.log.info(f"Using {connection_dir} to store connection files")
+        self.log.info("Using %s to store connection files" % connection_dir)
         return connection_dir
 
     @default("log_level")
@@ -516,7 +516,7 @@ class Voila(Application):
 
     def initialize(self, argv=None):
         self._init_asyncio_patch()
-        self.log.debug(f"Searching path {self.config_file_paths} for config files")
+        self.log.debug("Searching path %s for config files", self.config_file_paths)
         # to make config_file_paths settable via cmd line, we first need to parse it
         super().initialize(argv)
         if len(self.extra_args) == 1:
@@ -568,7 +568,7 @@ class Voila(Application):
                         self.voila_configuration.config.VoilaConfiguration = Config(
                             conf["traitlet_configuration"]
                         )
-        self.log.debug(f"using template: {self.voila_configuration.template}")
+        self.log.debug("using template: %s", self.voila_configuration.template)
         self.log.debug("template paths:\n\t%s", "\n\t".join(self.template_paths))
         self.log.debug("static paths:\n\t%s", "\n\t".join(self.static_paths))
         if self.notebook_path and not os.path.exists(self.notebook_path):
@@ -769,7 +769,7 @@ class Voila(Application):
                 )
             )
         else:
-            self.log.debug(f"serving directory: {self.root_dir!r}")
+            self.log.debug("serving directory: %r", self.root_dir)
             handlers.extend(
                 [
                     (self.server_url, TornadoVoilaTreeHandler, tree_handler_conf),
@@ -804,8 +804,8 @@ class Voila(Application):
         self.connection_dir = tempfile.mkdtemp(
             prefix="voila_", dir=self.connection_dir_root
         )
-        self.log.info(f"Storing connection files in {self.connection_dir}.")
-        self.log.info(f"Serving static files from {self.static_root}.")
+        self.log.info("Storing connection files in %s." % self.connection_dir)
+        self.log.info("Serving static files from %s." % self.static_root)
 
         settings = self.init_settings()
 
@@ -816,7 +816,7 @@ class Voila(Application):
         self.listen()
 
     def _handle_signal_stop(self, sig, frame):
-        self.log.info(f"Handle signal {sig}.")
+        self.log.info("Handle signal %s." % sig)
         self.ioloop.add_callback_from_signal(self.ioloop.stop)
 
     def stop(self):
@@ -840,18 +840,18 @@ class Voila(Application):
             try:
                 self.app.listen(port, self.ip)
                 self.port = port
-                self.log.info(f"Voilà is running at:\n{self.display_url}")
+                self.log.info("Voilà is running at:\n%s" % self.display_url)
             except OSError as e:
                 if e.errno == errno.EADDRINUSE:
                     self.log.info(
-                        _(f"The port {port} is already in use, trying another port.")
+                        _("The port %i is already in use, trying another port.") % port
                     )
                     continue
                 elif e.errno in (
                     errno.EACCES,
                     getattr(errno, "WSAEACCES", errno.EACCES),
                 ):
-                    self.log.warning(_(f"Permission to listen on port {port} denied"))
+                    self.log.warning(_("Permission to listen on port %i denied") % port)
                     continue
                 else:
                     raise
@@ -884,7 +884,7 @@ class Voila(Application):
         try:
             browser = webbrowser.get(self.browser or None)
         except webbrowser.Error as e:
-            self.log.warning(_(f"No web browser found: {e}."))
+            self.log.warning(_("No web browser found: %s.") % e)
             browser = None
 
         if not browser:
