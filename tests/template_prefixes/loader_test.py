@@ -1,4 +1,5 @@
 """Tests loading template of jinja2 templates"""
+
 import os
 
 from jinja2 import Environment, FileSystemLoader
