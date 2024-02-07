@@ -99,7 +99,12 @@ module.exports = [
           ...data.dependencies
         }
       })
-    ]
+    ],
+    resolve: {
+      fallback: {
+        util: require.resolve('util/')
+      }
+    }
   }),
   merge(baseConfig, {
     entry: './' + path.relative(__dirname, styleEntryPoint),
