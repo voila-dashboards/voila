@@ -118,9 +118,7 @@ class VoilaExecutor(NotebookClient):
             output for output in outputs if output["output_type"] == "error"
         ]
 
-        error_message = "There was an error when executing cell [{}]. {}".format(
-            cell["execution_count"], self.cell_error_instruction
-        )
+        error_message = f'There was an error when executing cell [{cell["execution_count"]}]. {self.cell_error_instruction}'
 
         for output in error_outputs:
             output["ename"] = "ExecutionError"

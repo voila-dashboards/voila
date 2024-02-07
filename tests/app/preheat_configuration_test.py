@@ -13,7 +13,7 @@ TIME_THRESHOLD = 1
 @pytest.fixture
 def voila_config_file_paths_arg():
     path = os.path.join(BASE_DIR, "..", "configs", "preheat")
-    return "--VoilaTest.config_file_paths=[%r]" % path
+    return f"--VoilaTest.config_file_paths=[{path!r}]"
 
 
 @pytest.fixture
