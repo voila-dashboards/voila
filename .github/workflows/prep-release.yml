@@ -12,10 +12,10 @@ on:
       post_version_spec:
         description: "Post Version Specifier"
         required: false
-      # silent:
-      #   description: "Set a placeholder in the changelog and don't publish the release."
-      #   required: false
-      #   type: boolean
+      silent:
+        description: "Set a placeholder in the changelog and don't publish the release."
+        required: false
+        type: boolean
       since:
         description: "Use PRs with activity since this date or git reference"
         required: false
@@ -37,7 +37,7 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           version_spec: ${{ github.event.inputs.version_spec }}
-          # silent: ${{ github.event.inputs.silent }}
+          silent: ${{ github.event.inputs.silent }}
           post_version_spec: ${{ github.event.inputs.post_version_spec }}
           branch: ${{ github.event.inputs.branch }}
           since: ${{ github.event.inputs.since }}
