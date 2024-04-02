@@ -661,7 +661,6 @@ class Voila(Application):
             autoreload=self.autoreload,
             voila_jinja2_env=env,
             jinja2_env=server_env,
-            static_path="/",
             server_root_dir="/",
             contents_manager=self.contents_manager,
             config_manager=self.config_manager,
