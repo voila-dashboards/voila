@@ -53,6 +53,45 @@ voila --token=my-secret-token notebook.ipynb
 
 <!-- <START NEW CHANGELOG ENTRY> -->
 
+## 0.5.6
+
+([Full Changelog](https://github.com/voila-dashboards/voila/compare/@voila-dashboards/jupyterlab-preview@2.3.5...8419cc7d79c0bb1dabfbd9ec49cb957740609d4d))
+
+### Enhancements made
+
+- enhancement: Allow users to disable the fix_notebook call [#1423](https://github.com/voila-dashboards/voila/pull/1423) ([@ClaytonAstrom](https://github.com/ClaytonAstrom))
+
+### Bugs fixed
+
+- Add support for es modules, fixes #1413 [#1414](https://github.com/voila-dashboards/voila/pull/1414) ([@timkpaine](https://github.com/timkpaine))
+
+### Maintenance and upkeep improvements
+
+- Update releaser workflows [#1453](https://github.com/voila-dashboards/voila/pull/1453) ([@jtpio](https://github.com/jtpio))
+- Bump follow-redirects from 1.15.5 to 1.15.6 [#1451](https://github.com/voila-dashboards/voila/pull/1451) ([@dependabot](https://github.com/dependabot))
+- Bump ip from 2.0.0 to 2.0.1 [#1444](https://github.com/voila-dashboards/voila/pull/1444) ([@dependabot](https://github.com/dependabot))
+- Fix Windows CI [#1443](https://github.com/voila-dashboards/voila/pull/1443) ([@trungleduc](https://github.com/trungleduc))
+- Update publish workflow for trusted publishers [#1434](https://github.com/voila-dashboards/voila/pull/1434) ([@jtpio](https://github.com/jtpio))
+- Add repository.url to `package.json` [#1431](https://github.com/voila-dashboards/voila/pull/1431) ([@jtpio](https://github.com/jtpio))
+
+### Documentation improvements
+
+- Add Discourse badge to the README [#1430](https://github.com/voila-dashboards/voila/pull/1430) ([@jtpio](https://github.com/jtpio))
+- Remove duplicate logo in the main docs page [#1421](https://github.com/voila-dashboards/voila/pull/1421) ([@martinRenou](https://github.com/martinRenou))
+- Documentation: Adds deployment instructions for Apache2 as reverse proxy [#1418](https://github.com/voila-dashboards/voila/pull/1418) ([@nbareil](https://github.com/nbareil))
+
+### Other merged PRs
+
+- Bump follow-redirects from 1.15.3 to 1.15.4 [#1436](https://github.com/voila-dashboards/voila/pull/1436) ([@dependabot](https://github.com/dependabot))
+
+### Contributors to this release
+
+([GitHub contributors page for this release](https://github.com/voila-dashboards/voila/graphs/contributors?from=2023-10-31&to=2024-04-02&type=c))
+
+[@ClaytonAstrom](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3AClaytonAstrom+updated%3A2023-10-31..2024-04-02&type=Issues) | [@dependabot](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Adependabot+updated%3A2023-10-31..2024-04-02&type=Issues) | [@github-actions](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Agithub-actions+updated%3A2023-10-31..2024-04-02&type=Issues) | [@jtpio](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Ajtpio+updated%3A2023-10-31..2024-04-02&type=Issues) | [@maartenbreddels](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Amaartenbreddels+updated%3A2023-10-31..2024-04-02&type=Issues) | [@martinRenou](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3AmartinRenou+updated%3A2023-10-31..2024-04-02&type=Issues) | [@nbareil](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Anbareil+updated%3A2023-10-31..2024-04-02&type=Issues) | [@pre-commit-ci](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Apre-commit-ci+updated%3A2023-10-31..2024-04-02&type=Issues) | [@SylvainCorlay](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3ASylvainCorlay+updated%3A2023-10-31..2024-04-02&type=Issues) | [@timkpaine](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Atimkpaine+updated%3A2023-10-31..2024-04-02&type=Issues) | [@trungleduc](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Atrungleduc+updated%3A2023-10-31..2024-04-02&type=Issues) | [@Zsailer](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3AZsailer+updated%3A2023-10-31..2024-04-02&type=Issues)
+
+<!-- <END NEW CHANGELOG ENTRY> -->
+
 ## 0.5.5
 
 ([Full Changelog](https://github.com/voila-dashboards/voila/compare/v0.5.4...560dbc18e999048a6cd5a6962fb9fd72bb88b7ac))
@@ -81,8 +120,6 @@ voila --token=my-secret-token notebook.ipynb
 ([GitHub contributors page for this release](https://github.com/voila-dashboards/voila/graphs/contributors?from=2023-09-18&to=2023-10-31&type=c))
 
 [@ClaytonAstrom](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3AClaytonAstrom+updated%3A2023-09-18..2023-10-31&type=Issues) | [@dependabot](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Adependabot+updated%3A2023-09-18..2023-10-31&type=Issues) | [@edublancas](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Aedublancas+updated%3A2023-09-18..2023-10-31&type=Issues) | [@github-actions](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Agithub-actions+updated%3A2023-09-18..2023-10-31&type=Issues) | [@pre-commit-ci](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Apre-commit-ci+updated%3A2023-09-18..2023-10-31&type=Issues) | [@trungleduc](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Atrungleduc+updated%3A2023-09-18..2023-10-31&type=Issues)
-
-<!-- <END NEW CHANGELOG ENTRY> -->
 
 ## 0.5.4
 
