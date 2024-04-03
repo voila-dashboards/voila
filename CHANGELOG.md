@@ -1,61 +1,14 @@
 # Voila Changelog
 
-## 0.5.0 - Highlights
-
-Below are the major highlights in Voila 0.5.0
-
-### New JupyterLab-based frontend
-
-In 0.5.0, the frontend of Voila is rebuilt from scratch with JupyterLab 4.0 components. The current `requirejs` + `nbextensions` approach is replaced by a JupyterLab plugin-based application.
-This allows Voila to profit from all the upstream features and improvements.
-
-### New extension loading system.
-
-This is a direct benefit of the new frontend, now Voila will use the same prebuilt extension system as in JupyterLab.
-The extension assets are loaded from the local path instead of the CDN. This greatly improves the extension compatibility of Voila and avoid making requests to external services.
-And moreover, we can start creating extensions for Voila in the same fashion as JupyterLab extensions.
-
-### Make use of JupyterLab mimetype renderers.
-
-In 0.5.0, the logic for rendering cell outputs is switched from relying on nbconvert for handling different mimetypes to relying on JupyterLab mimetype renderers.
-This adds support for many custom JupyterLab renderers like `jupyterlab-fasta`, `vega`, `jupyterlab-geojson`...
-
-### New tree page.
-
-The default tree page of Voila is now a JupyterLab-based application using the file browser widget.
-
-The jinja-based tree page is still supported, but users need to activate it with the `--classic-tree` CLI option, the `VoilaConfiguration.classic_tree` config, or `?classic-tree=True` in the query string.
-
-JupyterLab custom themes are supported with the new tree page, for the classic tree page, only the light and dark themes are supported.
-
-### New token-based authentication system.
-
-By using `jupyter-server` 2, Voila now supports token authentication, but it is disabled by default.
-
-- To start Voila with auto-generated token:
-
-```
-voila --token notebook.ipynb
-```
-
-- To start Voila with a personalized token:
-
-```
-voila --token=my-secret-token notebook.ipynb
-```
-
-### Backwards-incompatible changes.
-
-- The new tree page no longer supports templates, users need to activate the classic tree to use existing tree templates.
-- Theme argument now is the theme name displayed in JupyterLab and not the name of the theme python package.
-- Python 3.7 is no longer supported.
-- `jupyter_client` < 7.4.4 is no longer supported.
-
 <!-- <START NEW CHANGELOG ENTRY> -->
 
 ## 0.5.6
 
 ([Full Changelog](https://github.com/voila-dashboards/voila/compare/@voila-dashboards/jupyterlab-preview@2.3.5...8419cc7d79c0bb1dabfbd9ec49cb957740609d4d))
+
+### Security
+
+Fix CVE-2024-30265
 
 ### Enhancements made
 
@@ -185,18 +138,54 @@ voila --token=my-secret-token notebook.ipynb
 
 ## 0.5.0
 
-([Full Changelog](https://github.com/voila-dashboards/voila/compare/v0.5.0rc0...96bffae6b5885b2bfd80983cf7026e177270ff80))
+Below are the major highlights in Voila 0.5.0
 
-### Documentation improvements
+### New JupyterLab-based frontend
 
-- Add highlights section to changelog [#1382](https://github.com/voila-dashboards/voila/pull/1382) ([@trungleduc](https://github.com/trungleduc))
-- Update documentation [#1381](https://github.com/voila-dashboards/voila/pull/1381) ([@trungleduc](https://github.com/trungleduc))
+In 0.5.0, the frontend of Voila is rebuilt from scratch with JupyterLab 4.0 components. The current `requirejs` + `nbextensions` approach is replaced by a JupyterLab plugin-based application.
+This allows Voila to profit from all the upstream features and improvements.
 
-### Contributors to this release
+### New extension loading system.
 
-([GitHub contributors page for this release](https://github.com/voila-dashboards/voila/graphs/contributors?from=2023-08-10&to=2023-08-17&type=c))
+This is a direct benefit of the new frontend, now Voila will use the same prebuilt extension system as in JupyterLab.
+The extension assets are loaded from the local path instead of the CDN. This greatly improves the extension compatibility of Voila and avoid making requests to external services.
+And moreover, we can start creating extensions for Voila in the same fashion as JupyterLab extensions.
 
-[@github-actions](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Agithub-actions+updated%3A2023-08-10..2023-08-17&type=Issues) | [@trungleduc](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Atrungleduc+updated%3A2023-08-10..2023-08-17&type=Issues)
+### Make use of JupyterLab mimetype renderers.
+
+In 0.5.0, the logic for rendering cell outputs is switched from relying on nbconvert for handling different mimetypes to relying on JupyterLab mimetype renderers.
+This adds support for many custom JupyterLab renderers like `jupyterlab-fasta`, `vega`, `jupyterlab-geojson`...
+
+### New tree page.
+
+The default tree page of Voila is now a JupyterLab-based application using the file browser widget.
+
+The jinja-based tree page is still supported, but users need to activate it with the `--classic-tree` CLI option, the `VoilaConfiguration.classic_tree` config, or `?classic-tree=True` in the query string.
+
+JupyterLab custom themes are supported with the new tree page, for the classic tree page, only the light and dark themes are supported.
+
+### New token-based authentication system.
+
+By using `jupyter-server` 2, Voila now supports token authentication, but it is disabled by default.
+
+- To start Voila with auto-generated token:
+
+```
+voila --token notebook.ipynb
+```
+
+- To start Voila with a personalized token:
+
+```
+voila --token=my-secret-token notebook.ipynb
+```
+
+### Backwards-incompatible changes.
+
+- The new tree page no longer supports templates, users need to activate the classic tree to use existing tree templates.
+- Theme argument now is the theme name displayed in JupyterLab and not the name of the theme python package.
+- Python 3.7 is no longer supported.
+- `jupyter_client` < 7.4.4 is no longer supported.
 
 ## 0.5.0rc0
 
