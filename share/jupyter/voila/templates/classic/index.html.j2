@@ -58,7 +58,7 @@
 {%- endblock html_head_js_mathjax -%}
 
 {% block body_header %}
-<body data-base-url="{{resources.base_url}}voila/">
+<body data-base-url="{{resources.base_url}}voila/" data-voila="voila">
   {{ spinner.html() }}
   {{ voila_setup_helper_functions() }}
   <div tabindex="-1" id="notebook" class="border-box-sizing">
