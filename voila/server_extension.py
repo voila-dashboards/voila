@@ -14,7 +14,9 @@ from jinja2 import Environment, FileSystemLoader
 from jupyter_server.base.handlers import FileFindHandler, path_regex
 from jupyter_server.utils import url_path_join
 from jupyterlab_server.themes_handler import ThemesHandler
-
+from jupyter_core.paths import jupyter_config_path
+from jupyter_server.serverapp import ServerApp
+from jupyter_core.application import JupyterApp
 from .tornado.contentshandler import VoilaContentsHandler
 
 from .configuration import VoilaConfiguration
@@ -38,9 +40,11 @@ def _jupyter_server_extension_points():
     return [{"module": "voila.server_extension"}]
 
 
-def _load_jupyter_server_extension(server_app):
+def _load_jupyter_server_extension(server_app: ServerApp):
     web_app = server_app.web_app
     # common configuration options between the server extension and the application
+    config_file_paths = [os.getcwd(), *jupyter_config_path()]
+    super(JupyterApp, server_app).load_config_file("voila", path=config_file_paths)
     voila_configuration = VoilaConfiguration(parent=server_app)
     template_name = voila_configuration.template
     template_paths = collect_template_paths(["voila", "nbconvert"], template_name)

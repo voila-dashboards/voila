@@ -11,7 +11,7 @@ import os
 import re
 
 import tornado.web
-
+from typing import cast
 from .paths import collect_static_paths
 
 
@@ -111,3 +111,40 @@ class AllowListFileHandler(tornado.web.StaticFileHandler):
         if denylisted:
             raise tornado.web.HTTPError(403, "File denylisted")
         return super().get_absolute_path(root, path)
+
+    @property
+    def content_security_policy(self) -> str:
+        """The default Content-Security-Policy header
+
+        Can be overridden by defining Content-Security-Policy in settings['headers']
+        """
+        if "Content-Security-Policy" in self.settings.get("headers", {}):
+            # user-specified, don't override
+            return cast(str, self.settings["headers"]["Content-Security-Policy"])
+
+        return "; ".join(
+            [
+                "frame-ancestors 'self'",
+                "sandbox allow-scripts",
+            ]
+        )
+
+    def set_default_headers(self) -> None:
+        """Set the default headers."""
+        headers = {}
+        headers["X-Content-Type-Options"] = "nosniff"
+        headers.update(self.settings.get("headers", {}))
+
+        headers["Content-Security-Policy"] = self.content_security_policy
+
+        # Allow for overriding headers
+        for header_name, value in headers.items():
+            try:
+                self.set_header(header_name, value)
+            except Exception as e:
+                # tornado raise Exception (not a subclass)
+                # if method is unsupported (websocket and Access-Control-Allow-Origin
+                # for example, so just ignore)
+                self.log.exception(  # type:ignore[attr-defined]
+                    "Could not set default headers: %s", e
+                )
