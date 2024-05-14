@@ -491,7 +491,7 @@ voila --preheat_kernel=True --VoilaKernelManager.default_env_variables='{"FOO": 
 
 will set the variable "FOO" in all preheated kernels.
 
-If the pool size does not match the user's requirements, or some notebooks need to use specific environment variables..., additional settings are needed. The easiest way to change these settings is to provide a file named `voila.json` in the same folder containing the notebooks. Settings for preheating kernel ( list of notebooks does not need preheated kernels, number of kernels in pool, refilling delay, environment variables for starting kernel...) can be set under the `VoilaKernelManager` class name.
+If the pool size does not match the user's requirements, or some notebooks need to use specific environment variables..., additional settings are needed. The easiest way to change these settings is to provide a file named `voila.json` in the directory where you start Voilà. Settings for preheating kernel ( list of notebooks does not need preheated kernels, number of kernels in pool, refilling delay, environment variables for starting kernel...) can be set under the `VoilaKernelManager` class name.
 
 Here is an example of settings with explanations for preheating kernel option.
 
