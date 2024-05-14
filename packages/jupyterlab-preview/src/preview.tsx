@@ -1,24 +1,18 @@
-import {
-  IFrame,
-  ToolbarButton,
-  ReactWidget,
-  IWidgetTracker
-} from '@jupyterlab/apputils';
-
+import { IWidgetTracker } from '@jupyterlab/apputils';
 import {
   ABCWidgetFactory,
   DocumentRegistry,
   DocumentWidget
 } from '@jupyterlab/docregistry';
-
 import { INotebookModel } from '@jupyterlab/notebook';
-
-import { refreshIcon } from '@jupyterlab/ui-components';
-
+import {
+  IFrame,
+  ReactWidget,
+  refreshIcon,
+  ToolbarButton
+} from '@jupyterlab/ui-components';
 import { Token } from '@lumino/coreutils';
-
 import { Signal } from '@lumino/signaling';
-
 import * as React from 'react';
 
 import { voilaIcon } from './icons';
@@ -35,6 +29,12 @@ export const IVoilaPreviewTracker = new Token<IVoilaPreviewTracker>(
   '@voila-dashboards/jupyterlab-preview:IVoilaPreviewTracker'
 );
 
+const IFRAME_SANDBOX: IFrame.SandboxExceptions[] = [
+  'allow-same-origin',
+  'allow-scripts',
+  'allow-downloads',
+  'allow-modals'
+];
 /**
  * A DocumentWidget that shows a Voilà preview in an IFrame.
  */
@@ -47,16 +47,9 @@ export class VoilaPreview extends DocumentWidget<IFrame, INotebookModel> {
     super({
       ...options,
       content: new IFrame({
-        sandbox: [
-          'allow-same-origin',
-          'allow-scripts',
-          'allow-downloads',
-          'allow-modals',
-          'allow-popups'
-        ]
+        sandbox: IFRAME_SANDBOX
       })
     });
-
     window.onmessage = (event: any) => {
       //console.log("EVENT: ", event);
       const level = event?.data?.level;
@@ -93,7 +86,7 @@ export class VoilaPreview extends DocumentWidget<IFrame, INotebookModel> {
     this.content.title.icon = voilaIcon;
 
     this._renderOnSave = renderOnSave ?? false;
-
+    this._disableSandbox = false;
     context.pathChanged.connect(() => {
       this.content.url = getVoilaUrl(context.path);
     });
@@ -125,6 +118,32 @@ export class VoilaPreview extends DocumentWidget<IFrame, INotebookModel> {
       </label>
     );
 
+    const disableIFrameSandbox = ReactWidget.create(
+      <label className="jp-VoilaPreview-renderOnSave">
+        <input
+          name="disableIFrameSandbox"
+          type="checkbox"
+          defaultChecked={this._disableSandbox}
+          onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+            this._disableSandbox = event.target.checked;
+            const iframe = this.content.node.querySelector('iframe');
+            if (!iframe) {
+              return;
+            }
+            if (this._disableSandbox) {
+              iframe.removeAttribute('sandbox');
+            } else {
+              iframe.setAttribute('sandbox', IFRAME_SANDBOX.join(' '));
+            }
+            if (iframe.contentWindow) {
+              iframe.contentWindow.location.reload();
+            }
+          }}
+        />
+        Disable IFrame Sandbox
+      </label>
+    );
+
     this.toolbar.addItem('reload', reloadButton);
 
     if (context) {
@@ -137,6 +156,7 @@ export class VoilaPreview extends DocumentWidget<IFrame, INotebookModel> {
         });
       });
     }
+    this.toolbar.addItem('disableIFrameSandbox', disableIFrameSandbox);
   }
 
   /**
@@ -175,6 +195,7 @@ export class VoilaPreview extends DocumentWidget<IFrame, INotebookModel> {
   }
 
   private _renderOnSave: boolean;
+  private _disableSandbox: boolean;
 }
 
 /**
