@@ -3,7 +3,4 @@
 set -e
 
 jlpm && jlpm run build
-python -m pip install -e .
-jupyter labextension develop . --overwrite
-jupyter server extension enable voila.server_extension --sys-prefix
-jupyter serverextension enable voila.server_extension --sys-prefix
+python -m pip install .
