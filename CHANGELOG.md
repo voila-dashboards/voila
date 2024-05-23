@@ -2,6 +2,35 @@
 
 <!-- <START NEW CHANGELOG ENTRY> -->
 
+## 0.5.7
+
+([Full Changelog](https://github.com/voila-dashboards/voila/compare/@voila-dashboards/jupyterlab-preview@2.3.6...77d1b23dfdf82cbfa314b791d7a5166f0117bdd8))
+
+### Enhancements made
+
+- Disambiguate voilà frontend via html data attributes [#1457](https://github.com/voila-dashboards/voila/pull/1457) ([@timkpaine](https://github.com/timkpaine))
+
+### Bugs fixed
+
+- Fix Voila IFrame renderer [#1469](https://github.com/voila-dashboards/voila/pull/1469) ([@trungleduc](https://github.com/trungleduc))
+
+### Maintenance and upkeep improvements
+
+- allow nbclient 0.10 [#1462](https://github.com/voila-dashboards/voila/pull/1462) ([@minrk](https://github.com/minrk))
+
+### Documentation improvements
+
+- Update CHANGELOG [#1456](https://github.com/voila-dashboards/voila/pull/1456) ([@martinRenou](https://github.com/martinRenou))
+- fix documentation for voila.json location [#1470](https://github.com/voila-dashboards/voila/pull/1470) ([@djangoliv](https://github.com/djangoliv))
+
+### Contributors to this release
+
+([GitHub contributors page for this release](https://github.com/voila-dashboards/voila/graphs/contributors?from=2024-04-02&to=2024-05-23&type=c))
+
+[@djangoliv](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Adjangoliv+updated%3A2024-04-02..2024-05-23&type=Issues) | [@github-actions](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Agithub-actions+updated%3A2024-04-02..2024-05-23&type=Issues) | [@jgunstone](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Ajgunstone+updated%3A2024-04-02..2024-05-23&type=Issues) | [@martinRenou](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3AmartinRenou+updated%3A2024-04-02..2024-05-23&type=Issues) | [@minrk](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Aminrk+updated%3A2024-04-02..2024-05-23&type=Issues) | [@timkpaine](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Atimkpaine+updated%3A2024-04-02..2024-05-23&type=Issues) | [@trungleduc](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Atrungleduc+updated%3A2024-04-02..2024-05-23&type=Issues)
+
+<!-- <END NEW CHANGELOG ENTRY> -->
+
 ## 0.5.6
 
 ([Full Changelog](https://github.com/voila-dashboards/voila/compare/@voila-dashboards/jupyterlab-preview@2.3.5...8419cc7d79c0bb1dabfbd9ec49cb957740609d4d))
@@ -42,8 +71,6 @@ Fix CVE-2024-30265
 ([GitHub contributors page for this release](https://github.com/voila-dashboards/voila/graphs/contributors?from=2023-10-31&to=2024-04-02&type=c))
 
 [@ClaytonAstrom](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3AClaytonAstrom+updated%3A2023-10-31..2024-04-02&type=Issues) | [@dependabot](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Adependabot+updated%3A2023-10-31..2024-04-02&type=Issues) | [@github-actions](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Agithub-actions+updated%3A2023-10-31..2024-04-02&type=Issues) | [@jtpio](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Ajtpio+updated%3A2023-10-31..2024-04-02&type=Issues) | [@maartenbreddels](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Amaartenbreddels+updated%3A2023-10-31..2024-04-02&type=Issues) | [@martinRenou](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3AmartinRenou+updated%3A2023-10-31..2024-04-02&type=Issues) | [@nbareil](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Anbareil+updated%3A2023-10-31..2024-04-02&type=Issues) | [@pre-commit-ci](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Apre-commit-ci+updated%3A2023-10-31..2024-04-02&type=Issues) | [@SylvainCorlay](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3ASylvainCorlay+updated%3A2023-10-31..2024-04-02&type=Issues) | [@timkpaine](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Atimkpaine+updated%3A2023-10-31..2024-04-02&type=Issues) | [@trungleduc](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Atrungleduc+updated%3A2023-10-31..2024-04-02&type=Issues) | [@Zsailer](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3AZsailer+updated%3A2023-10-31..2024-04-02&type=Issues)
-
-<!-- <END NEW CHANGELOG ENTRY> -->
 
 ## 0.5.5
 
