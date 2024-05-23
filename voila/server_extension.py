@@ -14,9 +14,15 @@ from jinja2 import Environment, FileSystemLoader
 from jupyter_server.base.handlers import FileFindHandler, path_regex
 from jupyter_server.utils import url_path_join
 from jupyterlab_server.themes_handler import ThemesHandler
-
+from jupyter_core.paths import jupyter_config_path
+from jupyter_server.serverapp import ServerApp
 from .tornado.contentshandler import VoilaContentsHandler
-
+from traitlets.config import (
+    JSONFileConfigLoader,
+    PyFileConfigLoader,
+    Config,
+    ConfigFileNotFound,
+)
 from .configuration import VoilaConfiguration
 from .tornado.handler import TornadoVoilaHandler
 from .paths import ROOT, collect_static_paths, collect_template_paths, jupyter_path
@@ -38,10 +44,44 @@ def _jupyter_server_extension_points():
     return [{"module": "voila.server_extension"}]
 
 
-def _load_jupyter_server_extension(server_app):
+def load_config_file() -> Config:
+    """
+    Loads voila.json and voila.py config file from current working
+    directory and other Jupyter paths
+    """
+
+    new_config = Config()
+    base_file_name = "voila"
+    config_file_paths = [*jupyter_config_path(), os.getcwd()]
+
+    for current in config_file_paths:
+        py_loader = PyFileConfigLoader(filename=f"{base_file_name}.py", path=current)
+        try:
+            py_config = py_loader.load_config()
+            new_config.merge(py_config)
+        except ConfigFileNotFound:
+            pass
+
+        json_loader = JSONFileConfigLoader(
+            filename=f"{base_file_name}.json", path=current
+        )
+        try:
+            json_config = json_loader.load_config()
+            new_config.merge(json_config)
+        except ConfigFileNotFound:
+            pass
+
+    return new_config
+
+
+def _load_jupyter_server_extension(server_app: ServerApp):
     web_app = server_app.web_app
     # common configuration options between the server extension and the application
-    voila_configuration = VoilaConfiguration(parent=server_app)
+
+    voila_configuration = VoilaConfiguration(
+        parent=server_app, config=load_config_file()
+    )
+
     template_name = voila_configuration.template
     template_paths = collect_template_paths(["voila", "nbconvert"], template_name)
     static_paths = collect_static_paths(["voila", "nbconvert"], template_name)

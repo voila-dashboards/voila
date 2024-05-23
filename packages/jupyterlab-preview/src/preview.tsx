@@ -46,16 +46,13 @@ export class VoilaPreview extends DocumentWidget<IFrame, INotebookModel> {
   constructor(options: VoilaPreview.IOptions) {
     super({
       ...options,
-      content: new IFrame({
-        sandbox: [
-          'allow-same-origin',
-          'allow-scripts',
-          'allow-downloads',
-          'allow-modals',
-          'allow-popups'
-        ]
-      })
+      content: new IFrame()
     });
+
+    const iframe = this.content.node.querySelector('iframe');
+    if (iframe) {
+      iframe.removeAttribute('sandbox');
+    }
 
     window.onmessage = (event: any) => {
       //console.log("EVENT: ", event);
