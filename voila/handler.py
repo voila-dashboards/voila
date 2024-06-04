@@ -90,9 +90,9 @@ class VoilaHandler(BaseVoilaHandler):
         # Adding request uri to kernel env
         request_info = {}
         request_info[ENV_VARIABLE.SCRIPT_NAME] = self.request.path
-        request_info[
-            ENV_VARIABLE.PATH_INFO
-        ] = ""  # would be /foo/bar if voila.ipynb/foo/bar was supported
+        request_info[ENV_VARIABLE.PATH_INFO] = (
+            ""  # would be /foo/bar if voila.ipynb/foo/bar was supported
+        )
         request_info[ENV_VARIABLE.QUERY_STRING] = str(self.request.query)
         request_info[ENV_VARIABLE.SERVER_SOFTWARE] = f"voila/{__version__}"
         request_info[ENV_VARIABLE.SERVER_PROTOCOL] = str(self.request.version)
