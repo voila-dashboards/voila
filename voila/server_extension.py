@@ -160,7 +160,7 @@ def _load_jupyter_server_extension(server_app: ServerApp):
                 },
             ),
             (
-                url_path_join(base_url, r"/voila/api/contents%s" % path_regex),
+                url_path_join(base_url, rf"/voila/api/contents{path_regex}"),
                 VoilaContentsHandler,
                 tree_handler_conf,
             ),

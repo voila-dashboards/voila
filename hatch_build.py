@@ -31,7 +31,7 @@ class CustomBuildHook(BuildHookInterface):
             if not os.path.exists(".git") and os.path.exists(dest):
                 # not running from git, nothing to do
                 return
-            print("Downloading CSS: %s" % url)
+            print(f"Downloading CSS: {url}")
             try:
                 css = urlopen(url).read()
             except Exception as e:
@@ -39,11 +39,11 @@ class CustomBuildHook(BuildHookInterface):
                 print(msg, file=sys.stderr)
 
                 if os.path.exists(dest):
-                    print("Already have CSS: %s, moving on." % dest)
+                    print(f"Already have CSS: {dest}, moving on.")
                 else:
                     raise OSError("Need CSS to proceed.")
                 return
 
             with open(dest, "wb") as f:
                 f.write(css)
-            print("Downloaded Notebook CSS to %s" % dest)
+            print(f"Downloaded Notebook CSS to {dest}")
