@@ -62,7 +62,6 @@ test = [
     "ipykernel",
     "ipywidgets",
     "matplotlib",
-    "mock",
     "numpy",
     "pandas",
     "papermill",
