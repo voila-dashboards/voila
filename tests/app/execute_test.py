@@ -2,13 +2,9 @@
 import asyncio
 import json
 import re
+from unittest import mock
 
 import tornado.web
-
-try:
-    from unittest import mock
-except ImportError:
-    from unittest import mock
 
 
 async def test_hello_world(http_server_client, base_url):
