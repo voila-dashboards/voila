@@ -24,13 +24,8 @@ from .tornado.contentshandler import VoilaContentsHandler
 
 from .voila_identity_provider import VoilaLoginHandler
 
-try:
-    from urllib.parse import urljoin
-    from urllib.request import pathname2url
-except ImportError:
-    from urllib import pathname2url
-
-    from urlparse import urljoin
+from urllib.parse import urljoin
+from urllib.request import pathname2url
 
 import jinja2
 import tornado.ioloop
