@@ -34,10 +34,10 @@ class VoilaContentsHandler(APIHandler):
 
         format = self.get_query_argument("format", default=None)
         if format not in {None, "text", "base64"}:
-            raise web.HTTPError(400, "Format %r is invalid" % format)
+            raise web.HTTPError(400, f"Format {format!r} is invalid")
         content_str = self.get_query_argument("content", default="1")
         if content_str not in {"0", "1"}:
-            raise web.HTTPError(400, "Content %r is invalid" % content_str)
+            raise web.HTTPError(400, f"Content {content_str!r} is invalid")
         content = int(content_str or "")
 
         if not cm.allow_hidden and await ensure_async(cm.is_hidden(path)):

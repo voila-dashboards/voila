@@ -397,5 +397,5 @@ class NotebookRenderer(LoggingConfigurable):
             return matches[0]
         else:
             raise tornado.web.HTTPError(
-                500, "No Jupyter kernel for language %r found" % kernel_language
+                500, f"No Jupyter kernel for language {kernel_language!r} found"
             )

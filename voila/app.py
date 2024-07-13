@@ -382,7 +382,10 @@ class Voila(Application):
             if not url.endswith("/"):
                 url += "/"
         else:
-            ip = "%s" % socket.gethostname() if self.ip in ("", "0.0.0.0") else self.ip
+            if self.ip in ("", "0.0.0.0"):
+                ip = socket.gethostname()
+            else:
+                ip = self.ip
             url = self._url(ip)
         # TODO: do we want to have the token?
         if self.identity_provider.token:
@@ -406,7 +409,7 @@ class Voila(Application):
         # TODO: https / certfile
         # proto = 'https' if self.certfile else 'http'
         proto = "http"
-        return "%s://%s:%i%s" % (proto, ip, self.port, self.base_url)
+        return f"{proto}://{ip}:{self.port}{self.base_url}"
 
     config_file_paths = List(
         Unicode(), config=True, help=_("Paths to search for voila.(py|json)")
@@ -521,10 +524,10 @@ class Voila(Application):
                     self.notebook_path = arg
                 else:
                     raise ValueError(
-                        "argument is neither a file nor a directory: %r" % arg
+                        f"argument is neither a file nor a directory: {arg!r}"
                     )
         elif len(self.extra_args) != 0:
-            raise ValueError("provided more than 1 argument: %r" % self.extra_args)
+            raise ValueError(f"provided more than 1 argument: {self.extra_args!r}")
 
         # then we load the config
         self.load_config_file("voila", path=self.config_file_paths)
@@ -564,7 +567,7 @@ class Voila(Application):
         self.log.debug("template paths:\n\t%s", "\n\t".join(self.template_paths))
         self.log.debug("static paths:\n\t%s", "\n\t".join(self.static_paths))
         if self.notebook_path and not os.path.exists(self.notebook_path):
-            raise ValueError("Notebook not found: %s" % self.notebook_path)
+            raise ValueError(f"Notebook not found: {self.notebook_path}")
 
     def init_settings(self) -> Dict:
         """Initialize settings for Voila application."""
@@ -678,14 +681,12 @@ class Voila(Application):
         handlers.extend(
             [
                 (
-                    url_path_join(
-                        self.server_url, r"/api/kernels/%s" % _kernel_id_regex
-                    ),
+                    url_path_join(self.server_url, rf"/api/kernels/{_kernel_id_regex}"),
                     KernelHandler,
                 ),
                 (
                     url_path_join(
-                        self.server_url, r"/api/kernels/%s/channels" % _kernel_id_regex
+                        self.server_url, rf"/api/kernels/{_kernel_id_regex}/channels"
                     ),
                     KernelWebsocketHandler,
                 ),
@@ -718,9 +719,7 @@ class Voila(Application):
         if self.voila_configuration.preheat_kernel:
             handlers.append(
                 (
-                    url_path_join(
-                        self.server_url, r"/voila/query/%s" % _kernel_id_regex
-                    ),
+                    url_path_join(self.server_url, rf"/voila/query/{_kernel_id_regex}"),
                     RequestInfoSocketHandler,
                 )
             )
@@ -769,7 +768,7 @@ class Voila(Application):
                 [
                     (self.server_url, TornadoVoilaTreeHandler, tree_handler_conf),
                     (
-                        url_path_join(self.server_url, r"/voila/tree" + path_regex),
+                        url_path_join(self.server_url, rf"/voila/tree{path_regex}"),
                         TornadoVoilaTreeHandler,
                         tree_handler_conf,
                     ),
@@ -786,7 +785,7 @@ class Voila(Application):
                     # On serving a directory, expose the content handler.
                     (
                         url_path_join(
-                            self.server_url, r"/voila/api/contents%s" % path_regex
+                            self.server_url, rf"/voila/api/contents{path_regex}"
                         ),
                         VoilaContentsHandler,
                         tree_handler_conf,
