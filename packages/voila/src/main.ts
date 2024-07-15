@@ -14,6 +14,7 @@ import { PageConfig, URLExt } from '@jupyterlab/coreutils';
 
 import { VoilaApp } from './app';
 import plugins from './voilaplugins';
+import { baseWidgets7Plugin, controlWidgets7Plugin } from './ipywidgets7';
 import { VoilaServiceManager } from './services/servicemanager';
 import { VoilaShell } from './shell';
 import {
@@ -42,7 +43,10 @@ async function main() {
     require('@jupyter-widgets/jupyterlab-manager/lib/plugin').default.filter(
       (p: any) => p.id !== '@jupyter-widgets/jupyterlab-manager:plugin'
     ),
-    plugins
+    plugins,
+    // For backward compat with ipywidgets 7
+    baseWidgets7Plugin,
+    controlWidgets7Plugin
   ];
 
   if (shouldUseMathJax2()) {
@@ -85,6 +89,7 @@ async function main() {
     }
 
     const data = p.value;
+
     if (data.extension) {
       federatedExtensionPromises.push(createModule(data.name, data.extension));
     }

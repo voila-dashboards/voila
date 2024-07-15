@@ -12,6 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
+        ipywidgets: [7, 8]
         jupyter-server-version: ["1.24.0", "2.14.2"]
       fail-fast: false
 
@@ -21,11 +22,22 @@ jobs:
         uses: jupyterlab/maintainer-tools/.github/actions/base-setup@v1
 
       - name: Install dependencies
+        if: ${{ matrix.ipywidgets  == 7 }}
+        run: |
+          python -m pip install -r requirements-visual-test.txt
+          python -m pip install jupyterlab_miami_nights --no-deps
+          python -m pip install ".[test7]"
+
+      - name: Install dependencies
+        if: ${{ matrix.ipywidgets  == 8 }}
         run: |
           python -m pip install -r requirements-visual-test.txt
           python -m pip install jupyterlab_miami_nights --no-deps
           python -m pip install ".[test]"
           python -m pip install jupyter-server==${{ matrix.jupyter-server-version }}
+
+      - name: Build voila
+        run: |
           jlpm
           jlpm build
           jupyter labextension develop . --overwrite

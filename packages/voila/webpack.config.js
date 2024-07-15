@@ -69,6 +69,20 @@ const distRoot = path.resolve(
   'static'
 );
 
+const shared = {};
+for (const dependency of Object.keys(data.dependencies)) {
+  // TODO Why can we not share those?
+  if (
+    ['@jupyter-widgets/base7', '@jupyter-widgets/controls7'].includes(
+      dependency
+    )
+  ) {
+    continue;
+  }
+
+  shared[dependency] = data.dependencies[dependency];
+}
+
 module.exports = [
   merge(baseConfig, {
     mode: 'development',
@@ -95,9 +109,7 @@ module.exports = [
           name: ['_JUPYTERLAB', 'CORE_LIBRARY_FEDERATION']
         },
         name: 'CORE_FEDERATION',
-        shared: {
-          ...data.dependencies
-        }
+        shared
       })
     ],
     resolve: {

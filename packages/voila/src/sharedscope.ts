@@ -1,3 +1,7 @@
+// Ideally we would remove this but the ipywidgets labextension requires it
+import '@jupyterlab/notebook';
+import '@jupyterlab/console';
+
 import '@lumino/algorithm';
 import '@lumino/application';
 import '@lumino/coreutils';
