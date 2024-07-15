@@ -71,7 +71,11 @@ const distRoot = path.resolve(
 
 const shared = {};
 for (const dependency of Object.keys(data.dependencies)) {
-  if (['@jupyter-widgets/base7', '@jupyter-widgets/controls7'].includes(dependency)) {
+  if (
+    ['@jupyter-widgets/base7', '@jupyter-widgets/controls7'].includes(
+      dependency
+    )
+  ) {
     continue;
   }
 
