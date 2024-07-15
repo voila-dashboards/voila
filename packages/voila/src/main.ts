@@ -22,9 +22,11 @@ import {
   activePlugins,
   createModule,
   isIpywidgets7extension,
+  isIpywidgets8extension,
   loadComponent,
   shouldUseMathJax2
 } from './tools';
+import { baseWidgets8Plugin, controlWidgets8Plugin } from './ipywidgets8';
 
 //Inspired by: https://github.com/jupyterlab/jupyterlab/blob/master/dev_mode/index.js
 
@@ -87,7 +89,6 @@ async function main() {
     }
 
     const data = p.value;
-    console.log('LOADING EXTENSION ', data.name);
 
     if (data.extension) {
       federatedExtensionPromises.push(createModule(data.name, data.extension));
@@ -109,20 +110,22 @@ async function main() {
   federatedExtensions.forEach((p) => {
     if (p.status === 'fulfilled') {
       const plugins = p.value;
+
       // Special case for ipywidgets
-      // Case for ipywidgets 7 federated ext: we disabled the entire @jupyter-widgets/jupyterlab-manager and mock it
-      // Case for ipywidgets 8 federated ext: we load all plugins but @jupyter-widgets/jupyterlab-manager:plugin
       if (isIpywidgets7extension(plugins)) {
         mods.push(baseWidgets7Plugin);
         mods.push(controlWidgets7Plugin);
 
         return;
       }
+      if (isIpywidgets8extension(plugins)) {
+        mods.push(baseWidgets8Plugin);
+        mods.push(controlWidgets8Plugin);
 
-      // Whichever the ipywidgets version, we disable @jupyter-widgets/jupyterlab-manager:plugin
-      for (const plugin of activePlugins(plugins, [
-        '@jupyter-widgets/jupyterlab-manager:plugin'
-      ])) {
+        return;
+      }
+
+      for (const plugin of activePlugins(plugins, [])) {
         mods.push(plugin);
       }
     } else {

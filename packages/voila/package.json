@@ -20,6 +20,7 @@
     "@jupyterlab/apputils-extension": "^4.0.0",
     "@jupyterlab/codemirror": "^4.0.3",
     "@jupyterlab/codemirror-extension": "^4.0.0",
+    "@jupyterlab/console": "^4.0.0",
     "@jupyterlab/coreutils": "^6.0.0",
     "@jupyterlab/docregistry": "^4.0.0",
     "@jupyterlab/javascript-extension": "^4.0.0",
