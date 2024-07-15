@@ -12,6 +12,8 @@
   "browserslist": ">0.8%, not ie 11, not op_mini all, not dead",
   "dependencies": {
     "@jupyter-widgets/base": "^6.0.6",
+    "@jupyter-widgets/base7": "npm:@jupyter-widgets/base@4.1.6",
+    "@jupyter-widgets/controls7": "npm:@jupyter-widgets/controls@3.1.6",
     "@jupyter-widgets/jupyterlab-manager": "^5.0.9",
     "@jupyterlab/application": "^4.0.0",
     "@jupyterlab/apputils": "^4.0.0",

@@ -14,12 +14,14 @@ import { PageConfig, URLExt } from '@jupyterlab/coreutils';
 
 import { VoilaApp } from './app';
 import plugins from './voilaplugins';
+import { baseWidgets7Plugin, controlWidgets7Plugin } from './ipywidgets7';
 import { VoilaServiceManager } from './services/servicemanager';
 import { VoilaShell } from './shell';
 import {
   IFederatedExtensionData,
   activePlugins,
   createModule,
+  isIpywidgets7extension,
   loadComponent,
   shouldUseMathJax2
 } from './tools';
@@ -39,9 +41,9 @@ async function main() {
     require('@jupyterlab/rendermime-extension'),
     require('@jupyterlab/theme-light-extension'),
     require('@jupyterlab/theme-dark-extension'),
-    require('@jupyter-widgets/jupyterlab-manager/lib/plugin').default.filter(
-      (p: any) => p.id !== '@jupyter-widgets/jupyterlab-manager:plugin'
-    ),
+    // require('@jupyter-widgets/jupyterlab-manager/lib/plugin').default.filter(
+    //   (p: any) => p.id !== '@jupyter-widgets/jupyterlab-manager:plugin'
+    // ),
     plugins
   ];
 
@@ -85,6 +87,8 @@ async function main() {
     }
 
     const data = p.value;
+    console.log('LOADING EXTENSION ', data.name);
+
     if (data.extension) {
       federatedExtensionPromises.push(createModule(data.name, data.extension));
     }
@@ -104,7 +108,21 @@ async function main() {
   );
   federatedExtensions.forEach((p) => {
     if (p.status === 'fulfilled') {
-      for (const plugin of activePlugins(p.value, [])) {
+      const plugins = p.value;
+      // Special case for ipywidgets
+      // Case for ipywidgets 7 federated ext: we disabled the entire @jupyter-widgets/jupyterlab-manager and mock it
+      // Case for ipywidgets 8 federated ext: we load all plugins but @jupyter-widgets/jupyterlab-manager:plugin
+      if (isIpywidgets7extension(plugins)) {
+        mods.push(baseWidgets7Plugin);
+        mods.push(controlWidgets7Plugin);
+
+        return;
+      }
+
+      // Whichever the ipywidgets version, we disable @jupyter-widgets/jupyterlab-manager:plugin
+      for (const plugin of activePlugins(plugins, [
+        '@jupyter-widgets/jupyterlab-manager:plugin'
+      ])) {
         mods.push(plugin);
       }
     } else {
