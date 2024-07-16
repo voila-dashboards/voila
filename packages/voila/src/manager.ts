@@ -7,15 +7,13 @@
  * The full license is in the file LICENSE, distributed with this software. *
  ****************************************************************************/
 
+import $ from "jquery";
+import 'jquery-ui/ui/widgets/slider';
+
 import {
   WidgetManager as JupyterLabManager,
   WidgetRenderer
 } from '@jupyter-widgets/jupyterlab-manager';
-
-import { output } from '@jupyter-widgets/jupyterlab-manager';
-
-import * as base from '@jupyter-widgets/base';
-import * as controls from '@jupyter-widgets/controls';
 
 import * as Application from '@jupyterlab/application';
 import * as AppUtils from '@jupyterlab/apputils';
@@ -41,9 +39,7 @@ import { Widget } from '@lumino/widgets';
 import { requireLoader } from './loader';
 
 if (typeof window !== 'undefined' && typeof window.define !== 'undefined') {
-  window.define('@jupyter-widgets/base', base);
-  window.define('@jupyter-widgets/controls', controls);
-  window.define('@jupyter-widgets/output', output);
+  window.define('jquery', $);
 
   window.define('@jupyterlab/application', Application);
   window.define('@jupyterlab/apputils', AppUtils);
@@ -105,34 +101,23 @@ export class WidgetManager extends JupyterLabManager {
       if (!viewtag?.parentElement) {
         return;
       }
-      try {
-        const widgetViewObject = JSON.parse(viewtag.innerHTML);
-        const { model_id } = widgetViewObject;
-        const model = await this.get_model(model_id);
-        const widgetel = document.createElement('div');
-        viewtag.parentElement.insertBefore(widgetel, viewtag);
-        const view = await this.create_view(model);
-        // TODO: fix typing
-        await this.display_view(undefined as any, view, {
-          el: widgetel
-        });
-      } catch (error) {
-        // Each widget view tag rendering is wrapped with a try-catch statement.
-        //
-        // This fixes issues with widget models that are explicitly "closed"
-        // but are still referred to in a previous cell output.
-        // Without the try-catch statement, this error interrupts the loop and
-        // prevents the rendering of further cells.
-        //
-        // This workaround may not be necessary anymore with templates that make use
-        // of progressive rendering.
-      }
+
+      const widgetViewObject = JSON.parse(viewtag.innerHTML);
+      const { model_id } = widgetViewObject;
+      const model = await this.get_model(model_id);
+      const widgetel = document.createElement('div');
+      viewtag.parentElement.insertBefore(widgetel, viewtag);
+      const view = await this.create_view(model);
+      // TODO: fix typing
+      await this.display_view(undefined as any, view, {
+        el: widgetel
+      });
     });
   }
 
   async display_view(msg: any, view: any, options: any): Promise<Widget> {
     if (options.el) {
-      LuminoWidget.Widget.attach(view.luminoWidget, options.el);
+      LuminoWidget.Widget.attach(view.luminoWidget || view.pWidget, options.el);
     }
     if (view.el) {
       view.el.setAttribute('data-voila-jupyter-widget', '');
@@ -183,18 +168,28 @@ export class WidgetManager extends JupyterLabManager {
   private _registerWidgets(): void {
     this.register({
       name: '@jupyter-widgets/base',
-      version: base.JUPYTER_WIDGETS_VERSION,
-      exports: base as any
+      version: "2.0.0",
+      exports: async () => require('@jupyter-widgets/base') as any,
     });
     this.register({
       name: '@jupyter-widgets/controls',
-      version: controls.JUPYTER_CONTROLS_VERSION,
-      exports: controls as any
+      version: "2.0.0",
+      exports: async () => require('@jupyter-widgets/controls') as any,
     });
     this.register({
       name: '@jupyter-widgets/output',
-      version: output.OUTPUT_WIDGET_VERSION,
-      exports: output as any
+      version: "1.0.0",
+      exports: async () => (await require('@jupyter-widgets/jupyterlab-manager')).output as any,
+    });
+    this.register({
+      name: '@jupyter-widgets/base',
+      version: "1.2.0",
+      exports: async () => require('@jupyter-widgets/base7') as any,
+    });
+    this.register({
+      name: '@jupyter-widgets/controls',
+      version: "1.5.0",
+      exports: async () => require('@jupyter-widgets/controls7') as any,
     });
   }
 
