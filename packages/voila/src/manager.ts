@@ -187,6 +187,7 @@ export class WidgetManager extends JupyterLabManager {
   private _registerWidgets(): void {
     // Lazy loading of either ipywidgets 7 or ipywidgets 8 widgets and CSS
     // Depending on what is requested by the kernel, one or the other will load
+    // IPYWIDGETS 8
     this.register({
       name: '@jupyter-widgets/base',
       version: "2.0.0",
@@ -211,6 +212,8 @@ export class WidgetManager extends JupyterLabManager {
       version: "1.0.0",
       exports: async () => (await require('@jupyter-widgets/jupyterlab-manager')).output as any,
     });
+
+    // IPYWIDGETS 7
     this.register({
       name: '@jupyter-widgets/base',
       version: "1.2.0",
