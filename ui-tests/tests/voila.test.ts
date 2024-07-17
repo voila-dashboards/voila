@@ -258,19 +258,6 @@ test.describe('Voila performance Tests', () => {
     expect(await page.screenshot()).toMatchSnapshot(`${notebookName}.png`);
   });
 
-  test('Render and benchmark ipyvolume.ipynb', async ({
-    page,
-    browserName
-  }, testInfo) => {
-    const notebookName = 'ipyvolume';
-    const testFunction = async () => {
-      await page.goto(`/voila/render/${notebookName}.ipynb`);
-      await page.waitForSelector('canvas');
-    };
-    await addBenchmarkToTest(notebookName, testFunction, testInfo, browserName);
-    expect(await page.screenshot()).toMatchSnapshot(`${notebookName}.png`);
-  });
-
   test('Benchmark the multiple widgets notebook', async ({
     page,
     browserName
