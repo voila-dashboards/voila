@@ -7,7 +7,7 @@
  * The full license is in the file LICENSE, distributed with this software. *
  ****************************************************************************/
 
-import $ from "jquery";
+import $ from 'jquery';
 import 'jquery-ui/ui/widgets/slider';
 
 import {
@@ -190,48 +190,49 @@ export class WidgetManager extends JupyterLabManager {
     // IPYWIDGETS 8
     this.register({
       name: '@jupyter-widgets/base',
-      version: "2.0.0",
+      version: '2.0.0',
       exports: async () => {
         const baseWidgets = require('@jupyter-widgets/base') as any;
         windowDefine('@jupyter-widgets/base', baseWidgets);
         return baseWidgets;
-      },
+      }
     });
     this.register({
       name: '@jupyter-widgets/controls',
-      version: "2.0.0",
+      version: '2.0.0',
       exports: async () => {
         const controlsWidgets = require('@jupyter-widgets/controls') as any;
         windowDefine('@jupyter-widgets/controls', controlsWidgets);
         require('@jupyter-widgets/controls/css/widgets-base.css');
         return controlsWidgets;
-      },
+      }
     });
     this.register({
       name: '@jupyter-widgets/output',
-      version: "1.0.0",
-      exports: async () => (await require('@jupyter-widgets/jupyterlab-manager')).output as any,
+      version: '1.0.0',
+      exports: async () =>
+        (await require('@jupyter-widgets/jupyterlab-manager')).output as any
     });
 
     // IPYWIDGETS 7
     this.register({
       name: '@jupyter-widgets/base',
-      version: "1.2.0",
+      version: '1.2.0',
       exports: async () => {
-        const base7Widgets = require('@jupyter-widgets/base7') as any
+        const base7Widgets = require('@jupyter-widgets/base7') as any;
         windowDefine('@jupyter-widgets/base', base7Widgets);
         return base7Widgets;
-      },
+      }
     });
     this.register({
       name: '@jupyter-widgets/controls',
-      version: "1.5.0",
+      version: '1.5.0',
       exports: async () => {
         const controls7Widget = require('@jupyter-widgets/controls7') as any;
         windowDefine('@jupyter-widgets/controls', controls7Widget);
         require('@jupyter-widgets/controls7/css/widgets-base.css');
         return controls7Widget;
-      },
+      }
     });
   }
 
