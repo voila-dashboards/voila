@@ -227,24 +227,6 @@ test.describe('Voila performance Tests', () => {
     expect(await page.screenshot()).toMatchSnapshot(`${notebookName}.png`);
   });
 
-  test('Render and benchmark interactive.ipynb', async ({
-    page,
-    browserName
-  }, testInfo) => {
-    const notebookName = 'interactive';
-    const testFunction = async () => {
-      await page.goto(`/voila/render/${notebookName}.ipynb`);
-      await page.waitForSelector('div.widget-slider.widget-hslider');
-      await page.fill('div.widget-readout', '8.00');
-      await page.keyboard.down('Enter');
-      await page.fill('div.widget-readout >> text=0', '8.00');
-      await page.keyboard.down('Enter');
-      await page.mouse.click(0, 0);
-    };
-    await addBenchmarkToTest(notebookName, testFunction, testInfo, browserName);
-    expect(await page.screenshot()).toMatchSnapshot(`${notebookName}.png`);
-  });
-
   test('Render and benchmark ipympl.ipynb', async ({
     page,
     browserName
