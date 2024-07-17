@@ -10,7 +10,7 @@ jobs:
       matrix:
         python-version: [3.8]
         node-version: [18.x]
-        ipywidgets-version: [8, 7]
+        ipywidgets: [8, 7]
       fail-fast: false
 
     steps:
