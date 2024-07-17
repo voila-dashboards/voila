@@ -102,16 +102,29 @@ export class WidgetManager extends JupyterLabManager {
         return;
       }
 
-      const widgetViewObject = JSON.parse(viewtag.innerHTML);
-      const { model_id } = widgetViewObject;
-      const model = await this.get_model(model_id);
-      const widgetel = document.createElement('div');
-      viewtag.parentElement.insertBefore(widgetel, viewtag);
-      const view = await this.create_view(model);
-      // TODO: fix typing
-      await this.display_view(undefined as any, view, {
-        el: widgetel
-      });
+      try {
+        const widgetViewObject = JSON.parse(viewtag.innerHTML);
+        const { model_id } = widgetViewObject;
+        const model = await this.get_model(model_id);
+        const widgetel = document.createElement('div');
+        viewtag.parentElement.insertBefore(widgetel, viewtag);
+        const view = await this.create_view(model);
+        // TODO: fix typing
+        await this.display_view(undefined as any, view, {
+          el: widgetel
+        });
+      } catch (error) {
+        // Each widget view tag rendering is wrapped with a try-catch statement.
+        //
+        // This fixes issues with widget models that are explicitly "closed"
+        // but are still referred to in a previous cell output.
+        // Without the try-catch statement, this error interrupts the loop and
+        // prevents the rendering of further cells.
+        //
+        // This workaround may not be necessary anymore with templates that make use
+        // of progressive rendering.
+        console.error('Something went wrong', error);
+      }
     });
   }
 
