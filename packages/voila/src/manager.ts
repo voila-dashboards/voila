@@ -179,6 +179,8 @@ export class WidgetManager extends JupyterLabManager {
   }
 
   private _registerWidgets(): void {
+    // Lazy loading of either ipywidgets 7 or ipywidgets 8 widgets and CSS
+    // Depending on what is requested by the kernel, one or the other will load
     this.register({
       name: '@jupyter-widgets/base',
       version: "2.0.0",
@@ -187,7 +189,11 @@ export class WidgetManager extends JupyterLabManager {
     this.register({
       name: '@jupyter-widgets/controls',
       version: "2.0.0",
-      exports: async () => require('@jupyter-widgets/controls') as any,
+      exports: async () => {
+        const controlsWidgets = require('@jupyter-widgets/controls') as any;
+        require('@jupyter-widgets/controls/css/widgets-base.css');
+        return controlsWidgets;
+      },
     });
     this.register({
       name: '@jupyter-widgets/output',
@@ -202,7 +208,11 @@ export class WidgetManager extends JupyterLabManager {
     this.register({
       name: '@jupyter-widgets/controls',
       version: "1.5.0",
-      exports: async () => require('@jupyter-widgets/controls7') as any,
+      exports: async () => {
+        const controls7Widget = require('@jupyter-widgets/controls7') as any;
+        require('@jupyter-widgets/controls7/css/widgets-base.css');
+        return controls7Widget;
+      },
     });
   }
 
