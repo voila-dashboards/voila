@@ -191,7 +191,7 @@ export class WidgetManager extends JupyterLabManager {
     this.register({
       name: '@jupyter-widgets/base',
       version: '2.0.0',
-      exports: async () => {
+      exports: () => {
         const baseWidgets = require('@jupyter-widgets/base') as any;
         windowDefine('@jupyter-widgets/base', baseWidgets);
         return baseWidgets;
@@ -200,7 +200,7 @@ export class WidgetManager extends JupyterLabManager {
     this.register({
       name: '@jupyter-widgets/controls',
       version: '2.0.0',
-      exports: async () => {
+      exports: () => {
         const controlsWidgets = require('@jupyter-widgets/controls') as any;
         windowDefine('@jupyter-widgets/controls', controlsWidgets);
         require('@jupyter-widgets/controls/css/widgets-base.css');
@@ -218,7 +218,7 @@ export class WidgetManager extends JupyterLabManager {
     this.register({
       name: '@jupyter-widgets/base',
       version: '1.2.0',
-      exports: async () => {
+      exports: () => {
         const base7Widgets = require('@jupyter-widgets/base7') as any;
         windowDefine('@jupyter-widgets/base', base7Widgets);
         return base7Widgets;
@@ -227,7 +227,7 @@ export class WidgetManager extends JupyterLabManager {
     this.register({
       name: '@jupyter-widgets/controls',
       version: '1.5.0',
-      exports: async () => {
+      exports: () => {
         const controls7Widget = require('@jupyter-widgets/controls7') as any;
         windowDefine('@jupyter-widgets/controls', controls7Widget);
         require('@jupyter-widgets/controls7/css/widgets-base.css');
