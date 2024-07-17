@@ -43,6 +43,8 @@ lib
 voila/labextension
 tsconfig.tsbuildinfo
 
+.yarn
+
 ui-tests/playwright-report
 ui-tests/test-results
 ui-tests/benchmark-results
