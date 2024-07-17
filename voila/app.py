@@ -649,8 +649,6 @@ class Voila(Application):
         ])
 
         if JUPYTER_SERVER_2:
-
-
             handlers.extend(self.identity_provider.get_handlers())
 
         if self.voila_configuration.preheat_kernel:

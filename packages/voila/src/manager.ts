@@ -7,15 +7,13 @@
  * The full license is in the file LICENSE, distributed with this software. *
  ****************************************************************************/
 
+import $ from 'jquery';
+import 'jquery-ui/ui/widgets/slider';
+
 import {
   WidgetManager as JupyterLabManager,
   WidgetRenderer
 } from '@jupyter-widgets/jupyterlab-manager';
-
-import { output } from '@jupyter-widgets/jupyterlab-manager';
-
-import * as base from '@jupyter-widgets/base';
-import * as controls from '@jupyter-widgets/controls';
 
 import * as Application from '@jupyterlab/application';
 import * as AppUtils from '@jupyterlab/apputils';
@@ -40,10 +38,14 @@ import { Widget } from '@lumino/widgets';
 
 import { requireLoader } from './loader';
 
+function windowDefine(name: string, module: any) {
+  if (typeof window !== 'undefined' && typeof window.define !== 'undefined') {
+    window.define(name, module);
+  }
+}
+
 if (typeof window !== 'undefined' && typeof window.define !== 'undefined') {
-  window.define('@jupyter-widgets/base', base);
-  window.define('@jupyter-widgets/controls', controls);
-  window.define('@jupyter-widgets/output', output);
+  window.define('jquery', $);
 
   window.define('@jupyterlab/application', Application);
   window.define('@jupyterlab/apputils', AppUtils);
@@ -105,6 +107,7 @@ export class WidgetManager extends JupyterLabManager {
       if (!viewtag?.parentElement) {
         return;
       }
+
       try {
         const widgetViewObject = JSON.parse(viewtag.innerHTML);
         const { model_id } = widgetViewObject;
@@ -126,13 +129,14 @@ export class WidgetManager extends JupyterLabManager {
         //
         // This workaround may not be necessary anymore with templates that make use
         // of progressive rendering.
+        console.error('Something went wrong', error);
       }
     });
   }
 
   async display_view(msg: any, view: any, options: any): Promise<Widget> {
     if (options.el) {
-      LuminoWidget.Widget.attach(view.luminoWidget, options.el);
+      LuminoWidget.Widget.attach(view.luminoWidget || view.pWidget, options.el);
     }
     if (view.el) {
       view.el.setAttribute('data-voila-jupyter-widget', '');
@@ -181,20 +185,54 @@ export class WidgetManager extends JupyterLabManager {
   }
 
   private _registerWidgets(): void {
+    // Lazy loading of either ipywidgets 7 or ipywidgets 8 widgets and CSS
+    // Depending on what is requested by the kernel, one or the other will load
+    // IPYWIDGETS 8
     this.register({
       name: '@jupyter-widgets/base',
-      version: base.JUPYTER_WIDGETS_VERSION,
-      exports: base as any
+      version: '2.0.0',
+      exports: () => {
+        const baseWidgets = require('@jupyter-widgets/base') as any;
+        windowDefine('@jupyter-widgets/base', baseWidgets);
+        return baseWidgets;
+      }
     });
     this.register({
       name: '@jupyter-widgets/controls',
-      version: controls.JUPYTER_CONTROLS_VERSION,
-      exports: controls as any
+      version: '2.0.0',
+      exports: () => {
+        const controlsWidgets = require('@jupyter-widgets/controls') as any;
+        windowDefine('@jupyter-widgets/controls', controlsWidgets);
+        require('@jupyter-widgets/controls/css/widgets-base.css');
+        return controlsWidgets;
+      }
     });
     this.register({
       name: '@jupyter-widgets/output',
-      version: output.OUTPUT_WIDGET_VERSION,
-      exports: output as any
+      version: '1.0.0',
+      exports: async () =>
+        (await require('@jupyter-widgets/jupyterlab-manager')).output as any
+    });
+
+    // IPYWIDGETS 7
+    this.register({
+      name: '@jupyter-widgets/base',
+      version: '1.2.0',
+      exports: () => {
+        const base7Widgets = require('@jupyter-widgets/base7') as any;
+        windowDefine('@jupyter-widgets/base', base7Widgets);
+        return base7Widgets;
+      }
+    });
+    this.register({
+      name: '@jupyter-widgets/controls',
+      version: '1.5.0',
+      exports: () => {
+        const controls7Widget = require('@jupyter-widgets/controls7') as any;
+        windowDefine('@jupyter-widgets/controls', controls7Widget);
+        require('@jupyter-widgets/controls7/css/widgets-base.css');
+        return controls7Widget;
+      }
     });
   }
 

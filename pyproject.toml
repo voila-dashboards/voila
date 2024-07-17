@@ -69,6 +69,17 @@ test = [
     "pytest",
     "pytest-tornasync",
 ]
+test7 = [
+    "notebook==6",
+    "ipywidgets==7.8.2",
+    "matplotlib",
+    "mock",
+    "numpy",
+    "pandas",
+    "papermill",
+    "pytest",
+    "pytest-tornasync",
+]
 
 [project.scripts]
 voila = "voila.app:main"
