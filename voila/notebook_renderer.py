@@ -9,8 +9,6 @@
 
 
 import os
-import sys
-import traceback
 from functools import partial
 from copy import deepcopy
 from typing import Generator, List, Tuple, Union
@@ -19,13 +17,12 @@ import nbformat
 import tornado.web
 from jupyter_core.utils import ensure_async
 from jupyter_server.config_manager import recursive_update
-from nbclient.exceptions import CellExecutionError
 from nbconvert.preprocessors.clearoutput import ClearOutputPreprocessor
 from traitlets.config.configurable import LoggingConfigurable
 
 from voila.configuration import VoilaConfiguration
 
-from .execute import VoilaExecutor, strip_code_cell_warnings
+from .execute import VoilaExecutor
 from .exporter import VoilaExporter
 from .paths import collect_template_paths
 from .utils import ENV_VARIABLE
@@ -242,7 +239,7 @@ class NotebookRenderer(LoggingConfigurable):
         return kernel_id
 
     async def _jinja_notebook_execute(self, nb, kernel_id):
-        print('VVVVVVVVVVVVVVVV _jinja_notebook_execute' )
+        print("VVVVVVVVVVVVVVVV _jinja_notebook_execute")
         result = await self.executor.async_execute(cleanup_kc=False)
         # we modify the notebook in place, since the nb variable cannot be
         # reassigned it seems in jinja2 e.g. if we do {% with nb = notebook_execute(nb, kernel_id) %}
@@ -254,7 +251,7 @@ class NotebookRenderer(LoggingConfigurable):
 
     async def _jinja_cell_generator(self, nb, kernel_id):
         """Generator that will execute a single notebook cell at a time"""
-        print('VVVVVVVVVVVVVVVV _jinja_cell_generator' )
+        print("VVVVVVVVVVVVVVVV _jinja_cell_generator")
         nb, _ = ClearOutputPreprocessor().preprocess(
             nb, {"metadata": {"path": self.cwd}}
         )
