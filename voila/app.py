@@ -20,6 +20,8 @@ import tempfile
 import threading
 import webbrowser
 
+from .execution_request_handler import ExecutionRequestHandler
+
 from .tornado.contentshandler import VoilaContentsHandler
 
 from urllib.parse import urljoin
@@ -741,11 +743,10 @@ class Voila(Application):
                 ),
             ]
         )
-
         if JUPYTER_SERVER_2:
             handlers.extend(self.identity_provider.get_handlers())
 
-        if self.voila_configuration.preheat_kernel:
+        if self.voila_configuration.preheat_kernel or True:
             handlers.append(
                 (
                     url_path_join(
@@ -754,6 +755,14 @@ class Voila(Application):
                     RequestInfoSocketHandler,
                 )
             )
+        handlers.append(
+            (
+                url_path_join(
+                    self.server_url, r"/voila/execution/%s" % _kernel_id_regex
+                ),
+                ExecutionRequestHandler,
+            )
+        )
         # Serving JupyterLab extensions
         handlers.append(
             (

@@ -34,6 +34,11 @@ import { VoilaApp } from '../../app';
 
 import { Widget } from '@lumino/widgets';
 import { RenderedCells } from './renderedcells';
+import {
+  // OutputArea,
+  OutputAreaModel,
+  SimplifiedOutputArea
+} from '@jupyterlab/outputarea';
 
 const WIDGET_MIMETYPE = 'application/vnd.jupyter.widget-view+json';
 
@@ -123,40 +128,107 @@ export const renderOutputsPlugin: JupyterFrontEndPlugin<void> = {
       rendermime.latexTypesetter?.typeset(md as HTMLElement);
     });
     // Render code cell
-    const cellOutputs = document.body.querySelectorAll(
-      'script[type="application/vnd.voila.cell-output+json"]'
-    );
-    cellOutputs.forEach(async (cellOutput) => {
-      const model = JSON.parse(cellOutput.innerHTML);
+    // const cellOutputs = document.body.querySelectorAll(
+    //   'script[type="application/vnd.voila.cell-output+json"]'
+    // );
+    // cellOutputs.forEach(async (cellOutput) => {
+    //   const model = JSON.parse(cellOutput.innerHTML);
 
-      const mimeType = rendermime.preferredMimeType(model.data, 'any');
+    //   const mimeType = rendermime.preferredMimeType(model.data, 'any');
 
-      if (!mimeType) {
-        return null;
+    //   if (!mimeType) {
+    //     return null;
+    //   }
+    //   const output = rendermime.createRenderer(mimeType);
+    //   output.renderModel(model).catch((error) => {
+    //     // Manually append error message to output
+    //     const pre = document.createElement('pre');
+    //     pre.textContent = `Javascript Error: ${error.message}`;
+    //     output.node.appendChild(pre);
+
+    //     // Remove mime-type-specific CSS classes
+    //     pre.className = 'lm-Widget jp-RenderedText';
+    //     pre.setAttribute('data-mime-type', 'application/vnd.jupyter.stderr');
+    //   });
+
+    //   output.addClass('jp-OutputArea-output');
+
+    //   if (cellOutput.parentElement) {
+    //     const container = cellOutput.parentElement;
+
+    //     container.removeChild(cellOutput);
+
+    //     // Attach output
+    //     Widget.attach(output, container);
+    //   }
+    // });
+    const kernelId = (app as VoilaApp).widgetManager?.kernel.id;
+    console.log('using kernel', kernelId);
+    const ws = new WebSocket(`ws://localhost:8866/voila/execution/${kernelId}`);
+    ws.onmessage = (msg) => {
+      const { action, payload } = JSON.parse(msg.data);
+      if (action === 'execution_result') {
+        const { cell_index, output_cell, request_kernel_id } = payload;
+        const element = document.querySelector(
+          `[cell-index="${cell_index + 1}"]`
+        );
+        if (element) {
+          const model = new OutputAreaModel({ trusted: true });
+          const area = new SimplifiedOutputArea({
+            model,
+            rendermime
+          });
+
+          const wrapper = document.createElement('div');
+          wrapper.classList.add('jp-Cell-outputWrapper');
+          const collapser = document.createElement('div');
+          collapser.classList.add(
+            'jp-Collapser',
+            'jp-OutputCollapser',
+            'jp-Cell-outputCollapser'
+          );
+          wrapper.appendChild(collapser);
+          element.lastElementChild?.appendChild(wrapper);
+
+          area.node.classList.add('jp-Cell-outputArea');
+
+          // Why do we need this? Are we missing a CSS class?
+          area.node.style.display = 'flex';
+          area.node.style.flexDirection = 'column';
+
+          Widget.attach(area, wrapper);
+          const skeleton = element
+            .getElementsByClassName('voila-skeleton-container')
+            .item(0);
+          if (skeleton) {
+            element.removeChild(skeleton);
+          }
+          const outputData = output_cell.outputs[0];
+          if (outputData) {
+            console.log(
+              'adding',
+              outputData,
+              'request_kernel_id',
+              request_kernel_id,
+              'kernelId',
+              kernelId
+            );
+            element.lastElementChild?.classList.remove(
+              'jp-mod-noOutputs',
+              'jp-mod-noInput'
+            );
+            model.add(outputData);
+          }
+        }
       }
-      const output = rendermime.createRenderer(mimeType);
-      output.renderModel(model).catch((error) => {
-        // Manually append error message to output
-        const pre = document.createElement('pre');
-        pre.textContent = `Javascript Error: ${error.message}`;
-        output.node.appendChild(pre);
+    };
+    ws.onopen = () => {
+      console.log('opened');
+      ws.send(
+        JSON.stringify({ action: 'execute', payload: { kernel_id: kernelId } })
+      );
+    };
 
-        // Remove mime-type-specific CSS classes
-        pre.className = 'lm-Widget jp-RenderedText';
-        pre.setAttribute('data-mime-type', 'application/vnd.jupyter.stderr');
-      });
-
-      output.addClass('jp-OutputArea-output');
-
-      if (cellOutput.parentElement) {
-        const container = cellOutput.parentElement;
-
-        container.removeChild(cellOutput);
-
-        // Attach output
-        Widget.attach(output, container);
-      }
-    });
     const node = document.getElementById('rendered_cells');
     if (node) {
       const cells = new RenderedCells({ node });

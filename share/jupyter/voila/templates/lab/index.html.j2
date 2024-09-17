@@ -1,5 +1,6 @@
 {%- extends 'nbconvert/templates/lab/index.html.j2' -%}
 {% import "spinner.macro.html.j2" as spinner %}
+{% import "skeleton.macro.html.j2" as skeleton %}
 {% import "log.macro.html.j2" as log %}
 {% from 'voila_setup.macro.html.j2' import voila_setup_helper_functions, voila_setup_labextensions with context %}
 
@@ -15,6 +16,7 @@
   {% endif %}
 
   {{ spinner.css() }}
+  {{ skeleton.css() }}
 
   <style>
     /*Hide empty cells*/
@@ -108,6 +110,13 @@
           <script>
             voila_process({{ cellloop.index }}, {{ cell_count }})
           </script>
+          <div class="voila-skeleton-container">
+            <div class="voila-skeleton-post">
+              <div class="voila-skeleton-avatar"></div>
+              <div class="voila-skeleton-line"></div>
+              <div class="voila-skeleton-line"></div>
+            </div>
+          </div>
           {{ super() }}
         </div>
       {%- endblock any_cell -%}
