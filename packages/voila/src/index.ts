@@ -14,6 +14,14 @@ export {
   standardRendererFactories
 } from '@jupyterlab/rendermime';
 
+export {
+  EditorLanguageRegistry
+} from '@jupyterlab/codemirror';
+
+export { MathJaxTypesetter } from '@jupyterlab/mathjax2-extension';
+
+export { createMarkdownParser } from '@jupyterlab/markedparser-extension';
+
 export { extendedRendererFactories } from './rendermime';
 export { WidgetManager } from './manager';
 export { connectKernel } from './kernel';

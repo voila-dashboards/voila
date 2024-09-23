@@ -42,8 +42,12 @@ require([window.voila_js_url || 'static/voila'], function(voila) {
             saveState: false
         };
 
+        const languages = new voila.EditorLanguageRegistry();
+
         const rendermime = new voila.RenderMimeRegistry({
-            initialFactories: voila.extendedRendererFactories
+            initialFactories: voila.extendedRendererFactories,
+            latexTypesetter: new voila.MathJaxTypesetter(),
+            markdownParser: voila.createMarkdownParser(languages)
         });
 
         var widgetManager = new voila.WidgetManager(context, rendermime, settings);
