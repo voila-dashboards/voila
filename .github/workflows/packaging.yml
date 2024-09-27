@@ -50,7 +50,7 @@ jobs:
           sha256sum * | tee SHA256SUMS
 
       - name: Upload distributions
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: dist ${{ github.run_number }}
           path: ./dist
