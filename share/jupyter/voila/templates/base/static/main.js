@@ -65,7 +65,6 @@ require([window.voila_js_url || 'static/voila'], function(voila) {
                 kernel.dispose();
             });
             await widgetManager.build_widgets();
-            voila.renderMathJax();
         }
 
         if (document.readyState === 'complete') {
