@@ -239,7 +239,6 @@ class NotebookRenderer(LoggingConfigurable):
         return kernel_id
 
     async def _jinja_notebook_execute(self, nb, kernel_id):
-        print("VVVVVVVVVVVVVVVV _jinja_notebook_execute")
         result = await self.executor.async_execute(cleanup_kc=False)
         # we modify the notebook in place, since the nb variable cannot be
         # reassigned it seems in jinja2 e.g. if we do {% with nb = notebook_execute(nb, kernel_id) %}
@@ -251,7 +250,6 @@ class NotebookRenderer(LoggingConfigurable):
 
     async def _jinja_cell_generator(self, nb, kernel_id):
         """Generator that will execute a single notebook cell at a time"""
-        print("VVVVVVVVVVVVVVVV _jinja_cell_generator")
         nb, _ = ClearOutputPreprocessor().preprocess(
             nb, {"metadata": {"path": self.cwd}}
         )

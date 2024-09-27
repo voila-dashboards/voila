@@ -1,6 +1,5 @@
 import json
-import logging
-from typing import Awaitable, Dict
+from typing import Awaitable
 from jupyter_server.base.handlers import JupyterHandler
 from tornado.websocket import WebSocketHandler
 from jupyter_server.base.websocket import WebSocketMixin
@@ -19,7 +18,6 @@ class ExecutionRequestHandler(WebSocketMixin, WebSocketHandler, JupyterHandler):
 
     def initialize(self, **kwargs):
         super().initialize()
-        print("cccc", self.kernel_manager)
 
     def open(self, kernel_id: str) -> None:
         """Create a new websocket connection, this connection is
@@ -30,7 +28,6 @@ class ExecutionRequestHandler(WebSocketMixin, WebSocketHandler, JupyterHandler):
             the websocket connection.
         """
         super().open()
-        print("self", self)
         self._kernel_id = kernel_id
         ExecutionRequestHandler._kernels[kernel_id] = self
         self.write_message({"action": "initialized", "payload": {}})
@@ -43,20 +40,20 @@ class ExecutionRequestHandler(WebSocketMixin, WebSocketHandler, JupyterHandler):
         payload = message.get("payload", {})
         if action == "execute":
             request_kernel_id = payload.get("kernel_id")
-            print("RECEIVEDDDDDDDD", request_kernel_id, self._kernel_id)
 
             kernel_future = self.kernel_manager.get_kernel(self._kernel_id)
             km = await ensure_async(kernel_future)
             execution_data = self._execution_data.get(self._kernel_id)
 
             nb = execution_data["nb"]
-            executor = VoilaExecutor(
+            self._executor = executor = VoilaExecutor(
                 nb,
                 km=km,
                 config=execution_data["config"],
                 show_tracebacks=execution_data["show_tracebacks"],
             )
             executor.kc = await executor.async_start_new_kernel_client()
+
             for cell_idx, input_cell in enumerate(nb.cells):
                 try:
                     output_cell = await executor.execute_cell(
@@ -64,7 +61,7 @@ class ExecutionRequestHandler(WebSocketMixin, WebSocketHandler, JupyterHandler):
                     )
                 except TimeoutError:
                     output_cell = input_cell
-                    break
+
                 except CellExecutionError:
                     self.log.exception(
                         "Error at server while executing cell: %r", input_cell
@@ -73,7 +70,7 @@ class ExecutionRequestHandler(WebSocketMixin, WebSocketHandler, JupyterHandler):
                         strip_code_cell_warnings(input_cell)
                         executor.strip_code_cell_errors(input_cell)
                     output_cell = input_cell
-                    break
+
                 except Exception as e:
                     self.log.exception(
                         "Error at server while executing cell: %r", input_cell
@@ -113,20 +110,5 @@ class ExecutionRequestHandler(WebSocketMixin, WebSocketHandler, JupyterHandler):
                     )
 
     def on_close(self) -> None:
-        for k_id, waiter in ExecutionRequestHandler._kernels.items():
-            if waiter == self:
-                break
-        del ExecutionRequestHandler._kernels[k_id]
-
-    @classmethod
-    def send_updates(cls: "ExecutionRequestHandler", msg: Dict) -> None:
-        kernel_id = msg["kernel_id"]
-        payload = msg["payload"]
-        waiter = cls._kernels.get(kernel_id, None)
-        if waiter is not None:
-            try:
-                waiter.write_message(payload)
-            except Exception:
-                logging.error("Error sending message", exc_info=True)
-        else:
-            cls._cache[kernel_id] = payload
+        if self._executor:
+            del self._executor.kc
