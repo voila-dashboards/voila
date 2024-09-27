@@ -50,6 +50,8 @@ require([window.voila_js_url || 'static/voila'], function(voila) {
             markdownParser: voila.createMarkdownParser(languages)
         });
 
+        await rendermime.latexTypesetter.typeset(document.createElement('div'));
+
         var widgetManager = new voila.WidgetManager(context, rendermime, settings);
 
         async function init() {

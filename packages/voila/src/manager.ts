@@ -31,6 +31,7 @@ import * as LuminoVirtualdom from '@lumino/virtualdom';
 import * as LuminoAlgorithm from '@lumino/algorithm';
 import * as LuminoCommands from '@lumino/commands';
 import * as LuminoDomutils from '@lumino/domutils';
+import * as Mathjax2 from '@jupyterlab/mathjax2-extension';
 
 import { MessageLoop } from '@lumino/messaging';
 
@@ -52,6 +53,8 @@ if (typeof window !== 'undefined' && typeof window.define !== 'undefined') {
   window.define('@jupyterlab/coreutils', CoreUtils);
   window.define('@jupyterlab/docregistry', DocRegistry);
   window.define('@jupyterlab/outputarea', OutputArea);
+  window.define('@jupyterlab/outputarea', OutputArea);
+  window.define('@jupyterlab/mathjax2-extension', Mathjax2);
 
   window.define('@phosphor/widgets', LuminoWidget);
   window.define('@phosphor/signaling', LuminoSignaling);
@@ -66,6 +69,22 @@ if (typeof window !== 'undefined' && typeof window.define !== 'undefined') {
   window.define('@lumino/algorithm', LuminoAlgorithm);
   window.define('@lumino/commands', LuminoCommands);
   window.define('@lumino/domutils', LuminoDomutils);
+}
+
+const [urlParam, configParam] = ['fullMathjaxUrl', 'mathjaxConfig'];
+const url = CoreUtils.PageConfig.getOption(urlParam);
+const config = CoreUtils.PageConfig.getOption(configParam);
+if (url !== 'null' || config !== 'null') {
+  CoreUtils.PageConfig.setOption(
+    urlParam,
+    url === 'null'
+      ? 'https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js'
+      : url
+  );
+  CoreUtils.PageConfig.setOption(
+    configParam,
+    config === 'null' ? 'TeX-AMS_CHTML-full,Safe' : config
+  );
 }
 
 const WIDGET_MIMETYPE = 'application/vnd.jupyter.widget-view+json';
