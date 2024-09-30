@@ -1,3 +1,4 @@
+import asyncio
 import json
 from typing import Awaitable
 from jupyter_server.base.handlers import JupyterHandler
@@ -14,7 +15,6 @@ import sys
 class ExecutionRequestHandler(WebSocketMixin, WebSocketHandler, JupyterHandler):
     _kernels = {}
     _execution_data = {}
-    _cache = {}
 
     def initialize(self, **kwargs):
         super().initialize()
@@ -29,10 +29,7 @@ class ExecutionRequestHandler(WebSocketMixin, WebSocketHandler, JupyterHandler):
         """
         super().open()
         self._kernel_id = kernel_id
-        ExecutionRequestHandler._kernels[kernel_id] = self
         self.write_message({"action": "initialized", "payload": {}})
-        if kernel_id in self._cache:
-            self.write_message(self._cache[kernel_id])
 
     async def on_message(self, message_str: str | bytes) -> Awaitable[None] | None:
         message = json.loads(message_str)
@@ -40,11 +37,25 @@ class ExecutionRequestHandler(WebSocketMixin, WebSocketHandler, JupyterHandler):
         payload = message.get("payload", {})
         if action == "execute":
             request_kernel_id = payload.get("kernel_id")
-
+            if request_kernel_id != self._kernel_id:
+                await self.write_message(
+                    {
+                        "action": "execution_error",
+                        "payload": {"error": "Kernel ID does not match"},
+                    }
+                )
+                return
             kernel_future = self.kernel_manager.get_kernel(self._kernel_id)
             km = await ensure_async(kernel_future)
-            execution_data = self._execution_data.get(self._kernel_id)
-
+            execution_data = self._execution_data.pop(self._kernel_id, None)
+            if execution_data is None:
+                await self.write_message(
+                    {
+                        "action": "execution_error",
+                        "payload": {"error": "Missing notebook data"},
+                    }
+                )
+                return
             nb = execution_data["nb"]
             self._executor = executor = VoilaExecutor(
                 nb,
@@ -53,7 +64,7 @@ class ExecutionRequestHandler(WebSocketMixin, WebSocketHandler, JupyterHandler):
                 show_tracebacks=execution_data["show_tracebacks"],
             )
             executor.kc = await executor.async_start_new_kernel_client()
-
+            total_cell = len(nb.cells)
             for cell_idx, input_cell in enumerate(nb.cells):
                 try:
                     output_cell = await executor.execute_cell(
@@ -102,13 +113,13 @@ class ExecutionRequestHandler(WebSocketMixin, WebSocketHandler, JupyterHandler):
                         {
                             "action": "execution_result",
                             "payload": {
-                                "request_kernel_id": request_kernel_id,
                                 "output_cell": output_cell,
                                 "cell_index": cell_idx,
+                                "total_cell": total_cell,
                             },
                         }
                     )
 
     def on_close(self) -> None:
-        if self._executor:
-            del self._executor.kc
+        if self._executor and self._executor.kc:
+            asyncio.create_task(ensure_async(self._executor.kc.stop_channels()))
