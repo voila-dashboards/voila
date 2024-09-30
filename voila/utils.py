@@ -90,6 +90,7 @@ async def _get_request_info(ws_url: str) -> Awaitable:
 
 
 def get_page_config(base_url, settings, log, voila_configuration: VoilaConfiguration):
+    progressive_rendering = settings.get("progressive_rendering", False)
     page_config = {
         "appVersion": __version__,
         "appUrl": "voila/",
@@ -99,6 +100,7 @@ def get_page_config(base_url, settings, log, voila_configuration: VoilaConfigura
         "fullStaticUrl": url_path_join(base_url, "voila/static"),
         "fullLabextensionsUrl": url_path_join(base_url, "voila/labextensions"),
         "extensionConfig": voila_configuration.extension_config,
+        "progressiveRendering": progressive_rendering,
     }
     mathjax_config = settings.get("mathjax_config", "TeX-AMS_CHTML-full,Safe")
     mathjax_url = settings.get(

@@ -190,6 +190,7 @@ class Voila(Application):
         "pool_size": "VoilaConfiguration.default_pool_size",
         "show_tracebacks": "VoilaConfiguration.show_tracebacks",
         "preheat_kernel": "VoilaConfiguration.preheat_kernel",
+        "progressive_rendering": "VoilaConfiguration.progressive_rendering",
         "strip_sources": "VoilaConfiguration.strip_sources",
         "template": "VoilaConfiguration.template",
         "theme": "VoilaConfiguration.theme",
@@ -613,6 +614,12 @@ class Voila(Application):
         if preheat_kernel and self.prelaunch_hook:
             raise Exception("`preheat_kernel` and `prelaunch_hook` are incompatible")
 
+        progressive_rendering = self.voila_configuration.progressive_rendering
+        if preheat_kernel and progressive_rendering:
+            raise Exception(
+                "`preheat_kernel` and `progressive_rendering` are incompatible"
+            )
+
         kernel_manager_class = voila_kernel_manager_factory(
             self.voila_configuration.multi_kernel_manager_class,
             preheat_kernel,
@@ -685,6 +692,7 @@ class Voila(Application):
             config_manager=self.config_manager,
             mathjax_config=self.mathjax_config,
             mathjax_url=self.mathjax_url,
+            progressive_rendering=progressive_rendering,
         )
         settings[self.name] = self  # Why???
 

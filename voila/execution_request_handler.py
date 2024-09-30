@@ -13,7 +13,6 @@ import sys
 
 
 class ExecutionRequestHandler(WebSocketMixin, WebSocketHandler, JupyterHandler):
-    _kernels = {}
     _execution_data = {}
 
     def initialize(self, **kwargs):

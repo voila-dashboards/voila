@@ -3,6 +3,7 @@ import { OutputAreaModel, SimplifiedOutputArea } from '@jupyterlab/outputarea';
 import { IRenderMimeRegistry } from '@jupyterlab/rendermime';
 import { Widget } from '@lumino/widgets';
 import { VoilaWidgetManager } from './manager';
+import { PageConfig, URLExt } from '@jupyterlab/coreutils';
 
 /**
  * Interface representing the structure of an execution result message.
@@ -39,6 +40,14 @@ export interface IReceivedWidgetModel {
 export type IExecutionMessage =
   | IExecutionResultMessage
   | IExecutionErrorMessage;
+
+export function getExecutionURL(): string {
+  const executeProtocol =
+    PageConfig.getOption('progressiveRenderingProtocol') ?? 'ws';
+  const baseUrl = PageConfig.getOption('baseUrl') ?? '/';
+  console.log('cccc', executeProtocol, URLExt.normalize(baseUrl));
+  return `${URLExt.join(baseUrl)}`;
+}
 
 /**
  * Handles the execution result by rendering the output area and managing widget models.

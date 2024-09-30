@@ -25,6 +25,7 @@ import { VoilaApp } from '../../app';
 import { VoilaWidgetManager } from './manager';
 import { RenderedCells } from './renderedcells';
 import {
+  getExecutionURL,
   handleExecutionResult,
   IExecutionMessage,
   IReceivedWidgetModel
@@ -190,7 +191,7 @@ export const renderOutputsProgressivelyPlugin: JupyterFrontEndPlugin<void> = {
     widgetManager.modelRegistered.connect(modelRegisteredHandler);
 
     const ws = new WebSocket(`ws://localhost:8866/voila/execution/${kernelId}`);
-
+    getExecutionURL();
     ws.onmessage = async (msg) => {
       const { action, payload }: IExecutionMessage = JSON.parse(msg.data);
       switch (action) {
