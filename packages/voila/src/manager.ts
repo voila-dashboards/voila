@@ -71,22 +71,6 @@ if (typeof window !== 'undefined' && typeof window.define !== 'undefined') {
   window.define('@lumino/domutils', LuminoDomutils);
 }
 
-const [urlParam, configParam] = ['fullMathjaxUrl', 'mathjaxConfig'];
-const url = CoreUtils.PageConfig.getOption(urlParam);
-const config = CoreUtils.PageConfig.getOption(configParam);
-if (url !== 'null' || config !== 'null') {
-  CoreUtils.PageConfig.setOption(
-    urlParam,
-    url === 'null'
-      ? 'https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js'
-      : url
-  );
-  CoreUtils.PageConfig.setOption(
-    configParam,
-    config === 'null' ? 'TeX-AMS_CHTML-full,Safe' : config
-  );
-}
-
 const WIDGET_MIMETYPE = 'application/vnd.jupyter.widget-view+json';
 
 /**

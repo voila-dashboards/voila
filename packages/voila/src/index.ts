@@ -18,6 +18,8 @@ export {
   EditorLanguageRegistry
 } from '@jupyterlab/codemirror';
 
+export { PageConfig } from '@jupyterlab/coreutils';
+
 export { MathJaxTypesetter } from '@jupyterlab/mathjax2-extension';
 
 export { createMarkdownParser } from '@jupyterlab/markedparser-extension';
