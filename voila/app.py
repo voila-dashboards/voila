@@ -20,7 +20,7 @@ import tempfile
 import threading
 import webbrowser
 
-from .tornado.kernelwebsockethandler import VoilaKernelWebsocketHandler
+from .tornado.kernel_websocket_handler import VoilaKernelWebsocketHandler
 
 from .tornado.execution_request_handler import ExecutionRequestHandler
 

@@ -34,6 +34,63 @@
     .voila-spinner-color2{
       fill:#f8e14b;
     }
+
+    .voila-skeleton-container {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .voila-skeleton-post {
+      width: 220px;
+      height: 80px;
+    }
+    .voila-skeleton-post .voila-skeleton-avatar {
+      float: left;
+      width: 52px;
+      height: 52px;
+      background-color: var(--jp-layout-color1);
+      border-radius: 25%;
+      margin: 8px;
+      background-image: linear-gradient(90deg, var(--jp-layout-color2) 0px, var(--jp-layout-color3) 40px, var(--jp-layout-color2) 80px);
+      background-size: 600px;
+      animation: shine-avatar 1.6s infinite linear;
+    }
+    .voila-skeleton-post .voila-skeleton-line {
+      float: left;
+      width: 140px;
+      height: 16px;
+      margin-top: 12px;
+      border-radius: 7px;
+      background-image: linear-gradient(90deg, var(--jp-layout-color2) 0px, var(--jp-layout-color3) 40px, var(--jp-layout-color2) 80px);
+      background-size: 600px;
+      animation: shine-lines 1.6s infinite linear;
+    }
+    .voila-skeleton-post .voila-skeleton-avatar + .voila-skeleton-line {
+      margin-top: 11px;
+      width: 100px;
+    }
+    .voila-skeleton-post .voila-skeleton-line ~ .voila-skeleton-line {
+      background-color: var(--jp-layout-color2);
+    }
+
+    @keyframes shine-lines {
+      0% {
+        background-position: -100px;
+      }
+      40%, 100% {
+        background-position: 140px;
+      }
+    }
+    @keyframes shine-avatar {
+      0% {
+        background-position: -32px;
+      }
+      40%, 100% {
+        background-position: 208px;
+      }
+    }
   </style>
 {% endmacro %}
 

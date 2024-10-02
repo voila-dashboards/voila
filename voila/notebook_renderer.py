@@ -249,11 +249,17 @@ class NotebookRenderer(LoggingConfigurable):
         return kernel_id
 
     async def _jinja_notebook_execute(self, nb, kernel_id):
-        result = await self.executor.async_execute(cleanup_kc=False)
         # we modify the notebook in place, since the nb variable cannot be
         # reassigned it seems in jinja2 e.g. if we do {% with nb = notebook_execute(nb, kernel_id) %}
         # ,the base template/blocks will not see the updated variable
         #  (it seems to be local to our block)
+        if self.voila_configuration.progressive_rendering:
+            result, _ = ClearOutputPreprocessor().preprocess(
+                nb, {"metadata": {"path": self.cwd}}
+            )
+        else:
+            result = await self.executor.async_execute(cleanup_kc=False)
+
         nb.cells = result.cells
 
         await self._cleanup_resources()
