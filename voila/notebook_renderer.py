@@ -9,20 +9,23 @@
 
 
 import os
+import sys
+import traceback
 from functools import partial
 from copy import deepcopy
-from typing import Generator, List, Tuple, Union
+from typing import AsyncGenerator, Generator, List, Tuple, Union
 
 import nbformat
 import tornado.web
 from jupyter_core.utils import ensure_async
 from jupyter_server.config_manager import recursive_update
+from nbclient.exceptions import CellExecutionError
 from nbconvert.preprocessors.clearoutput import ClearOutputPreprocessor
 from traitlets.config.configurable import LoggingConfigurable
 
 from voila.configuration import VoilaConfiguration
 
-from .execute import VoilaExecutor
+from .execute import VoilaExecutor, strip_code_cell_warnings
 from .exporter import VoilaExporter
 from .paths import collect_template_paths
 from .utils import ENV_VARIABLE
@@ -153,7 +156,7 @@ class NotebookRenderer(LoggingConfigurable):
         self,
         kernel_id: Union[str, None] = None,
         kernel_future=None,
-    ) -> Generator:
+    ) -> AsyncGenerator:
         inner_kernel_start = partial(
             self._jinja_kernel_start, kernel_id=kernel_id, kernel_future=kernel_future
         )
@@ -168,9 +171,16 @@ class NotebookRenderer(LoggingConfigurable):
             "frontend": "voila",
             "main_js": "voila.js",
             "kernel_start": inner_kernel_start,
-            "cell_generator": self._jinja_cell_generator,
             "notebook_execute": self._jinja_notebook_execute,
+            "progressive_rendering": self.voila_configuration.progressive_rendering,
         }
+        if self.voila_configuration.progressive_rendering:
+            extra_context["cell_generator"] = (
+                self._jinja_cell_generator_without_execution
+            )
+        else:
+            extra_context["cell_generator"] = self._jinja_cell_generator
+
         # render notebook in snippets, then return an iterator so we can flush
         # them out to the browser progressively.
         return self.exporter.generate_from_notebook_node(
@@ -248,56 +258,63 @@ class NotebookRenderer(LoggingConfigurable):
 
         await self._cleanup_resources()
 
+    async def _jinja_cell_generator_without_execution(self, nb, kernel_id):
+        nb, _ = ClearOutputPreprocessor().preprocess(
+            nb, {"metadata": {"path": self.cwd}}
+        )
+        for input_cell in nb.cells:
+            output = input_cell.copy()
+            yield output
+        await self._cleanup_resources()
+
     async def _jinja_cell_generator(self, nb, kernel_id):
         """Generator that will execute a single notebook cell at a time"""
         nb, _ = ClearOutputPreprocessor().preprocess(
             nb, {"metadata": {"path": self.cwd}}
         )
         for cell_idx, input_cell in enumerate(nb.cells):
-            output = input_cell.copy()
-            yield output
-            # try:
-            #     output_cell = await self.executor.execute_cell(
-            #         input_cell, None, cell_idx, store_history=False
-            #     )
-            # except TimeoutError:
-            #     output_cell = input_cell
-            #     break
-            # except CellExecutionError:
-            #     self.log.exception(
-            #         "Error at server while executing cell: %r", input_cell
-            #     )
-            #     if self.executor.should_strip_error():
-            #         strip_code_cell_warnings(input_cell)
-            #         self.executor.strip_code_cell_errors(input_cell)
-            #     output_cell = input_cell
-            #     break
-            # except Exception as e:
-            #     self.log.exception(
-            #         "Error at server while executing cell: %r", input_cell
-            #     )
-            #     output_cell = nbformat.v4.new_code_cell()
-            #     if self.executor.should_strip_error():
-            #         output_cell.outputs = [
-            #             {
-            #                 "output_type": "stream",
-            #                 "name": "stderr",
-            #                 "text": "An exception occurred at the server (not the notebook). {}".format(
-            #                     self.executor.cell_error_instruction
-            #                 ),
-            #             }
-            #         ]
-            #     else:
-            #         output_cell.outputs = [
-            #             {
-            #                 "output_type": "error",
-            #                 "ename": type(e).__name__,
-            #                 "evalue": str(e),
-            #                 "traceback": traceback.format_exception(*sys.exc_info()),
-            #             }
-            #         ]
-            # finally:
-            #     yield output_cell
+            try:
+                output_cell = await self.executor.execute_cell(
+                    input_cell, None, cell_idx, store_history=False
+                )
+            except TimeoutError:
+                output_cell = input_cell
+                break
+            except CellExecutionError:
+                self.log.exception(
+                    "Error at server while executing cell: %r", input_cell
+                )
+                if self.executor.should_strip_error():
+                    strip_code_cell_warnings(input_cell)
+                    self.executor.strip_code_cell_errors(input_cell)
+                output_cell = input_cell
+                break
+            except Exception as e:
+                self.log.exception(
+                    "Error at server while executing cell: %r", input_cell
+                )
+                output_cell = nbformat.v4.new_code_cell()
+                if self.executor.should_strip_error():
+                    output_cell.outputs = [
+                        {
+                            "output_type": "stream",
+                            "name": "stderr",
+                            "text": "An exception occurred at the server (not the notebook). {}".format(
+                                self.executor.cell_error_instruction
+                            ),
+                        }
+                    ]
+                else:
+                    output_cell.outputs = [
+                        {
+                            "output_type": "error",
+                            "ename": type(e).__name__,
+                            "evalue": str(e),
+                            "traceback": traceback.format_exception(*sys.exc_info()),
+                        }
+                    ]
+            finally:
+                yield output_cell
 
         await self._cleanup_resources()
 

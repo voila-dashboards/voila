@@ -22,7 +22,7 @@ import webbrowser
 
 from .tornado.kernelwebsockethandler import VoilaKernelWebsocketHandler
 
-from .execution_request_handler import ExecutionRequestHandler
+from .tornado.execution_request_handler import ExecutionRequestHandler
 
 from .tornado.contentshandler import VoilaContentsHandler
 
@@ -692,7 +692,6 @@ class Voila(Application):
             config_manager=self.config_manager,
             mathjax_config=self.mathjax_config,
             mathjax_url=self.mathjax_url,
-            progressive_rendering=progressive_rendering,
         )
         settings[self.name] = self  # Why???
 
@@ -751,10 +750,11 @@ class Voila(Application):
                 ),
             ]
         )
+
         if JUPYTER_SERVER_2:
             handlers.extend(self.identity_provider.get_handlers())
 
-        if self.voila_configuration.preheat_kernel or True:
+        if self.voila_configuration.preheat_kernel:
             handlers.append(
                 (
                     url_path_join(
@@ -763,14 +763,15 @@ class Voila(Application):
                     RequestInfoSocketHandler,
                 )
             )
-        handlers.append(
-            (
-                url_path_join(
-                    self.server_url, r"/voila/execution/%s" % _kernel_id_regex
-                ),
-                ExecutionRequestHandler,
+        if self.voila_configuration.progressive_rendering:
+            handlers.append(
+                (
+                    url_path_join(
+                        self.server_url, r"/voila/execution/%s" % _kernel_id_regex
+                    ),
+                    ExecutionRequestHandler,
+                )
             )
-        )
         # Serving JupyterLab extensions
         handlers.append(
             (

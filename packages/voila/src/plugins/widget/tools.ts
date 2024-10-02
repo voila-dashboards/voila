@@ -141,3 +141,18 @@ export function createOutputArea({
   Widget.attach(area, wrapper);
   return model;
 }
+
+export function createSkeleton(): void {
+  const innerHtml = `<div class="voila-skeleton-post">
+      <div class="voila-skeleton-avatar"></div>
+      <div class="voila-skeleton-line"></div>
+      <div class="voila-skeleton-line"></div>
+    </div>`;
+  const elements = document.querySelectorAll('[cell-index]');
+  elements.forEach((it) => {
+    const element = document.createElement('div');
+    element.className = 'voila-skeleton-container';
+    element.innerHTML = innerHtml;
+    it.appendChild(element);
+  });
+}

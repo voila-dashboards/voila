@@ -19,7 +19,11 @@
       spinner.style.display="flex";
     }
     var el = document.getElementById("loading_text");
-    innterText = text ?? `Reading ${cell_index} of ${cell_count}`
+    let defaultText = `Executing ${cell_index} of ${cell_count}`
+    if("{{ progressive_rendering | default("False", true) }}" === "True"){
+      defaultText = `Reading ${cell_index} of ${cell_count}`
+    }
+    innterText = text ?? defaultText
     if(el){
       el.innerHTML = innterText;
     }

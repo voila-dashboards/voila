@@ -25,6 +25,7 @@ import { VoilaApp } from '../../app';
 import { VoilaWidgetManager } from './manager';
 import { RenderedCells } from './renderedcells';
 import {
+  createSkeleton,
   getExecutionURL,
   handleExecutionResult,
   IExecutionMessage,
@@ -173,7 +174,16 @@ export const renderOutputsProgressivelyPlugin: JupyterFrontEndPlugin<void> = {
     app: JupyterFrontEnd,
     rendermime: IRenderMimeRegistry
   ): Promise<void> => {
-    const widgetManager = (app as VoilaApp).widgetManager;
+    const progressiveRendering =
+      PageConfig.getOption('progressiveRendering') === 'true';
+    if (!progressiveRendering) {
+      return;
+    }
+
+    createSkeleton();
+
+    const widgetManager = await (app as VoilaApp).widgetManagerPromise.promise;
+
     if (!widgetManager) {
       return;
     }

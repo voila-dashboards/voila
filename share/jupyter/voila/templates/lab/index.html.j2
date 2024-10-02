@@ -110,13 +110,6 @@
           <script>
             voila_process({{ cellloop.index }}, {{ cell_count }})
           </script>
-          <div class="voila-skeleton-container">
-            <div class="voila-skeleton-post">
-              <div class="voila-skeleton-avatar"></div>
-              <div class="voila-skeleton-line"></div>
-              <div class="voila-skeleton-line"></div>
-            </div>
-          </div>
           {{ super() }}
         </div>
       {%- endblock any_cell -%}
