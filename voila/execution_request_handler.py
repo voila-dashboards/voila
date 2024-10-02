@@ -3,6 +3,7 @@ import json
 from typing import Awaitable
 from jupyter_server.base.handlers import JupyterHandler
 from tornado.websocket import WebSocketHandler
+from tornado.web import HTTPError
 from jupyter_server.base.websocket import WebSocketMixin
 from jupyter_core.utils import ensure_async
 from nbclient.exceptions import CellExecutionError
@@ -18,7 +19,7 @@ class ExecutionRequestHandler(WebSocketMixin, WebSocketHandler, JupyterHandler):
     def initialize(self, **kwargs):
         super().initialize()
 
-    def open(self, kernel_id: str) -> None:
+    async def open(self, kernel_id: str) -> None:
         """Create a new websocket connection, this connection is
         identified by the kernel id.
 
@@ -26,7 +27,12 @@ class ExecutionRequestHandler(WebSocketMixin, WebSocketHandler, JupyterHandler):
             kernel_id (str): Kernel id used by the notebook when it opens
             the websocket connection.
         """
+        identity_provider = self.settings.get("identity_provider")
+        user = await ensure_async(identity_provider.get_user(self))
+        if user is None:
+            raise HTTPError(403, "Unauthenticated")
         super().open()
+
         self._kernel_id = kernel_id
         self.write_message({"action": "initialized", "payload": {}})
 
@@ -108,6 +114,7 @@ class ExecutionRequestHandler(WebSocketMixin, WebSocketHandler, JupyterHandler):
                             }
                         ]
                 finally:
+                    output_cell.pop("source", None)
                     await self.write_message(
                         {
                             "action": "execution_result",

@@ -189,8 +189,8 @@ export const renderOutputsProgressivelyPlugin: JupyterFrontEndPlugin<void> = {
       }
     };
     widgetManager.modelRegistered.connect(modelRegisteredHandler);
-
-    const ws = new WebSocket(`ws://localhost:8866/voila/execution/${kernelId}`);
+    const wsUrl = getExecutionURL(kernelId);
+    const ws = new WebSocket(wsUrl);
     getExecutionURL();
     ws.onmessage = async (msg) => {
       const { action, payload }: IExecutionMessage = JSON.parse(msg.data);

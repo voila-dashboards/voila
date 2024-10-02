@@ -41,12 +41,9 @@ export type IExecutionMessage =
   | IExecutionResultMessage
   | IExecutionErrorMessage;
 
-export function getExecutionURL(): string {
-  const executeProtocol =
-    PageConfig.getOption('progressiveRenderingProtocol') ?? 'ws';
-  const baseUrl = PageConfig.getOption('baseUrl') ?? '/';
-  console.log('cccc', executeProtocol, URLExt.normalize(baseUrl));
-  return `${URLExt.join(baseUrl)}`;
+export function getExecutionURL(kernelId?: string): string {
+  const wsUrl = PageConfig.getWsUrl();
+  return URLExt.join(wsUrl, 'voila/execution', kernelId ?? '');
 }
 
 /**

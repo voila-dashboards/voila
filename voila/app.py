@@ -20,6 +20,8 @@ import tempfile
 import threading
 import webbrowser
 
+from .tornado.kernelwebsockethandler import VoilaKernelWebsocketHandler
+
 from .execution_request_handler import ExecutionRequestHandler
 
 from .tornado.contentshandler import VoilaContentsHandler
@@ -39,7 +41,6 @@ from jupyter_server.services.kernels.handlers import KernelHandler
 try:
     JUPYTER_SERVER_2 = True
 
-    from jupyter_server.services.kernels.websocket import KernelWebsocketHandler
     from jupyter_server.auth.authorizer import AllowAllAuthorizer, Authorizer
     from jupyter_server.auth.identity import PasswordIdentityProvider
     from jupyter_server import DEFAULT_TEMPLATE_PATH_LIST, DEFAULT_STATIC_FILES_PATH
@@ -61,7 +62,6 @@ try:
 except ImportError:
     JUPYTER_SERVER_2 = False
 
-    from jupyter_server.services.kernels.handlers import ZMQChannelsHandler
     from jupyter_server.utils import url_path_join, run_sync
     from jupyter_server.services.config import ConfigManager
 
@@ -724,7 +724,7 @@ class Voila(Application):
                     url_path_join(
                         self.server_url, r"/api/kernels/%s/channels" % _kernel_id_regex
                     ),
-                    KernelWebsocketHandler if JUPYTER_SERVER_2 else ZMQChannelsHandler,
+                    VoilaKernelWebsocketHandler,
                 ),
                 (
                     url_path_join(self.server_url, r"/voila/templates/(.*)"),
