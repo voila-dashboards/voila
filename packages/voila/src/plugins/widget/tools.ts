@@ -75,7 +75,9 @@ export function handleExecutionResult({
       element.removeChild(skeleton);
     }
     const model = createOutputArea({ rendermime, parent: element });
-
+    if (!output_cell.outputs) {
+      return;
+    }
     if (output_cell.outputs.length > 0) {
       element.lastElementChild?.classList.remove(
         'jp-mod-noOutputs',
