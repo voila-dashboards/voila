@@ -61,7 +61,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu, macos, windows]
+        os: [ubuntu, macos-12, windows]
         python: ['3.8', '3.10']
         include:
           - python: '3.8'
@@ -70,7 +70,7 @@ jobs:
             dist: 'voila*.whl'
           - os: windows
             py_cmd: python
-          - os: macos
+          - os: macos-12
             py_cmd: python3
           - os: ubuntu
             py_cmd: python
