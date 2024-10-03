@@ -4,6 +4,8 @@
 import { expect, test } from '@playwright/test';
 import { addBenchmarkToTest } from './utils';
 
+const PREFIX =
+  process.env.PROGRESSIVE_RENDERING === 'true' ? 'progressive_rendering_' : '';
 test.describe('Voila performance Tests', () => {
   test.beforeEach(({ page }) => {
     page.setDefaultTimeout(120000);
@@ -24,7 +26,8 @@ test.describe('Voila performance Tests', () => {
       browserName
     );
 
-    expect(await page.screenshot()).toMatchSnapshot('voila-tree-classic.png');
+    // await expect(page).toHaveScreenshot('voila-tree-classic.png');
+    await expect(page).toHaveScreenshot(`${PREFIX}voila-tree-classic.png`);
   });
 
   test('Render tree light theme', async ({ page, browserName }, testInfo) => {
@@ -40,7 +43,7 @@ test.describe('Voila performance Tests', () => {
       browserName
     );
 
-    expect(await page.screenshot()).toMatchSnapshot('voila-tree-light.png');
+    await expect(page).toHaveScreenshot(`${PREFIX}voila-tree-light.png`);
   });
 
   test('Render tree dark theme', async ({ page, browserName }, testInfo) => {
@@ -56,7 +59,7 @@ test.describe('Voila performance Tests', () => {
       browserName
     );
 
-    expect(await page.screenshot()).toMatchSnapshot('voila-tree-dark.png');
+    await expect(page).toHaveScreenshot(`${PREFIX}voila-tree-dark.png`);
   });
 
   test('Render tree miami theme', async ({ page, browserName }, testInfo) => {
@@ -72,7 +75,7 @@ test.describe('Voila performance Tests', () => {
       browserName
     );
 
-    expect(await page.screenshot()).toMatchSnapshot('voila-tree-miami.png');
+    await expect(page).toHaveScreenshot(`${PREFIX}voila-tree-miami.png`);
   });
 
   test('Render and benchmark basics.ipynb with classic template', async ({
@@ -90,9 +93,7 @@ test.describe('Voila performance Tests', () => {
     // wait for the final MathJax message to be hidden
     await page.$('text=Typesetting math: 100%');
     await page.waitForSelector('#MathJax_Message', { state: 'hidden' });
-    expect(await page.screenshot()).toMatchSnapshot(
-      `${notebookName}-classic.png`
-    );
+    await expect(page).toHaveScreenshot(`${PREFIX}${notebookName}-classic.png`);
   });
 
   test('Render and benchmark basics.ipynb', async ({
@@ -117,7 +118,7 @@ test.describe('Voila performance Tests', () => {
     // wait for the final MathJax message to be hidden
     await page.$('text=Typesetting math: 100%');
     await page.waitForSelector('#MathJax_Message', { state: 'hidden' });
-    expect(await page.screenshot()).toMatchSnapshot(`${notebookName}.png`);
+    await expect(page).toHaveScreenshot(`${PREFIX}${notebookName}.png`);
   });
 
   test('Render basics.ipynb with dark theme', async ({
@@ -135,7 +136,7 @@ test.describe('Voila performance Tests', () => {
     // wait for the final MathJax message to be hidden
     await page.$('text=Typesetting math: 100%');
     await page.waitForSelector('#MathJax_Message', { state: 'hidden' });
-    expect(await page.screenshot()).toMatchSnapshot(`${notebookName}-dark.png`);
+    await expect(page).toHaveScreenshot(`${PREFIX}${notebookName}-dark.png`);
   });
 
   test('Render basics.ipynb with miami theme', async ({
@@ -155,30 +156,28 @@ test.describe('Voila performance Tests', () => {
     // wait for the final MathJax message to be hidden
     await page.$('text=Typesetting math: 100%');
     await page.waitForSelector('#MathJax_Message', { state: 'hidden' });
-    expect(await page.screenshot()).toMatchSnapshot(
-      `${notebookName}-miami.png`
-    );
+    await expect(page).toHaveScreenshot(`${PREFIX}${notebookName}-miami.png`);
   });
 
   test('Render 404 error', async ({ page }) => {
     await page.goto('/voila/render/unknown.ipynb');
     await page.waitForSelector('.voila-error');
 
-    expect(await page.screenshot()).toMatchSnapshot('404.png');
+    await expect(page).toHaveScreenshot('404.png');
   });
 
   test('Render 404 error with classic template', async ({ page }) => {
     await page.goto('/voila/render/unknown.ipynb?template=classic');
     await page.waitForSelector('.voila-error');
 
-    expect(await page.screenshot()).toMatchSnapshot('404-classic.png');
+    await expect(page).toHaveScreenshot('404-classic.png');
   });
 
   test('Render 404 error with dark theme', async ({ page }) => {
     await page.goto('/voila/render/unknown.ipynb?theme=dark');
     await page.waitForSelector('.voila-error');
 
-    expect(await page.screenshot()).toMatchSnapshot('404-dark.png');
+    await expect(page).toHaveScreenshot('404-dark.png');
   });
 
   test('Render and benchmark bqplot.ipynb', async ({
@@ -191,7 +190,7 @@ test.describe('Voila performance Tests', () => {
       await page.waitForSelector('svg.svg-figure');
     };
     await addBenchmarkToTest(notebookName, testFunction, testInfo, browserName);
-    expect(await page.screenshot()).toMatchSnapshot(`${notebookName}.png`);
+    await expect(page).toHaveScreenshot(`${PREFIX}${notebookName}.png`);
   });
 
   test('Render and benchmark dashboard.ipynb', async ({
@@ -222,7 +221,7 @@ test.describe('Voila performance Tests', () => {
       );
     };
     await addBenchmarkToTest(notebookName, testFunction, testInfo, browserName);
-    expect(await page.screenshot()).toMatchSnapshot(`${notebookName}.png`);
+    await expect(page).toHaveScreenshot(`${PREFIX}${notebookName}.png`);
   });
 
   test('Render and benchmark interactive.ipynb', async ({
@@ -240,7 +239,7 @@ test.describe('Voila performance Tests', () => {
       await page.mouse.click(0, 0);
     };
     await addBenchmarkToTest(notebookName, testFunction, testInfo, browserName);
-    expect(await page.screenshot()).toMatchSnapshot(`${notebookName}.png`);
+    await expect(page).toHaveScreenshot(`${PREFIX}${notebookName}.png`);
   });
 
   test('Render and benchmark ipympl.ipynb', async ({
@@ -253,7 +252,7 @@ test.describe('Voila performance Tests', () => {
       await page.waitForSelector('div.jupyter-matplotlib-figure');
     };
     await addBenchmarkToTest(notebookName, testFunction, testInfo, browserName);
-    expect(await page.screenshot()).toMatchSnapshot(`${notebookName}.png`);
+    await expect(page).toHaveScreenshot(`${PREFIX}${notebookName}.png`);
   });
 
   test('Render and benchmark mimerenderers.ipynb', async ({
@@ -268,7 +267,7 @@ test.describe('Voila performance Tests', () => {
       await page.waitForTimeout(2000);
     };
     await addBenchmarkToTest(notebookName, testFunction, testInfo, browserName);
-    expect(await page.screenshot()).toMatchSnapshot(`${notebookName}.png`);
+    await expect(page).toHaveScreenshot(`${PREFIX}${notebookName}.png`);
   });
 
   test('Render and benchmark bokeh.ipynb', async ({
@@ -281,7 +280,7 @@ test.describe('Voila performance Tests', () => {
       await page.waitForSelector('.bk-Canvas');
     };
     await addBenchmarkToTest(notebookName, testFunction, testInfo, browserName);
-    expect(await page.screenshot()).toMatchSnapshot(`${notebookName}.png`);
+    await expect(page).toHaveScreenshot(`${PREFIX}${notebookName}.png`);
   });
 
   test('Benchmark the multiple widgets notebook', async ({
@@ -301,7 +300,7 @@ test.describe('Voila performance Tests', () => {
       testInfo,
       browserName
     );
-    expect(await page.screenshot()).toMatchSnapshot(`${notebookName}.png`);
+    await expect(page).toHaveScreenshot(`${PREFIX}${notebookName}.png`);
   });
 
   test('Render and benchmark query-strings.ipynb', async ({
@@ -311,6 +310,9 @@ test.describe('Voila performance Tests', () => {
     const notebookName = 'query-strings';
     const testFunction = async () => {
       await page.goto(`/voila/render/${notebookName}.ipynb`);
+      await page.waitForSelector(
+        'div.lm-Widget[data-mime-type="application/vnd.jupyter.stdout"]'
+      );
       const userName = await page.$$(
         'div.jp-RenderedText.jp-OutputArea-output > pre'
       );
@@ -318,13 +320,16 @@ test.describe('Voila performance Tests', () => {
     };
     await addBenchmarkToTest(notebookName, testFunction, testInfo, browserName);
     await page.goto(`/voila/render/${notebookName}.ipynb?username=Riley`);
+    await page.waitForSelector(
+      'div.lm-Widget[data-mime-type="application/vnd.jupyter.stdout"]'
+    );
     const userName = await page.$$(
       'div.jp-RenderedText.jp-OutputArea-output > pre'
     );
     expect(await userName[1].innerHTML()).toContain('Hi Riley');
     await page.$('text=Typesetting math: 100%');
     await page.waitForSelector('#MathJax_Message', { state: 'hidden' });
-    expect(await page.screenshot()).toMatchSnapshot(`${notebookName}.png`);
+    await expect(page).toHaveScreenshot(`${PREFIX}${notebookName}.png`);
   });
 
   test('Render and benchmark reveal.ipynb', async ({
@@ -337,13 +342,13 @@ test.describe('Voila performance Tests', () => {
       await page.waitForSelector('.slider-container');
     };
     await addBenchmarkToTest(notebookName, testFunction, testInfo, browserName);
-    expect(await page.screenshot()).toMatchSnapshot(`${notebookName}.png`);
+    await expect(page).toHaveScreenshot(`${PREFIX}${notebookName}.png`);
   });
 
   test('Render yaml.ipynb', async ({ page, browserName }, testInfo) => {
     const notebookName = 'yaml';
     await page.goto(`/voila/render/${notebookName}.ipynb`);
     await page.waitForSelector('span >> text=hey');
-    expect(await page.screenshot()).toMatchSnapshot(`${notebookName}.png`);
+    await expect(page).toHaveScreenshot(`${PREFIX}${notebookName}.png`);
   });
 });

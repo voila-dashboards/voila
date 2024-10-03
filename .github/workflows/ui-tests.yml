@@ -13,6 +13,7 @@ jobs:
     strategy:
       matrix:
         jupyter-server-version: ["1.24.0", "2.14.2"]
+        progressive_rendering: [false, true]
       fail-fast: false
 
     steps:
@@ -35,7 +36,7 @@ jobs:
       - name: Launch Voila
         run: |
           # Mount a volume to overwrite the server configuration
-          jlpm start 2>&1 > /tmp/voila_server.log &
+          jlpm start --progressive_rendering=${{ matrix.progressive_rendering }} 2>&1 > /tmp/voila_server.log &
         working-directory: ui-tests
 
       - name: Install browser
@@ -49,6 +50,8 @@ jobs:
           timeout: 360000
 
       - name: Test
+        env:
+          PROGRESSIVE_RENDERING: ${{ matrix.progressive_rendering }}
         run: jlpm run test
         working-directory: ui-tests
 

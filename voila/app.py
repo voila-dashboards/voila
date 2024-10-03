@@ -883,6 +883,8 @@ class Voila(Application):
             try:
                 self.app.listen(port, self.ip)
                 self.port = port
+                if self.voila_configuration.progressive_rendering:
+                    self.log.info("Progressive rendering is activated")
                 self.log.info("Voilà is running at:\n%s" % self.display_url)
             except OSError as e:
                 if e.errno == errno.EADDRINUSE:
