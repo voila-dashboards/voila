@@ -1,6 +1,6 @@
 import asyncio
 import json
-from typing import Awaitable, Optional, Union
+from typing import Awaitable, Union
 from jupyter_server.base.handlers import JupyterHandler
 from tornado.websocket import WebSocketHandler
 from tornado.web import HTTPError
@@ -38,7 +38,7 @@ class ExecutionRequestHandler(WebSocketMixin, WebSocketHandler, JupyterHandler):
 
     async def on_message(
         self, message_str: Union[str, bytes]
-    ) -> Optional[Awaitable[None] | None]:
+    ) -> Union[Awaitable[None], None]:
         message = json.loads(message_str)
         action = message.get("action", None)
         payload = message.get("payload", {})

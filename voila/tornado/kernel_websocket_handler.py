@@ -1,10 +1,11 @@
 import json
-from typing import Any, Dict, Optional
+from typing import Any, Dict, Optional, Union
 
 try:
     from jupyter_server.services.kernels.websocket import KernelWebsocketHandler as WebsocketHandler
 except ImportError:
     from jupyter_server.services.kernels.handlers import ZMQChannelsHandler as WebsocketHandler
+
 
 
 def read_header_from_binary_message(ws_msg: bytes) -> Optional[Dict]:
@@ -24,9 +25,8 @@ def read_header_from_binary_message(ws_msg: bytes) -> Optional[Dict]:
 
 class VoilaKernelWebsocketHandler(WebsocketHandler):
     def write_message(
-        self, message: bytes | str | Dict[str, Any], binary: bool = False
+        self, message: Union[bytes, Dict[str, Any]], binary: bool = False
     ):
-        # if '"msg_type": "execute_input"' in message:
         if isinstance(message, bytes):
             header = read_header_from_binary_message(message)
         elif isinstance(message, dict):

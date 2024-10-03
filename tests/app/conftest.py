@@ -48,14 +48,30 @@ def preheat_mode():
 
 
 @pytest.fixture
+def progressive_rendering_mode():
+    """Fixture used to activate/deactivate progressive rendering mode.
+    Override this fixture in test file if you want to activate
+    progressive rendering mode.
+    """
+    return False
+
+
+@pytest.fixture
 def preheat_config(preheat_mode):
     return f"--preheat_kernel={preheat_mode}"
 
 
 @pytest.fixture
-def voila_app(voila_args, voila_config, preheat_config):
+def progressive_rendering_config(progressive_rendering_mode):
+    return f"--progressive_rendering={progressive_rendering_mode}"
+
+
+@pytest.fixture
+def voila_app(voila_args, voila_config, preheat_config, progressive_rendering_config):
     voila_app = VoilaTest.instance()
-    voila_app.initialize([*voila_args, "--no-browser", preheat_config])
+    voila_app.initialize(
+        [*voila_args, "--no-browser", preheat_config, progressive_rendering_config]
+    )
     voila_config(voila_app)
     voila_app.start()
     yield voila_app
