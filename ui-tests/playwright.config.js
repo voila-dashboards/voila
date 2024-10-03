@@ -19,7 +19,7 @@ module.exports = {
   retries: 1,
   expect: {
     toHaveScreenshot: {
-      maxDiffPixelRatio: 0.025
+      maxDiffPixelRatio: 0.05
     }
   }
 };

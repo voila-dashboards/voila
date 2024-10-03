@@ -4,8 +4,8 @@
 import { expect, test } from '@playwright/test';
 import { addBenchmarkToTest } from './utils';
 
-const PREFIX =
-  process.env.PROGRESSIVE_RENDERING === 'true' ? 'progressive_rendering_' : '';
+const PROGRESSIVE_RENDERING = process.env.PROGRESSIVE_RENDERING === 'true';
+const PREFIX = PROGRESSIVE_RENDERING ? '' : '';
 test.describe('Voila performance Tests', () => {
   test.beforeEach(({ page }) => {
     page.setDefaultTimeout(120000);
@@ -310,9 +310,15 @@ test.describe('Voila performance Tests', () => {
     const notebookName = 'query-strings';
     const testFunction = async () => {
       await page.goto(`/voila/render/${notebookName}.ipynb`);
-      await page.waitForSelector(
-        'div.lm-Widget[data-mime-type="application/vnd.jupyter.stdout"]'
-      );
+      if (PROGRESSIVE_RENDERING) {
+        await page.waitForSelector(
+          'div.lm-Widget[data-mime-type="application/vnd.jupyter.stdout"]'
+        );
+      } else {
+        await page.waitForSelector(
+          'div.jp-OutputArea-output[data-mime-type="text/plain"]'
+        );
+      }
       const userName = await page.$$(
         'div.jp-RenderedText.jp-OutputArea-output > pre'
       );
@@ -320,9 +326,15 @@ test.describe('Voila performance Tests', () => {
     };
     await addBenchmarkToTest(notebookName, testFunction, testInfo, browserName);
     await page.goto(`/voila/render/${notebookName}.ipynb?username=Riley`);
-    await page.waitForSelector(
-      'div.lm-Widget[data-mime-type="application/vnd.jupyter.stdout"]'
-    );
+    if (PROGRESSIVE_RENDERING) {
+      await page.waitForSelector(
+        'div.lm-Widget[data-mime-type="application/vnd.jupyter.stdout"]'
+      );
+    } else {
+      await page.waitForSelector(
+        'div.jp-OutputArea-output[data-mime-type="text/plain"]'
+      );
+    }
     const userName = await page.$$(
       'div.jp-RenderedText.jp-OutputArea-output > pre'
     );

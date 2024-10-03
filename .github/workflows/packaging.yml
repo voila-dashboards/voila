@@ -56,23 +56,23 @@ jobs:
           path: ./dist
 
   install:
-    runs-on: ${{ matrix.os }}-latest
+    runs-on: ${{ matrix.os }}
     needs: [build]
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu, macos-12, windows]
+        os: [ubuntu-latest, macos-12, windows-latest]
         python: ['3.8', '3.10']
         include:
           - python: '3.8'
             dist: 'voila*.tar.gz'
           - python: '3.10'
             dist: 'voila*.whl'
-          - os: windows
+          - os: windows-latest
             py_cmd: python
           - os: macos-12
             py_cmd: python3
-          - os: ubuntu
+          - os: ubuntu-latest
             py_cmd: python
     steps:
       - name: Install Python
