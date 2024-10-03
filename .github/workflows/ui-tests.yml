@@ -55,11 +55,25 @@ jobs:
         run: jlpm run test
         working-directory: ui-tests
 
+      - name: Set test report name for progressive rendering
+        if: always() && matrix.progressive_rendering == true
+        run: |
+          echo "TEST_REPORT_NAME=progressive-voila-test-report" >> $GITHUB_ENV
+          echo "TEST_ASSETS_NAME=progressive-voila-test-assets" >> $GITHUB_ENV
+          echo "TEST_BENCHMARK_NAME=progressive-voila-test-benchmark" >> $GITHUB_ENV
+
+      - name: Set test report name for non-progressive rendering
+        if: always() && matrix.progressive_rendering == false
+        run: |
+          echo "TEST_REPORT_NAME=voila-test-report" >> $GITHUB_ENV
+          echo "TEST_ASSETS_NAME=voila-test-assets" >> $GITHUB_ENV
+          echo "TEST_BENCHMARK_NAME=voila-test-benchmark" >> $GITHUB_ENV
+
       - name: Upload Playwright Test assets
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: voila-test-assets
+          name: ${{ env.TEST_ASSETS_NAME }}
           path: |
             ui-tests/test-results
 
@@ -67,7 +81,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: voila-benchmark-report
+          name: ${{ env.TEST_BENCHMARK_NAME }}
           path: |
             ui-tests/benchmark-results
 
@@ -75,7 +89,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: voila-test-report
+          name: ${{ env.TEST_REPORT_NAME }}
           path: |
             ui-tests/playwright-report
 

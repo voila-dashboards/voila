@@ -18,8 +18,8 @@ module.exports = {
   // Try one retry as some tests are flaky
   retries: 1,
   expect: {
-    toMatchSnapshot: {
-      maxDiffPixelRatio: 0.05
+    toHaveScreenshot: {
+      maxDiffPixelRatio: 0.025
     }
   }
 };
