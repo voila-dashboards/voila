@@ -28,7 +28,6 @@ jobs:
         node-version: [18.x]
 
     steps:
-
       - name: React to the triggering comment
         run: |
           gh api repos/${{ github.repository }}/issues/comments/${{ github.event.comment.id }}/reactions --raw-field 'content=+1'
@@ -96,11 +95,3 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           server_url: http-get://localhost:8866/
           test_folder: ui-tests
-
-      - uses: jupyterlab/maintainer-tools/.github/actions/update-snapshots@main
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          server_url: http-get://localhost:8866/
-          test_folder: ui-tests
-          start_server_script : start:progressive_rendering
-          update_script: test:update:progressive_rendering

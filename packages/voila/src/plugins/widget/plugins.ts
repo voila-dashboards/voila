@@ -201,7 +201,6 @@ export const renderOutputsProgressivelyPlugin: JupyterFrontEndPlugin<void> = {
     widgetManager.modelRegistered.connect(modelRegisteredHandler);
     const wsUrl = getExecutionURL(kernelId);
     const ws = new WebSocket(wsUrl);
-    getExecutionURL();
     ws.onmessage = async (msg) => {
       const { action, payload }: IExecutionMessage = JSON.parse(msg.data);
       switch (action) {
