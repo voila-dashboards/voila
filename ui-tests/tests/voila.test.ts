@@ -288,7 +288,7 @@ test.describe('Voila performance Tests', () => {
     const notebookName = 'reveal';
     const testFunction = async () => {
       await page.goto(`/voila/render/${notebookName}.ipynb`);
-      await page.waitForSelector('span[role="presentation"] >> text=x');
+      await page.waitForSelector('.noUi-touch-area');
     };
     await addBenchmarkToTest(notebookName, testFunction, testInfo, browserName);
     expect(await page.screenshot()).toMatchSnapshot(`${notebookName}.png`);
