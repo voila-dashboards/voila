@@ -116,11 +116,6 @@ class VoilaHandler(BaseVoilaHandler):
 
         template_arg = self.get_argument("template", None)
         theme_arg = self.get_argument("theme", None)
-        labextensions_url = self.get_argument("labextensions_url", None)
-
-        # Set the labextension_url if it is provided
-        if labextensions_url:
-            self.voila_configuration.labextensions_url = labextensions_url
 
         # Compose reply
         self.set_header("Content-Type", "text/html")
