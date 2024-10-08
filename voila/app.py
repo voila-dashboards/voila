@@ -339,9 +339,9 @@ class Voila(Application):
             Should be of the form:
 
             def hook_fn(
-                base_url: str, 
-                settings: Dict[str, Any], 
-                log: Logger, 
+                base_url: str,
+                settings: Dict[str, Any],
+                log: Logger,
                 voila_configuration: VoilaConfiguration
             ) -> Dict
 
