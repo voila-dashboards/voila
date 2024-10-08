@@ -20,7 +20,7 @@
     "@jupyterlab/docregistry": "^3 || ^4 || ^5",
     "@jupyterlab/javascript-extension": "^3 || ^4",
     "@jupyterlab/markedparser-extension": "^4",
-    "@jupyterlab/mathjax2-extension": "^4",
+    "@jupyterlab/mathjax-extension": "^4",
     "@jupyterlab/notebook": "^3 || ^4",
     "@jupyterlab/outputarea": "^3 || ^4",
     "@jupyterlab/rendermime": "^3 || ^4",

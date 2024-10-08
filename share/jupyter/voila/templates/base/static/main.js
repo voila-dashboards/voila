@@ -51,7 +51,7 @@ require([window.voila_js_url || 'static/voila'], function(voila) {
             voila.PageConfig.setOption(
                 urlParam,
                 url === 'null'
-                ? 'https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js'
+                ? 'https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/latest.min.js'
                 : url
             );
             voila.PageConfig.setOption(

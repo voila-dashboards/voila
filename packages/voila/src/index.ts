@@ -20,7 +20,7 @@ export {
 
 export { PageConfig } from '@jupyterlab/coreutils';
 
-export { MathJaxTypesetter } from '@jupyterlab/mathjax2-extension';
+export { MathJaxTypesetter } from '@jupyterlab/mathjax-extension';
 
 export { createMarkdownParser } from '@jupyterlab/markedparser-extension';
 
