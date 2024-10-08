@@ -21,6 +21,10 @@ from ..utils import (
 
 
 class TornadoVoilaTreeHandler(VoilaTreeHandler):
+    def initialize(self, **kwargs):
+        super().initialize(**kwargs)
+        self.get_page_config = kwargs.get("get_page_config_hook") or get_page_config
+
     @web.authenticated
     async def get(self, path=""):
         cm = self.contents_manager
@@ -58,7 +62,7 @@ class TornadoVoilaTreeHandler(VoilaTreeHandler):
 
             theme_arg = self.validate_theme(theme_arg, classic_tree)
 
-            page_config = get_page_config(
+            page_config = self.get_page_config(
                 base_url=self.base_url,
                 settings=self.settings,
                 log=self.log,

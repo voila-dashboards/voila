@@ -330,6 +330,28 @@ class Voila(Application):
         ),
     )
 
+    get_page_config_hook = Callable(
+        default_value=None,
+        allow_none=True,
+        config=True,
+        help=_(
+            """A function that is called to get the page config for a given notebook.
+            Should be of the form:
+
+            def hook_fn(
+                base_url: str, 
+                settings: Dict[str, Any], 
+                log: Logger, 
+                voila_configuration: VoilaConfiguration
+            ) -> Dict
+
+            The hook should return a dictionary that will be passed to the template
+            as the `page_config` variable and the NotebookRenderer. This can be used to pass custom
+            configuration.
+            """
+        ),
+    )
+
     cookie_secret = Bytes(
         b"",
         config=True,
@@ -594,6 +616,7 @@ class Voila(Application):
             self.voila_configuration.multi_kernel_manager_class,
             preheat_kernel,
             pool_size,
+            get_page_config_hook=self.get_page_config_hook,
         )
         self.kernel_manager = kernel_manager_class(
             parent=self,
@@ -760,6 +783,7 @@ class Voila(Application):
                         "config": self.config,
                         "voila_configuration": self.voila_configuration,
                         "prelaunch_hook": self.prelaunch_hook,
+                        "get_page_config_hook": self.get_page_config_hook,
                     },
                 )
             )
@@ -771,7 +795,10 @@ class Voila(Application):
                     (
                         url_path_join(self.server_url, r"/voila/tree" + path_regex),
                         TornadoVoilaTreeHandler,
-                        tree_handler_conf,
+                        {
+                            "voila_configuration": self.voila_configuration,
+                            "get_page_config_hook": self.get_page_config_hook,
+                        },
                     ),
                     (
                         url_path_join(self.server_url, r"/voila/render/(.*)"),
@@ -781,6 +808,7 @@ class Voila(Application):
                             "config": self.config,
                             "voila_configuration": self.voila_configuration,
                             "prelaunch_hook": self.prelaunch_hook,
+                            "get_page_config_hook": self.get_page_config_hook,
                         },
                     ),
                     # On serving a directory, expose the content handler.

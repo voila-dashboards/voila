@@ -73,6 +73,7 @@ class VoilaHandler(BaseVoilaHandler):
         self.traitlet_config = kwargs.pop("config", None)
         self.voila_configuration: VoilaConfiguration = kwargs["voila_configuration"]
         self.prelaunch_hook = kwargs.get("prelaunch_hook", None)
+        self.get_page_config = kwargs.get("get_page_config_hook") or get_page_config
         # we want to avoid starting multiple kernels due to template mistakes
         self.kernel_started = False
 
@@ -202,7 +203,7 @@ class VoilaHandler(BaseVoilaHandler):
                 base_url=self.base_url,
                 kernel_spec_manager=self.kernel_spec_manager,
                 prelaunch_hook=self.prelaunch_hook,
-                page_config=get_page_config(
+                page_config=self.get_page_config(
                     base_url=self.base_url,
                     settings=self.settings,
                     log=self.log,

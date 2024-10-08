@@ -12,7 +12,7 @@ import asyncio
 import os
 import re
 from pathlib import Path
-from typing import Awaitable
+from typing import Awaitable, Callable
 from typing import Dict as TypeDict
 from typing import List as TypeList
 from typing import Tuple, Type, TypeVar, Union
@@ -34,7 +34,10 @@ async def wait_before(delay: float, aw: Awaitable) -> Awaitable:
 
 
 def voila_kernel_manager_factory(
-    base_class: Type[T], preheat_kernel: bool, default_pool_size: int
+    base_class: Type[T],
+    preheat_kernel: bool,
+    default_pool_size: int,
+    get_page_config_hook: Callable = None,
 ) -> T:
     """
     Decorator used to make a normal kernel manager compatible with pre-heated
@@ -50,10 +53,14 @@ def voila_kernel_manager_factory(
         - preheat_kernel (Bool): Flag to decorate the input class
         - default_pool_size (int): Size of pre-heated kernel pool for each notebook.
             Zero or negative number means disabled
+        - get_page_config_hook (Callable, optional): Hook to get the page config.
 
     Returns:
         T: Decorated class
     """
+
+    get_page_config_fn = get_page_config_hook or get_page_config
+
     if not preheat_kernel:
 
         class NormalKernelManager(base_class):
@@ -397,7 +404,7 @@ def voila_kernel_manager_factory(
                     contents_manager=self.parent.contents_manager,
                     base_url=self.parent.base_url,
                     kernel_spec_manager=self.parent.kernel_spec_manager,
-                    page_config=get_page_config(
+                    page_config=get_page_config_fn(
                         base_url=self.parent.base_url,
                         settings=self.parent.app.settings,
                         log=self.parent.log,

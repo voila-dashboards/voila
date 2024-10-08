@@ -8,20 +8,17 @@
 #############################################################################
 
 import asyncio
-import io
 import json
 import os
 import sys
-import tempfile
 import threading
 import warnings
 from copy import deepcopy
 from functools import partial
 from pathlib import Path
-from typing import Awaitable, Dict, List
-import zipfile
+from typing import Awaitable, Dict, List, Any
+from logging import Logger
 
-import requests
 import websockets
 from jupyter_core.paths import jupyter_path
 from jupyter_server.config_manager import recursive_update
@@ -93,7 +90,12 @@ async def _get_request_info(ws_url: str) -> Awaitable:
         return ri
 
 
-def get_page_config(base_url, settings, log, voila_configuration: VoilaConfiguration):
+def get_page_config(
+    base_url: str,
+    settings: Dict[str, Any],
+    log: Logger,
+    voila_configuration: VoilaConfiguration,
+):
     page_config = {
         "appVersion": __version__,
         "appUrl": "voila/",
@@ -101,47 +103,24 @@ def get_page_config(base_url, settings, log, voila_configuration: VoilaConfigura
         "baseUrl": base_url,
         "terminalsAvailable": False,
         "fullStaticUrl": url_path_join(base_url, "voila/static"),
+        "fullLabextensionsUrl": url_path_join(base_url, "voila/labextensions"),
         "extensionConfig": voila_configuration.extension_config,
-        "fullLabextensionsUrl": url_path_join(
-            voila_configuration.labextensions_url, "labextensions"
-        )
-        or url_path_join(base_url, "voila/labextensions"),
     }
-
     mathjax_config = settings.get("mathjax_config", "TeX-AMS_CHTML-full,Safe")
     mathjax_url = settings.get(
         "mathjax_url", "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js"
     )
     page_config.setdefault("mathjaxConfig", mathjax_config)
     page_config.setdefault("fullMathjaxUrl", mathjax_url)
-    print("########### page_config", page_config)
+    labextensions_path = jupyter_path("labextensions")
 
-    # If I want to do use the existing url and the custom, the the server here should
-    # have the 'download_all_extensions' endpoint...
-
-    download_extensions_url = url_path_join(
-        page_config.get("fullLabextensionsUrl"), "download_all_extensions"
+    recursive_update(
+        page_config,
+        gpc(
+            labextensions_path,
+            logger=log,
+        ),
     )
-
-    response = requests.get(download_extensions_url)
-    response.raise_for_status()
-
-    with tempfile.TemporaryDirectory() as labextensions_temp_path:
-
-        # Extract the ZIP file into the temporary directory
-        with zipfile.ZipFile(io.BytesIO(response.content)) as zip_ref:
-            zip_ref.extractall(labextensions_temp_path)
-
-            # I need to replace labextensions_temp_path with the actual result of
-            recursive_update(
-                page_config,
-                gpc(
-                    [labextensions_temp_path],
-                    logger=log,
-                ),
-            )
-
-    print("################Updatedsss page_config", page_config)
     disabled_extensions = [
         "@voila-dashboards/jupyterlab-preview",
         "@jupyter/collaboration-extension",
