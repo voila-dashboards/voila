@@ -14,9 +14,7 @@ export {
   standardRendererFactories
 } from '@jupyterlab/rendermime';
 
-export {
-  EditorLanguageRegistry
-} from '@jupyterlab/codemirror';
+export { EditorLanguageRegistry } from '@jupyterlab/codemirror';
 
 export { PageConfig } from '@jupyterlab/coreutils';
 
@@ -28,4 +26,4 @@ export { extendedRendererFactories } from './rendermime';
 export { WidgetManager } from './manager';
 export { connectKernel } from './kernel';
 // This is a no-op, keeping this around for backward compat
-export function renderMathJax() {};
+export function renderMathJax() {}
