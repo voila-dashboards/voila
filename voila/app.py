@@ -342,7 +342,8 @@ class Voila(Application):
                 base_url: str,
                 settings: Dict[str, Any],
                 log: Logger,
-                voila_configuration: VoilaConfiguration
+                voila_configuration: VoilaConfiguration,
+                **kwargs
             ) -> Dict
 
             The hook should return a dictionary that will be passed to the template

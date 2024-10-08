@@ -203,6 +203,7 @@ class VoilaHandler(BaseVoilaHandler):
                     settings=self.settings,
                     log=self.log,
                     voila_configuration=self.voila_configuration,
+                    notebook_path=notebook_path,
                 ),
                 mathjax_config=mathjax_config,
                 mathjax_url=mathjax_url,

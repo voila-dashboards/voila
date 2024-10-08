@@ -67,6 +67,7 @@ class TornadoVoilaTreeHandler(VoilaTreeHandler):
                 settings=self.settings,
                 log=self.log,
                 voila_configuration=self.voila_configuration,
+                notebook_path=path,
             )
             page_config["jupyterLabTheme"] = theme_arg
             page_config["frontend"] = "voila"

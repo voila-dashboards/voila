@@ -95,7 +95,17 @@ def get_page_config(
     settings: Dict[str, Any],
     log: Logger,
     voila_configuration: VoilaConfiguration,
+    **kwargs,
 ):
+    """Get the page configuration for Voila.
+
+    Args:
+        base_url (str): The base URL of the Voila application.
+        settings (Dict[str, Any]): The settings of the Voila application.
+        log (Logger): The logger instance.
+        voila_configuration (VoilaConfiguration): The Voila configuration instance.
+        **kwargs: additional keyword arguments that can be used when get_page_config_hook is set.
+    """
     page_config = {
         "appVersion": __version__,
         "appUrl": "voila/",

@@ -409,6 +409,7 @@ def voila_kernel_manager_factory(
                         settings=self.parent.app.settings,
                         log=self.parent.log,
                         voila_configuration=voila_configuration,
+                        notebook_path=notebook_path,
                     ),
                     mathjax_config=mathjax_config,
                     mathjax_url=mathjax_url,
