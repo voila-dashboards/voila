@@ -35,7 +35,6 @@ class VoilaConfiguration(traitlets.config.Configurable):
     template = Unicode(
         "lab", config=True, allow_none=True, help=("template name to be used by voila.")
     )
-    labextensions_url = Unicode("", config=True, help=("Custom lab extensions url."))
     classic_tree = Bool(
         False,
         config=True,
