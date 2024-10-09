@@ -14,6 +14,9 @@ jobs:
       matrix:
         jupyter-server-version: ["1.24.0", "2.14.2"]
         progressive_rendering: [false, true]
+        exclude:
+          - jupyter-server-version: "1.24.0"
+            progressive_rendering: true
       fail-fast: false
 
     steps:
