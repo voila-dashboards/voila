@@ -73,7 +73,10 @@ class VoilaHandler(BaseVoilaHandler):
         self.traitlet_config = kwargs.pop("config", None)
         self.voila_configuration: VoilaConfiguration = kwargs["voila_configuration"]
         self.prelaunch_hook = kwargs.get("prelaunch_hook", None)
-        self.get_page_config = kwargs.get("get_page_config_hook") or get_page_config
+        self.get_page_config_hook = kwargs.get(
+            "get_page_config_hook", lambda page_config, **kwargs: page_config
+        )
+
         # we want to avoid starting multiple kernels due to template mistakes
         self.kernel_started = False
 
@@ -187,6 +190,19 @@ class VoilaHandler(BaseVoilaHandler):
                 return
             mathjax_config = self.settings.get("mathjax_config")
             mathjax_url = self.settings.get("mathjax_url")
+
+            page_config_kwargs = {
+                "base_url": self.base_url,
+                "settings": self.settings,
+                "log": self.log,
+                "voila_configuration": self.voila_configuration,
+            }
+            page_config = self.get_page_config_hook(
+                get_page_config(**page_config_kwargs),
+                **page_config_kwargs,
+                notebook_path=notebook_path,
+            )
+
             gen = NotebookRenderer(
                 request_handler=self,
                 voila_configuration=self.voila_configuration,
@@ -198,13 +214,7 @@ class VoilaHandler(BaseVoilaHandler):
                 base_url=self.base_url,
                 kernel_spec_manager=self.kernel_spec_manager,
                 prelaunch_hook=self.prelaunch_hook,
-                page_config=self.get_page_config(
-                    base_url=self.base_url,
-                    settings=self.settings,
-                    log=self.log,
-                    voila_configuration=self.voila_configuration,
-                    notebook_path=notebook_path,
-                ),
+                page_config=page_config,
                 mathjax_config=mathjax_config,
                 mathjax_url=mathjax_url,
             )

@@ -23,7 +23,9 @@ from ..utils import (
 class TornadoVoilaTreeHandler(VoilaTreeHandler):
     def initialize(self, **kwargs):
         super().initialize(**kwargs)
-        self.get_page_config = kwargs.get("get_page_config_hook") or get_page_config
+        self.get_page_config_hook = kwargs.get(
+            "get_page_config_hook", lambda page_config, **kwargs: page_config
+        )
 
     @web.authenticated
     async def get(self, path=""):
@@ -62,11 +64,15 @@ class TornadoVoilaTreeHandler(VoilaTreeHandler):
 
             theme_arg = self.validate_theme(theme_arg, classic_tree)
 
-            page_config = self.get_page_config(
-                base_url=self.base_url,
-                settings=self.settings,
-                log=self.log,
-                voila_configuration=self.voila_configuration,
+            page_config_kwargs = {
+                "base_url": self.base_url,
+                "settings": self.settings,
+                "log": self.log,
+                "voila_configuration": self.voila_configuration,
+            }
+            page_config = self.get_page_config_hook(
+                get_page_config(**page_config_kwargs),
+                **page_config_kwargs,
                 notebook_path=path,
             )
             page_config["jupyterLabTheme"] = theme_arg

@@ -37,7 +37,7 @@ def voila_kernel_manager_factory(
     base_class: Type[T],
     preheat_kernel: bool,
     default_pool_size: int,
-    get_page_config_hook: Callable = None,
+    get_page_config_hook: Callable = lambda page_config, **kwargs: page_config,
 ) -> T:
     """
     Decorator used to make a normal kernel manager compatible with pre-heated
@@ -53,13 +53,11 @@ def voila_kernel_manager_factory(
         - preheat_kernel (Bool): Flag to decorate the input class
         - default_pool_size (int): Size of pre-heated kernel pool for each notebook.
             Zero or negative number means disabled
-        - get_page_config_hook (Callable, optional): Hook to get the page config.
+        - get_page_config_hook (Callable): Hook to modify the default page config.
 
     Returns:
         T: Decorated class
     """
-
-    get_page_config_fn = get_page_config_hook or get_page_config
 
     if not preheat_kernel:
 
@@ -395,6 +393,19 @@ def voila_kernel_manager_factory(
                 settings = self.parent.app.settings
                 mathjax_config = settings.get("mathjax_config")
                 mathjax_url = settings.get("mathjax_url")
+
+                page_config_kwargs = {
+                    "base_url": self.parent.base_url,
+                    "settings": self.parent.app.settings,
+                    "log": self.parent.log,
+                    "voila_configuration": voila_configuration,
+                }
+                page_config = get_page_config_hook(
+                    get_page_config(**page_config_kwargs),
+                    **page_config_kwargs,
+                    notebook_path=notebook_path,
+                )
+
                 return NotebookRenderer(
                     voila_configuration=voila_configuration,
                     traitlet_config=self.parent.config,
@@ -404,13 +415,7 @@ def voila_kernel_manager_factory(
                     contents_manager=self.parent.contents_manager,
                     base_url=self.parent.base_url,
                     kernel_spec_manager=self.parent.kernel_spec_manager,
-                    page_config=get_page_config_fn(
-                        base_url=self.parent.base_url,
-                        settings=self.parent.app.settings,
-                        log=self.parent.log,
-                        voila_configuration=voila_configuration,
-                        notebook_path=notebook_path,
-                    ),
+                    page_config=page_config,
                     mathjax_config=mathjax_config,
                     mathjax_url=mathjax_url,
                 )
