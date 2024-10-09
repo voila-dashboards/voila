@@ -103,7 +103,7 @@ test.describe('Voila performance Tests', () => {
     const testFunction = async () => {
       await page.goto(`/voila/render/${notebookName}.ipynb`);
       // wait for the widgets to load
-      await page.waitForSelector('span.mjx-char >> text=x');
+      await page.waitForSelector('.slider-container');
     };
     await addBenchmarkToTest(notebookName, testFunction, testInfo, browserName);
     // change the value of the slider
