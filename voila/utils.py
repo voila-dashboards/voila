@@ -102,7 +102,8 @@ def get_page_config(base_url, settings, log, voila_configuration: VoilaConfigura
     }
     mathjax_config = settings.get("mathjax_config", "TeX-AMS_CHTML-full,Safe")
     mathjax_url = settings.get(
-        "mathjax_url", "https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/latest.min.js"
+        "mathjax_url",
+        "https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/latest.min.js",
     )
     page_config.setdefault("mathjaxConfig", mathjax_config)
     page_config.setdefault("fullMathjaxUrl", mathjax_url)
