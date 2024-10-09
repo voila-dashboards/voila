@@ -147,11 +147,9 @@ class Voila(Application):
         flags = {
             **flags,
             "token": (
-                {
-                    "Voila": {"auto_token": True}
-                },
+                {"Voila": {"auto_token": True}},
                 _(""),
-            )
+            ),
         }
 
     description = Unicode(
@@ -197,7 +195,7 @@ class Voila(Application):
         "kernel_spec_manager_class": "VoilaConfiguration.kernel_spec_manager_class",
     }
     if JUPYTER_SERVER_2:
-        aliases = {**aliases, 'token': 'Voila.token'}
+        aliases = {**aliases, "token": "Voila.token"}
     classes = [VoilaConfiguration, VoilaExecutor, VoilaExporter]
     connection_dir_root = Unicode(
         config=True,
@@ -364,9 +362,9 @@ class Voila(Application):
             """,
         )
 
-        token = Unicode(None, help="""Token for identity provider """, allow_none=True).tag(
-            config=True
-        )
+        token = Unicode(
+            None, help="""Token for identity provider """, allow_none=True
+        ).tag(config=True)
 
         auto_token = Bool(
             False, help="""Generate token automatically """, allow_none=True
