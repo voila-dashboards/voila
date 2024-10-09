@@ -2,10 +2,13 @@ import json
 from typing import Any, Dict, Optional, Union
 
 try:
-    from jupyter_server.services.kernels.websocket import KernelWebsocketHandler as WebsocketHandler
+    from jupyter_server.services.kernels.websocket import (
+        KernelWebsocketHandler as WebsocketHandler,
+    )
 except ImportError:
-    from jupyter_server.services.kernels.handlers import ZMQChannelsHandler as WebsocketHandler
-
+    from jupyter_server.services.kernels.handlers import (
+        ZMQChannelsHandler as WebsocketHandler,
+    )
 
 
 def read_header_from_binary_message(ws_msg: bytes) -> Optional[Dict]:
