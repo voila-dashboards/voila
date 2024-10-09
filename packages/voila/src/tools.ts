@@ -90,7 +90,7 @@ export function shouldUseMathJax2() {
     PageConfig.setOption(
       urlParam,
       url === 'null'
-        ? 'https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js'
+        ? 'https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/latest.min.js'
         : url
     );
     PageConfig.setOption(
