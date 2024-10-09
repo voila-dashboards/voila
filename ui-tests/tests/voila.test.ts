@@ -83,7 +83,7 @@ test.describe('Voila performance Tests', () => {
     const testFunction = async () => {
       await page.goto(`/voila/render/${notebookName}.ipynb?template=classic`);
       // wait for the widgets to load
-      await page.waitForSelector('span[role="presentation"] >> text=x');
+      await page.waitForSelector('.slider-container');
     };
     await addBenchmarkToTest(notebookName, testFunction, testInfo, browserName);
 
@@ -128,7 +128,7 @@ test.describe('Voila performance Tests', () => {
     const testFunction = async () => {
       await page.goto(`/voila/render/${notebookName}.ipynb?theme=dark`);
       // wait for the widgets to load
-      await page.waitForSelector('span[role="presentation"] >> text=x');
+      await page.waitForSelector('.slider-container');
     };
     await addBenchmarkToTest(notebookName, testFunction, testInfo, browserName);
 
@@ -148,7 +148,7 @@ test.describe('Voila performance Tests', () => {
         `/voila/render/${notebookName}.ipynb?theme=JupyterLab%20Miami%20Nights`
       );
       // wait for the widgets to load
-      await page.waitForSelector('span[role="presentation"] >> text=x');
+      await page.waitForSelector('.slider-container');
     };
     await addBenchmarkToTest(notebookName, testFunction, testInfo, browserName);
 
@@ -334,7 +334,7 @@ test.describe('Voila performance Tests', () => {
     const notebookName = 'reveal';
     const testFunction = async () => {
       await page.goto(`/voila/render/${notebookName}.ipynb`);
-      await page.waitForSelector('span[role="presentation"] >> text=x');
+      await page.waitForSelector('.slider-container');
     };
     await addBenchmarkToTest(notebookName, testFunction, testInfo, browserName);
     expect(await page.screenshot()).toMatchSnapshot(`${notebookName}.png`);
