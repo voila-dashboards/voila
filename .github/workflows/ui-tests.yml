@@ -12,8 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: [3.8]
-        node-version: [18.x]
+        jupyter-server-version: ["1.24.0", "2.14.2"]
       fail-fast: false
 
     steps:
@@ -26,6 +25,7 @@ jobs:
           python -m pip install -r requirements-visual-test.txt
           python -m pip install jupyterlab_miami_nights --no-deps
           python -m pip install ".[test]"
+          python -m pip install jupyter-server==${{ matrix.jupyter-server-version }}
           jlpm
           jlpm build
           jupyter labextension develop . --overwrite
