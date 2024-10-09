@@ -31,6 +31,7 @@ import * as LuminoVirtualdom from '@lumino/virtualdom';
 import * as LuminoAlgorithm from '@lumino/algorithm';
 import * as LuminoCommands from '@lumino/commands';
 import * as LuminoDomutils from '@lumino/domutils';
+import * as Mathjax from '@jupyterlab/mathjax-extension';
 
 import { MessageLoop } from '@lumino/messaging';
 
@@ -52,6 +53,8 @@ if (typeof window !== 'undefined' && typeof window.define !== 'undefined') {
   window.define('@jupyterlab/coreutils', CoreUtils);
   window.define('@jupyterlab/docregistry', DocRegistry);
   window.define('@jupyterlab/outputarea', OutputArea);
+  window.define('@jupyterlab/outputarea', OutputArea);
+  window.define('@jupyterlab/mathjax-extension', Mathjax);
 
   window.define('@phosphor/widgets', LuminoWidget);
   window.define('@phosphor/signaling', LuminoSignaling);

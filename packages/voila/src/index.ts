@@ -14,7 +14,16 @@ export {
   standardRendererFactories
 } from '@jupyterlab/rendermime';
 
+export { EditorLanguageRegistry } from '@jupyterlab/codemirror';
+
+export { PageConfig } from '@jupyterlab/coreutils';
+
+export { MathJaxTypesetter } from '@jupyterlab/mathjax-extension';
+
+export { createMarkdownParser } from '@jupyterlab/markedparser-extension';
+
 export { extendedRendererFactories } from './rendermime';
 export { WidgetManager } from './manager';
 export { connectKernel } from './kernel';
-export { renderMathJax } from './mathjax';
+// This is a no-op, keeping this around for backward compat
+export function renderMathJax() {}

@@ -42,9 +42,31 @@ require([window.voila_js_url || 'static/voila'], function(voila) {
             saveState: false
         };
 
+        const languages = new voila.EditorLanguageRegistry();
+
+        const [urlParam, configParam] = ['fullMathjaxUrl', 'mathjaxConfig'];
+        const url = voila.PageConfig.getOption(urlParam);
+        const config = voila.PageConfig.getOption(configParam);
+        if (url !== 'null' || config !== 'null') {
+            voila.PageConfig.setOption(
+                urlParam,
+                url === 'null'
+                ? 'https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/latest.min.js'
+                : url
+            );
+            voila.PageConfig.setOption(
+                configParam,
+                config === 'null' ? 'TeX-AMS_CHTML-full,Safe' : config
+            );
+        }
+
         const rendermime = new voila.RenderMimeRegistry({
-            initialFactories: voila.extendedRendererFactories
+            initialFactories: voila.extendedRendererFactories,
+            latexTypesetter: new voila.MathJaxTypesetter({ url: voila.PageConfig.getOption(urlParam), config: voila.PageConfig.getOption(configParam) }),
+            markdownParser: voila.createMarkdownParser(languages)
         });
+
+        await rendermime.latexTypesetter.typeset(document.createElement('div'));
 
         var widgetManager = new voila.WidgetManager(context, rendermime, settings);
 
@@ -61,7 +83,6 @@ require([window.voila_js_url || 'static/voila'], function(voila) {
                 kernel.dispose();
             });
             await widgetManager.build_widgets();
-            voila.renderMathJax();
         }
 
         if (document.readyState === 'complete') {
