@@ -50,7 +50,7 @@ jobs:
 
       - name: Upload Playwright Test assets
         if: always()
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: voila-test-assets
           path: |
@@ -58,7 +58,7 @@ jobs:
 
       - name: Upload Playwright Benchmark report
         if: always()
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: voila-benchmark-report
           path: |
@@ -66,7 +66,7 @@ jobs:
 
       - name: Upload Playwright Test report
         if: always()
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: voila-test-report
           path: |
