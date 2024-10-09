@@ -17,7 +17,7 @@ from jupyterlab_server.themes_handler import ThemesHandler
 from jupyter_core.paths import jupyter_config_path
 from jupyter_server.serverapp import ServerApp
 
-from .tornado.execution_request_handler import ExecutionRequestHandler
+from .tornado.execution_request_handler import ExecutionRequestHandler, JUPYTER_SERVER_2
 from .tornado.contentshandler import VoilaContentsHandler
 from traitlets.config import (
     JSONFileConfigLoader,
@@ -167,7 +167,7 @@ def _load_jupyter_server_extension(server_app: ServerApp):
             tree_handler_conf,
         ),
     ]
-    if voila_configuration.progressive_rendering:
+    if JUPYTER_SERVER_2 and voila_configuration.progressive_rendering:
         handlers.append(
             (
                 url_path_join(base_url, r"/voila/execution/%s" % _kernel_id_regex),

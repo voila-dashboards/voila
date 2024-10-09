@@ -620,6 +620,11 @@ class Voila(Application):
                 "`preheat_kernel` and `progressive_rendering` are incompatible"
             )
 
+        if not JUPYTER_SERVER_2 and progressive_rendering:
+            raise Exception(
+                "`progressive_rendering` can only be enabled with jupyter_server>=2"
+            )
+
         kernel_manager_class = voila_kernel_manager_factory(
             self.voila_configuration.multi_kernel_manager_class,
             preheat_kernel,
