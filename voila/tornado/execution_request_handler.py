@@ -4,6 +4,7 @@ from typing import Awaitable, Union
 from jupyter_server.base.handlers import JupyterHandler
 from tornado.websocket import WebSocketHandler
 from tornado.web import HTTPError
+
 try:
     JUPYTER_SERVER_2 = True
     from jupyter_server.base.websocket import WebSocketMixin
@@ -17,6 +18,7 @@ import traceback
 import sys
 
 if JUPYTER_SERVER_2:
+
     class ExecutionRequestHandler(WebSocketMixin, WebSocketHandler, JupyterHandler):
         _execution_data = {}
 
@@ -135,6 +137,8 @@ if JUPYTER_SERVER_2:
         def on_close(self) -> None:
             if self._executor and self._executor.kc:
                 asyncio.create_task(ensure_async(self._executor.kc.stop_channels()))
+
 else:
-    class ExecutionRequestHandler():
+
+    class ExecutionRequestHandler:
         pass
