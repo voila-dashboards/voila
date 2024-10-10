@@ -13,6 +13,7 @@
   "dependencies": {
     "@jupyter-widgets/base": "^6.0.10",
     "@jupyter-widgets/base7": "npm:@jupyter-widgets/base@4.1.6",
+    "@jupyter-widgets/controls": "^5.0.11",
     "@jupyter-widgets/controls7": "npm:@jupyter-widgets/controls@3.1.6",
     "@jupyter-widgets/jupyterlab-manager": "^5.0.13",
     "@jupyterlab/application": "^4.0.0",

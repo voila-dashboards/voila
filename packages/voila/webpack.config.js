@@ -69,21 +69,29 @@ const distRoot = path.resolve(
   'static'
 );
 
-const shared = {};
+const voilaIndexSharedPackages = {};
 for (const dependency of Object.keys(data.dependencies)) {
-  // TODO Why can we not share those?
+  // Do not share jupyter-widgets packages in the Voila index
   if (
-    ['@jupyter-widgets/base7', '@jupyter-widgets/controls7'].includes(
+    [
+      '@jupyter-widgets/base7',
+      '@jupyter-widgets/base',
+      '@jupyter-widgets/controls7',
+      '@jupyter-widgets/controls'
+    ].includes(
       dependency
     )
   ) {
     continue;
   }
 
-  shared[dependency] = data.dependencies[dependency];
+  voilaIndexSharedPackages[dependency] = data.dependencies[dependency];
 }
 
 module.exports = [
+  /*
+   * Voila main index
+   */
   merge(baseConfig, {
     mode: 'development',
     entry: {
@@ -109,7 +117,7 @@ module.exports = [
           name: ['_JUPYTERLAB', 'CORE_LIBRARY_FEDERATION']
         },
         name: 'CORE_FEDERATION',
-        shared
+        shared: voilaIndexSharedPackages
       })
     ],
     resolve: {
@@ -118,6 +126,9 @@ module.exports = [
       }
     }
   }),
+  /*
+   * Voila styles
+   */
   merge(baseConfig, {
     entry: './' + path.relative(__dirname, styleEntryPoint),
     mode: 'production',
@@ -125,5 +136,77 @@ module.exports = [
       path: distRoot,
       filename: 'voila-style.js'
     }
-  })
+  }),
+  /*
+   * jupyter-widgets 7 packages
+   */
+  merge(baseConfig, {
+    mode: 'development',
+    entry: {
+      ipywidgets7shared: ['./publicpath.js', './' + path.relative(__dirname, path.join(buildDir, 'ipywidgets7shared.js'))]
+    },
+    output: {
+      path: distRoot,
+      library: {
+        type: 'var',
+        name: ['_JUPYTERLAB', 'CORE_OUTPUT']
+      },
+      filename: '[name].js',
+      chunkFilename: '[name].ipywidgets7shared.js'
+    },
+    plugins: [
+      new ModuleFederationPlugin({
+        library: {
+          type: 'var',
+          name: ['_JUPYTERLAB', 'CORE_LIBRARY_FEDERATION']
+        },
+        name: 'CORE_FEDERATION',
+        shared: {
+          '@jupyter-widgets/base': data.dependencies['@jupyter-widgets/base7'],
+          '@jupyter-widgets/controls': data.dependencies['@jupyter-widgets/controls7']
+        }
+      })
+    ],
+    resolve: {
+      fallback: {
+        util: require.resolve('util/')
+      }
+    }
+  }),
+  /*
+   * jupyter-widgets 8 packages
+   */
+  merge(baseConfig, {
+    mode: 'development',
+    entry: {
+      ipywidgets8shared: ['./publicpath.js', './' + path.relative(__dirname, path.join(buildDir, 'ipywidgets8shared.js'))]
+    },
+    output: {
+      path: distRoot,
+      library: {
+        type: 'var',
+        name: ['_JUPYTERLAB', 'CORE_OUTPUT']
+      },
+      filename: '[name].js',
+      chunkFilename: '[name].ipywidgets8shared.js'
+    },
+    plugins: [
+      new ModuleFederationPlugin({
+        library: {
+          type: 'var',
+          name: ['_JUPYTERLAB', 'CORE_LIBRARY_FEDERATION']
+        },
+        name: 'CORE_FEDERATION',
+        shared: {
+          '@jupyter-widgets/base': data.dependencies['@jupyter-widgets/base'],
+          '@jupyter-widgets/controls': data.dependencies['@jupyter-widgets/controls']
+        }
+      })
+    ],
+    resolve: {
+      fallback: {
+        util: require.resolve('util/')
+      }
+    }
+  }),
 ].concat(extras);

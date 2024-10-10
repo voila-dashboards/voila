@@ -30,6 +30,8 @@ config.rst
 package-lock.json
 
 share/jupyter/voila/templates/base/static/*voila.js
+share/jupyter/voila/templates/base/static/*ipywidgets7shared.js
+share/jupyter/voila/templates/base/static/*ipywidgets8shared.js
 share/jupyter/voila/templates/base/static/*treepage.js
 share/jupyter/voila/templates/base/static/*voila-style.js
 share/jupyter/voila/templates/base/static/*.woff

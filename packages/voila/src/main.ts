@@ -15,6 +15,7 @@ import { PageConfig, URLExt } from '@jupyterlab/coreutils';
 import { VoilaApp } from './app';
 import plugins from './voilaplugins';
 import { baseWidgets7Plugin, controlWidgets7Plugin } from './ipywidgets7';
+import { baseWidgets8Plugin, controlWidgets8Plugin } from './ipywidgets8';
 import { VoilaServiceManager } from './services/servicemanager';
 import { VoilaShell } from './shell';
 import {
@@ -46,7 +47,10 @@ async function main() {
     plugins,
     // For backward compat with ipywidgets 7
     baseWidgets7Plugin,
-    controlWidgets7Plugin
+    controlWidgets7Plugin,
+    // For compat with ipywidgets 8
+    baseWidgets8Plugin,
+    controlWidgets8Plugin
   ];
 
   if (shouldUseMathJax2()) {

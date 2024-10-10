@@ -13,13 +13,13 @@ import {
   JupyterFrontEndPlugin
 } from '@jupyterlab/application';
 
-const JUPYTER_WIDGETS_VERSION = '1.2.0';
-const JUPYTER_CONTROLS_VERSION = '1.5.0';
+const JUPYTER_WIDGETS_VERSION = '2.0.0';
+const JUPYTER_CONTROLS_VERSION = '2.0.0';
 
 /**
  * The base widgets.
  */
-export const baseWidgets7Plugin: JupyterFrontEndPlugin<void> = {
+export const baseWidgets8Plugin: JupyterFrontEndPlugin<void> = {
   id: `@jupyter-widgets/jupyterlab-manager:base-${JUPYTER_WIDGETS_VERSION}`,
   requires: [base.IJupyterWidgetRegistry],
   autoStart: true,
@@ -31,8 +31,8 @@ export const baseWidgets7Plugin: JupyterFrontEndPlugin<void> = {
       name: '@jupyter-widgets/base',
       version: JUPYTER_WIDGETS_VERSION,
       exports: () => {
-        require('./ipywidgets7shared');
-        return require('@jupyter-widgets/base7') as any;
+        require('./ipywidgets8shared');
+        return require('@jupyter-widgets/base') as any;
       }
     });
   }
@@ -41,7 +41,7 @@ export const baseWidgets7Plugin: JupyterFrontEndPlugin<void> = {
 /**
  * The control widgets.
  */
-export const controlWidgets7Plugin: JupyterFrontEndPlugin<void> = {
+export const controlWidgets8Plugin: JupyterFrontEndPlugin<void> = {
   id: `@jupyter-widgets/jupyterlab-manager:controls-${JUPYTER_CONTROLS_VERSION}`,
   requires: [base.IJupyterWidgetRegistry],
   autoStart: true,
@@ -53,9 +53,9 @@ export const controlWidgets7Plugin: JupyterFrontEndPlugin<void> = {
       name: '@jupyter-widgets/controls',
       version: JUPYTER_CONTROLS_VERSION,
       exports: () => {
-        require('./ipywidgets7shared');
-        const controlsWidgets = require('@jupyter-widgets/controls7') as any;
-        require('@jupyter-widgets/controls7/css/widgets-base.css');
+        require('./ipywidgets8shared');
+        const controlsWidgets = require('@jupyter-widgets/controls') as any;
+        require('@jupyter-widgets/controls/css/widgets-base.css');
         return controlsWidgets;
       }
     });
