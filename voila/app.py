@@ -358,6 +358,7 @@ class Voila(Application):
             Should be of the form:
 
             def page_config_hook(
+                current_page_config: Dict[str, Any],
                 base_url: str,
                 settings: Dict[str, Any],
                 log: Logger,
