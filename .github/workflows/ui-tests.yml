@@ -2,14 +2,17 @@ name: UI Tests
 
 on: [push, pull_request]
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   ui-tests:
     name: Visual Regression
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: [3.8]
-        node-version: [18.x]
+        jupyter-server-version: ["1.24.0", "2.14.2"]
       fail-fast: false
 
     steps:
@@ -22,6 +25,7 @@ jobs:
           python -m pip install -r requirements-visual-test.txt
           python -m pip install jupyterlab_miami_nights --no-deps
           python -m pip install ".[test]"
+          python -m pip install jupyter-server==${{ matrix.jupyter-server-version }}
           jlpm
           jlpm build
           jupyter labextension develop . --overwrite
@@ -50,7 +54,7 @@ jobs:
 
       - name: Upload Playwright Test assets
         if: always()
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: voila-test-assets
           path: |
@@ -58,7 +62,7 @@ jobs:
 
       - name: Upload Playwright Benchmark report
         if: always()
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: voila-benchmark-report
           path: |
@@ -66,7 +70,7 @@ jobs:
 
       - name: Upload Playwright Test report
         if: always()
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: voila-test-report
           path: |

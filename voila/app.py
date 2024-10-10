@@ -22,8 +22,6 @@ import webbrowser
 
 from .tornado.contentshandler import VoilaContentsHandler
 
-from .voila_identity_provider import VoilaLoginHandler
-
 from urllib.parse import urljoin
 from urllib.request import pathname2url
 
@@ -33,23 +31,38 @@ import tornado.web
 from jupyter_core.paths import jupyter_config_path, jupyter_path
 from jupyter_server.base.handlers import FileFindHandler, path_regex
 from jupyter_server.config_manager import recursive_update
-from jupyter_server.services.config.manager import ConfigManager
 from jupyter_server.services.contents.largefilemanager import LargeFileManager
 from jupyter_server.services.kernels.handlers import KernelHandler
-from jupyter_server.services.kernels.websocket import KernelWebsocketHandler
-from jupyter_server.auth.authorizer import AllowAllAuthorizer, Authorizer
-from jupyter_server.auth.identity import PasswordIdentityProvider
-from jupyter_server import DEFAULT_TEMPLATE_PATH_LIST, DEFAULT_STATIC_FILES_PATH
-from jupyter_server.services.kernels.connection.base import (
-    BaseKernelWebsocketConnection,
-)
-from jupyter_server.services.kernels.connection.channels import (
-    ZMQChannelsWebsocketConnection,
-)
-from jupyter_server.auth.identity import (
-    IdentityProvider,
-)
-from jupyter_server.utils import url_path_join
+
+try:
+    JUPYTER_SERVER_2 = True
+
+    from jupyter_server.services.kernels.websocket import KernelWebsocketHandler
+    from jupyter_server.auth.authorizer import AllowAllAuthorizer, Authorizer
+    from jupyter_server.auth.identity import PasswordIdentityProvider
+    from jupyter_server import DEFAULT_TEMPLATE_PATH_LIST, DEFAULT_STATIC_FILES_PATH
+    from jupyter_server.services.kernels.connection.base import (
+        BaseKernelWebsocketConnection,
+    )
+    from jupyter_server.services.kernels.connection.channels import (
+        ZMQChannelsWebsocketConnection,
+    )
+    from jupyter_server.auth.identity import (
+        IdentityProvider,
+    )
+    from jupyter_server.utils import url_path_join
+    from jupyter_core.utils import run_sync
+    from jupyter_server.services.config.manager import ConfigManager
+
+    from jupyterlab_server.themes_handler import ThemesHandler
+    from .voila_identity_provider import VoilaLoginHandler
+except ImportError:
+    JUPYTER_SERVER_2 = False
+
+    from jupyter_server.services.kernels.handlers import ZMQChannelsHandler
+    from jupyter_server.utils import url_path_join, run_sync
+    from jupyter_server.services.config import ConfigManager
+
 from jupyter_core.utils import run_sync
 
 from jupyterlab_server.themes_handler import ThemesHandler
@@ -122,10 +135,6 @@ class Voila(Application):
                 'Show left and right margins for the "lab" template, this gives a "classic" template look'
             ),
         ),
-        "token": (
-            {"Voila": {"auto_token": True}},
-            _(""),
-        ),
         "classic-tree": (
             {
                 "VoilaConfiguration": {"classic_tree": True},
@@ -133,6 +142,15 @@ class Voila(Application):
             _("Use the jinja2-based tree page instead of the new JupyterLab-based one"),
         ),
     }
+
+    if JUPYTER_SERVER_2:
+        flags = {
+            **flags,
+            "token": (
+                {"Voila": {"auto_token": True}},
+                _(""),
+            ),
+        }
 
     description = Unicode(
         """voila [OPTIONS] NOTEBOOK_FILENAME
@@ -167,7 +185,6 @@ class Voila(Application):
         "port": "Voila.port",
         "static": "Voila.static_root",
         "server_url": "Voila.server_url",
-        "token": "Voila.token",
         "pool_size": "VoilaConfiguration.default_pool_size",
         "show_tracebacks": "VoilaConfiguration.show_tracebacks",
         "preheat_kernel": "VoilaConfiguration.preheat_kernel",
@@ -177,6 +194,8 @@ class Voila(Application):
         "classic_tree": "VoilaConfiguration.classic_tree",
         "kernel_spec_manager_class": "VoilaConfiguration.kernel_spec_manager_class",
     }
+    if JUPYTER_SERVER_2:
+        aliases = {**aliases, "token": "Voila.token"}
     classes = [VoilaConfiguration, VoilaExecutor, VoilaExporter]
     connection_dir_root = Unicode(
         config=True,
@@ -346,50 +365,51 @@ class Voila(Application):
         ),
     )
 
-    cookie_secret = Bytes(
-        b"",
-        config=True,
-        help="""The random bytes used to secure cookies.
-        By default this is a new random number every time you start the server.
-        Set it to a value in a config file to enable logins to persist across server sessions.
+    if JUPYTER_SERVER_2:
+        cookie_secret = Bytes(
+            b"",
+            config=True,
+            help="""The random bytes used to secure cookies.
+            By default this is a new random number every time you start the server.
+            Set it to a value in a config file to enable logins to persist across server sessions.
 
-        Note: Cookie secrets should be kept private, do not share config files with
-        cookie_secret stored in plaintext (you can read the value from a file).
-        """,
-    )
+            Note: Cookie secrets should be kept private, do not share config files with
+            cookie_secret stored in plaintext (you can read the value from a file).
+            """,
+        )
 
-    token = Unicode(None, help="""Token for identity provider """, allow_none=True).tag(
-        config=True
-    )
+        token = Unicode(
+            None, help="""Token for identity provider """, allow_none=True
+        ).tag(config=True)
 
-    auto_token = Bool(
-        False, help="""Generate token automatically """, allow_none=True
-    ).tag(config=True)
+        auto_token = Bool(
+            False, help="""Generate token automatically """, allow_none=True
+        ).tag(config=True)
 
-    @default("cookie_secret")
-    def _default_cookie_secret(self):
-        return os.urandom(32)
+        @default("cookie_secret")
+        def _default_cookie_secret(self):
+            return os.urandom(32)
 
-    authorizer_class = Type(
-        default_value=AllowAllAuthorizer,
-        klass=Authorizer,
-        config=True,
-        help=_("The authorizer class to use."),
-    )
+        authorizer_class = Type(
+            default_value=AllowAllAuthorizer,
+            klass=Authorizer,
+            config=True,
+            help=_("The authorizer class to use."),
+        )
 
-    identity_provider_class = Type(
-        default_value=PasswordIdentityProvider,
-        klass=IdentityProvider,
-        config=True,
-        help=_("The identity provider class to use."),
-    )
+        identity_provider_class = Type(
+            default_value=PasswordIdentityProvider,
+            klass=IdentityProvider,
+            config=True,
+            help=_("The identity provider class to use."),
+        )
 
-    kernel_websocket_connection_class = Type(
-        default_value=ZMQChannelsWebsocketConnection,
-        klass=BaseKernelWebsocketConnection,
-        config=True,
-        help=_("The kernel websocket connection class to use."),
-    )
+        kernel_websocket_connection_class = Type(
+            default_value=ZMQChannelsWebsocketConnection,
+            klass=BaseKernelWebsocketConnection,
+            config=True,
+            help=_("The kernel websocket connection class to use."),
+        )
 
     @property
     def display_url(self):
@@ -401,7 +421,7 @@ class Voila(Application):
             ip = "%s" % socket.gethostname() if self.ip in ("", "0.0.0.0") else self.ip
             url = self._url(ip)
         # TODO: do we want to have the token?
-        if self.identity_provider.token:
+        if JUPYTER_SERVER_2 and self.identity_provider.token:
             # Don't log full token if it came from config
             token = (
                 self.identity_provider.token
@@ -558,7 +578,8 @@ class Voila(Application):
             self.static_paths = collect_static_paths(
                 ["voila", "nbconvert"], template_name
             )
-            self.static_paths.append(DEFAULT_STATIC_FILES_PATH)
+            if JUPYTER_SERVER_2:
+                self.static_paths.append(DEFAULT_STATIC_FILES_PATH)
             conf_paths = [os.path.join(d, "conf.json") for d in self.template_paths]
             for p in conf_paths:
                 # see if config file exists
@@ -634,35 +655,36 @@ class Voila(Application):
             extensions=["jinja2.ext.i18n"],
             **jenv_opt,
         )
-        server_env = jinja2.Environment(
-            loader=jinja2.FileSystemLoader(DEFAULT_TEMPLATE_PATH_LIST),
-            extensions=["jinja2.ext.i18n"],
-            **jenv_opt,
-        )
-
         nbui = gettext.translation(
             "nbui", localedir=os.path.join(ROOT, "i18n"), fallback=True
         )
         env.install_gettext_translations(nbui, newstyle=False)
-        server_env.install_gettext_translations(nbui, newstyle=False)
 
-        identity_provider_kwargs = {
-            "parent": self,
-            "log": self.log,
-            "login_handler_class": VoilaLoginHandler,
-        }
-        if self.token is None and not self.auto_token:
-            identity_provider_kwargs["token"] = ""
-        elif self.token is not None:
-            identity_provider_kwargs["token"] = self.token
+        if JUPYTER_SERVER_2:
+            server_env = jinja2.Environment(
+                loader=jinja2.FileSystemLoader(DEFAULT_TEMPLATE_PATH_LIST),
+                extensions=["jinja2.ext.i18n"],
+                **jenv_opt,
+            )
+            server_env.install_gettext_translations(nbui, newstyle=False)
 
-        self.identity_provider = self.identity_provider_class(
-            **identity_provider_kwargs
-        )
+            identity_provider_kwargs = {
+                "parent": self,
+                "log": self.log,
+                "login_handler_class": VoilaLoginHandler,
+            }
+            if self.token is None and not self.auto_token:
+                identity_provider_kwargs["token"] = ""
+            elif self.token is not None:
+                identity_provider_kwargs["token"] = self.token
 
-        self.authorizer = self.authorizer_class(
-            parent=self, log=self.log, identity_provider=self.identity_provider
-        )
+            self.identity_provider = self.identity_provider_class(
+                **identity_provider_kwargs
+            )
+
+            self.authorizer = self.authorizer_class(
+                parent=self, log=self.log, identity_provider=self.identity_provider
+            )
 
         settings = dict(
             base_url=self.base_url,
@@ -672,19 +694,24 @@ class Voila(Application):
             allow_remote_access=True,
             autoreload=self.autoreload,
             voila_jinja2_env=env,
-            jinja2_env=server_env,
+            jinja2_env=server_env if JUPYTER_SERVER_2 else env,
             server_root_dir="/",
             contents_manager=self.contents_manager,
             config_manager=self.config_manager,
-            cookie_secret=self.cookie_secret,
-            authorizer=self.authorizer,
-            identity_provider=self.identity_provider,
-            kernel_websocket_connection_class=self.kernel_websocket_connection_class,
-            login_url=url_path_join(self.base_url, "/login"),
             mathjax_config=self.mathjax_config,
             mathjax_url=self.mathjax_url,
         )
         settings[self.name] = self  # Why???
+
+        if JUPYTER_SERVER_2:
+            settings = {
+                **settings,
+                "cookie_secret": self.cookie_secret,
+                "authorizer": self.authorizer,
+                "identity_provider": self.identity_provider,
+                "kernel_websocket_connection_class": self.kernel_websocket_connection_class,
+                "login_url": url_path_join(self.base_url, "/login"),
+            }
 
         return settings
 
@@ -704,7 +731,7 @@ class Voila(Application):
                     url_path_join(
                         self.server_url, r"/api/kernels/%s/channels" % _kernel_id_regex
                     ),
-                    KernelWebsocketHandler,
+                    KernelWebsocketHandler if JUPYTER_SERVER_2 else ZMQChannelsHandler,
                 ),
                 (
                     url_path_join(self.server_url, r"/voila/templates/(.*)"),
@@ -731,7 +758,10 @@ class Voila(Application):
                 ),
             ]
         )
-        handlers.extend(self.identity_provider.get_handlers())
+
+        if JUPYTER_SERVER_2:
+            handlers.extend(self.identity_provider.get_handlers())
+
         if self.voila_configuration.preheat_kernel:
             handlers.append(
                 (

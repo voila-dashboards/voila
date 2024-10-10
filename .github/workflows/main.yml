@@ -10,6 +10,10 @@ on:
   schedule:
     - cron: '0 2 * * 1-5' # run on weekdays at 2:00am UTC
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   test-linux:
     runs-on: ${{ matrix.os }}
@@ -70,7 +74,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [macos-12]
+        os: [macos]
         python_version: ['3.8', '3.9', '3.10', '3.11']
 
     steps:
@@ -116,7 +120,7 @@ jobs:
       - uses: actions/checkout@v2
 
       - name: Set up Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
 
