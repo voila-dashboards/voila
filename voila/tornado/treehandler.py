@@ -23,7 +23,7 @@ from ..utils import (
 class TornadoVoilaTreeHandler(VoilaTreeHandler):
     def initialize(self, **kwargs):
         super().initialize(**kwargs)
-        self.page_config_hook = kwargs.get("page_config_hook", None)
+        self.page_config_hook = self.voila_configuration.page_config_hook
 
     @web.authenticated
     async def get(self, path=""):

@@ -8,7 +8,7 @@
 #############################################################################
 
 import traitlets.config
-from traitlets import Bool, Dict, Enum, Int, List, Type, Unicode, validate
+from traitlets import Bool, Callable, Dict, Enum, Int, List, Type, Unicode, validate
 
 from warnings import warn
 
@@ -216,4 +216,48 @@ class VoilaConfiguration(traitlets.config.Configurable):
         True,
         config=True,
         help="""Whether or not voila should attempt to fix and resolve a notebooks kernelspec metadata""",
+    )
+
+    prelaunch_hook = Callable(
+        default_value=None,
+        allow_none=True,
+        config=True,
+        help="""A function that is called prior to the launch of a new kernel instance
+            when a user visits the voila webpage. Used for custom user authorization
+            or any other necessary pre-launch functions.
+
+            Should be of the form:
+
+            def hook(req: tornado.web.RequestHandler,
+                    notebook: nbformat.NotebookNode,
+                    cwd: str)
+
+            Although most customizations can leverage templates, if you need access
+            to the request object (e.g. to inspect cookies for authentication),
+            or to modify the notebook itself (e.g. to inject some custom structure,
+            although much of this can be done by interacting with the kernel
+            in javascript) the prelaunch hook lets you do that.
+            """,
+    )
+
+    page_config_hook = Callable(
+        default_value=None,
+        allow_none=True,
+        config=True,
+        help="""A function that is called to modify the page config for a given notebook.
+            Should be of the form:
+
+            def page_config_hook(
+                current_page_config: Dict[str, Any],
+                base_url: str,
+                settings: Dict[str, Any],
+                log: Logger,
+                voila_configuration: VoilaConfiguration,
+                notebook_path: str
+            ) -> Dict[str, Any]:
+
+            The hook receives the default page_config dictionary and all its parameters, it should
+            return a dictionary that will be passed to the template as the `page_config` variable
+            and the NotebookRenderer. This can be used to pass custom configuration.
+            """,
     )

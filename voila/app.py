@@ -70,7 +70,6 @@ from jupyterlab_server.themes_handler import ThemesHandler
 
 from traitlets import (
     Bool,
-    Callable,
     Dict,
     Integer,
     List,
@@ -193,6 +192,8 @@ class Voila(Application):
         "theme": "VoilaConfiguration.theme",
         "classic_tree": "VoilaConfiguration.classic_tree",
         "kernel_spec_manager_class": "VoilaConfiguration.kernel_spec_manager_class",
+        "prelaunch_hook": "VoilaConfiguration.prelaunch_hook",  # For backward compatibility
+        "page_config_hook": "VoilaConfiguration.page_config_hook",
     }
     if JUPYTER_SERVER_2:
         aliases = {**aliases, "token": "Voila.token"}
@@ -322,54 +323,6 @@ class Voila(Application):
                                  This option is intended to be used when the URL to display to the user
                                  cannot be determined reliably by the Jupyter notebook server (proxified
                                  or containerized setups for example)."""
-        ),
-    )
-
-    prelaunch_hook = Callable(
-        default_value=None,
-        allow_none=True,
-        config=True,
-        help=_(
-            """A function that is called prior to the launch of a new kernel instance
-            when a user visits the voila webpage. Used for custom user authorization
-            or any other necessary pre-launch functions.
-
-            Should be of the form:
-
-            def hook(req: tornado.web.RequestHandler,
-                    notebook: nbformat.NotebookNode,
-                    cwd: str)
-
-            Although most customizations can leverage templates, if you need access
-            to the request object (e.g. to inspect cookies for authentication),
-            or to modify the notebook itself (e.g. to inject some custom structure,
-            although much of this can be done by interacting with the kernel
-            in javascript) the prelaunch hook lets you do that.
-            """
-        ),
-    )
-
-    page_config_hook = Callable(
-        default_value=None,
-        allow_none=True,
-        config=True,
-        help=_(
-            """A function that is called to modify the page config for a given notebook.
-            Should be of the form:
-
-            def page_config_hook(
-                current_page_config: Dict[str, Any],
-                base_url: str,
-                settings: Dict[str, Any],
-                log: Logger,
-                voila_configuration: VoilaConfiguration,
-                notebook_path: str
-            ) -> Dict[str, Any]:
-
-            The hook receives the default page_config dictionary and all its parameters, it should
-            return a dictionary that will be passed to the template as the `page_config` variable
-            and the NotebookRenderer. This can be used to pass custom configuration.
-            """
         ),
     )
 
@@ -632,14 +585,14 @@ class Voila(Application):
         preheat_kernel: bool = self.voila_configuration.preheat_kernel
         pool_size: int = self.voila_configuration.default_pool_size
 
-        if preheat_kernel and self.prelaunch_hook:
+        if preheat_kernel and self.voila_configuration.prelaunch_hook:
             raise Exception("`preheat_kernel` and `prelaunch_hook` are incompatible")
 
         kernel_manager_class = voila_kernel_manager_factory(
             self.voila_configuration.multi_kernel_manager_class,
             preheat_kernel,
             pool_size,
-            page_config_hook=self.page_config_hook,
+            page_config_hook=self.voila_configuration.page_config_hook,
         )
         self.kernel_manager = kernel_manager_class(
             parent=self,
@@ -814,8 +767,6 @@ class Voila(Application):
                         "template_paths": self.template_paths,
                         "config": self.config,
                         "voila_configuration": self.voila_configuration,
-                        "prelaunch_hook": self.prelaunch_hook,
-                        "page_config_hook": self.page_config_hook,
                     },
                 )
             )
@@ -826,18 +777,12 @@ class Voila(Application):
                     (
                         self.server_url,
                         TornadoVoilaTreeHandler,
-                        {
-                            "voila_configuration": self.voila_configuration,
-                            "page_config_hook": self.page_config_hook,
-                        },
+                        {"voila_configuration": self.voila_configuration},
                     ),
                     (
                         url_path_join(self.server_url, r"/voila/tree" + path_regex),
                         TornadoVoilaTreeHandler,
-                        {
-                            "voila_configuration": self.voila_configuration,
-                            "page_config_hook": self.page_config_hook,
-                        },
+                        {"voila_configuration": self.voila_configuration},
                     ),
                     (
                         url_path_join(self.server_url, r"/voila/render/(.*)"),
@@ -846,8 +791,6 @@ class Voila(Application):
                             "template_paths": self.template_paths,
                             "config": self.config,
                             "voila_configuration": self.voila_configuration,
-                            "prelaunch_hook": self.prelaunch_hook,
-                            "page_config_hook": self.page_config_hook,
                         },
                     ),
                     # On serving a directory, expose the content handler.

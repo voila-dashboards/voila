@@ -12,7 +12,7 @@ import asyncio
 import os
 import re
 from pathlib import Path
-from typing import Awaitable, Callable
+from typing import Awaitable, Callable, Optional
 from typing import Dict as TypeDict
 from typing import List as TypeList
 from typing import Tuple, Type, TypeVar, Union
@@ -37,7 +37,7 @@ def voila_kernel_manager_factory(
     base_class: Type[T],
     preheat_kernel: bool,
     default_pool_size: int,
-    page_config_hook: Callable = None,
+    page_config_hook: Optional[Callable] = None,
 ) -> T:
     """
     Decorator used to make a normal kernel manager compatible with pre-heated

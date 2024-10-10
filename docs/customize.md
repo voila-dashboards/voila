@@ -309,8 +309,8 @@ def page_config_hook_function(current_page_config,**kwargs):
    """Modify the current_page_config"""
    return new_page_config
 
-c.Voila.prelaunch_hook = hook_function
-c.Voila.page_config_hook = page_config_hook
+c.VoilaConfiguration.prelaunch_hook = hook_function
+c.VoilaConfiguration.page_config_hook = page_config_hook
 
 ```
 
@@ -374,17 +374,17 @@ from voila.config import VoilaConfiguration
 # customize config how you like
 config = VoilaConfiguration()
 
+# set the prelaunch hook
+config.prelaunch_hook = parameterize_with_papermill
+
+# set the page config hook
+config.config_page_hook = page_config_hook
+
 # create a voila instance
 app = Voila()
 
 # set the config
 app.voila_configuration = config
-
-# set the prelaunch hook
-app.prelaunch_hook = parameterize_with_papermill
-
-# set the page config hook
-app.config_page_hook = page_config_hook
 
 # launch
 app.start()

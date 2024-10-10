@@ -72,8 +72,8 @@ class VoilaHandler(BaseVoilaHandler):
         self.template_paths = kwargs.pop("template_paths", [])
         self.traitlet_config = kwargs.pop("config", None)
         self.voila_configuration: VoilaConfiguration = kwargs["voila_configuration"]
-        self.prelaunch_hook = kwargs.get("prelaunch_hook", None)
-        self.page_config_hook = kwargs.get("page_config_hook", None)
+        self.prelaunch_hook = self.voila_configuration.prelaunch_hook
+        self.page_config_hook = self.voila_configuration.page_config_hook
 
         # we want to avoid starting multiple kernels due to template mistakes
         self.kernel_started = False
