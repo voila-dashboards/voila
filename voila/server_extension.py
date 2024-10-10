@@ -81,6 +81,8 @@ def _load_jupyter_server_extension(server_app: ServerApp):
     voila_configuration = VoilaConfiguration(
         parent=server_app, config=load_config_file()
     )
+    page_config_hook = voila_configuration.config.Voila.get("page_config_hook", None)
+    prelaunch_hook = voila_configuration.config.Voila.get("prelaunch_hook", None)
 
     template_name = voila_configuration.template
     template_paths = collect_template_paths(["voila", "nbconvert"], template_name)
@@ -102,8 +104,6 @@ def _load_jupyter_server_extension(server_app: ServerApp):
     host_pattern = ".*$"
     base_url = url_path_join(web_app.settings["base_url"])
 
-    tree_handler_conf = {"voila_configuration": voila_configuration}
-
     themes_dir = pjoin(get_data_dir(), "themes")
     web_app.add_handlers(
         host_pattern,
@@ -115,17 +115,25 @@ def _load_jupyter_server_extension(server_app: ServerApp):
                     "config": server_app.config,
                     "template_paths": template_paths,
                     "voila_configuration": voila_configuration,
+                    "prelaunch_hook": prelaunch_hook,
+                    "page_config_hook": page_config_hook,
                 },
             ),
             (
                 url_path_join(base_url, "/voila"),
                 TornadoVoilaTreeHandler,
-                tree_handler_conf,
+                {
+                    "voila_configuration": voila_configuration,
+                    "page_config_hook": page_config_hook,
+                },
             ),
             (
                 url_path_join(base_url, "/voila/tree" + path_regex),
                 TornadoVoilaTreeHandler,
-                tree_handler_conf,
+                {
+                    "voila_configuration": voila_configuration,
+                    "page_config_hook": page_config_hook,
+                },
             ),
             (
                 url_path_join(base_url, "/voila/templates/(.*)"),
@@ -162,7 +170,7 @@ def _load_jupyter_server_extension(server_app: ServerApp):
             (
                 url_path_join(base_url, r"/voila/api/contents%s" % path_regex),
                 VoilaContentsHandler,
-                tree_handler_conf,
+                {"voila_configuration": voila_configuration},
             ),
         ],
     )
