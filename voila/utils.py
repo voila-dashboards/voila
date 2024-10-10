@@ -95,7 +95,7 @@ def get_page_config(
     settings: Dict[str, Any],
     log: Logger,
     voila_configuration: VoilaConfiguration,
-):
+) -> Dict[str, Any]:
     """Get the page configuration for Voila.
 
     Args:

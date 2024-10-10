@@ -73,9 +73,7 @@ class VoilaHandler(BaseVoilaHandler):
         self.traitlet_config = kwargs.pop("config", None)
         self.voila_configuration: VoilaConfiguration = kwargs["voila_configuration"]
         self.prelaunch_hook = kwargs.get("prelaunch_hook", None)
-        self.get_page_config_hook = kwargs.get(
-            "get_page_config_hook", lambda page_config, **kwargs: page_config
-        )
+        self.page_config_hook = kwargs.get("page_config_hook", None)
 
         # we want to avoid starting multiple kernels due to template mistakes
         self.kernel_started = False
@@ -197,11 +195,15 @@ class VoilaHandler(BaseVoilaHandler):
                 "log": self.log,
                 "voila_configuration": self.voila_configuration,
             }
-            page_config = self.get_page_config_hook(
-                get_page_config(**page_config_kwargs),
-                **page_config_kwargs,
-                notebook_path=notebook_path,
-            )
+
+            page_config = get_page_config(**page_config_kwargs)
+
+            if self.page_config_hook:
+                page_config = self.page_config_hook(
+                    page_config,
+                    **page_config_kwargs,
+                    notebook_path=notebook_path,
+                )
 
             gen = NotebookRenderer(
                 request_handler=self,

@@ -349,18 +349,25 @@ class Voila(Application):
         ),
     )
 
-    get_page_config_hook = Callable(
-        default_value=lambda page_config, **kwargs: page_config,
+    page_config_hook = Callable(
+        default_value=None,
+        allow_none=True,
         config=True,
         help=_(
             """A function that is called to modify the page config for a given notebook.
             Should be of the form:
 
-            def hook_fn(page_config, **kwargs) -> Dict
+            def page_config_hook(
+                base_url: str,
+                settings: Dict[str, Any],
+                log: Logger,
+                voila_configuration: VoilaConfiguration,
+                notebook_path: str
+            ) -> Dict[str, Any]:
 
-            The hook receives the default page_config dictionary and should return a dictionary
-            that will be passed to the template as the `page_config` variable and the
-            NotebookRenderer. This can be used to pass custom configuration.
+            The hook receives the default page_config dictionary and all its parameters, it should
+            return a dictionary that will be passed to the template as the `page_config` variable 
+            and the NotebookRenderer. This can be used to pass custom configuration.
             """
         ),
     )
@@ -631,7 +638,7 @@ class Voila(Application):
             self.voila_configuration.multi_kernel_manager_class,
             preheat_kernel,
             pool_size,
-            get_page_config_hook=self.get_page_config_hook,
+            page_config_hook=self.page_config_hook,
         )
         self.kernel_manager = kernel_manager_class(
             parent=self,
@@ -807,7 +814,7 @@ class Voila(Application):
                         "config": self.config,
                         "voila_configuration": self.voila_configuration,
                         "prelaunch_hook": self.prelaunch_hook,
-                        "get_page_config_hook": self.get_page_config_hook,
+                        "page_config_hook": self.page_config_hook,
                     },
                 )
             )
@@ -820,7 +827,7 @@ class Voila(Application):
                         TornadoVoilaTreeHandler,
                         {
                             "voila_configuration": self.voila_configuration,
-                            "get_page_config_hook": self.get_page_config_hook,
+                            "page_config_hook": self.page_config_hook,
                         },
                     ),
                     (
@@ -828,7 +835,7 @@ class Voila(Application):
                         TornadoVoilaTreeHandler,
                         {
                             "voila_configuration": self.voila_configuration,
-                            "get_page_config_hook": self.get_page_config_hook,
+                            "page_config_hook": self.page_config_hook,
                         },
                     ),
                     (
@@ -839,7 +846,7 @@ class Voila(Application):
                             "config": self.config,
                             "voila_configuration": self.voila_configuration,
                             "prelaunch_hook": self.prelaunch_hook,
-                            "get_page_config_hook": self.get_page_config_hook,
+                            "page_config_hook": self.page_config_hook,
                         },
                     ),
                     # On serving a directory, expose the content handler.
