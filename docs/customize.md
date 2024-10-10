@@ -228,7 +228,9 @@ Please refer to the [cookiecutter repo](https://github.com/voila-dashboards/voil
 
 ### Customizing Voila with Hooks
 
-Voila provides hooks that allow you to customize its behavior. Currently, Voila supports two hooks:
+Voila provides hooks that allow you to customize its behavior to fit your specific needs. These hooks enable you to inject custom functions at certain points during Voila's execution, giving you control over aspects like notebook execution and frontend configuration.
+
+Currently, Voila supports the following hooks:
 
 - prelaunch_hook: Access and modify the Tornado request and notebook before execution.
 - config_page_hook: Customize the page_config object, which controls the Voila frontend configuration.
@@ -259,7 +261,9 @@ def prelaunch_hook(req: tornado.web.RequestHandler,
 
 #### Customize the page config object (`page_config_hook`)
 
-Use config_page_hook to customize the page_config dictionary, which controls the frontend settings of Voila.
+The config_page_hook allows you to customize the page_config object, which controls various aspects of the Voila frontend. This is useful when you need to modify frontend settings such as the URLs for static assets or other configuration parameters.
+
+By default, Voila uses the following page_config:
 
 ```python
 # Default page_config
@@ -361,7 +365,7 @@ def page_config_hook(
 
 ```
 
-You can use both hooks simultaneously to customize notebook execution and frontend configuration, to add this hook to your `Voilà` application:
+You can use both hooks simultaneously to customize notebook execution and frontend configuration, to add this hooks to your `Voilà` application:
 
 ```python
 from voila.app import Voila
