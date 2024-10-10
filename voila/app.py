@@ -366,7 +366,7 @@ class Voila(Application):
             ) -> Dict[str, Any]:
 
             The hook receives the default page_config dictionary and all its parameters, it should
-            return a dictionary that will be passed to the template as the `page_config` variable 
+            return a dictionary that will be passed to the template as the `page_config` variable
             and the NotebookRenderer. This can be used to pass custom configuration.
             """
         ),
