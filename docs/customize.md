@@ -233,7 +233,7 @@ Voila provides hooks that allow you to customize its behavior to fit your specif
 Currently, Voila supports the following hooks:
 
 - prelaunch_hook: Access and modify the Tornado request and notebook before execution.
-- config_page_hook: Customize the page_config object, which controls the Voila frontend configuration.
+- page_config_hook: Customize the page_config object, which controls the Voila frontend configuration.
 
 #### Accessing the tornado request (`prelaunch-hook`)
 
@@ -261,7 +261,7 @@ def prelaunch_hook(req: tornado.web.RequestHandler,
 
 #### Customize the page config object (`page_config_hook`)
 
-The config_page_hook allows you to customize the page_config object, which controls various aspects of the Voila frontend. This is useful when you need to modify frontend settings such as the URLs for static assets or other configuration parameters.
+The page_config_hook allows you to customize the page_config object, which controls various aspects of the Voila frontend. This is useful when you need to modify frontend settings such as the URLs for static assets or other configuration parameters.
 
 By default, Voila uses the following page_config:
 
@@ -305,7 +305,7 @@ def prelaunch_hook_function(req, notebook, cwd):
    """Do your stuffs here"""
    return notebook
 
-def page_config_hook_function(current_page_config,**kwargs):
+def page_config_hook_function(current_page_config, **kwargs):
    """Modify the current_page_config"""
    return new_page_config
 
@@ -378,7 +378,7 @@ config = VoilaConfiguration()
 config.prelaunch_hook = parameterize_with_papermill
 
 # set the page config hook
-config.config_page_hook = page_config_hook
+config.page_config_hook = page_config_hook
 
 # create a voila instance
 app = Voila()

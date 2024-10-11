@@ -70,6 +70,7 @@ from jupyterlab_server.themes_handler import ThemesHandler
 
 from traitlets import (
     Bool,
+    Callable,
     Dict,
     Integer,
     List,
@@ -192,8 +193,6 @@ class Voila(Application):
         "theme": "VoilaConfiguration.theme",
         "classic_tree": "VoilaConfiguration.classic_tree",
         "kernel_spec_manager_class": "VoilaConfiguration.kernel_spec_manager_class",
-        "prelaunch_hook": "VoilaConfiguration.prelaunch_hook",  # For backward compatibility
-        "page_config_hook": "VoilaConfiguration.page_config_hook",
     }
     if JUPYTER_SERVER_2:
         aliases = {**aliases, "token": "Voila.token"}
@@ -325,6 +324,40 @@ class Voila(Application):
                                  or containerized setups for example)."""
         ),
     )
+
+    prelaunch_hook = Callable(
+        default_value=None,
+        allow_none=True,
+        config=True,
+        help=_(
+            """A function that is called prior to the launch of a new kernel instance
+            when a user visits the voila webpage. Used for custom user authorization
+            or any other necessary pre-launch functions.
+
+            Should be of the form:
+
+            def hook(req: tornado.web.RequestHandler,
+                    notebook: nbformat.NotebookNode,
+                    cwd: str)
+
+            Although most customizations can leverage templates, if you need access
+            to the request object (e.g. to inspect cookies for authentication),
+            or to modify the notebook itself (e.g. to inject some custom structure,
+            although much of this can be done by interacting with the kernel
+            in javascript) the prelaunch hook lets you do that.
+            """
+        ),
+    )
+
+    @validate("prelaunch_hook")
+    def _valid_prelaunch_hook(self, proposal):
+        warn(
+            "Voila.prelaunch_hook is deprecated, please use VoilaConfiguration.prelaunch_hook instead",
+            DeprecationWarning,
+            stacklevel=2,
+        )
+        self.voila_configuration.prelaunch_hook = proposal["value"]
+        return proposal["value"]
 
     if JUPYTER_SERVER_2:
         cookie_secret = Bytes(
