@@ -3,7 +3,4 @@ import {
   renderOutputsProgressivelyPlugin
 } from './plugins';
 
-export {
-  renderOutputsPlugin,
-  renderOutputsProgressivelyPlugin
-};
+export { renderOutputsPlugin, renderOutputsProgressivelyPlugin };

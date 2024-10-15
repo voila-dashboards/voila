@@ -2,7 +2,6 @@ import { WidgetModel } from '@jupyter-widgets/base';
 import { WidgetManager } from '@jupyter-widgets/jupyterlab-manager';
 import { ISignal, Signal } from '@lumino/signaling';
 
-
 export class VoilaWidgetManager extends WidgetManager {
   register_model(model_id: string, modelPromise: Promise<WidgetModel>): void {
     super.register_model(model_id, modelPromise);

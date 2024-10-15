@@ -32,9 +32,7 @@ import { KernelConnection } from '@jupyterlab/services/lib/kernel/default';
 
 import { VoilaWidgetManager } from './manager';
 
-
 const WIDGET_MIMETYPE = 'application/vnd.jupyter.widget-view+json';
-
 
 /**
  * The Voila widgets manager plugin.
@@ -48,7 +46,7 @@ const widgetManager: JupyterFrontEndPlugin<IJupyterWidgetRegistry> = {
     app: JupyterFrontEnd,
     rendermime: IRenderMimeRegistry
   ): Promise<IJupyterWidgetRegistry> => {
-    if (app.name !== 'Voila'){
+    if (app.name !== 'Voila') {
       throw Error(
         'The Voila Widget Manager plugin must be activated in a VoilaApp'
       );
@@ -69,32 +67,36 @@ const widgetManager: JupyterFrontEndPlugin<IJupyterWidgetRegistry> = {
 
     const context = {
       sessionContext: {
-          session: {
-              kernel,
-              kernelChanged: {
-                  connect: () => {}
-              },
-          },
-          statusChanged: {
-              connect: () => {}
-          },
+        session: {
+          kernel,
           kernelChanged: {
-              connect: () => {}
-          },
-          connectionStatusChanged: {
-              connect: () => {}
-          },
+            connect: () => {}
+          }
+        },
+        statusChanged: {
+          connect: () => {}
+        },
+        kernelChanged: {
+          connect: () => {}
+        },
+        connectionStatusChanged: {
+          connect: () => {}
+        }
       },
       saveState: {
-          connect: () => {}
-      },
+        connect: () => {}
+      }
     };
 
     const settings = {
       saveState: false
     };
 
-    const manager = new VoilaWidgetManager(context as any, rendermime, settings);
+    const manager = new VoilaWidgetManager(
+      context as any,
+      rendermime,
+      settings
+    );
     (app as any).widgetManager = manager;
 
     rendermime.removeMimeType(WIDGET_MIMETYPE);
@@ -136,10 +138,7 @@ const baseWidgets7Plugin: JupyterFrontEndPlugin<void> = {
   id: `@jupyter-widgets/jupyterlab-manager:base-${JUPYTER_WIDGETS_VERSION}`,
   requires: [IJupyterWidgetRegistry],
   autoStart: true,
-  activate: (
-    app: JupyterFrontEnd,
-    registry: IJupyterWidgetRegistry
-  ): void => {
+  activate: (app: JupyterFrontEnd, registry: IJupyterWidgetRegistry): void => {
     registry.registerWidget({
       name: '@jupyter-widgets/base',
       version: JUPYTER_WIDGETS_VERSION,
@@ -164,10 +163,7 @@ const controlWidgets7Plugin: JupyterFrontEndPlugin<void> = {
   id: `@jupyter-widgets/jupyterlab-manager:controls-${JUPYTER_CONTROLS_VERSION}`,
   requires: [IJupyterWidgetRegistry],
   autoStart: true,
-  activate: (
-    app: JupyterFrontEnd,
-    registry: IJupyterWidgetRegistry
-  ): void => {
+  activate: (app: JupyterFrontEnd, registry: IJupyterWidgetRegistry): void => {
     registry.registerWidget({
       name: '@jupyter-widgets/controls',
       version: JUPYTER_CONTROLS_VERSION,
@@ -190,8 +186,4 @@ const controlWidgets7Plugin: JupyterFrontEndPlugin<void> = {
   }
 };
 
-export default [
-  widgetManager,
-  baseWidgets7Plugin,
-  controlWidgets7Plugin
-];
+export default [widgetManager, baseWidgets7Plugin, controlWidgets7Plugin];

@@ -20,6 +20,7 @@ import {
   IFederatedExtensionData,
   activePlugins,
   createModule,
+  isIpywidgets7extension,
   loadComponent,
   shouldUseMathJax2
 } from './tools';
@@ -73,6 +74,47 @@ async function main() {
       return data;
     })
   );
+
+  console.log('lab extensions!', extensions);
+
+  // Extract out @voila-dashboards/widget-manager packages
+  // we'll include them back later depending on the requested version
+  const widgetsManager7Extension = extensions.splice(
+    extensions.findIndex(
+      (ext) =>
+        ext.status === 'fulfilled' &&
+        ext.value.name === '@voila-dashboards/widgets-manager7'
+    ),
+    1
+  )[0];
+  const widgetsManager8Extension = extensions.splice(
+    extensions.findIndex(
+      (ext) =>
+        ext.status === 'fulfilled' &&
+        ext.value.name === '@voila-dashboards/widgets-manager8'
+    ),
+    1
+  )[0];
+  const officialWidgetsManagerExtension = extensions.splice(
+    extensions.findIndex(
+      (ext) =>
+        ext.status === 'fulfilled' &&
+        ext.value.name === '@jupyter-widgets/jupyterlab-manager'
+    ),
+    1
+  )[0];
+  if (
+    officialWidgetsManagerExtension &&
+    officialWidgetsManagerExtension.status === 'fulfilled'
+  ) {
+    const ext = officialWidgetsManagerExtension.value;
+
+    if (ext.extension) {
+      const module = await createModule(ext.name, ext.extension);
+      console.log('loaded jupyter widgets module', module);
+    }
+  }
+  console.log(widgetsManager7Extension, widgetsManager8Extension);
 
   extensions.forEach((p) => {
     if (p.status === 'rejected') {

@@ -36,7 +36,7 @@ const widgetManager: JupyterFrontEndPlugin<IJupyterWidgetRegistry> = {
     app: JupyterFrontEnd,
     rendermime: IRenderMimeRegistry
   ): Promise<IJupyterWidgetRegistry> => {
-    if (app.name !== 'Voila'){
+    if (app.name !== 'Voila') {
       throw Error(
         'The Voila Widget Manager plugin must be activated in a VoilaApp'
       );
@@ -89,6 +89,4 @@ const widgetManager: JupyterFrontEndPlugin<IJupyterWidgetRegistry> = {
   }
 };
 
-export default [
-  widgetManager
-];
+export default [widgetManager];
