@@ -87,7 +87,9 @@ path = "voila/_version.py"
 
 [tool.hatch.build]
 artifacts = [
-    "voila/labextension",
+    "voila/labextensions/jupyterlab-preview",
+    "voila/labextensions/widgets-manager7",
+    "voila/labextensions/widgets-manager8",
     "share/jupyter/voila/templates",
     "share/jupyter/voila/schemas",
     "share/jupyter/voila/themes"
@@ -98,7 +100,9 @@ path = "hatch_build.py"
 
 [tool.hatch.build.targets.wheel.shared-data]
 "etc/jupyter" = "etc/jupyter"
-"voila/labextension" = "share/jupyter/labextensions/@voila-dashboards/jupyterlab-preview"
+"voila/labextensions/jupyterlab-preview" = "share/jupyter/labextensions/@voila-dashboards/jupyterlab-preview"
+"voila/labextensions/widgets-manager7" = "share/jupyter/voila/labextensions/@voila-dashboards/widgets-manager7"
+"voila/labextensions/widgets-manager8" = "share/jupyter/voila/labextensions/@voila-dashboards/widgets-manager8"
 "install.json" = "share/jupyter/labextensions/@voila-dashboards/jupyterlab-preview/install.json"
 "share/jupyter/voila/templates" = "share/jupyter/voila/templates"
 "share/jupyter/voila/schemas" = "share/jupyter/voila/schemas"
@@ -116,13 +120,13 @@ dependencies = [
 ]
 build-function = "hatch_jupyter_builder.npm_builder"
 ensured-targets = [
-    "voila/labextension/static/style.js",
+    "voila/labextensions/jupyterlab-preview/static/style.js",
     "share/jupyter/voila/templates/base/static/materialcolors.css",
     "share/jupyter/voila/templates/base/static/labvariables.css",
     "share/jupyter/voila/themes/@jupyterlab/theme-dark-extension/index.css"
 ]
 skip-if-exists = [
-    "voila/labextension/static/style.js",
+    "voila/labextensions/jupyterlab-preview/static/style.js",
     "share/jupyter/voila/templates/base/static/materialcolors.css",
     "share/jupyter/voila/templates/base/static/labvariables.css",
     "share/jupyter/voila/themes/@jupyterlab/theme-dark-extension/index.css"
