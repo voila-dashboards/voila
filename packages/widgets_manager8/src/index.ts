@@ -27,8 +27,8 @@ const WIDGET_MIMETYPE = 'application/vnd.jupyter.widget-view+json';
 /**
  * The Voila widgets manager plugin.
  */
-export const widgetManager: JupyterFrontEndPlugin<IJupyterWidgetRegistry> = {
-  id: '@voila-dashboards/voila:widget-manager',
+const widgetManager: JupyterFrontEndPlugin<IJupyterWidgetRegistry> = {
+  id: '@voila-dashboards/voila:widget-manager8',
   autoStart: true,
   requires: [IRenderMimeRegistry],
   provides: IJupyterWidgetRegistry,
@@ -88,3 +88,7 @@ export const widgetManager: JupyterFrontEndPlugin<IJupyterWidgetRegistry> = {
     };
   }
 };
+
+export default [
+  widgetManager
+];

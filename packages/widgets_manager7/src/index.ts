@@ -39,8 +39,8 @@ const WIDGET_MIMETYPE = 'application/vnd.jupyter.widget-view+json';
 /**
  * The Voila widgets manager plugin.
  */
-export const widgetManager: JupyterFrontEndPlugin<IJupyterWidgetRegistry> = {
-  id: '@voila-dashboards/voila:widget-manager',
+const widgetManager: JupyterFrontEndPlugin<IJupyterWidgetRegistry> = {
+  id: '@voila-dashboards/voila:widget-manager7',
   autoStart: true,
   requires: [IRenderMimeRegistry],
   provides: IJupyterWidgetRegistry,
@@ -132,7 +132,7 @@ export const widgetManager: JupyterFrontEndPlugin<IJupyterWidgetRegistry> = {
 /**
  * The base widgets.
  */
-export const baseWidgets7Plugin: JupyterFrontEndPlugin<void> = {
+const baseWidgets7Plugin: JupyterFrontEndPlugin<void> = {
   id: `@jupyter-widgets/jupyterlab-manager:base-${JUPYTER_WIDGETS_VERSION}`,
   requires: [IJupyterWidgetRegistry],
   autoStart: true,
@@ -160,7 +160,7 @@ export const baseWidgets7Plugin: JupyterFrontEndPlugin<void> = {
 /**
  * The control widgets.
  */
-export const controlWidgets7Plugin: JupyterFrontEndPlugin<void> = {
+const controlWidgets7Plugin: JupyterFrontEndPlugin<void> = {
   id: `@jupyter-widgets/jupyterlab-manager:controls-${JUPYTER_CONTROLS_VERSION}`,
   requires: [IJupyterWidgetRegistry],
   autoStart: true,
@@ -189,3 +189,9 @@ export const controlWidgets7Plugin: JupyterFrontEndPlugin<void> = {
     });
   }
 };
+
+export default [
+  widgetManager,
+  baseWidgets7Plugin,
+  controlWidgets7Plugin
+];
