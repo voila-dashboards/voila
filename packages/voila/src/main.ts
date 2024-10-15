@@ -103,6 +103,7 @@ async function main() {
     ),
     1
   )[0];
+  // Load @jupyter-widgets/jupyterlab-manager if it's there, and spot if it's widgets 7 or 8
   if (
     officialWidgetsManagerExtension &&
     officialWidgetsManagerExtension.status === 'fulfilled'
@@ -111,10 +112,15 @@ async function main() {
 
     if (ext.extension) {
       const module = await createModule(ext.name, ext.extension);
-      console.log('loaded jupyter widgets module', module);
+      if (isIpywidgets7extension(module)) {
+        extensions.push(widgetsManager7Extension);
+      } else {
+        extensions.push(widgetsManager8Extension);
+        // Also bring back the official extension which registers the widgets
+        extensions.push(officialWidgetsManagerExtension);
+      }
     }
   }
-  console.log(widgetsManager7Extension, widgetsManager8Extension);
 
   extensions.forEach((p) => {
     if (p.status === 'rejected') {
@@ -143,7 +149,9 @@ async function main() {
   );
   federatedExtensions.forEach((p) => {
     if (p.status === 'fulfilled') {
-      for (const plugin of activePlugins(p.value, [])) {
+      for (const plugin of activePlugins(p.value, [
+        '@jupyter-widgets/jupyterlab-manager:plugin'
+      ])) {
         mods.push(plugin);
       }
     } else {
