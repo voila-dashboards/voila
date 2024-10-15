@@ -1,0 +1,72 @@
+{
+    "name": "@voila-dashboards/widgets-manager8",
+    "version": "0.5.7",
+    "description": "The Voilà jupyter-widgets manager for ipywidgets 8 support",
+    "keywords": [
+      "jupyter",
+      "jupyterlab",
+      "jupyterlab-extension"
+    ],
+    "homepage": "https://github.com/voila-dashboards/voila",
+    "bugs": {
+      "url": "https://github.com/voila-dashboards/voila/issues"
+    },
+    "license": "BSD-3-Clause",
+    "author": "Voilà contributors",
+    "files": [
+      "lib/**/*.{d.ts,eot,gif,html,jpg,js,js.map,json,png,svg,woff2,ttf}"
+    ],
+    "main": "lib/index.js",
+    "types": "lib/index.d.ts",
+    "repository": {
+      "type": "git",
+      "url": "https://github.com/voila-dashboards/voila.git"
+    },
+    "scripts": {
+      "build": "jlpm run build:lib && jlpm run build:labextension:dev",
+      "build:labextension": "jupyter labextension build .",
+      "build:labextension:dev": "jupyter labextension build --development True .",
+      "build:lib": "tsc",
+      "build:prod": "jlpm run build:lib && jlpm run build:labextension",
+      "build:test": "tsc --build tsconfig.test.json",
+      "clean": "jlpm run clean:lib && jlpm run clean:labextension",
+      "clean:labextension": "rimraf ../../voila/labextensions/widgets-manager8",
+      "clean:lib": "rimraf lib tsconfig.tsbuildinfo",
+      "test": "jest",
+      "watch": "run-p watch:src watch:labextension",
+      "watch:labextension": "jupyter labextension watch .",
+      "watch:src": "tsc -w"
+    },
+    "dependencies": {
+      "@jupyter-widgets/base": "^6.0.10",
+      "@jupyter-widgets/jupyterlab-manager": "^5.0.13",
+      "@jupyterlab/application": "^4.0.0",
+      "@jupyterlab/coreutils": "^6.0.5",
+      "@jupyterlab/rendermime": "^4.0.0",
+      "@jupyterlab/services": "^7.0.0"
+    },
+    "devDependencies": {
+      "@babel/core": "^7.10.2",
+      "@babel/preset-env": "^7.10.2",
+      "@jupyterlab/builder": "^4.0.0",
+      "@jupyterlab/testutils": "^4.0.0",
+      "npm-run-all": "^4.1.5",
+      "rimraf": "^2.6.1",
+      "source-map-loader": "~1.0.2",
+      "typescript": "~5.0.2"
+    },
+    "jupyterlab": {
+      "extension": true,
+      "outputDir": "../../voila/labextensions/widgets-manager8",
+      "sharedPackages": {
+        "@jupyter-widgets/base": {
+          "bundled": true,
+          "singleton": true
+        },
+        "@jupyter-widgets/jupyterlab-manager": {
+          "bundled": true,
+          "singleton": true
+        }
+      }
+    }
+  }

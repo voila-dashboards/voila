@@ -1,3 +1,12 @@
+import '@jupyterlab/application';
+import '@jupyterlab/coreutils';
+import '@jupyterlab/console';
+import '@jupyterlab/rendermime';
+import '@jupyterlab/services';
+import '@jupyterlab/statedb';
+import '@jupyterlab/notebook';
+import '@jupyterlab/mainmenu';
+import '@jupyterlab/logconsole';
 import '@lumino/algorithm';
 import '@lumino/application';
 import '@lumino/coreutils';

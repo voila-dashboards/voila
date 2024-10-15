@@ -10,9 +10,9 @@
 import { JupyterFrontEndPlugin } from '@jupyterlab/application';
 import { pathsPlugin } from './plugins/path';
 import { translatorPlugin } from './plugins/translator';
-import { renderOutputsPlugin, widgetManager } from './plugins/widget';
+import { renderOutputsPlugin, widgetManager } from './plugins/outputs';
 import { themePlugin, themesManagerPlugin } from './plugins/themes';
-import { renderOutputsProgressivelyPlugin } from './plugins/widget/index';
+import { renderOutputsProgressivelyPlugin } from './plugins/outputs/index';
 
 /**
  * Export the plugins as default.

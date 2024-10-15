@@ -145,8 +145,7 @@ def get_page_config(
     )
     disabled_extensions = [
         "@voila-dashboards/jupyterlab-preview",
-        "@jupyter/collaboration-extension",
-        "@jupyter-widgets/jupyterlab-manager",
+        "@jupyter/collaboration-extension"
     ]
     disabled_extensions.extend(page_config.get("disabledExtensions", []))
     required_extensions = []
