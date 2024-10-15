@@ -12,6 +12,7 @@ import { pathsPlugin } from './plugins/path';
 import { translatorPlugin } from './plugins/translator';
 import { renderOutputsPlugin, widgetManager } from './plugins/widget';
 import { themePlugin, themesManagerPlugin } from './plugins/themes';
+import { renderOutputsProgressivelyPlugin } from './plugins/widget/index';
 
 /**
  * Export the plugins as default.
@@ -21,6 +22,7 @@ const plugins: JupyterFrontEndPlugin<any>[] = [
   translatorPlugin,
   widgetManager,
   renderOutputsPlugin,
+  renderOutputsProgressivelyPlugin,
   themesManagerPlugin,
   themePlugin
 ];
@@ -32,6 +34,7 @@ export {
   translatorPlugin,
   widgetManager,
   renderOutputsPlugin,
+  renderOutputsProgressivelyPlugin,
   themesManagerPlugin,
   themePlugin
 };

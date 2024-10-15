@@ -13,7 +13,7 @@ import sys
 import traceback
 from functools import partial
 from copy import deepcopy
-from typing import Generator, List, Tuple, Union
+from typing import AsyncGenerator, Generator, List, Tuple, Union
 
 import nbformat
 import tornado.web
@@ -156,7 +156,7 @@ class NotebookRenderer(LoggingConfigurable):
         self,
         kernel_id: Union[str, None] = None,
         kernel_future=None,
-    ) -> Generator:
+    ) -> AsyncGenerator:
         inner_kernel_start = partial(
             self._jinja_kernel_start, kernel_id=kernel_id, kernel_future=kernel_future
         )
@@ -171,9 +171,16 @@ class NotebookRenderer(LoggingConfigurable):
             "frontend": "voila",
             "main_js": "voila.js",
             "kernel_start": inner_kernel_start,
-            "cell_generator": self._jinja_cell_generator,
             "notebook_execute": self._jinja_notebook_execute,
+            "progressive_rendering": self.voila_configuration.progressive_rendering,
         }
+        if self.voila_configuration.progressive_rendering:
+            extra_context["cell_generator"] = (
+                self._jinja_cell_generator_without_execution
+            )
+        else:
+            extra_context["cell_generator"] = self._jinja_cell_generator
+
         # render notebook in snippets, then return an iterator so we can flush
         # them out to the browser progressively.
         return self.exporter.generate_from_notebook_node(
@@ -242,13 +249,28 @@ class NotebookRenderer(LoggingConfigurable):
         return kernel_id
 
     async def _jinja_notebook_execute(self, nb, kernel_id):
-        result = await self.executor.async_execute(cleanup_kc=False)
         # we modify the notebook in place, since the nb variable cannot be
         # reassigned it seems in jinja2 e.g. if we do {% with nb = notebook_execute(nb, kernel_id) %}
         # ,the base template/blocks will not see the updated variable
         #  (it seems to be local to our block)
+        if self.voila_configuration.progressive_rendering:
+            result, _ = ClearOutputPreprocessor().preprocess(
+                nb, {"metadata": {"path": self.cwd}}
+            )
+        else:
+            result = await self.executor.async_execute(cleanup_kc=False)
+
         nb.cells = result.cells
 
+        await self._cleanup_resources()
+
+    async def _jinja_cell_generator_without_execution(self, nb, kernel_id):
+        nb, _ = ClearOutputPreprocessor().preprocess(
+            nb, {"metadata": {"path": self.cwd}}
+        )
+        for input_cell in nb.cells:
+            output = input_cell.copy()
+            yield output
         await self._cleanup_resources()
 
     async def _jinja_cell_generator(self, nb, kernel_id):

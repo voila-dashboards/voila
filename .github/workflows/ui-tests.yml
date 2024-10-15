@@ -12,7 +12,11 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        jupyter-server-version: ["1.24.0", "2.14.2"]
+        jupyter-server-version: ['1.24.0', '2.14.2']
+        progressive_rendering: [false, true]
+        exclude:
+          - jupyter-server-version: '1.24.0'
+            progressive_rendering: true
       fail-fast: false
 
     steps:
@@ -35,7 +39,7 @@ jobs:
       - name: Launch Voila
         run: |
           # Mount a volume to overwrite the server configuration
-          jlpm start 2>&1 > /tmp/voila_server.log &
+          jlpm start --progressive_rendering=${{ matrix.progressive_rendering }} 2>&1 > /tmp/voila_server.log &
         working-directory: ui-tests
 
       - name: Install browser
@@ -49,30 +53,46 @@ jobs:
           timeout: 360000
 
       - name: Test
+        env:
+          PROGRESSIVE_RENDERING: ${{ matrix.progressive_rendering }}
         run: jlpm run test
         working-directory: ui-tests
 
+      - name: Set test report name for progressive rendering
+        if: always() && matrix.progressive_rendering == true
+        run: |
+          echo "TEST_REPORT_NAME=progressive-voila-test-report-${{ matrix.jupyter-server-version }}" >> $GITHUB_ENV
+          echo "TEST_ASSETS_NAME=progressive-voila-test-assets-${{ matrix.jupyter-server-version }}" >> $GITHUB_ENV
+          echo "TEST_BENCHMARK_NAME=progressive-voila-test-benchmark-${{ matrix.jupyter-server-version }}" >> $GITHUB_ENV
+
+      - name: Set test report name for non-progressive rendering
+        if: always() && matrix.progressive_rendering == false
+        run: |
+          echo "TEST_REPORT_NAME=voila-test-report-${{ matrix.jupyter-server-version }}" >> $GITHUB_ENV
+          echo "TEST_ASSETS_NAME=voila-test-assets-${{ matrix.jupyter-server-version }}" >> $GITHUB_ENV
+          echo "TEST_BENCHMARK_NAME=voila-test-benchmark-${{ matrix.jupyter-server-version }}" >> $GITHUB_ENV
+
       - name: Upload Playwright Test assets
         if: always()
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
-          name: voila-test-assets
+          name: ${{ env.TEST_ASSETS_NAME }}
           path: |
             ui-tests/test-results
 
       - name: Upload Playwright Benchmark report
         if: always()
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
-          name: voila-benchmark-report
+          name: ${{ env.TEST_BENCHMARK_NAME }}
           path: |
             ui-tests/benchmark-results
 
       - name: Upload Playwright Test report
         if: always()
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
-          name: voila-test-report
+          name: ${{ env.TEST_REPORT_NAME }}
           path: |
             ui-tests/playwright-report
 

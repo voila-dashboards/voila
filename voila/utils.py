@@ -99,6 +99,7 @@ def get_page_config(base_url, settings, log, voila_configuration: VoilaConfigura
         "fullStaticUrl": url_path_join(base_url, "voila/static"),
         "fullLabextensionsUrl": url_path_join(base_url, "voila/labextensions"),
         "extensionConfig": voila_configuration.extension_config,
+        "progressiveRendering": voila_configuration.progressive_rendering,
     }
     mathjax_config = settings.get("mathjax_config", "TeX-AMS_CHTML-full,Safe")
     mathjax_url = settings.get(

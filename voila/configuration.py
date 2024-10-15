@@ -217,3 +217,11 @@ class VoilaConfiguration(traitlets.config.Configurable):
         config=True,
         help="""Whether or not voila should attempt to fix and resolve a notebooks kernelspec metadata""",
     )
+
+    progressive_rendering = Bool(
+        False,
+        config=True,
+        help="""Flag to enable or disable progressive rendering option.
+        This option is not compatible with preheat-kernel option.
+        """,
+    )

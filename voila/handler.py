@@ -19,6 +19,8 @@ from nbclient.util import ensure_async
 from tornado.httputil import split_host_and_port
 from traitlets.traitlets import Bool
 
+from voila.tornado.execution_request_handler import ExecutionRequestHandler
+
 from .configuration import VoilaConfiguration
 
 from ._version import __version__
@@ -236,6 +238,12 @@ class VoilaHandler(BaseVoilaHandler):
             )
             kernel_future = self.kernel_manager.get_kernel(kernel_id)
             queue = asyncio.Queue()
+            if self.voila_configuration.progressive_rendering:
+                ExecutionRequestHandler._execution_data[kernel_id] = {
+                    "nb": gen.notebook,
+                    "config": self.traitlet_config,
+                    "show_tracebacks": self.voila_configuration.show_tracebacks,
+                }
 
             async def put_html():
                 async for html_snippet, _ in gen.generate_content_generator(
