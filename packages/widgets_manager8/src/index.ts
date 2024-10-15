@@ -55,7 +55,7 @@ export const widgetManager: JupyterFrontEndPlugin<IJupyterWidgetRegistry> = {
     }
     const kernel = new KernelConnection({ model, serverSettings });
     const manager = new VoilaWidgetManager(kernel, rendermime);
-    app.widgetManager = manager;
+    (app as any).widgetManager = manager;
 
     rendermime.removeMimeType(WIDGET_MIMETYPE);
     rendermime.addFactory(
@@ -81,7 +81,7 @@ export const widgetManager: JupyterFrontEndPlugin<IJupyterWidgetRegistry> = {
 
     return {
       registerWidget: async (data: IWidgetRegistryData) => {
-        const manager = await app.widgetManagerPromise.promise;
+        const manager = await (app as any).widgetManagerPromise.promise;
 
         manager.register(data);
       }

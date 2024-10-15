@@ -35,6 +35,7 @@ import { VoilaWidgetManager } from './manager';
 
 const WIDGET_MIMETYPE = 'application/vnd.jupyter.widget-view+json';
 
+
 /**
  * The Voila widgets manager plugin.
  */
@@ -65,8 +66,36 @@ export const widgetManager: JupyterFrontEndPlugin<IJupyterWidgetRegistry> = {
       };
     }
     const kernel = new KernelConnection({ model, serverSettings });
-    const manager = new VoilaWidgetManager(kernel, rendermime);
-    app.widgetManager = manager;
+
+    const context = {
+      sessionContext: {
+          session: {
+              kernel,
+              kernelChanged: {
+                  connect: () => {}
+              },
+          },
+          statusChanged: {
+              connect: () => {}
+          },
+          kernelChanged: {
+              connect: () => {}
+          },
+          connectionStatusChanged: {
+              connect: () => {}
+          },
+      },
+      saveState: {
+          connect: () => {}
+      },
+    };
+
+    const settings = {
+      saveState: false
+    };
+
+    const manager = new VoilaWidgetManager(context as any, rendermime, settings);
+    (app as any).widgetManager = manager;
 
     rendermime.removeMimeType(WIDGET_MIMETYPE);
     rendermime.addFactory(
@@ -92,7 +121,7 @@ export const widgetManager: JupyterFrontEndPlugin<IJupyterWidgetRegistry> = {
 
     return {
       registerWidget: async (data: IWidgetRegistryData) => {
-        const manager = await app.widgetManagerPromise.promise;
+        const manager = await (app as any).widgetManagerPromise.promise;
 
         manager.register(data);
       }
@@ -145,15 +174,15 @@ export const controlWidgets7Plugin: JupyterFrontEndPlugin<void> = {
       exports: () => {
         return new Promise((resolve, reject) => {
           (require as any).ensure(
-            ['@jupyter-widgets/controls7'],
+            ['@jupyter-widgets/controls'],
             (require: NodeRequire) => {
               // eslint-disable-next-line @typescript-eslint/no-var-requires
-              resolve(require('@jupyter-widgets/controls7'));
+              resolve(require('@jupyter-widgets/controls'));
             },
             (err: any) => {
               reject(err);
             },
-            '@jupyter-widgets/controls7'
+            '@jupyter-widgets/controls'
           );
         });
       }
