@@ -39,9 +39,6 @@ async function main() {
     require('@jupyterlab/rendermime-extension'),
     require('@jupyterlab/theme-light-extension'),
     require('@jupyterlab/theme-dark-extension'),
-    require('@jupyter-widgets/jupyterlab-manager/lib/plugin').default.filter(
-      (p: any) => p.id !== '@jupyter-widgets/jupyterlab-manager:plugin'
-    ),
     plugins
   ];
 
