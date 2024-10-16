@@ -74,8 +74,6 @@ async function main() {
     })
   );
 
-  console.log('labextensions data', extensionData, extensions);
-
   extensions.forEach((p) => {
     if (p.status === 'rejected') {
       // There was an error loading the component
@@ -141,7 +139,6 @@ async function main() {
   });
   app.registerPluginModules(mods);
   await app.start();
-  console.log('__webpack_share_scopes__.default', __webpack_share_scopes__.default);
   window.jupyterapp = app;
 }
 

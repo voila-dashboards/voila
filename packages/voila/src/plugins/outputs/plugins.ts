@@ -53,13 +53,11 @@ export const renderOutputsPlugin: JupyterFrontEndPlugin<void> = {
         const model = JSON.parse(cellOutput.innerHTML);
 
         const mimeType = rendermime.preferredMimeType(model.data, 'any');
-        console.log('mimetype', mimeType, rendermime);
 
         if (!mimeType) {
           return null;
         }
         const output = rendermime.createRenderer(mimeType);
-        console.log('rendering model', model);
         output.renderModel(model).catch((error) => {
           // Manually append error message to output
           const pre = document.createElement('pre');

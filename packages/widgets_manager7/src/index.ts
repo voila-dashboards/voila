@@ -26,13 +26,31 @@ import {
   JupyterFrontEndPlugin
 } from '@jupyterlab/application';
 import { PageConfig } from '@jupyterlab/coreutils';
-import { IRenderMimeRegistry } from '@jupyterlab/rendermime';
+import { IRenderMime, IRenderMimeRegistry } from '@jupyterlab/rendermime';
 import { KernelAPI, ServerConnection } from '@jupyterlab/services';
 import { KernelConnection } from '@jupyterlab/services/lib/kernel/default';
 
 import { VoilaWidgetManager } from './manager';
 
 const WIDGET_MIMETYPE = 'application/vnd.jupyter.widget-view+json';
+
+class VoilaWidgetRenderer extends WidgetRenderer {
+
+  constructor(options: IRenderMime.IRendererOptions, manager: VoilaWidgetManager) {
+    super(options, manager);
+
+    this.voilaManager = manager;
+  }
+
+  async renderModel(model: IRenderMime.IMimeModel): Promise<void> {
+    await this.voilaManager.loadedModelsFromKernel;
+
+    return super.renderModel(model);
+  }
+
+  private voilaManager: VoilaWidgetManager;
+
+};
 
 /**
  * The Voila widgets manager plugin.
@@ -99,16 +117,55 @@ const widgetManager: JupyterFrontEndPlugin<IJupyterWidgetRegistry> = {
     );
     (app as any).widgetManager = manager;
 
-    console.log('manager promise!', manager);
     rendermime.removeMimeType(WIDGET_MIMETYPE);
     rendermime.addFactory(
       {
         safe: false,
         mimeTypes: [WIDGET_MIMETYPE],
-        createRenderer: (options) => new WidgetRenderer(options, manager)
+        createRenderer: (options) => new VoilaWidgetRenderer(options, manager)
       },
       -10
     );
+
+    manager.register({
+      name: '@jupyter-widgets/controls',
+      version: JUPYTER_CONTROLS_VERSION,
+      exports: () => {
+        return new Promise((resolve, reject) => {
+          (require as any).ensure(
+            ['@jupyter-widgets/controls'],
+            (require: NodeRequire) => {
+              // eslint-disable-next-line @typescript-eslint/no-var-requires
+              resolve(require('@jupyter-widgets/controls'));
+            },
+            (err: any) => {
+              reject(err);
+            },
+            '@jupyter-widgets/controls'
+          );
+        });
+      }
+    });
+
+    manager.register({
+      name: '@jupyter-widgets/base',
+      version: JUPYTER_WIDGETS_VERSION,
+      exports: {
+        WidgetModel: WidgetModel as any,
+        WidgetView: WidgetView as any,
+        DOMWidgetView: DOMWidgetView as any,
+        DOMWidgetModel: DOMWidgetModel as any,
+        LayoutModel: LayoutModel as any,
+        LayoutView: LayoutView as any,
+        StyleModel: StyleModel as any,
+        StyleView: StyleView as any
+      }
+    });
+
+    app.started.then(async() => {
+      await manager._loadFromKernel();
+    });
+
     window.addEventListener('beforeunload', (e) => {
       const data = new FormData();
       // it seems if we attach this to early, it will not be called
@@ -132,59 +189,4 @@ const widgetManager: JupyterFrontEndPlugin<IJupyterWidgetRegistry> = {
   }
 };
 
-/**
- * The base widgets.
- */
-const baseWidgets7Plugin: JupyterFrontEndPlugin<void> = {
-  id: `@jupyter-widgets/jupyterlab-manager:base-${JUPYTER_WIDGETS_VERSION}`,
-  requires: [IJupyterWidgetRegistry],
-  autoStart: true,
-  activate: (app: JupyterFrontEnd, registry: IJupyterWidgetRegistry): void => {
-    registry.registerWidget({
-      name: '@jupyter-widgets/base',
-      version: JUPYTER_WIDGETS_VERSION,
-      exports: {
-        WidgetModel: WidgetModel as any,
-        WidgetView: WidgetView as any,
-        DOMWidgetView: DOMWidgetView as any,
-        DOMWidgetModel: DOMWidgetModel as any,
-        LayoutModel: LayoutModel as any,
-        LayoutView: LayoutView as any,
-        StyleModel: StyleModel as any,
-        StyleView: StyleView as any
-      }
-    });
-  }
-};
-
-/**
- * The control widgets.
- */
-const controlWidgets7Plugin: JupyterFrontEndPlugin<void> = {
-  id: `@jupyter-widgets/jupyterlab-manager:controls-${JUPYTER_CONTROLS_VERSION}`,
-  requires: [IJupyterWidgetRegistry],
-  autoStart: true,
-  activate: (app: JupyterFrontEnd, registry: IJupyterWidgetRegistry): void => {
-    registry.registerWidget({
-      name: '@jupyter-widgets/controls',
-      version: JUPYTER_CONTROLS_VERSION,
-      exports: () => {
-        return new Promise((resolve, reject) => {
-          (require as any).ensure(
-            ['@jupyter-widgets/controls'],
-            (require: NodeRequire) => {
-              // eslint-disable-next-line @typescript-eslint/no-var-requires
-              resolve(require('@jupyter-widgets/controls'));
-            },
-            (err: any) => {
-              reject(err);
-            },
-            '@jupyter-widgets/controls'
-          );
-        });
-      }
-    });
-  }
-};
-
-export default [widgetManager, baseWidgets7Plugin, controlWidgets7Plugin];
+export default [widgetManager];
