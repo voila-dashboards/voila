@@ -93,7 +93,7 @@ jobs:
         with:
           name: ${{ env.TEST_ASSETS_NAME }}
           path: |
-            ui-tests/test-results
+            ui-tests/test-results-${{ matrix.ipywidgets }}
 
       - name: Upload Playwright Benchmark report
         if: always()
@@ -101,7 +101,7 @@ jobs:
         with:
           name: ${{ env.TEST_BENCHMARK_NAME }}
           path: |
-            ui-tests/benchmark-results
+            ui-tests/benchmark-results-${{ matrix.ipywidgets }}
 
       - name: Upload Playwright Test report
         if: always()
@@ -109,7 +109,7 @@ jobs:
         with:
           name: ${{ env.TEST_REPORT_NAME }}
           path: |
-            ui-tests/playwright-report
+            ui-tests/playwright-report-${{ matrix.ipywidgets }}
 
       - name: Print Voila logs
         if: always()
