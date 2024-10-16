@@ -91,25 +91,25 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: ${{ env.TEST_ASSETS_NAME }}
+          name: ${{ env.TEST_ASSETS_NAME }}${{ matrix.ipywidgets }}
           path: |
-            ui-tests/test-results-${{ matrix.ipywidgets }}
+            ui-tests/test-results
 
       - name: Upload Playwright Benchmark report
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: ${{ env.TEST_BENCHMARK_NAME }}
+          name: ${{ env.TEST_BENCHMARK_NAME }}${{ matrix.ipywidgets }}
           path: |
-            ui-tests/benchmark-results-${{ matrix.ipywidgets }}
+            ui-tests/benchmark-results
 
       - name: Upload Playwright Test report
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: ${{ env.TEST_REPORT_NAME }}
+          name: ${{ env.TEST_REPORT_NAME }}${{ matrix.ipywidgets }}
           path: |
-            ui-tests/playwright-report-${{ matrix.ipywidgets }}
+            ui-tests/playwright-report
 
       - name: Print Voila logs
         if: always()
