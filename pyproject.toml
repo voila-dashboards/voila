@@ -68,6 +68,16 @@ test = [
     "pytest",
     "pytest-tornasync",
 ]
+test7 = [
+    "ipykernel",
+    "ipywidgets==7.8.2",
+    "matplotlib",
+    "numpy",
+    "pandas",
+    "papermill",
+    "pytest",
+    "pytest-tornasync",
+]
 docs = [
     "myst-parser",
     "pydata-sphinx-theme",
