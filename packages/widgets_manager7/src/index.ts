@@ -20,7 +20,7 @@ import {
   StyleView
 } from '@jupyter-widgets/base';
 import { JUPYTER_CONTROLS_VERSION } from '@jupyter-widgets/controls/lib/version';
-import { WidgetRenderer } from '@jupyter-widgets/jupyterlab-manager';
+import { WidgetRenderer, output } from '@jupyter-widgets/jupyterlab-manager';
 import {
   JupyterFrontEnd,
   JupyterFrontEndPlugin
@@ -166,6 +166,12 @@ const widgetManager: JupyterFrontEndPlugin<IJupyterWidgetRegistry> = {
         StyleModel: StyleModel as any,
         StyleView: StyleView as any
       }
+    });
+
+    manager.register({
+      name: '@jupyter-widgets/output',
+      version: output.OUTPUT_WIDGET_VERSION,
+      exports: output as any
     });
 
     app.started.then(async () => {

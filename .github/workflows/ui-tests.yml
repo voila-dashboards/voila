@@ -76,22 +76,22 @@ jobs:
       - name: Set test report name for progressive rendering
         if: always() && matrix.progressive_rendering == true
         run: |
-          echo "TEST_REPORT_NAME=progressive-voila-test-report-${{ matrix.jupyter-server-version }}" >> $GITHUB_ENV
-          echo "TEST_ASSETS_NAME=progressive-voila-test-assets-${{ matrix.jupyter-server-version }}" >> $GITHUB_ENV
-          echo "TEST_BENCHMARK_NAME=progressive-voila-test-benchmark-${{ matrix.jupyter-server-version }}" >> $GITHUB_ENV
+          echo "TEST_REPORT_NAME=progressive-voila-test-report-${{ matrix.jupyter-server-version }}-${{ matrix.ipywidgets }}" >> $GITHUB_ENV
+          echo "TEST_ASSETS_NAME=progressive-voila-test-assets-${{ matrix.jupyter-server-version }}-${{ matrix.ipywidgets }}" >> $GITHUB_ENV
+          echo "TEST_BENCHMARK_NAME=progressive-voila-test-benchmark-${{ matrix.jupyter-server-version }}-${{ matrix.ipywidgets }}" >> $GITHUB_ENV
 
       - name: Set test report name for non-progressive rendering
         if: always() && matrix.progressive_rendering == false
         run: |
-          echo "TEST_REPORT_NAME=voila-test-report-${{ matrix.jupyter-server-version }}" >> $GITHUB_ENV
-          echo "TEST_ASSETS_NAME=voila-test-assets-${{ matrix.jupyter-server-version }}" >> $GITHUB_ENV
-          echo "TEST_BENCHMARK_NAME=voila-test-benchmark-${{ matrix.jupyter-server-version }}" >> $GITHUB_ENV
+          echo "TEST_REPORT_NAME=voila-test-report-${{ matrix.jupyter-server-version }}-${{ matrix.ipywidgets }}" >> $GITHUB_ENV
+          echo "TEST_ASSETS_NAME=voila-test-assets-${{ matrix.jupyter-server-version }}-${{ matrix.ipywidgets }}" >> $GITHUB_ENV
+          echo "TEST_BENCHMARK_NAME=voila-test-benchmark-${{ matrix.jupyter-server-version }}-${{ matrix.ipywidgets }}" >> $GITHUB_ENV
 
       - name: Upload Playwright Test assets
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: ${{ env.TEST_ASSETS_NAME }}${{ matrix.ipywidgets }}
+          name: ${{ env.TEST_ASSETS_NAME }}
           path: |
             ui-tests/test-results
 
@@ -99,7 +99,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: ${{ env.TEST_BENCHMARK_NAME }}${{ matrix.ipywidgets }}
+          name: ${{ env.TEST_BENCHMARK_NAME }}
           path: |
             ui-tests/benchmark-results
 
@@ -107,7 +107,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: ${{ env.TEST_REPORT_NAME }}${{ matrix.ipywidgets }}
+          name: ${{ env.TEST_REPORT_NAME }}
           path: |
             ui-tests/playwright-report
 
