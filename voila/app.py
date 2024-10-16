@@ -104,7 +104,7 @@ from .utils import (
     create_include_assets_functions,
     get_data_dir,
     pjoin,
-    get_voila_labextensions_path
+    get_voila_labextensions_path,
 )
 from .voila_kernel_manager import voila_kernel_manager_factory
 

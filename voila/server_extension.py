@@ -39,7 +39,7 @@ from .utils import (
     get_data_dir,
     get_server_root_dir,
     pjoin,
-    get_voila_labextensions_path
+    get_voila_labextensions_path,
 )
 
 _kernel_id_regex = r"(?P<kernel_id>\w+-\w+-\w+-\w+-\w+)"

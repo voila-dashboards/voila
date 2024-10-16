@@ -147,7 +147,7 @@ def get_page_config(
     )
     disabled_extensions = [
         "@voila-dashboards/jupyterlab-preview",
-        "@jupyter/collaboration-extension"
+        "@jupyter/collaboration-extension",
     ]
     disabled_extensions.extend(page_config.get("disabledExtensions", []))
     required_extensions = []
@@ -161,34 +161,38 @@ def get_page_config(
         extension_denylist=voila_configuration.extension_denylist,
     )
 
-    extensions = maybe_inject_widgets_manager_extension(filtered_extensions, labextensions_path)
+    extensions = maybe_inject_widgets_manager_extension(
+        filtered_extensions, labextensions_path
+    )
 
     page_config["federated_extensions"] = extensions
     return page_config
 
 
-def maybe_inject_widgets_manager_extension(federated_extensions: List[Dict], labextensions_path: List[str]):
+def maybe_inject_widgets_manager_extension(
+    federated_extensions: List[Dict], labextensions_path: List[str]
+):
     """If the @jupyter-widgets/jupyterlab-manager is installed on the server. Inject our own manager."""
     labextensions = get_federated_extensions(labextensions_path)
 
-    if '@jupyter-widgets/jupyterlab-manager' not in labextensions:
+    if "@jupyter-widgets/jupyterlab-manager" not in labextensions:
         return federated_extensions
 
-    widgets_version = labextensions['@jupyter-widgets/jupyterlab-manager']['version']
+    widgets_version = labextensions["@jupyter-widgets/jupyterlab-manager"]["version"]
 
-    if Version(widgets_version) >= Version('5.0.0'):
+    if Version(widgets_version) >= Version("5.0.0"):
         # ipywidgets 8 or more, remove widgets-manager7
         return [
             x
             for x in federated_extensions
-            if x["name"] != '@voila-dashboards/widgets-manager7'
+            if x["name"] != "@voila-dashboards/widgets-manager7"
         ]
     else:
         # ipywidgets 7, remove widgets-manager8
         return [
             x
             for x in federated_extensions
-            if x["name"] != '@voila-dashboards/widgets-manager8'
+            if x["name"] != "@voila-dashboards/widgets-manager8"
         ]
 
 
