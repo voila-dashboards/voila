@@ -35,56 +35,60 @@ export const renderOutputsPlugin: JupyterFrontEndPlugin<void> = {
     app: JupyterFrontEnd,
     rendermime: IRenderMimeRegistry
   ): Promise<void> => {
-    // TODO: Typeset a fake element to get MathJax loaded, remove this hack once
-    // MathJax 2 is removed.
-    await rendermime.latexTypesetter?.typeset(document.createElement('div'));
+    app.started.then(() => {
+      // TODO: Typeset a fake element to get MathJax loaded, remove this hack once
+      // MathJax 2 is removed.
+      rendermime.latexTypesetter?.typeset(document.createElement('div'));
 
-    // Render latex in markdown cells
-    const mdOutput = document.body.querySelectorAll('div.jp-MarkdownOutput');
-    mdOutput.forEach((md) => {
-      rendermime.latexTypesetter?.typeset(md as HTMLElement);
-    });
-    // Render code cell
-    const cellOutputs = document.body.querySelectorAll(
-      'script[type="application/vnd.voila.cell-output+json"]'
-    );
-    cellOutputs.forEach(async (cellOutput) => {
-      const model = JSON.parse(cellOutput.innerHTML);
+      // Render latex in markdown cells
+      const mdOutput = document.body.querySelectorAll('div.jp-MarkdownOutput');
+      mdOutput.forEach((md) => {
+        rendermime.latexTypesetter?.typeset(md as HTMLElement);
+      });
+      // Render code cell
+      const cellOutputs = document.body.querySelectorAll(
+        'script[type="application/vnd.voila.cell-output+json"]'
+      );
+      cellOutputs.forEach(async (cellOutput) => {
+        const model = JSON.parse(cellOutput.innerHTML);
 
-      const mimeType = rendermime.preferredMimeType(model.data, 'any');
+        const mimeType = rendermime.preferredMimeType(model.data, 'any');
+        console.log('mimetype', mimeType, rendermime);
 
-      if (!mimeType) {
-        return null;
-      }
-      const output = rendermime.createRenderer(mimeType);
-      output.renderModel(model).catch((error) => {
-        // Manually append error message to output
-        const pre = document.createElement('pre');
-        pre.textContent = `Javascript Error: ${error.message}`;
-        output.node.appendChild(pre);
+        if (!mimeType) {
+          return null;
+        }
+        const output = rendermime.createRenderer(mimeType);
+        console.log('rendering model', model);
+        output.renderModel(model).catch((error) => {
+          // Manually append error message to output
+          const pre = document.createElement('pre');
+          pre.textContent = `Javascript Error: ${error.message}`;
+          output.node.appendChild(pre);
 
-        // Remove mime-type-specific CSS classes
-        pre.className = 'lm-Widget jp-RenderedText';
-        pre.setAttribute('data-mime-type', 'application/vnd.jupyter.stderr');
+          // Remove mime-type-specific CSS classes
+          pre.className = 'lm-Widget jp-RenderedText';
+          pre.setAttribute('data-mime-type', 'application/vnd.jupyter.stderr');
+        });
+
+        output.addClass('jp-OutputArea-output');
+
+        if (cellOutput.parentElement) {
+          const container = cellOutput.parentElement;
+
+          container.removeChild(cellOutput);
+
+          // Attach output
+          Widget.attach(output, container);
+        }
       });
 
-      output.addClass('jp-OutputArea-output');
-
-      if (cellOutput.parentElement) {
-        const container = cellOutput.parentElement;
-
-        container.removeChild(cellOutput);
-
-        // Attach output
-        Widget.attach(output, container);
+      const node = document.getElementById('rendered_cells');
+      if (node) {
+        const cells = new RenderedCells({ node });
+        app.shell.add(cells, 'main');
       }
-    });
-
-    const node = document.getElementById('rendered_cells');
-    if (node) {
-      const cells = new RenderedCells({ node });
-      app.shell.add(cells, 'main');
-    }
+    })
   }
 };
 

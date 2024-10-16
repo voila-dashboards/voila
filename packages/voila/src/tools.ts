@@ -38,27 +38,6 @@ export async function createModule(
   }
 }
 
-export function isIpywidgets7extension(extension: any) {
-  // Handle commonjs or es2015 modules
-  let exports;
-  if (Object.prototype.hasOwnProperty.call(extension, '__esModule')) {
-    exports = extension.default;
-  } else {
-    // CommonJS exports.
-    exports = extension;
-  }
-
-  const plugins = Array.isArray(exports) ? exports : [exports];
-  const pluginIds = plugins.map((plugin) => {
-    return plugin.id;
-  });
-
-  return (
-    pluginIds.includes('@jupyter-widgets/jupyterlab-manager:plugin') &&
-    pluginIds.length === 1
-  );
-}
-
 /**
  * Iterate over active plugins in an extension.
  *

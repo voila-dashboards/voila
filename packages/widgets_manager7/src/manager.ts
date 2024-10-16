@@ -1,6 +1,7 @@
 import { WidgetModel } from '@jupyter-widgets/base';
 import { WidgetManager } from '@jupyter-widgets/jupyterlab-manager';
 import { ISignal, Signal } from '@lumino/signaling';
+import { INotebookModel } from '@jupyterlab/notebook';
 
 export class VoilaWidgetManager extends WidgetManager {
   register_model(model_id: string, modelPromise: Promise<WidgetModel>): void {
@@ -19,6 +20,10 @@ export class VoilaWidgetManager extends WidgetManager {
 
   removeRegisteredModel(modelId: string) {
     this._registeredModels.delete(modelId);
+  }
+
+  restoreWidgets(notebook: INotebookModel): Promise<void> {
+    return Promise.resolve();
   }
 
   private _modelRegistered = new Signal<VoilaWidgetManager, string>(this);

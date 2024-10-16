@@ -18,12 +18,14 @@ from functools import partial
 from pathlib import Path
 from typing import Awaitable, Dict, List, Any
 from logging import Logger
+from packaging.version import Version
 
 import websockets
 from jupyter_core.paths import jupyter_path
 from jupyter_server.config_manager import recursive_update
 from jupyter_server.utils import url_path_join
 from jupyterlab_server.config import get_page_config as gpc
+from jupyterlab_server.config import get_federated_extensions
 from markupsafe import Markup
 
 from ._version import __version__
@@ -151,14 +153,43 @@ def get_page_config(
     required_extensions = []
     federated_extensions = deepcopy(page_config["federated_extensions"])
 
-    page_config["federated_extensions"] = filter_extension(
+    filtered_extensions = filter_extension(
         federated_extensions=federated_extensions,
         disabled_extensions=disabled_extensions,
         required_extensions=required_extensions,
         extension_allowlist=voila_configuration.extension_allowlist,
         extension_denylist=voila_configuration.extension_denylist,
     )
+
+    extensions = maybe_inject_widgets_manager_extension(filtered_extensions, labextensions_path)
+
+    page_config["federated_extensions"] = extensions
     return page_config
+
+
+def maybe_inject_widgets_manager_extension(federated_extensions: List[Dict], labextensions_path: List[str]):
+    """If the @jupyter-widgets/jupyterlab-manager is installed on the server. Inject our own manager."""
+    labextensions = get_federated_extensions(labextensions_path)
+
+    if '@jupyter-widgets/jupyterlab-manager' not in labextensions:
+        return federated_extensions
+
+    widgets_version = labextensions['@jupyter-widgets/jupyterlab-manager']['version']
+
+    if Version(widgets_version) >= Version('5.0.0'):
+        # ipywidgets 8 or more, remove widgets-manager7
+        return [
+            x
+            for x in federated_extensions
+            if x["name"] != '@voila-dashboards/widgets-manager7'
+        ]
+    else:
+        # ipywidgets 7, remove widgets-manager8
+        return [
+            x
+            for x in federated_extensions
+            if x["name"] != '@voila-dashboards/widgets-manager8'
+        ]
 
 
 def filter_extension(

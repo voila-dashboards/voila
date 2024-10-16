@@ -99,6 +99,7 @@ const widgetManager: JupyterFrontEndPlugin<IJupyterWidgetRegistry> = {
     );
     (app as any).widgetManager = manager;
 
+    console.log('manager promise!', manager);
     rendermime.removeMimeType(WIDGET_MIMETYPE);
     rendermime.addFactory(
       {
