@@ -86,7 +86,7 @@ export const renderOutputsPlugin: JupyterFrontEndPlugin<void> = {
         const cells = new RenderedCells({ node });
         app.shell.add(cells, 'main');
       }
-    })
+    });
   }
 };
 

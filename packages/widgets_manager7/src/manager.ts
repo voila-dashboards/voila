@@ -6,7 +6,6 @@ import { INotebookModel } from '@jupyterlab/notebook';
 import { Widget } from '@lumino/widgets';
 import { MessageLoop } from '@lumino/messaging';
 
-
 export class VoilaWidgetManager extends WidgetManager {
   register_model(model_id: string, modelPromise: Promise<WidgetModel>): void {
     super.register_model(model_id, modelPromise);
@@ -43,10 +42,7 @@ export class VoilaWidgetManager extends WidgetManager {
     if (view.el) {
       view.el.setAttribute('data-voila-jupyter-widget', '');
       view.el.addEventListener('jupyterWidgetResize', (e: Event) => {
-        MessageLoop.postMessage(
-          view.pWidget,
-          Widget.ResizeMessage.UnknownSize
-        );
+        MessageLoop.postMessage(view.pWidget, Widget.ResizeMessage.UnknownSize);
       });
     }
     return view.pWidget;

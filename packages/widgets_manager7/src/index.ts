@@ -35,8 +35,10 @@ import { VoilaWidgetManager } from './manager';
 const WIDGET_MIMETYPE = 'application/vnd.jupyter.widget-view+json';
 
 class VoilaWidgetRenderer extends WidgetRenderer {
-
-  constructor(options: IRenderMime.IRendererOptions, manager: VoilaWidgetManager) {
+  constructor(
+    options: IRenderMime.IRendererOptions,
+    manager: VoilaWidgetManager
+  ) {
     super(options, manager);
 
     this.voilaManager = manager;
@@ -49,8 +51,7 @@ class VoilaWidgetRenderer extends WidgetRenderer {
   }
 
   private voilaManager: VoilaWidgetManager;
-
-};
+}
 
 /**
  * The Voila widgets manager plugin.
@@ -88,20 +89,25 @@ const widgetManager: JupyterFrontEndPlugin<IJupyterWidgetRegistry> = {
         session: {
           kernel,
           kernelChanged: {
+            // eslint-disable-next-line @typescript-eslint/no-empty-function
             connect: () => {}
           }
         },
         statusChanged: {
+          // eslint-disable-next-line @typescript-eslint/no-empty-function
           connect: () => {}
         },
         kernelChanged: {
+          // eslint-disable-next-line @typescript-eslint/no-empty-function
           connect: () => {}
         },
         connectionStatusChanged: {
+          // eslint-disable-next-line @typescript-eslint/no-empty-function
           connect: () => {}
         }
       },
       saveState: {
+        // eslint-disable-next-line @typescript-eslint/no-empty-function
         connect: () => {}
       }
     };
@@ -162,7 +168,7 @@ const widgetManager: JupyterFrontEndPlugin<IJupyterWidgetRegistry> = {
       }
     });
 
-    app.started.then(async() => {
+    app.started.then(async () => {
       await manager._loadFromKernel();
     });
 
