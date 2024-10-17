@@ -10,7 +10,7 @@ import { PageConfig } from '@jupyterlab/coreutils';
 
 import { IRenderMime } from '@jupyterlab/rendermime';
 
-import { KernelWidgetManager } from '@jupyter-widgets/jupyterlab-manager';
+import { VoilaWidgetManager } from './plugins/widget';
 
 import { IShell, VoilaShell } from './shell';
 
@@ -121,23 +121,23 @@ export class VoilaApp extends JupyterFrontEnd<IShell> {
   /**
    * A promise that resolves when the Voila Widget Manager is created
    */
-  get widgetManagerPromise(): PromiseDelegate<KernelWidgetManager> {
+  get widgetManagerPromise(): PromiseDelegate<VoilaWidgetManager> {
     return this._widgetManagerPromise;
   }
 
-  set widgetManager(manager: KernelWidgetManager | null) {
+  set widgetManager(manager: VoilaWidgetManager | null) {
     this._widgetManager = manager;
     if (this._widgetManager) {
       this._widgetManagerPromise.resolve(this._widgetManager);
     }
   }
 
-  get widgetManager(): KernelWidgetManager | null {
+  get widgetManager(): VoilaWidgetManager | null {
     return this._widgetManager;
   }
 
-  protected _widgetManager: KernelWidgetManager | null = null;
-  protected _widgetManagerPromise = new PromiseDelegate<KernelWidgetManager>();
+  protected _widgetManager: VoilaWidgetManager | null = null;
+  protected _widgetManagerPromise = new PromiseDelegate<VoilaWidgetManager>();
 }
 
 /**

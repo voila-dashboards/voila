@@ -16,6 +16,8 @@ from jupyter_server.utils import url_path_join
 from jupyterlab_server.themes_handler import ThemesHandler
 from jupyter_core.paths import jupyter_config_path
 from jupyter_server.serverapp import ServerApp
+
+from .tornado.execution_request_handler import ExecutionRequestHandler, JUPYTER_SERVER_2
 from .tornado.contentshandler import VoilaContentsHandler
 from traitlets.config import (
     JSONFileConfigLoader,
@@ -34,6 +36,8 @@ from .static_file_handler import (
 )
 from .tornado.treehandler import TornadoVoilaTreeHandler
 from .utils import get_data_dir, get_server_root_dir, pjoin
+
+_kernel_id_regex = r"(?P<kernel_id>\w+-\w+-\w+-\w+-\w+)"
 
 
 def _jupyter_server_extension_points():
@@ -105,67 +109,72 @@ def _load_jupyter_server_extension(server_app: ServerApp):
     tree_handler_conf = {"voila_configuration": voila_configuration}
 
     themes_dir = pjoin(get_data_dir(), "themes")
-    web_app.add_handlers(
-        host_pattern,
-        [
+    handlers = [
+        (
+            url_path_join(base_url, "/voila/render/(.*)"),
+            TornadoVoilaHandler,
+            {
+                "config": server_app.config,
+                "template_paths": template_paths,
+                "voila_configuration": voila_configuration,
+            },
+        ),
+        (
+            url_path_join(base_url, "/voila"),
+            TornadoVoilaTreeHandler,
+            tree_handler_conf,
+        ),
+        (
+            url_path_join(base_url, "/voila/tree" + path_regex),
+            TornadoVoilaTreeHandler,
+            tree_handler_conf,
+        ),
+        (
+            url_path_join(base_url, "/voila/templates/(.*)"),
+            TemplateStaticFileHandler,
+        ),
+        (
+            url_path_join(base_url, r"/voila/api/themes/(.*)"),
+            ThemesHandler,
+            {
+                "themes_url": "/voila/api/themes",
+                "path": themes_dir,
+                "labextensions_path": jupyter_path("labextensions"),
+                "no_cache_paths": ["/"],
+            },
+        ),
+        (
+            url_path_join(base_url, "/voila/static/(.*)"),
+            MultiStaticFileHandler,
+            {"paths": static_paths},
+        ),
+        (
+            url_path_join(base_url, r"/voila/api/shutdown/(.*)"),
+            VoilaShutdownKernelHandler,
+        ),
+        (
+            url_path_join(base_url, r"/voila/files/(.*)"),
+            AllowListFileHandler,
+            {
+                "allowlist": voila_configuration.file_allowlist,
+                "denylist": voila_configuration.file_denylist,
+                "path": os.path.expanduser(get_server_root_dir(web_app.settings)),
+            },
+        ),
+        (
+            url_path_join(base_url, r"/voila/api/contents%s" % path_regex),
+            VoilaContentsHandler,
+            tree_handler_conf,
+        ),
+    ]
+    if JUPYTER_SERVER_2 and voila_configuration.progressive_rendering:
+        handlers.append(
             (
-                url_path_join(base_url, "/voila/render/(.*)"),
-                TornadoVoilaHandler,
-                {
-                    "config": server_app.config,
-                    "template_paths": template_paths,
-                    "voila_configuration": voila_configuration,
-                },
-            ),
-            (
-                url_path_join(base_url, "/voila"),
-                TornadoVoilaTreeHandler,
-                tree_handler_conf,
-            ),
-            (
-                url_path_join(base_url, "/voila/tree" + path_regex),
-                TornadoVoilaTreeHandler,
-                tree_handler_conf,
-            ),
-            (
-                url_path_join(base_url, "/voila/templates/(.*)"),
-                TemplateStaticFileHandler,
-            ),
-            (
-                url_path_join(base_url, r"/voila/api/themes/(.*)"),
-                ThemesHandler,
-                {
-                    "themes_url": "/voila/api/themes",
-                    "path": themes_dir,
-                    "labextensions_path": jupyter_path("labextensions"),
-                    "no_cache_paths": ["/"],
-                },
-            ),
-            (
-                url_path_join(base_url, "/voila/static/(.*)"),
-                MultiStaticFileHandler,
-                {"paths": static_paths},
-            ),
-            (
-                url_path_join(base_url, r"/voila/api/shutdown/(.*)"),
-                VoilaShutdownKernelHandler,
-            ),
-            (
-                url_path_join(base_url, r"/voila/files/(.*)"),
-                AllowListFileHandler,
-                {
-                    "allowlist": voila_configuration.file_allowlist,
-                    "denylist": voila_configuration.file_denylist,
-                    "path": os.path.expanduser(get_server_root_dir(web_app.settings)),
-                },
-            ),
-            (
-                url_path_join(base_url, r"/voila/api/contents%s" % path_regex),
-                VoilaContentsHandler,
-                tree_handler_conf,
-            ),
-        ],
-    )
+                url_path_join(base_url, r"/voila/execution/%s" % _kernel_id_regex),
+                ExecutionRequestHandler,
+            )
+        )
+    web_app.add_handlers(host_pattern, handlers)
 
     # Serving lab extensions
     # TODO: reuse existing lab server endpoint?

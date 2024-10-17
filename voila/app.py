@@ -20,6 +20,10 @@ import tempfile
 import threading
 import webbrowser
 
+from .tornado.kernel_websocket_handler import VoilaKernelWebsocketHandler
+
+from .tornado.execution_request_handler import ExecutionRequestHandler
+
 from .tornado.contentshandler import VoilaContentsHandler
 
 from urllib.parse import urljoin
@@ -37,7 +41,6 @@ from jupyter_server.services.kernels.handlers import KernelHandler
 try:
     JUPYTER_SERVER_2 = True
 
-    from jupyter_server.services.kernels.websocket import KernelWebsocketHandler
     from jupyter_server.auth.authorizer import AllowAllAuthorizer, Authorizer
     from jupyter_server.auth.identity import PasswordIdentityProvider
     from jupyter_server import DEFAULT_TEMPLATE_PATH_LIST, DEFAULT_STATIC_FILES_PATH
@@ -59,7 +62,6 @@ try:
 except ImportError:
     JUPYTER_SERVER_2 = False
 
-    from jupyter_server.services.kernels.handlers import ZMQChannelsHandler
     from jupyter_server.utils import url_path_join, run_sync
     from jupyter_server.services.config import ConfigManager
 
@@ -188,6 +190,7 @@ class Voila(Application):
         "pool_size": "VoilaConfiguration.default_pool_size",
         "show_tracebacks": "VoilaConfiguration.show_tracebacks",
         "preheat_kernel": "VoilaConfiguration.preheat_kernel",
+        "progressive_rendering": "VoilaConfiguration.progressive_rendering",
         "strip_sources": "VoilaConfiguration.strip_sources",
         "template": "VoilaConfiguration.template",
         "theme": "VoilaConfiguration.theme",
@@ -621,6 +624,17 @@ class Voila(Application):
         if preheat_kernel and self.voila_configuration.prelaunch_hook:
             raise Exception("`preheat_kernel` and `prelaunch_hook` are incompatible")
 
+        progressive_rendering = self.voila_configuration.progressive_rendering
+        if preheat_kernel and progressive_rendering:
+            raise Exception(
+                "`preheat_kernel` and `progressive_rendering` are incompatible"
+            )
+
+        if not JUPYTER_SERVER_2 and progressive_rendering:
+            raise Exception(
+                "`progressive_rendering` can only be enabled with jupyter_server>=2"
+            )
+
         kernel_manager_class = voila_kernel_manager_factory(
             self.voila_configuration.multi_kernel_manager_class,
             preheat_kernel,
@@ -725,7 +739,7 @@ class Voila(Application):
                     url_path_join(
                         self.server_url, r"/api/kernels/%s/channels" % _kernel_id_regex
                     ),
-                    KernelWebsocketHandler if JUPYTER_SERVER_2 else ZMQChannelsHandler,
+                    VoilaKernelWebsocketHandler,
                 ),
                 (
                     url_path_join(self.server_url, r"/voila/templates/(.*)"),
@@ -763,6 +777,15 @@ class Voila(Application):
                         self.server_url, r"/voila/query/%s" % _kernel_id_regex
                     ),
                     RequestInfoSocketHandler,
+                )
+            )
+        if self.voila_configuration.progressive_rendering:
+            handlers.append(
+                (
+                    url_path_join(
+                        self.server_url, r"/voila/execution/%s" % _kernel_id_regex
+                    ),
+                    ExecutionRequestHandler,
                 )
             )
         # Serving JupyterLab extensions
@@ -878,6 +901,8 @@ class Voila(Application):
             try:
                 self.app.listen(port, self.ip)
                 self.port = port
+                if self.voila_configuration.progressive_rendering:
+                    self.log.info("Progressive rendering is activated")
                 self.log.info("Voilà is running at:\n%s" % self.display_url)
             except OSError as e:
                 if e.errno == errno.EADDRINUSE:

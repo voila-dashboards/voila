@@ -260,4 +260,11 @@ class VoilaConfiguration(traitlets.config.Configurable):
             return a dictionary that will be passed to the template as the `page_config` variable
             and the NotebookRenderer. This can be used to pass custom configuration.
             """,
+
+    progressive_rendering = Bool(
+        False,
+        config=True,
+        help="""Flag to enable or disable progressive rendering option.
+        This option is not compatible with preheat-kernel option.
+        """,
     )

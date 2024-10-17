@@ -44,7 +44,7 @@ class RequestInfoSocketHandler(WebSocketHandler):
         notebook. This method is called in `VoilaHandler` when the request
         info becomes available.
         If this method is called before the opening of websocket connection,
-        `msg` is stored in `_cache0` and the message will be dispatched when
+        `msg` is stored in `_cache` and the message will be dispatched when
         a notebook with corresponding kernel id is connected.
 
         Args:
@@ -59,5 +59,5 @@ class RequestInfoSocketHandler(WebSocketHandler):
                 waiter.write_message(payload)
             except Exception:
                 logging.error("Error sending message", exc_info=True)
-
-        cls._cache[kernel_id] = payload
+        else:
+            cls._cache[kernel_id] = payload

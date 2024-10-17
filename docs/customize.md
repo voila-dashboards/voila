@@ -729,3 +729,33 @@ By default, Voilà will attempt to resolve a kernel spec to the best fit, based 
 ```py
 c.VoilaConfiguration.attempt_fix_notebook = False
 ```
+
+## Changing dashboard rendering technique
+
+There are two dashboard rendering techniques in Voilà:
+
+- **Blocking rendering** (default): In this method, Voilà completes the execution of the entire notebook before displaying the dashboard. It is ideal for lightweight notebooks, as a loading spinner is shown until execution finishes..
+- **Progressive rendering** (introduced in Voilà 0.6): With this method, the dashboard appears immediately, with placeholders filling the cell outputs. These outputs are updated as each cell is executed by the kernel.
+
+To start Voilà with progressive rendering mode using CLI:
+
+```bash
+voila ... --progressive_rendering=True
+```
+
+or using `voila.json` file
+
+```python
+# voila.json
+{
+   ...
+   "VoilaConfiguration": {
+      "progressive_rendering": true,
+      ...
+   }
+}
+```
+
+:::{warning}
+Progressive rendering mode is incompatible with the preheated kernels functionality.
+:::
