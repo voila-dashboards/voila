@@ -759,3 +759,12 @@ or using `voila.json` file
 :::{warning}
 Progressive rendering mode is incompatible with the preheated kernels functionality.
 :::
+
+## Custom labextension for Voila
+
+Since Voila 0.5.0, it can now load JupyterLab extensions. Allowing to load custom mimetype extensions, JupyterLab themes etc.
+
+Voila will load all extensions under `{PREFIX}/share/jupyter/labextensions` just like JupyterLab and Jupyter Notebook v7.
+
+It also has its own path for labextensions that you can use: `{PREFIX}/share/jupyter/voila/labextensions`. Installing extensions there will make those extensions only available to Voila. This is really useful if you
+don't want to pollute JupyterLab or Jupyter Notebook with extensions that only work for Voila.
