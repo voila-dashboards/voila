@@ -12,6 +12,11 @@ import { IRenderMime } from '@jupyterlab/rendermime';
 
 import { IShell, VoilaShell } from './shell';
 
+// Only import the type, it is important to not import the library at runtime
+// to not pollute the shared packages with widgets related things
+import { type VoilaWidgetManager } from '@voila-dashboards/widgets-manager8/lib/manager';
+
+
 const PACKAGE = require('../package.json');
 
 /**
@@ -119,23 +124,23 @@ export class VoilaApp extends JupyterFrontEnd<IShell> {
   /**
    * A promise that resolves when the Voila Widget Manager is created
    */
-  get widgetManagerPromise(): PromiseDelegate<any> {
+  get widgetManagerPromise(): PromiseDelegate<VoilaWidgetManager> {
     return this._widgetManagerPromise;
   }
 
-  set widgetManager(manager: any) {
+  set widgetManager(manager: VoilaWidgetManager | null) {
     this._widgetManager = manager;
     if (this._widgetManager) {
       this._widgetManagerPromise.resolve(this._widgetManager);
     }
   }
 
-  get widgetManager(): any {
+  get widgetManager(): VoilaWidgetManager | null {
     return this._widgetManager;
   }
 
-  protected _widgetManager: any = null;
-  protected _widgetManagerPromise = new PromiseDelegate<any>();
+  protected _widgetManager: VoilaWidgetManager | null = null;
+  protected _widgetManagerPromise = new PromiseDelegate<VoilaWidgetManager>();
 }
 
 /**

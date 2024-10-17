@@ -11,6 +11,7 @@
   },
   "browserslist": ">0.8%, not ie 11, not op_mini all, not dead",
   "dependencies": {
+    "@voila-dashboards/widgets-manager8": "^0.5.7",
     "@jupyterlab/application": "^4.0.0",
     "@jupyterlab/apputils": "^4.0.0",
     "@jupyterlab/apputils-extension": "^4.0.0",
