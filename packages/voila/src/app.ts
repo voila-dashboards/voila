@@ -16,7 +16,6 @@ import { IShell, VoilaShell } from './shell';
 // to not pollute the shared packages with widgets related things
 import { type VoilaWidgetManager } from '@voila-dashboards/widgets-manager8/lib/manager';
 
-
 const PACKAGE = require('../package.json');
 
 /**
