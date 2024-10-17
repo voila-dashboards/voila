@@ -352,6 +352,16 @@ class Voila(Application):
         ),
     )
 
+    @validate("prelaunch_hook")
+    def _valid_prelaunch_hook(self, proposal):
+        warn(
+            "Voila.prelaunch_hook is deprecated, please use VoilaConfiguration.prelaunch_hook instead",
+            DeprecationWarning,
+            stacklevel=2,
+        )
+        self.voila_configuration.prelaunch_hook = proposal["value"]
+        return proposal["value"]
+
     if JUPYTER_SERVER_2:
         cookie_secret = Bytes(
             b"",
@@ -611,7 +621,7 @@ class Voila(Application):
         preheat_kernel: bool = self.voila_configuration.preheat_kernel
         pool_size: int = self.voila_configuration.default_pool_size
 
-        if preheat_kernel and self.prelaunch_hook:
+        if preheat_kernel and self.voila_configuration.prelaunch_hook:
             raise Exception("`preheat_kernel` and `prelaunch_hook` are incompatible")
 
         progressive_rendering = self.voila_configuration.progressive_rendering
@@ -629,6 +639,7 @@ class Voila(Application):
             self.voila_configuration.multi_kernel_manager_class,
             preheat_kernel,
             pool_size,
+            page_config_hook=self.voila_configuration.page_config_hook,
         )
         self.kernel_manager = kernel_manager_class(
             parent=self,
@@ -812,7 +823,6 @@ class Voila(Application):
                         "template_paths": self.template_paths,
                         "config": self.config,
                         "voila_configuration": self.voila_configuration,
-                        "prelaunch_hook": self.prelaunch_hook,
                     },
                 )
             )
@@ -820,11 +830,15 @@ class Voila(Application):
             self.log.debug("serving directory: %r", self.root_dir)
             handlers.extend(
                 [
-                    (self.server_url, TornadoVoilaTreeHandler, tree_handler_conf),
+                    (
+                        self.server_url,
+                        TornadoVoilaTreeHandler,
+                        {"voila_configuration": self.voila_configuration},
+                    ),
                     (
                         url_path_join(self.server_url, r"/voila/tree" + path_regex),
                         TornadoVoilaTreeHandler,
-                        tree_handler_conf,
+                        {"voila_configuration": self.voila_configuration},
                     ),
                     (
                         url_path_join(self.server_url, r"/voila/render/(.*)"),
@@ -833,7 +847,6 @@ class Voila(Application):
                             "template_paths": self.template_paths,
                             "config": self.config,
                             "voila_configuration": self.voila_configuration,
-                            "prelaunch_hook": self.prelaunch_hook,
                         },
                     ),
                     # On serving a directory, expose the content handler.

@@ -16,7 +16,8 @@ import warnings
 from copy import deepcopy
 from functools import partial
 from pathlib import Path
-from typing import Awaitable, Dict, List
+from typing import Awaitable, Dict, List, Any
+from logging import Logger
 
 import websockets
 from jupyter_core.paths import jupyter_path
@@ -89,7 +90,20 @@ async def _get_request_info(ws_url: str) -> Awaitable:
         return ri
 
 
-def get_page_config(base_url, settings, log, voila_configuration: VoilaConfiguration):
+def get_page_config(
+    base_url: str,
+    settings: Dict[str, Any],
+    log: Logger,
+    voila_configuration: VoilaConfiguration,
+) -> Dict[str, Any]:
+    """Get the page configuration for Voila.
+
+    Args:
+        base_url (str): The base URL of the Voila application.
+        settings (Dict[str, Any]): The settings of the Voila application.
+        log (Logger): The logger instance.
+        voila_configuration (VoilaConfiguration): The Voila configuration instance.
+    """
     page_config = {
         "appVersion": __version__,
         "appUrl": "voila/",

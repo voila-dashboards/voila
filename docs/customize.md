@@ -226,7 +226,16 @@ There is a Voilà template cookiecutter available to give you a running start.
 This cookiecutter contains some docker configuration for live reloading of your template changes to make development easier.
 Please refer to the [cookiecutter repo](https://github.com/voila-dashboards/voila-template-cookiecutter) for more information on how to use the Voilà template cookiecutter.
 
-### Accessing the tornado request (`prelaunch-hook`)
+### Customizing Voila with Hooks
+
+Voila provides hooks that allow you to customize its behavior to fit your specific needs. These hooks enable you to inject custom functions at certain points during Voila's execution, giving you control over aspects like notebook execution and frontend configuration.
+
+Currently, Voila supports the following hooks:
+
+- prelaunch_hook: Access and modify the Tornado request and notebook before execution.
+- page_config_hook: Customize the page_config object, which controls the Voila frontend configuration.
+
+#### Accessing the tornado request (`prelaunch-hook`)
 
 In certain custom setups when you need to access the tornado request object in order to check for authentication cookies, access details about the request headers, or modify the notebook before rendering. You can leverage the `prelaunch-hook`, which lets you inject a function to inspect the notebook and the request prior to executing them.
 
@@ -240,7 +249,7 @@ Because `prelaunch-hook` only runs after receiving a new request but before the 
 The format of this hook should be:
 
 ```python
-def hook(req: tornado.web.RequestHandler,
+def prelaunch_hook(req: tornado.web.RequestHandler,
          notebook: nbformat.NotebookNode,
          cwd: str) -> Optional[nbformat.NotebookNode]:
 ```
@@ -249,6 +258,39 @@ def hook(req: tornado.web.RequestHandler,
 - The second argument will be the `NotebookNode`, which you can mutate to e.g. inject cells or make other notebook-level modifications.
 - The last argument is the current working directory should you need to mutate anything on disk.
 - The return value of your hook function can either be `None`, or a `NotebookNode`.
+
+#### Customize the page config object (`page_config_hook`)
+
+The page_config_hook allows you to customize the page_config object, which controls various aspects of the Voila frontend. This is useful when you need to modify frontend settings such as the URLs for static assets or other configuration parameters.
+
+By default, Voila uses the following page_config:
+
+```python
+# Default page_config
+page_config = {
+    "appVersion": __version__,
+    "appUrl": "voila/",
+    "themesUrl": "/voila/api/themes",
+    "baseUrl": base_url,
+    "terminalsAvailable": False,
+    "fullStaticUrl": url_path_join(base_url, "voila/static"),
+    "fullLabextensionsUrl": url_path_join(base_url, "voila/labextensions"),
+    "extensionConfig": voila_configuration.extension_config,
+}
+```
+
+The format of this hook should be:
+
+```python
+def page_config_hook(
+      current_page_config: Dict[str, Any],
+      base_url: str,
+      settings: Dict[str, Any],
+      log: Logger,
+      voila_configuration: VoilaConfiguration,
+      notebook_path: str
+) -> Dict[str, Any]:
+```
 
 #### Adding the hook function to Voilà
 
@@ -259,16 +301,22 @@ There are two ways to add the hook function to Voilà:
 Here is an example of the configuration file. This file needs to be placed in the directory where you start Voilà.
 
 ```python
-def hook_function(req, notebook, cwd):
+def prelaunch_hook_function(req, notebook, cwd):
    """Do your stuffs here"""
    return notebook
 
-c.Voila.prelaunch_hook = hook_function
+def page_config_hook_function(current_page_config, **kwargs):
+   """Modify the current_page_config"""
+   return new_page_config
+
+c.VoilaConfiguration.prelaunch_hook = hook_function
+c.VoilaConfiguration.page_config_hook = page_config_hook
+
 ```
 
 - Start Voilà from a python script:
 
-Here is an example of a custom `prelaunch-hook` to execute a notebook with `papermill`:
+Here is an example of a custom `prelaunch-hook` to execute a notebook with `papermill`, and a `page_config_hook` to add a custom labextensions URL:
 
 ```python
 def parameterize_with_papermill(req, notebook, cwd):
@@ -302,9 +350,22 @@ def parameterize_with_papermill(req, notebook, cwd):
 
         # Parameterize with papermill
         return parameterize_notebook(notebook, parameters)
+
+
+def page_config_hook(
+   current_page_config: Dict[str, Any],
+   base_url: str,
+   settings: Dict[str, Any],
+   log: Logger,
+   voila_configuration: VoilaConfiguration,
+   notebook_path: str
+):
+    page_config['fullLabextensionsUrl'] = '/custom/labextensions_url'
+    return page_config
+
 ```
 
-To add this hook to your `Voilà` application:
+You can use both hooks simultaneously to customize notebook execution and frontend configuration, to add this hooks to your `Voilà` application:
 
 ```python
 from voila.app import Voila
@@ -313,14 +374,17 @@ from voila.config import VoilaConfiguration
 # customize config how you like
 config = VoilaConfiguration()
 
+# set the prelaunch hook
+config.prelaunch_hook = parameterize_with_papermill
+
+# set the page config hook
+config.page_config_hook = page_config_hook
+
 # create a voila instance
 app = Voila()
 
 # set the config
 app.voila_configuration = config
-
-# set the prelaunch hook
-app.prelaunch_hook = parameterize_with_papermill
 
 # launch
 app.start()

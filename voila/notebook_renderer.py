@@ -45,7 +45,7 @@ class NotebookRenderer(LoggingConfigurable):
         self.config_manager = kwargs.get("config_manager")
         self.contents_manager = kwargs.get("contents_manager")
         self.kernel_spec_manager = kwargs.get("kernel_spec_manager")
-        self.prelaunch_hook = kwargs.get("prelaunch_hook")
+        self.prelaunch_hook = self.voila_configuration.prelaunch_hook
         self.base_url = kwargs.get("base_url")
         self.page_config = deepcopy(kwargs.get("page_config"))
         self.default_kernel_name = "python3"
