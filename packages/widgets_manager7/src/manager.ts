@@ -13,6 +13,10 @@ export class VoilaWidgetManager extends WidgetManager {
     this._modelRegistered.emit(model_id);
   }
 
+  get kernel() {
+    return this.context.sessionContext.session?.kernel;
+  }
+
   get registeredModels(): ReadonlySet<string> {
     return this._registeredModels;
   }
