@@ -2,7 +2,7 @@ node_modules
 **/node_modules
 **/lib
 **/package.json
-**/labextension
+**/labextensions
 **/static
 build
 notebooks/

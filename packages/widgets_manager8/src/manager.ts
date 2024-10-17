@@ -8,15 +8,19 @@ export class VoilaWidgetManager extends KernelWidgetManager {
     this._registeredModels.add(model_id);
     this._modelRegistered.emit(model_id);
   }
+
   get registeredModels(): ReadonlySet<string> {
     return this._registeredModels;
   }
+
   get modelRegistered(): ISignal<VoilaWidgetManager, string> {
     return this._modelRegistered;
   }
+
   removeRegisteredModel(modelId: string) {
     this._registeredModels.delete(modelId);
   }
+
   private _modelRegistered = new Signal<VoilaWidgetManager, string>(this);
   private _registeredModels = new Set<string>();
 }

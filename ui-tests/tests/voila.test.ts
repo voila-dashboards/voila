@@ -230,7 +230,7 @@ test.describe('Voila performance Tests', () => {
     const notebookName = 'interactive';
     const testFunction = async () => {
       await page.goto(`/voila/render/${notebookName}.ipynb`);
-      await page.waitForSelector('div.widget-slider.widget-hslider');
+      await page.waitForSelector('.slider-container');
       await page.fill('div.widget-readout', '8.00');
       await page.keyboard.down('Enter');
       await page.fill('div.widget-readout >> text=0', '8.00');

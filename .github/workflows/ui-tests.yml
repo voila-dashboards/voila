@@ -14,6 +14,7 @@ jobs:
       matrix:
         jupyter-server-version: ['1.24.0', '2.14.2']
         progressive_rendering: [false, true]
+        ipywidgets: ['latest', '7']
         exclude:
           - jupyter-server-version: '1.24.0'
             progressive_rendering: true
@@ -25,10 +26,24 @@ jobs:
         uses: jupyterlab/maintainer-tools/.github/actions/base-setup@v1
 
       - name: Install dependencies
+        if: ${{ matrix.ipywidgets == 'latest' }}
         run: |
           python -m pip install -r requirements-visual-test.txt
           python -m pip install jupyterlab_miami_nights --no-deps
           python -m pip install ".[test]"
+          python -m pip install jupyter-server==${{ matrix.jupyter-server-version }}
+          jlpm
+          jlpm build
+          jupyter labextension develop . --overwrite
+          cd ui-tests
+          jlpm install
+
+      - name: Install dependencies
+        if: ${{ matrix.ipywidgets == '7' }}
+        run: |
+          python -m pip install -r requirements-visual-test.txt
+          python -m pip install jupyterlab_miami_nights --no-deps
+          python -m pip install ".[test7]"
           python -m pip install jupyter-server==${{ matrix.jupyter-server-version }}
           jlpm
           jlpm build
@@ -61,16 +76,16 @@ jobs:
       - name: Set test report name for progressive rendering
         if: always() && matrix.progressive_rendering == true
         run: |
-          echo "TEST_REPORT_NAME=progressive-voila-test-report-${{ matrix.jupyter-server-version }}" >> $GITHUB_ENV
-          echo "TEST_ASSETS_NAME=progressive-voila-test-assets-${{ matrix.jupyter-server-version }}" >> $GITHUB_ENV
-          echo "TEST_BENCHMARK_NAME=progressive-voila-test-benchmark-${{ matrix.jupyter-server-version }}" >> $GITHUB_ENV
+          echo "TEST_REPORT_NAME=progressive-voila-test-report-server_${{ matrix.jupyter-server-version }}-ipywidget_${{ matrix.ipywidgets }}" >> $GITHUB_ENV
+          echo "TEST_ASSETS_NAME=progressive-voila-test-assets-server_${{ matrix.jupyter-server-version }}-ipywidget_${{ matrix.ipywidgets }}" >> $GITHUB_ENV
+          echo "TEST_BENCHMARK_NAME=progressive-voila-test-benchmark-server_${{ matrix.jupyter-server-version }}-ipywidget_${{ matrix.ipywidgets }}" >> $GITHUB_ENV
 
       - name: Set test report name for non-progressive rendering
         if: always() && matrix.progressive_rendering == false
         run: |
-          echo "TEST_REPORT_NAME=voila-test-report-${{ matrix.jupyter-server-version }}" >> $GITHUB_ENV
-          echo "TEST_ASSETS_NAME=voila-test-assets-${{ matrix.jupyter-server-version }}" >> $GITHUB_ENV
-          echo "TEST_BENCHMARK_NAME=voila-test-benchmark-${{ matrix.jupyter-server-version }}" >> $GITHUB_ENV
+          echo "TEST_REPORT_NAME=voila-test-report-server_${{ matrix.jupyter-server-version }}-ipywidget_${{ matrix.ipywidgets }}" >> $GITHUB_ENV
+          echo "TEST_ASSETS_NAME=voila-test-assets-server_${{ matrix.jupyter-server-version }}-ipywidget_${{ matrix.ipywidgets }}" >> $GITHUB_ENV
+          echo "TEST_BENCHMARK_NAME=voila-test-benchmark-server_${{ matrix.jupyter-server-version }}-ipywidget_${{ matrix.ipywidgets }}" >> $GITHUB_ENV
 
       - name: Upload Playwright Test assets
         if: always()

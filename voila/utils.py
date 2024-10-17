@@ -18,12 +18,14 @@ from functools import partial
 from pathlib import Path
 from typing import Awaitable, Dict, List, Any
 from logging import Logger
+from packaging.version import Version
 
 import websockets
 from jupyter_core.paths import jupyter_path
 from jupyter_server.config_manager import recursive_update
 from jupyter_server.utils import url_path_join
 from jupyterlab_server.config import get_page_config as gpc
+from jupyterlab_server.config import get_federated_extensions
 from markupsafe import Markup
 
 from ._version import __version__
@@ -90,6 +92,18 @@ async def _get_request_info(ws_url: str) -> Awaitable:
         return ri
 
 
+def get_voila_labextensions_path():
+    labextensions_path = jupyter_path("labextensions")
+
+    # Paths to labextensions specific to Voila
+    voila_labextensions = [
+        str(Path(path) / "labextensions") for path in jupyter_path("voila")
+    ]
+    labextensions_path = labextensions_path + voila_labextensions
+
+    return labextensions_path
+
+
 def get_page_config(
     base_url: str,
     settings: Dict[str, Any],
@@ -122,7 +136,7 @@ def get_page_config(
     )
     page_config.setdefault("mathjaxConfig", mathjax_config)
     page_config.setdefault("fullMathjaxUrl", mathjax_url)
-    labextensions_path = jupyter_path("labextensions")
+    labextensions_path = get_voila_labextensions_path()
 
     recursive_update(
         page_config,
@@ -134,20 +148,52 @@ def get_page_config(
     disabled_extensions = [
         "@voila-dashboards/jupyterlab-preview",
         "@jupyter/collaboration-extension",
-        "@jupyter-widgets/jupyterlab-manager",
     ]
     disabled_extensions.extend(page_config.get("disabledExtensions", []))
     required_extensions = []
     federated_extensions = deepcopy(page_config["federated_extensions"])
 
-    page_config["federated_extensions"] = filter_extension(
+    filtered_extensions = filter_extension(
         federated_extensions=federated_extensions,
         disabled_extensions=disabled_extensions,
         required_extensions=required_extensions,
         extension_allowlist=voila_configuration.extension_allowlist,
         extension_denylist=voila_configuration.extension_denylist,
     )
+
+    extensions = maybe_inject_widgets_manager_extension(
+        filtered_extensions, labextensions_path
+    )
+
+    page_config["federated_extensions"] = extensions
     return page_config
+
+
+def maybe_inject_widgets_manager_extension(
+    federated_extensions: List[Dict], labextensions_path: List[str]
+):
+    """If the @jupyter-widgets/jupyterlab-manager is installed on the server. Inject our own manager."""
+    labextensions = get_federated_extensions(labextensions_path)
+
+    if "@jupyter-widgets/jupyterlab-manager" not in labextensions:
+        return federated_extensions
+
+    widgets_version = labextensions["@jupyter-widgets/jupyterlab-manager"]["version"]
+
+    if Version(widgets_version) >= Version("5.0.0"):
+        # ipywidgets 8 or more, remove widgets-manager7
+        return [
+            x
+            for x in federated_extensions
+            if x["name"] != "@voila-dashboards/widgets-manager7"
+        ]
+    else:
+        # ipywidgets 7, remove widgets-manager8
+        return [
+            x
+            for x in federated_extensions
+            if x["name"] != "@voila-dashboards/widgets-manager8"
+        ]
 
 
 def filter_extension(

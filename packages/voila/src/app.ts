@@ -10,9 +10,11 @@ import { PageConfig } from '@jupyterlab/coreutils';
 
 import { IRenderMime } from '@jupyterlab/rendermime';
 
-import { VoilaWidgetManager } from './plugins/widget';
-
 import { IShell, VoilaShell } from './shell';
+
+// Only import the type, it is important to not import the library at runtime
+// to not pollute the shared packages with widgets related things
+import { type VoilaWidgetManager } from '@voila-dashboards/widgets-manager8/lib/manager';
 
 const PACKAGE = require('../package.json');
 

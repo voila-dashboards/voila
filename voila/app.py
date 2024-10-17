@@ -32,7 +32,7 @@ from urllib.request import pathname2url
 import jinja2
 import tornado.ioloop
 import tornado.web
-from jupyter_core.paths import jupyter_config_path, jupyter_path
+from jupyter_core.paths import jupyter_config_path
 from jupyter_server.base.handlers import FileFindHandler, path_regex
 from jupyter_server.config_manager import recursive_update
 from jupyter_server.services.contents.largefilemanager import LargeFileManager
@@ -100,7 +100,12 @@ from .static_file_handler import (
 )
 from .tornado.handler import TornadoVoilaHandler
 from .tornado.treehandler import TornadoVoilaTreeHandler
-from .utils import create_include_assets_functions, get_data_dir, pjoin
+from .utils import (
+    create_include_assets_functions,
+    get_data_dir,
+    pjoin,
+    get_voila_labextensions_path,
+)
 from .voila_kernel_manager import voila_kernel_manager_factory
 
 _kernel_id_regex = r"(?P<kernel_id>\w+-\w+-\w+-\w+-\w+)"
@@ -469,7 +474,7 @@ class Voila(Application):
 
     @property
     def labextensions_path(self):
-        return jupyter_path("labextensions")
+        return get_voila_labextensions_path()
 
     @property
     def data_dir(self):
@@ -756,7 +761,7 @@ class Voila(Application):
                     {
                         "themes_url": "/voila/api/themes",
                         "path": self.themes_dir,
-                        "labextensions_path": jupyter_path("labextensions"),
+                        "labextensions_path": get_voila_labextensions_path(),
                         "no_cache_paths": ["/"],
                     },
                 ),

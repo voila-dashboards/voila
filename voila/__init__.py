@@ -27,4 +27,17 @@ def _jupyter_nbextension_paths():
 
 
 def _jupyter_labextension_paths():
-    return [{"src": "labextension", "dest": "@voila-dashboards/jupyterlab-preview"}]
+    return [
+        {
+            "src": "labextensions/jupyterlab-preview",
+            "dest": "@voila-dashboards/jupyterlab-preview",
+        },
+        {
+            "src": "labextensions/widgets-manager7",
+            "dest": "../voila/labextensions/@voila-dashboards/widgets-manager7",
+        },
+        {
+            "src": "labextensions/widgets-manager8",
+            "dest": "../voila/labextensions/@voila-dashboards/widgets-manager8",
+        },
+    ]

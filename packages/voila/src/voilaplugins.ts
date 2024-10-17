@@ -10,9 +10,9 @@
 import { JupyterFrontEndPlugin } from '@jupyterlab/application';
 import { pathsPlugin } from './plugins/path';
 import { translatorPlugin } from './plugins/translator';
-import { renderOutputsPlugin, widgetManager } from './plugins/widget';
+import { renderOutputsPlugin } from './plugins/outputs';
 import { themePlugin, themesManagerPlugin } from './plugins/themes';
-import { renderOutputsProgressivelyPlugin } from './plugins/widget/index';
+import { renderOutputsProgressivelyPlugin } from './plugins/outputs/index';
 
 /**
  * Export the plugins as default.
@@ -20,7 +20,6 @@ import { renderOutputsProgressivelyPlugin } from './plugins/widget/index';
 const plugins: JupyterFrontEndPlugin<any>[] = [
   pathsPlugin,
   translatorPlugin,
-  widgetManager,
   renderOutputsPlugin,
   renderOutputsProgressivelyPlugin,
   themesManagerPlugin,
@@ -32,7 +31,6 @@ export default plugins;
 export {
   pathsPlugin,
   translatorPlugin,
-  widgetManager,
   renderOutputsPlugin,
   renderOutputsProgressivelyPlugin,
   themesManagerPlugin,

@@ -6,7 +6,7 @@ node_modules
 **/node_modules
 **/mock_packages
 **/static
-**/labextension
+**/labextensions
 **/typings
 **/schemas
 **/themes

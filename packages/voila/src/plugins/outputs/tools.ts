@@ -2,7 +2,6 @@ import { IOutput } from '@jupyterlab/nbformat';
 import { OutputAreaModel, SimplifiedOutputArea } from '@jupyterlab/outputarea';
 import { IRenderMimeRegistry } from '@jupyterlab/rendermime';
 import { Widget } from '@lumino/widgets';
-import { VoilaWidgetManager } from './manager';
 import { PageConfig, URLExt } from '@jupyterlab/coreutils';
 
 /**
@@ -63,7 +62,7 @@ export function handleExecutionResult({
 }: {
   payload: IExecutionResultMessage['payload'];
   rendermime: IRenderMimeRegistry;
-  widgetManager: VoilaWidgetManager;
+  widgetManager: any;
 }): IReceivedWidgetModel | undefined {
   const { cell_index, output_cell } = payload;
   const element = document.querySelector(`[cell-index="${cell_index + 1}"]`);
