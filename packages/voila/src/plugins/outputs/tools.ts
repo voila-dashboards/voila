@@ -3,6 +3,7 @@ import { OutputAreaModel, SimplifiedOutputArea } from '@jupyterlab/outputarea';
 import { IRenderMimeRegistry } from '@jupyterlab/rendermime';
 import { Widget } from '@lumino/widgets';
 import { PageConfig, URLExt } from '@jupyterlab/coreutils';
+import { type VoilaWidgetManager } from '@voila-dashboards/widgets-manager8/lib/manager';
 
 /**
  * Interface representing the structure of an execution result message.
@@ -62,7 +63,7 @@ export function handleExecutionResult({
 }: {
   payload: IExecutionResultMessage['payload'];
   rendermime: IRenderMimeRegistry;
-  widgetManager: any;
+  widgetManager: VoilaWidgetManager;
 }): IReceivedWidgetModel | undefined {
   const { cell_index, output_cell } = payload;
   const element = document.querySelector(`[cell-index="${cell_index + 1}"]`);
