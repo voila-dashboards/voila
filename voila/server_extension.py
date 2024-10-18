@@ -27,7 +27,7 @@ from traitlets.config import (
 )
 from .configuration import VoilaConfiguration
 from .tornado.handler import TornadoVoilaHandler
-from .paths import ROOT, collect_static_paths, collect_template_paths, jupyter_path
+from .paths import ROOT, collect_static_paths, collect_template_paths
 from .shutdown_kernel_handler import VoilaShutdownKernelHandler
 from .static_file_handler import (
     MultiStaticFileHandler,
@@ -35,7 +35,12 @@ from .static_file_handler import (
     AllowListFileHandler,
 )
 from .tornado.treehandler import TornadoVoilaTreeHandler
-from .utils import get_data_dir, get_server_root_dir, pjoin
+from .utils import (
+    get_data_dir,
+    get_server_root_dir,
+    pjoin,
+    get_voila_labextensions_path,
+)
 
 _kernel_id_regex = r"(?P<kernel_id>\w+-\w+-\w+-\w+-\w+)"
 
@@ -109,6 +114,8 @@ def _load_jupyter_server_extension(server_app: ServerApp):
     tree_handler_conf = {"voila_configuration": voila_configuration}
 
     themes_dir = pjoin(get_data_dir(), "themes")
+    labextensions_path = get_voila_labextensions_path()
+
     handlers = [
         (
             url_path_join(base_url, "/voila/render/(.*)"),
@@ -139,7 +146,7 @@ def _load_jupyter_server_extension(server_app: ServerApp):
             {
                 "themes_url": "/voila/api/themes",
                 "path": themes_dir,
-                "labextensions_path": jupyter_path("labextensions"),
+                "labextensions_path": labextensions_path,
                 "no_cache_paths": ["/"],
             },
         ),
@@ -175,15 +182,6 @@ def _load_jupyter_server_extension(server_app: ServerApp):
             )
         )
     web_app.add_handlers(host_pattern, handlers)
-
-    # Serving lab extensions
-    # TODO: reuse existing lab server endpoint?
-    # First look into 'labextensions_path' configuration key (classic notebook)
-    # and fall back to default path for labextensions (jupyter server).
-    if "labextensions_path" in web_app.settings:
-        labextensions_path = web_app.settings["labextensions_path"]
-    else:
-        labextensions_path = jupyter_path("labextensions")
 
     web_app.add_handlers(
         host_pattern,

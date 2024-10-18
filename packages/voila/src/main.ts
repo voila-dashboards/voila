@@ -39,9 +39,6 @@ async function main() {
     require('@jupyterlab/rendermime-extension'),
     require('@jupyterlab/theme-light-extension'),
     require('@jupyterlab/theme-dark-extension'),
-    require('@jupyter-widgets/jupyterlab-manager/lib/plugin').default.filter(
-      (p: any) => p.id !== '@jupyter-widgets/jupyterlab-manager:plugin'
-    ),
     plugins
   ];
 
@@ -104,7 +101,9 @@ async function main() {
   );
   federatedExtensions.forEach((p) => {
     if (p.status === 'fulfilled') {
-      for (const plugin of activePlugins(p.value, [])) {
+      for (const plugin of activePlugins(p.value, [
+        '@jupyter-widgets/jupyterlab-manager:plugin'
+      ])) {
         mods.push(plugin);
       }
     } else {

@@ -44,7 +44,7 @@ share/jupyter/voila/templates/base/static/*.LICENSE.txt
 
 lib
 
-voila/labextension
+voila/labextensions
 tsconfig.tsbuildinfo
 
 ui-tests/playwright-report
