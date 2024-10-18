@@ -4919,6 +4919,7 @@ __metadata:
     "@lumino/virtualdom": ^2.0.0
     "@lumino/widgets": ^2.0.0
     "@types/node": ~18.8.3
+    "@voila-dashboards/widgets-manager8": ^0.5.8
     css-loader: ^6.7.2
     fs-extra: ^9.1.0
     glob: ~7.1.6
@@ -4964,7 +4965,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@voila-dashboards/widgets-manager8@workspace:packages/widgets_manager8":
+"@voila-dashboards/widgets-manager8@^0.5.8, @voila-dashboards/widgets-manager8@workspace:packages/widgets_manager8":
   version: 0.0.0-use.local
   resolution: "@voila-dashboards/widgets-manager8@workspace:packages/widgets_manager8"
   dependencies:

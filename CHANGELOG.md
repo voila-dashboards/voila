@@ -2,6 +2,42 @@
 
 <!-- <START NEW CHANGELOG ENTRY> -->
 
+## 0.5.8
+
+([Full Changelog](https://github.com/voila-dashboards/voila/compare/@voila-dashboards/jupyterlab-preview@2.3.7...5ad1b1db4a9f69730d5446b35c64c38c11373b16))
+
+### Highlights!
+
+- Voila now supports progressive rendering with the `--progressive_rendering=True` CLI and config option.
+- We brought back ipywidgets 7 support. This will ease transition from 0.3.x to 0.5.x for people who have not updated yet.
+- Allow users to configure the page_config to tweak even more the Voila page
+
+### Enhancements made
+
+- Add backward compatibility for ipywidgets 7 [#1501](https://github.com/voila-dashboards/voila/pull/1501) ([@martinRenou](https://github.com/martinRenou))
+- Custom page config hook [#1495](https://github.com/voila-dashboards/voila/pull/1495) ([@dfguerrerom](https://github.com/dfguerrerom))
+- Support progressive rendering [#1489](https://github.com/voila-dashboards/voila/pull/1489) ([@trungleduc](https://github.com/trungleduc))
+
+### Bugs fixed
+
+- Fix mathjax default url and bump ipywidgets packages [#1496](https://github.com/voila-dashboards/voila/pull/1496) ([@martinRenou](https://github.com/martinRenou))
+
+### Maintenance and upkeep improvements
+
+- Bring back support for jupyter-server 1 [#1498](https://github.com/voila-dashboards/voila/pull/1498) ([@martinRenou](https://github.com/martinRenou))
+- Update and improve CI [#1497](https://github.com/voila-dashboards/voila/pull/1497) ([@martinRenou](https://github.com/martinRenou))
+- Remove old urllib imports [#1477](https://github.com/voila-dashboards/voila/pull/1477) ([@lahwaacz](https://github.com/lahwaacz))
+- Remove mock [#1476](https://github.com/voila-dashboards/voila/pull/1476) ([@lahwaacz](https://github.com/lahwaacz))
+- Get mybinder.org working again [#1471](https://github.com/voila-dashboards/voila/pull/1471) ([@manics](https://github.com/manics))
+
+### Contributors to this release
+
+([GitHub contributors page for this release](https://github.com/voila-dashboards/voila/graphs/contributors?from=2024-05-23&to=2024-10-18&type=c))
+
+[@dfguerrerom](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Adfguerrerom+updated%3A2024-05-23..2024-10-18&type=Issues) | [@github-actions](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Agithub-actions+updated%3A2024-05-23..2024-10-18&type=Issues) | [@lahwaacz](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Alahwaacz+updated%3A2024-05-23..2024-10-18&type=Issues) | [@manics](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Amanics+updated%3A2024-05-23..2024-10-18&type=Issues) | [@martinRenou](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3AmartinRenou+updated%3A2024-05-23..2024-10-18&type=Issues) | [@pre-commit-ci](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Apre-commit-ci+updated%3A2024-05-23..2024-10-18&type=Issues) | [@trungleduc](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Atrungleduc+updated%3A2024-05-23..2024-10-18&type=Issues)
+
+<!-- <END NEW CHANGELOG ENTRY> -->
+
 ## 0.5.7
 
 ([Full Changelog](https://github.com/voila-dashboards/voila/compare/@voila-dashboards/jupyterlab-preview@2.3.6...77d1b23dfdf82cbfa314b791d7a5166f0117bdd8))
@@ -28,8 +64,6 @@
 ([GitHub contributors page for this release](https://github.com/voila-dashboards/voila/graphs/contributors?from=2024-04-02&to=2024-05-23&type=c))
 
 [@djangoliv](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Adjangoliv+updated%3A2024-04-02..2024-05-23&type=Issues) | [@github-actions](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Agithub-actions+updated%3A2024-04-02..2024-05-23&type=Issues) | [@jgunstone](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Ajgunstone+updated%3A2024-04-02..2024-05-23&type=Issues) | [@martinRenou](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3AmartinRenou+updated%3A2024-04-02..2024-05-23&type=Issues) | [@minrk](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Aminrk+updated%3A2024-04-02..2024-05-23&type=Issues) | [@timkpaine](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Atimkpaine+updated%3A2024-04-02..2024-05-23&type=Issues) | [@trungleduc](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Atrungleduc+updated%3A2024-04-02..2024-05-23&type=Issues)
-
-<!-- <END NEW CHANGELOG ENTRY> -->
 
 ## 0.5.6
 
