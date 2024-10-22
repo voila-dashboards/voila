@@ -38,9 +38,9 @@
         "watch:src": "tsc -w"
     },
     "dependencies": {
-        "@jupyter-widgets/base": "^4.1.6",
-        "@jupyter-widgets/controls": "^3.1.6",
-        "@jupyter-widgets/jupyterlab-manager": "^3.1.10",
+        "@jupyter-widgets/base": "^4.1.7",
+        "@jupyter-widgets/controls": "^3.1.8",
+        "@jupyter-widgets/jupyterlab-manager": "^3.1.11",
         "@jupyterlab/application": "^4.0.0",
         "@jupyterlab/coreutils": "^6.0.5",
         "@jupyterlab/rendermime": "^4.0.0",
