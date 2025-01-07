@@ -62,11 +62,11 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-latest, macos-12, windows-latest]
-        python: ['3.8', '3.10']
+        python: ['3.9', '3.13']
         include:
-          - python: '3.8'
+          - python: '3.9'
             dist: 'voila*.tar.gz'
-          - python: '3.10'
+          - python: '3.13'
             dist: 'voila*.whl'
           - os: windows-latest
             py_cmd: python
