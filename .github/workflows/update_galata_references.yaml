@@ -24,8 +24,8 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: [3.10]
-        node-version: [18.x]
+        python-version: [3.12]
+        node-version: [22.x]
 
     steps:
       - name: React to the triggering comment
