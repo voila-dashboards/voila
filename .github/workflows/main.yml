@@ -22,20 +22,29 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-latest]
-        python_version: ['3.8', '3.9', '3.10', '3.11']
+        python_version: ['3.9', '3.10', '3.11']
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
 
-      - name: Setup mamba
-        uses: conda-incubator/setup-miniconda@v2
+      - name: Install Conda environment with Micromamba
+        uses: mamba-org/setup-micromamba@v2
         with:
-          miniforge-variant: Mambaforge
-          channels: conda-forge
-
-      - name: Create the conda environment
-        shell: bash -l {0}
-        run: mamba install -q python=${{ matrix.python_version }} pip jupyterlab_pygments==0.1.0 pytest-cov pytest-rerunfailures nodejs=18 yarn=3 ipywidgets matplotlib xeus-cling  "traitlets>=5.0.3,<6" ipykernel
+          environment-name: voila
+          create-args: >-
+            python=${{ matrix.python_version }}
+            pip
+            jupyterlab_pygments=0.1.0
+            pytest-cov
+            pytest-rerunfailures
+            nodejs=18
+            yarn=3
+            ipywidgets
+            matplotlib
+            xeus-cling
+            traitlets>=5.0.3,<6
+            ipykernel
+            pyzmq=25.1.0
 
       - name: Install dependencies
         shell: bash -l {0}
@@ -74,22 +83,30 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [macos-12]
-        python_version: ['3.8', '3.9', '3.10', '3.11']
+        os: [macos-13]
+        python_version: ['3.9', '3.10', '3.11']
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
 
-      - name: Setup mamba
-        uses: conda-incubator/setup-miniconda@v2
+      - name: Install Conda environment with Micromamba
+        uses: mamba-org/setup-micromamba@v2
         with:
-          miniforge-variant: Mambaforge
-          channels: conda-forge
-
-      - name: Create the conda environment
-        shell: bash -l {0}
-        # TODO unpin pyzmq
-        run: mamba install -q python=${{ matrix.python_version }} pip jupyterlab_pygments==0.1.0 pytest-cov pytest-rerunfailures nodejs=18 yarn=3 ipywidgets matplotlib xeus-cling "traitlets>=5.0.3,<6" ipykernel pyzmq==25.1.0
+          environment-name: voila
+          create-args: >-
+            python=${{ matrix.python_version }}
+            pip
+            jupyterlab_pygments=0.1.0
+            pytest-cov
+            pytest-rerunfailures
+            nodejs=18
+            yarn=3
+            ipywidgets
+            matplotlib
+            xeus-cling
+            traitlets>=5.0.3,<6
+            ipykernel
+            pyzmq=25.1.0
 
       - name: Install dependencies
         shell: bash -l {0}
@@ -115,7 +132,7 @@ jobs:
       fail-fast: false
       matrix:
         os: [windows-latest]
-        python-version: ['3.8', '3.9', '3.10', '3.11']
+        python-version: ['3.9', '3.10', '3.11']
     steps:
       - uses: actions/checkout@v2
 
