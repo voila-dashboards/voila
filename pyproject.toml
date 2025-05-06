@@ -190,8 +190,9 @@ version-cmd = "python scripts/bump-version.py --force"
 ignore = ["W002"]
 
 [tool.ruff]
-target-version = "py37"
+target-version = "py39"
 line-length = 100
+exclude = ["*.ipynb"]
 ignore = [
 # Q000 Single quotes found but double quotes preferred
 "Q000",
