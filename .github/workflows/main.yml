@@ -31,7 +31,7 @@ jobs:
         uses: mamba-org/setup-micromamba@v1
         with:
           micromamba-version: '1.5.5-0'
-          environment-name: base
+          environment-name: voila
           create-args: >-
             python=${{ matrix.python_version }}
             pip
@@ -43,7 +43,7 @@ jobs:
             ipywidgets
             matplotlib
             xeus-cling
-            "traitlets>=5.0.3,<6"
+            traitlets>=5.0.3,<6
             ipykernel
             pyzmq=25.1.0
 
@@ -94,7 +94,7 @@ jobs:
         uses: mamba-org/setup-micromamba@v1
         with:
           micromamba-version: '1.5.5-0'
-          environment-name: base
+          environment-name: voila
           create-args: >-
             python=${{ matrix.python_version }}
             pip
