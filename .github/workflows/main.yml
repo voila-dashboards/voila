@@ -84,7 +84,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [macos-14]
+        os: [macos-13]
         python_version: ['3.9', '3.10', '3.11']
 
     steps:
@@ -106,7 +106,7 @@ jobs:
             ipywidgets
             matplotlib
             xeus-cling
-            "traitlets>=5.0.3,<6"
+            traitlets>=5.0.3,<6
             ipykernel
             pyzmq=25.1.0
 
