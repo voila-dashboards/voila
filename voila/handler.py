@@ -92,7 +92,9 @@ class VoilaHandler(BaseVoilaHandler):
             return
 
         cwd = os.path.dirname(notebook_path)
-        notebook_os_path = to_os_path(ApiPath(notebook_path), os.path.abspath(self.contents_manager.root_dir))
+        notebook_os_path = to_os_path(
+            ApiPath(notebook_path), os.path.abspath(self.contents_manager.root_dir)
+        )
 
         # Adding request uri to kernel env
         request_info = {}
