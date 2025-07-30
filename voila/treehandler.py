@@ -25,7 +25,7 @@ class VoilaTreeHandler(BaseVoilaHandler):
             supported_themes = ["dark", "light", "JupyterLab Dark", "JupyterLab Light"]
             if theme not in supported_themes:
                 self.log.warn(
-                    "Custom JupyterLab theme is not supported in the classic tree, failback to the light theme!"
+                    "Custom JupyterLab theme is not supported in the classic tree, fallback to the light theme!"
                 )
                 return "light"
             else:
