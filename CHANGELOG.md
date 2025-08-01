@@ -2,6 +2,22 @@
 
 <!-- <START NEW CHANGELOG ENTRY> -->
 
+## 0.5.10
+
+([Full Changelog](https://github.com/voila-dashboards/voila/compare/@voila-dashboards/jupyterlab-preview@2.3.9...981ae03cbd08859638fade059c931affea58259a))
+
+### Enhancements made
+
+- Don't merge the config if not needed [#1536](https://github.com/voila-dashboards/voila/pull/1536) ([@martinRenou](https://github.com/martinRenou))
+
+### Contributors to this release
+
+([GitHub contributors page for this release](https://github.com/voila-dashboards/voila/graphs/contributors?from=2025-07-30&to=2025-08-01&type=c))
+
+[@martinRenou](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3AmartinRenou+updated%3A2025-07-30..2025-08-01&type=Issues)
+
+<!-- <END NEW CHANGELOG ENTRY> -->
+
 ## 0.5.9
 
 ([Full Changelog](https://github.com/voila-dashboards/voila/compare/@voila-dashboards/jupyterlab-preview@2.3.8...8dcef0ca36649edd9262ce1d3b1a5622dcba2e3d))
@@ -26,8 +42,6 @@
 ([GitHub contributors page for this release](https://github.com/voila-dashboards/voila/graphs/contributors?from=2024-10-18&to=2025-07-30&type=c))
 
 [@github-actions](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Agithub-actions+updated%3A2024-10-18..2025-07-30&type=Issues) | [@jtpio](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Ajtpio+updated%3A2024-10-18..2025-07-30&type=Issues) | [@martinRenou](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3AmartinRenou+updated%3A2024-10-18..2025-07-30&type=Issues) | [@pre-commit-ci](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Apre-commit-ci+updated%3A2024-10-18..2025-07-30&type=Issues) | [@trungleduc](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Atrungleduc+updated%3A2024-10-18..2025-07-30&type=Issues)
-
-<!-- <END NEW CHANGELOG ENTRY> -->
 
 ## 0.5.8
 

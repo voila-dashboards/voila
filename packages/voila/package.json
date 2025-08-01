@@ -1,6 +1,6 @@
 {
   "name": "@voila-dashboards/voila",
-  "version": "0.5.9",
+  "version": "0.5.10",
   "description": "The Voilà Frontend",
   "author": "Voilà contributors",
   "license": "BSD-3-Clause",
@@ -52,7 +52,7 @@
     "@lumino/signaling": "^2.0.0",
     "@lumino/virtualdom": "^2.0.0",
     "@lumino/widgets": "^2.0.0",
-    "@voila-dashboards/widgets-manager8": "^0.5.9",
+    "@voila-dashboards/widgets-manager8": "^0.5.10",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "style-mod": "^4.0.3",
