@@ -53,13 +53,13 @@ def _jupyter_server_extension_points():
     return [{"module": "voila.server_extension"}]
 
 
-def load_config_file() -> Config:
+def load_config_file() -> Optional[Config]:
     """
     Loads voila.json and voila.py config file from current working
     directory and other Jupyter paths
     """
 
-    new_config = Config()
+    new_config = None
     base_file_name = "voila"
     config_file_paths = [*jupyter_config_path(), os.getcwd()]
 
@@ -67,6 +67,10 @@ def load_config_file() -> Config:
         py_loader = PyFileConfigLoader(filename=f"{base_file_name}.py", path=current)
         try:
             py_config = py_loader.load_config()
+
+            if new_config is None:
+                new_config = Config()
+
             new_config.merge(py_config)
         except ConfigFileNotFound:
             pass
@@ -76,6 +80,10 @@ def load_config_file() -> Config:
         )
         try:
             json_config = json_loader.load_config()
+
+            if new_config is None:
+                new_config = Config()
+
             new_config.merge(json_config)
         except ConfigFileNotFound:
             pass
@@ -88,7 +96,10 @@ def _load_jupyter_server_extension(server_app: ServerApp):
     # common configuration options between the server extension and the application
 
     voila_configuration = VoilaConfiguration(parent=server_app)
-    voila_configuration.config.merge(load_config_file())
+
+    local_config = load_config_file()
+    if local_config is not None:
+        voila_configuration.config.merge(load_config_file())
 
     template_name = voila_configuration.template
     template_paths = collect_template_paths(["voila", "nbconvert"], template_name)
