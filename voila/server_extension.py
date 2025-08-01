@@ -9,6 +9,7 @@
 
 import gettext
 import os
+from typing import Optional
 
 from jinja2 import Environment, FileSystemLoader
 from jupyter_server.base.handlers import FileFindHandler, path_regex
