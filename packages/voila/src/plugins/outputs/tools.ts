@@ -28,6 +28,14 @@ export interface IExecutionErrorMessage {
 }
 
 /**
+ * Interface representing the structure of an execution's ping and pong message.
+ */
+export interface IExecutionResultPingMessage {
+  action: 'ping';
+  payload: any;
+}
+
+/**
  * Interface representing a received widget model
  * containing output and execution models.
  */
@@ -39,7 +47,8 @@ export interface IReceivedWidgetModel {
 }
 export type IExecutionMessage =
   | IExecutionResultMessage
-  | IExecutionErrorMessage;
+  | IExecutionErrorMessage
+  | IExecutionResultPingMessage;
 
 export function getExecutionURL(kernelId?: string): string {
   const wsUrl = PageConfig.getWsUrl();

@@ -154,6 +154,10 @@ export const renderOutputsProgressivelyPlugin: JupyterFrontEndPlugin<void> = {
           console.error(`Execution error: ${payload.error}`);
           break;
         }
+        case 'ping': {
+          ws.send(JSON.stringify({ action: 'pong' }));
+          break;
+        }
         default:
           break;
       }
