@@ -54,7 +54,7 @@ if JUPYTER_SERVER_2:
                 await self.write_message(
                     {
                         "action": "error",
-                        "payload": {"error": f"Unknown action: {action}"}
+                        "payload": {"error": f"Unknown action: {action}"},
                     }
                 )
                 return
@@ -64,7 +64,7 @@ if JUPYTER_SERVER_2:
                 await self.write_message(
                     {
                         "action": "execution_error",
-                        "payload": {"error": "Kernel ID does not match"}
+                        "payload": {"error": "Kernel ID does not match"},
                     }
                 )
                 return
@@ -75,7 +75,7 @@ if JUPYTER_SERVER_2:
                 await self.write_message(
                     {
                         "action": "execution_error",
-                        "payload": {"error": "Missing notebook data"}
+                        "payload": {"error": "Missing notebook data"},
                     }
                 )
                 return
