@@ -56,6 +56,14 @@
 {% block jupyter_widgets %}
 {% endblock jupyter_widgets %}
 
+{% block error -%}
+<details>
+<summary>An unexpected error occurred while executing...</summary>
+{{ super() }}
+</details>
+{%- endblock error %}
+
+
 {%- block body_header -%}
 <link rel="icon" href="data:;base64,=">
 {% if resources.theme == 'dark' or resources.theme == 'JupyterLab Dark' %}
