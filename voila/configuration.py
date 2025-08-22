@@ -269,3 +269,9 @@ class VoilaConfiguration(traitlets.config.Configurable):
         This option is not compatible with preheat-kernel option.
         """,
     )
+
+    extra_labextensions_path = List(
+        Unicode(),
+        config=True,
+        help="""Extra paths to look for federated JupyterLab extensions""",
+    )
