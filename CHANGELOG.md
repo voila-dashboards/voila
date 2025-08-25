@@ -2,6 +2,26 @@
 
 <!-- <START NEW CHANGELOG ENTRY> -->
 
+## 0.5.11
+
+([Full Changelog](https://github.com/voila-dashboards/voila/compare/@voila-dashboards/jupyterlab-preview@2.3.10...86dbefc4436d27f8d90e838d43b8b191eacb98df))
+
+### Enhancements made
+
+- Allow specifying `extra_labextensions_path` [#1542](https://github.com/voila-dashboards/voila/pull/1542) ([@jtpio](https://github.com/jtpio))
+
+### Bugs fixed
+
+- Server extension: Fix merging with local config [#1543](https://github.com/voila-dashboards/voila/pull/1543) ([@martinRenou](https://github.com/martinRenou))
+
+### Contributors to this release
+
+([GitHub contributors page for this release](https://github.com/voila-dashboards/voila/graphs/contributors?from=2025-08-01&to=2025-08-25&type=c))
+
+[@github-actions](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Agithub-actions+updated%3A2025-08-01..2025-08-25&type=Issues) | [@jtpio](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Ajtpio+updated%3A2025-08-01..2025-08-25&type=Issues) | [@martinRenou](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3AmartinRenou+updated%3A2025-08-01..2025-08-25&type=Issues)
+
+<!-- <END NEW CHANGELOG ENTRY> -->
+
 ## 0.5.10
 
 ([Full Changelog](https://github.com/voila-dashboards/voila/compare/@voila-dashboards/jupyterlab-preview@2.3.9...981ae03cbd08859638fade059c931affea58259a))
@@ -15,8 +35,6 @@
 ([GitHub contributors page for this release](https://github.com/voila-dashboards/voila/graphs/contributors?from=2025-07-30&to=2025-08-01&type=c))
 
 [@martinRenou](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3AmartinRenou+updated%3A2025-07-30..2025-08-01&type=Issues)
-
-<!-- <END NEW CHANGELOG ENTRY> -->
 
 ## 0.5.9
 
