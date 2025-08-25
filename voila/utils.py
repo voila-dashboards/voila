@@ -92,7 +92,7 @@ async def _get_request_info(ws_url: str) -> Awaitable:
         return ri
 
 
-def get_voila_labextensions_path():
+def get_voila_labextensions_path(extra_paths=None):
     labextensions_path = jupyter_path("labextensions")
 
     # Paths to labextensions specific to Voila
@@ -100,6 +100,10 @@ def get_voila_labextensions_path():
         str(Path(path) / "labextensions") for path in jupyter_path("voila")
     ]
     labextensions_path = labextensions_path + voila_labextensions
+
+    # Add extra labextensions paths if provided
+    if extra_paths:
+        labextensions_path = labextensions_path + extra_paths
 
     return labextensions_path
 
@@ -136,7 +140,9 @@ def get_page_config(
     )
     page_config.setdefault("mathjaxConfig", mathjax_config)
     page_config.setdefault("fullMathjaxUrl", mathjax_url)
-    labextensions_path = get_voila_labextensions_path()
+    labextensions_path = get_voila_labextensions_path(
+        voila_configuration.extra_labextensions_path
+    )
 
     recursive_update(
         page_config,

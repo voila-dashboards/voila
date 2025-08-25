@@ -125,7 +125,9 @@ def _load_jupyter_server_extension(server_app: ServerApp):
     tree_handler_conf = {"voila_configuration": voila_configuration}
 
     themes_dir = pjoin(get_data_dir(), "themes")
-    labextensions_path = get_voila_labextensions_path()
+    labextensions_path = get_voila_labextensions_path(
+        voila_configuration.extra_labextensions_path
+    )
 
     handlers = [
         (
