@@ -777,21 +777,17 @@ You can configure additional paths for Voilà to search for JupyterLab extension
 voila --VoilaConfiguration.extra_labextensions_path="['/path/to/custom/extensions', '/another/path']"
 ```
 
-Or via the configuration file:
+Or via the configuration file (`voila.json`):
 
-```python
-# voila.json
+```json
 {
-   "VoilaConfiguration": {
-      "extra_labextensions_path": [
-         "/path/to/custom/extensions",
-         "/another/path"
-      ]
-   }
+  "VoilaConfiguration": {
+    "extra_labextensions_path": ["/path/to/custom/extensions", "/another/path"]
+  }
 }
 ```
 
-Or in a Python configuration file (voila.py):
+Or in a Python configuration file (`voila.py`):
 
 ```python
 c.VoilaConfiguration.extra_labextensions_path = [
