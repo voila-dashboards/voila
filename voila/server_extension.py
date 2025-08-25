@@ -100,7 +100,7 @@ def _load_jupyter_server_extension(server_app: ServerApp):
 
     local_config = load_config_file()
     if local_config is not None:
-        voila_configuration.config.merge(load_config_file())
+        voila_configuration.update_config(local_config)
 
     template_name = voila_configuration.template
     template_paths = collect_template_paths(["voila", "nbconvert"], template_name)
