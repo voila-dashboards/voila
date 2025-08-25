@@ -768,3 +768,34 @@ Voila will load all extensions under `{PREFIX}/share/jupyter/labextensions` just
 
 It also has its own path for labextensions that you can use: `{PREFIX}/share/jupyter/voila/labextensions`. Installing extensions there will make those extensions only available to Voila. This is really useful if you
 don't want to pollute JupyterLab or Jupyter Notebook with extensions that only work for Voila.
+
+### Configuring extra labextensions paths
+
+You can configure additional paths for Voilà to search for JupyterLab extensions using the `extra_labextensions_path` configuration option:
+
+```bash
+voila --VoilaConfiguration.extra_labextensions_path="['/path/to/custom/extensions', '/another/path']"
+```
+
+Or via the configuration file:
+
+```python
+# voila.json
+{
+   "VoilaConfiguration": {
+      "extra_labextensions_path": [
+         "/path/to/custom/extensions",
+         "/another/path"
+      ]
+   }
+}
+```
+
+Or in a Python configuration file (voila.py):
+
+```python
+c.VoilaConfiguration.extra_labextensions_path = [
+    '/path/to/custom/extensions',
+    '/another/path'
+]
+```
