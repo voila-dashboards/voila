@@ -100,7 +100,7 @@ def _load_jupyter_server_extension(server_app: ServerApp):
 
     local_config = load_config_file()
     if local_config is not None:
-        voila_configuration.config.merge(load_config_file())
+        voila_configuration.update_config(local_config)
 
     template_name = voila_configuration.template
     template_paths = collect_template_paths(["voila", "nbconvert"], template_name)
@@ -125,7 +125,9 @@ def _load_jupyter_server_extension(server_app: ServerApp):
     tree_handler_conf = {"voila_configuration": voila_configuration}
 
     themes_dir = pjoin(get_data_dir(), "themes")
-    labextensions_path = get_voila_labextensions_path()
+    labextensions_path = get_voila_labextensions_path(
+        voila_configuration.extra_labextensions_path
+    )
 
     handlers = [
         (

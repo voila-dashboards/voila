@@ -474,7 +474,9 @@ class Voila(Application):
 
     @property
     def labextensions_path(self):
-        return get_voila_labextensions_path()
+        return get_voila_labextensions_path(
+            self.voila_configuration.extra_labextensions_path
+        )
 
     @property
     def data_dir(self):
@@ -761,7 +763,9 @@ class Voila(Application):
                     {
                         "themes_url": "/voila/api/themes",
                         "path": self.themes_dir,
-                        "labextensions_path": get_voila_labextensions_path(),
+                        "labextensions_path": get_voila_labextensions_path(
+                            self.voila_configuration.extra_labextensions_path
+                        ),
                         "no_cache_paths": ["/"],
                     },
                 ),
