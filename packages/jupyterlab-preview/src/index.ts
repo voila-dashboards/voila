@@ -67,7 +67,7 @@ class VoilaRenderButton
   createNew(panel: NotebookPanel): IDisposable {
     const button = new ToolbarButton({
       className: 'voilaRender',
-      tooltip: 'Render with Voilà',
+      tooltip: 'Render Notebook as Web Application with Voilà',
       icon: voilaIcon,
       onClick: () => {
         this._commands.execute(CommandIDs.voilaRender);
@@ -177,7 +177,7 @@ const extension: JupyterFrontEndPlugin<IVoilaPreviewTracker> = {
     const { commands, docRegistry } = app;
 
     commands.addCommand(CommandIDs.voilaRender, {
-      label: 'Render Notebook with Voilà',
+      label: 'Preview Notebook as Web Application with Voilà',
       execute: async (args) => {
         const current = getCurrent(args);
         let context: DocumentRegistry.IContext<INotebookModel>;
