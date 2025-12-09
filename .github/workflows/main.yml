@@ -83,7 +83,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [macos-latest]
+        os: [macos-15-intel]
         python_version: ['3.9', '3.10', '3.11']
 
     steps:
