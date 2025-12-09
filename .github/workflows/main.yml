@@ -83,7 +83,8 @@ jobs:
       fail-fast: false
       matrix:
         os: [macos-latest]
-        python_version: ['3.10', '3.14']
+        # TODO: Python 3.14 on macOS hangs during ipywidgets tests
+        python_version: ['3.10', '3.13']
 
     steps:
       - uses: actions/checkout@v4
