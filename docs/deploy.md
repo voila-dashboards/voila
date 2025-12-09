@@ -29,7 +29,7 @@ and with very little prior experience of deployments.
 2. Add a requirements.txt file to the project directory. This file should
    contain all the Python dependencies your Voilà app needs to run. For this
    tutorial we will copy the contents of the environment.yml of Voilà.
-   We omit xleaflet and xeus-cling because these require extra work that is
+   We omit xleaflet and xeus-cpp because these require extra work that is
    beyond the scope of this guide.
 
    ```text

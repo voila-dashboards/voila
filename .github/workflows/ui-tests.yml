@@ -51,21 +51,9 @@ jobs:
           cd ui-tests
           jlpm install
 
-      - name: Launch Voila
-        run: |
-          # Mount a volume to overwrite the server configuration
-          jlpm start --progressive_rendering=${{ matrix.progressive_rendering }} 2>&1 > /tmp/voila_server.log &
-        working-directory: ui-tests
-
       - name: Install browser
         run: npx playwright install chromium
         working-directory: ui-tests
-
-      - name: Wait for Voila
-        uses: ifaxity/wait-on-action@v1
-        with:
-          resource: http-get://localhost:8866/
-          timeout: 360000
 
       - name: Test
         env:
@@ -110,8 +98,3 @@ jobs:
           name: ${{ env.TEST_REPORT_NAME }}
           path: |
             ui-tests/playwright-report
-
-      - name: Print Voila logs
-        if: always()
-        run: |
-          cat /tmp/voila_server.log

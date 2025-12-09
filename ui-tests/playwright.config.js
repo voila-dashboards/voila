@@ -21,5 +21,14 @@ module.exports = {
     toHaveScreenshot: {
       maxDiffPixelRatio: 0.05
     }
+  },
+  webServer: {
+    command:
+      process.env.PROGRESSIVE_RENDERING === 'true'
+        ? 'voila ../notebooks --no-browser --show_tracebacks True --progressive_rendering=true'
+        : 'voila ../notebooks --no-browser --show_tracebacks True',
+    url: 'http://localhost:8866',
+    timeout: 360000,
+    reuseExistingServer: !process.env.CI
   }
 };
