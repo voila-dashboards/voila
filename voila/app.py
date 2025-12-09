@@ -497,6 +497,13 @@ class Voila(Application):
         else:
             return os.getcwd()
 
+    @validate("root_dir")
+    def _validate_root_dir(self, proposal):
+        value = proposal["value"]
+        if not os.path.isabs(value):
+            value = os.path.abspath(value)
+        return value
+
     @validate("mathjax_url")
     def _valid_mathjax_url(self, proposal):
         warn(
