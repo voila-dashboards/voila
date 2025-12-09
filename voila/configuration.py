@@ -119,8 +119,8 @@ class VoilaConfiguration(traitlets.config.Configurable):
         {},
         config=True,
         help="""Mapping of language name to kernel name
-        Example mapping python to use xeus-python, and C++11 to use xeus-cling:
-        --VoilaConfiguration.extension_language_mapping='{"python": "xpython", "C++11": "xcpp11"}'
+        Example mapping python to use xeus-python, and C++23 to use xeus-cpp:
+        --VoilaConfiguration.extension_language_mapping='{"python": "xpython", "C++23": "xcpp23"}'
         """,
     )
 

@@ -2,7 +2,7 @@ import os
 
 import pytest
 
-TEST_XEUS_CLING = os.environ.get("VOILA_TEST_XEUS_CLING", "") == "1"
+TEST_XEUS_CPP = os.environ.get("VOILA_TEST_XEUS_CPP", "") == "1"
 NOTEBOOK_PATH = "print.xcpp"
 
 
@@ -14,7 +14,7 @@ def cpp_file_url(base_url, preheat_mode):
 @pytest.fixture
 def voila_args_extra():
     return [
-        '--VoilaConfiguration.extension_language_mapping={".xcpp": "C++11"}',
+        '--VoilaConfiguration.extension_language_mapping={".xcpp": "C++23"}',
         "--VoilaExecutor.timeout=240",
     ]
 
@@ -25,7 +25,7 @@ def voila_args(notebook_directory, voila_args_extra, preheat_mode):
 
 
 @pytest.mark.skipif(
-    not TEST_XEUS_CLING, reason="opt in to avoid having to install xeus-cling"
+    not TEST_XEUS_CPP, reason="opt in to avoid having to install xeus-cpp"
 )
 async def test_non_existing_kernel(http_server_client, cpp_file_url):
     response = await http_server_client.fetch(cpp_file_url)

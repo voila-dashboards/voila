@@ -41,7 +41,7 @@ jobs:
             yarn=3
             ipywidgets
             matplotlib
-            xeus-cling
+            xeus-cpp
             traitlets>=5.0.3,<6
             ipykernel
 
@@ -63,8 +63,8 @@ jobs:
       - name: Run tests
         shell: bash -l {0}
         run: |
-          VOILA_TEST_XEUS_CLING=1 py.test tests/app --async-test-timeout=240 --reruns 2 --reruns-delay 1
-          VOILA_TEST_XEUS_CLING=1 py.test tests/server --async-test-timeout=240 --reruns 2 --reruns-delay 1 --trace
+          VOILA_TEST_XEUS_CPP=1 py.test tests/app --async-test-timeout=240 --reruns 2 --reruns-delay 1
+          VOILA_TEST_XEUS_CPP=1 py.test tests/server --async-test-timeout=240 --reruns 2 --reruns-delay 1 --trace
           py.test tests/execute_output_test.py
           voila --help  # Making sure we can run `voila --help`
           # tests if voila sends a 'heartbeat' to avoid proxies from closing an apparently stale connection
@@ -74,7 +74,7 @@ jobs:
           wget --read-timeout=5 --tries=1 http://localhost:8878
           # Test nbconvert < 7.6.0
           python -m pip install "nbconvert<7.6.0"
-          VOILA_TEST_XEUS_CLING=1 py.test tests/app/image_inlining_test.py
+          VOILA_TEST_XEUS_CPP=1 py.test tests/app/image_inlining_test.py
 
   test-osx:
     runs-on: ${{ matrix.os }}
@@ -82,7 +82,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [macos-15-intel]
+        os: [macos-latest]
         python_version: ['3.10', '3.14']
 
     steps:
@@ -102,7 +102,7 @@ jobs:
             yarn=3
             ipywidgets
             matplotlib
-            xeus-cling
+            xeus-cpp
             traitlets>=5.0.3,<6
             ipykernel
 

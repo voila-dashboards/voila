@@ -3,7 +3,7 @@ import os
 
 import pytest
 
-TEST_XEUS_CLING = os.environ.get("VOILA_TEST_XEUS_CLING", "") == "1"
+TEST_XEUS_CPP = os.environ.get("VOILA_TEST_XEUS_CPP", "") == "1"
 
 
 @pytest.fixture
@@ -36,7 +36,7 @@ async def test_print_py(http_server_client, print_notebook_url):
 
 
 @pytest.mark.skipif(
-    not TEST_XEUS_CLING, reason="opt in to avoid having to install xeus-cling"
+    not TEST_XEUS_CPP, reason="opt in to avoid having to install xeus-cpp"
 )
 async def test_print_julia_notebook(http_server_client, print_notebook_url):
     print(print_notebook_url)
