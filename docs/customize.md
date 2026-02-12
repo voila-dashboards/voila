@@ -795,3 +795,7 @@ c.VoilaConfiguration.extra_labextensions_path = [
     '/another/path'
 ]
 ```
+
+:::{note}
+The `extra_labextensions_path` directories are prepended to the default `labextensions_path`. In other words, extensions in the `extra_labextensions_path` will take precedence over those in the standard locations.
+:::

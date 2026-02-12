@@ -103,7 +103,7 @@ def get_voila_labextensions_path(extra_paths=None):
 
     # Add extra labextensions paths if provided
     if extra_paths:
-        labextensions_path = labextensions_path + extra_paths
+        labextensions_path = extra_paths + labextensions_path
 
     return labextensions_path
 
