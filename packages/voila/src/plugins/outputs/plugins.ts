@@ -16,13 +16,7 @@ import { Widget } from '@lumino/widgets';
 
 import { VoilaApp } from '../../app';
 import { RenderedCells } from './renderedcells';
-import {
-  createSkeleton,
-  getExecutionURL,
-  handleExecutionResult,
-  IExecutionMessage,
-  IReceivedWidgetModel
-} from './tools';
+import { createOutputArea, createSkeleton, executeCode } from './tools';
 
 /**
  * The plugin that renders outputs.
@@ -115,53 +109,25 @@ export const renderOutputsProgressivelyPlugin: JupyterFrontEndPlugin<void> = {
       return;
     }
 
-    const kernelId = widgetManager.kernel.id;
-
-    const receivedWidgetModel: IReceivedWidgetModel = {};
-    const modelRegisteredHandler = (_: any, modelId: string) => {
-      if (receivedWidgetModel[modelId]) {
-        const { outputModel, executionModel } = receivedWidgetModel[modelId];
-        outputModel.add(executionModel);
-        widgetManager.removeRegisteredModel(modelId);
-      }
-    };
-    widgetManager.modelRegistered.connect(modelRegisteredHandler);
-    const wsUrl = getExecutionURL(kernelId);
-    const ws = new WebSocket(wsUrl);
-    ws.onmessage = async (msg) => {
-      const { action, payload }: IExecutionMessage = JSON.parse(msg.data);
-      switch (action) {
-        case 'execution_result': {
-          const result = handleExecutionResult({
-            payload,
-            rendermime,
-            widgetManager
-          });
-          if (result) {
-            Object.entries(result).forEach(([key, val]) => {
-              receivedWidgetModel[key] = val;
-            });
+    const cells = document.querySelectorAll('[cell-index]');
+    const cellsNumber = cells.length;
+    for (let cellIdx = 0; cellIdx < cellsNumber; cellIdx++) {
+      const el = cells.item(cellIdx);
+      const codeCell =
+        el.getElementsByClassName('jp-CodeCell').item(0) ||
+        el.getElementsByClassName('code_cell').item(0); // for classic template;
+      if (codeCell) {
+        const { area } = createOutputArea({ rendermime, parent: codeCell });
+        const source = `${cellIdx}`;
+        executeCode(source, area, widgetManager.kernel).then((future) => {
+          const skeleton = el
+            .getElementsByClassName('voila-skeleton-container')
+            .item(0);
+          if (skeleton) {
+            el.removeChild(skeleton);
           }
-          const { cell_index, total_cell } = payload;
-          if (cell_index + 1 === total_cell) {
-            // Executed all cells
-            ws.close();
-          }
-
-          break;
-        }
-        case 'execution_error': {
-          console.error(`Execution error: ${payload.error}`);
-          break;
-        }
-        default:
-          break;
+        });
       }
-    };
-    ws.onopen = () => {
-      ws.send(
-        JSON.stringify({ action: 'execute', payload: { kernel_id: kernelId } })
-      );
-    };
+    }
   }
 };

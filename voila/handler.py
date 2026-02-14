@@ -19,7 +19,7 @@ from nbclient.util import ensure_async
 from tornado.httputil import split_host_and_port
 from traitlets.traitlets import Bool
 
-from voila.tornado.execution_request_handler import ExecutionRequestHandler
+from voila.tornado.kernel_websocket_handler import VoilaKernelWebsocketHandler
 
 from .configuration import VoilaConfiguration
 
@@ -190,7 +190,6 @@ class VoilaHandler(BaseVoilaHandler):
                 return
             mathjax_config = self.settings.get("mathjax_config")
             mathjax_url = self.settings.get("mathjax_url")
-
             page_config_kwargs = {
                 "base_url": self.base_url,
                 "settings": self.settings,
@@ -253,8 +252,8 @@ class VoilaHandler(BaseVoilaHandler):
             kernel_future = self.kernel_manager.get_kernel(kernel_id)
             queue = asyncio.Queue()
             if self.voila_configuration.progressive_rendering:
-                ExecutionRequestHandler._execution_data[kernel_id] = {
-                    "nb": gen.notebook,
+                VoilaKernelWebsocketHandler._ALL_EXECUTION_DATA[kernel_id] = {
+                    "cells": gen.notebook.cells,
                     "config": self.traitlet_config,
                     "show_tracebacks": self.voila_configuration.show_tracebacks,
                 }
