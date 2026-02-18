@@ -27,6 +27,7 @@ from ._version import __version__
 from .notebook_renderer import NotebookRenderer
 from .request_info_handler import RequestInfoSocketHandler
 from .utils import ENV_VARIABLE, create_include_assets_functions, get_page_config
+from jupyter_server.utils import ApiPath, to_os_path
 
 
 class BaseVoilaHandler(JupyterHandler):
@@ -91,8 +92,14 @@ class VoilaHandler(BaseVoilaHandler):
             return
 
         cwd = os.path.dirname(notebook_path)
+        notebook_os_path = to_os_path(
+            ApiPath(notebook_path), os.path.abspath(self.contents_manager.root_dir)
+        )
+
         # Adding request uri to kernel env
         request_info = {}
+        # Expose the absolute OS path to the notebook in the same way as jupyter_server does
+        request_info[ENV_VARIABLE.JPY_SESSION_NAME] = notebook_os_path
         request_info[ENV_VARIABLE.SCRIPT_NAME] = self.request.path
         request_info[ENV_VARIABLE.PATH_INFO] = (
             ""  # would be /foo/bar if voila.ipynb/foo/bar was supported
