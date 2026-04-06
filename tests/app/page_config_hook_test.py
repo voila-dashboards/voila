@@ -2,7 +2,6 @@ import os
 
 import pytest
 
-
 BASE_DIR = os.path.dirname(__file__)
 
 

@@ -7,7 +7,7 @@ ci:
 repos:
   # Autoformat and linting, misc. details
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v5.0.0
+    rev: v6.0.0
     hooks:
       - id: forbid-new-submodules
       - id: end-of-file-fixer
@@ -24,13 +24,13 @@ repos:
         exclude: .bumpversion.cfg
 
   # Autoformat: Python code
-  - repo: https://github.com/psf/black
-    rev: 25.1.0
+  - repo: https://github.com/psf/black-pre-commit-mirror
+    rev: 26.3.1
     hooks:
       - id: black
 
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.12.2
+    rev: v0.15.9
     hooks:
       - id: ruff
         args: ['--fix']
