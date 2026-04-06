@@ -1,7 +1,6 @@
 from typing import Dict, List, Set
 from voila.utils import filter_extension
 
-
 federated_extensions = [{"name": "foo"}, {"name": "bar"}, {"name": "foo-bar"}]
 
 

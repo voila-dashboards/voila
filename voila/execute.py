@@ -53,13 +53,11 @@ class VoilaExecutor(NotebookClient):
     startup_timeout: int = Integer(
         60,
         config=True,
-        help=(
-            """
+        help=("""
             The time to wait (in seconds) for the kernel to start.
             If kernel startup takes longer, a RuntimeError is
             raised.
-            """
-        ),
+            """),
     )
 
     def execute(self, nb, resources, km=None):
