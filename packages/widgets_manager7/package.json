@@ -1,6 +1,6 @@
 {
     "name": "@voila-dashboards/widgets-manager7",
-    "version": "0.5.11",
+    "version": "0.5.12",
     "description": "The Voilà jupyter-widgets manager for ipywidgets 7 support",
     "keywords": [
         "jupyter",

@@ -2,6 +2,32 @@
 
 <!-- <START NEW CHANGELOG ENTRY> -->
 
+## 0.5.12
+
+([Full Changelog](https://github.com/voila-dashboards/voila/compare/@voila-dashboards/jupyterlab-preview@2.3.11...c33cdabae9bf2d00ac45e698689b40831817fa99))
+
+### Enhancements made
+
+- Export `IVoilaPreviewTracker` [#1556](https://github.com/voila-dashboards/voila/pull/1556) ([@jtpio](https://github.com/jtpio), [@trungleduc](https://github.com/trungleduc))
+- [Enhancement] - Normalize extra labextensions path | #1553 [#1552](https://github.com/voila-dashboards/voila/pull/1552) ([@gauraangkhurana](https://github.com/gauraangkhurana), [@trungleduc](https://github.com/trungleduc))
+
+### Maintenance and upkeep improvements
+
+- Update galata bot permission check [#1551](https://github.com/voila-dashboards/voila/pull/1551) ([@martinRenou](https://github.com/martinRenou))
+- Fix CI [#1549](https://github.com/voila-dashboards/voila/pull/1549) ([@jtpio](https://github.com/jtpio), [@martinRenou](https://github.com/martinRenou))
+- Add JupyterLab 4 classifier [#1546](https://github.com/voila-dashboards/voila/pull/1546) ([@ktaletsk](https://github.com/ktaletsk), [@jtpio](https://github.com/jtpio), [@trungleduc](https://github.com/trungleduc))
+
+### Contributors to this release
+
+The following people contributed discussions, new ideas, code and documentation contributions, and review.
+See [our definition of contributors](https://github-activity.readthedocs.io/en/latest/use/#how-does-this-tool-define-contributions-in-the-reports).
+
+([GitHub contributors page for this release](https://github.com/voila-dashboards/voila/graphs/contributors?from=2025-08-25&to=2026-04-22&type=c))
+
+@gauraangkhurana ([activity](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Agauraangkhurana+updated%3A2025-08-25..2026-04-22&type=Issues)) | @jtpio ([activity](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Ajtpio+updated%3A2025-08-25..2026-04-22&type=Issues)) | @ktaletsk ([activity](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Aktaletsk+updated%3A2025-08-25..2026-04-22&type=Issues)) | @martinRenou ([activity](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3AmartinRenou+updated%3A2025-08-25..2026-04-22&type=Issues)) | @trungleduc ([activity](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Atrungleduc+updated%3A2025-08-25..2026-04-22&type=Issues))
+
+<!-- <END NEW CHANGELOG ENTRY> -->
+
 ## 0.5.11
 
 ([Full Changelog](https://github.com/voila-dashboards/voila/compare/@voila-dashboards/jupyterlab-preview@2.3.10...86dbefc4436d27f8d90e838d43b8b191eacb98df))
@@ -19,8 +45,6 @@
 ([GitHub contributors page for this release](https://github.com/voila-dashboards/voila/graphs/contributors?from=2025-08-01&to=2025-08-25&type=c))
 
 [@github-actions](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Agithub-actions+updated%3A2025-08-01..2025-08-25&type=Issues) | [@jtpio](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3Ajtpio+updated%3A2025-08-01..2025-08-25&type=Issues) | [@martinRenou](https://github.com/search?q=repo%3Avoila-dashboards%2Fvoila+involves%3AmartinRenou+updated%3A2025-08-01..2025-08-25&type=Issues)
-
-<!-- <END NEW CHANGELOG ENTRY> -->
 
 ## 0.5.10
 
