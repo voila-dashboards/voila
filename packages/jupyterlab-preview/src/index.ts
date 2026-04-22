@@ -38,6 +38,8 @@ import {
 
 import { voilaIcon } from './icons';
 
+export { VoilaPreview, IVoilaPreviewTracker, VoilaPreviewFactory };
+
 /**
  * The command IDs used by the plugin.
  */
