@@ -114,7 +114,7 @@ Voilà is built upon Jupyter standard formats and protocols, and is agnostic to 
 
 ## The Voilà Gallery
 
-The [Voilà Gallery](https://voila-gallery.org) is a collection of live dashboards and applications built with Voilà and Jupyter widgets.
+The [Voilà Gallery](https://voila-gallery.github.io/) is a collection of live dashboards and applications built with Voilà and Jupyter widgets.
 
 Most of the examples rely on widget libraries such as ipywidgets, ipyleaflet, ipyvolume, bqplot and ipympl, and showcase how to build complex web applications entirely based on notebooks.
 
