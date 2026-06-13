@@ -18,7 +18,6 @@ from jupyterlab_server.themes_handler import ThemesHandler
 from jupyter_core.paths import jupyter_config_path
 from jupyter_server.serverapp import ServerApp
 
-from .tornado.execution_request_handler import ExecutionRequestHandler, JUPYTER_SERVER_2
 from .tornado.contentshandler import VoilaContentsHandler
 from traitlets.config import (
     JSONFileConfigLoader,
@@ -42,6 +41,9 @@ from .utils import (
     pjoin,
     get_voila_labextensions_path,
 )
+from jupyter_server.services.kernels.handlers import KernelHandler
+from .tornado.kernel_websocket_handler import VoilaKernelWebsocketHandler
+
 
 _kernel_id_regex = r"(?P<kernel_id>\w+-\w+-\w+-\w+-\w+)"
 
@@ -128,8 +130,17 @@ def _load_jupyter_server_extension(server_app: ServerApp):
     labextensions_path = get_voila_labextensions_path(
         voila_configuration.extra_labextensions_path
     )
-
     handlers = [
+        (
+            url_path_join(base_url, r"/voila/api/kernels/%s" % _kernel_id_regex),
+            KernelHandler,
+        ),
+        (
+            url_path_join(
+                base_url, r"/voila/api/kernels/%s/channels" % _kernel_id_regex
+            ),
+            VoilaKernelWebsocketHandler,
+        ),
         (
             url_path_join(base_url, "/voila/render/(.*)"),
             TornadoVoilaHandler,
@@ -187,13 +198,7 @@ def _load_jupyter_server_extension(server_app: ServerApp):
             tree_handler_conf,
         ),
     ]
-    if JUPYTER_SERVER_2 and voila_configuration.progressive_rendering:
-        handlers.append(
-            (
-                url_path_join(base_url, r"/voila/execution/%s" % _kernel_id_regex),
-                ExecutionRequestHandler,
-            )
-        )
+
     web_app.add_handlers(host_pattern, handlers)
 
     web_app.add_handlers(

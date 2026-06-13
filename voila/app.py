@@ -22,8 +22,6 @@ import webbrowser
 
 from .tornado.kernel_websocket_handler import VoilaKernelWebsocketHandler
 
-from .tornado.execution_request_handler import ExecutionRequestHandler
-
 from .tornado.contentshandler import VoilaContentsHandler
 
 from urllib.parse import urljoin
@@ -660,6 +658,7 @@ class Voila(Application):
             connection_dir=self.connection_dir,
             kernel_spec_manager=self.kernel_spec_manager,
             allowed_message_types=[
+                "execute_request",
                 "comm_open",
                 "comm_close",
                 "comm_msg",
@@ -722,6 +721,7 @@ class Voila(Application):
             config_manager=self.config_manager,
             mathjax_config=self.mathjax_config,
             mathjax_url=self.mathjax_url,
+            static_path=self.static_root,
         )
         settings[self.name] = self  # Why???
 
@@ -745,13 +745,14 @@ class Voila(Application):
             [
                 (
                     url_path_join(
-                        self.server_url, r"/api/kernels/%s" % _kernel_id_regex
+                        self.server_url, r"/voila/api/kernels/%s" % _kernel_id_regex
                     ),
                     KernelHandler,
                 ),
                 (
                     url_path_join(
-                        self.server_url, r"/api/kernels/%s/channels" % _kernel_id_regex
+                        self.server_url,
+                        r"/voila/api/kernels/%s/channels" % _kernel_id_regex,
                     ),
                     VoilaKernelWebsocketHandler,
                 ),
@@ -793,15 +794,6 @@ class Voila(Application):
                         self.server_url, r"/voila/query/%s" % _kernel_id_regex
                     ),
                     RequestInfoSocketHandler,
-                )
-            )
-        if self.voila_configuration.progressive_rendering:
-            handlers.append(
-                (
-                    url_path_join(
-                        self.server_url, r"/voila/execution/%s" % _kernel_id_regex
-                    ),
-                    ExecutionRequestHandler,
                 )
             )
         # Serving JupyterLab extensions
