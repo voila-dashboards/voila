@@ -109,9 +109,7 @@ def collect_paths(
     if not found_at_least_one:
         paths = "\n\t".join(full_paths)
         raise ValueError(
-            "No template sub-directory with name {!r} found in the following paths:\n\t{}".format(
-                template_name, paths
-            )
+            f"No template sub-directory with name {template_name!r} found in the following paths:\n\t{paths}"
         )
     return paths
 
