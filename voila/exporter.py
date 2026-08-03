@@ -25,6 +25,7 @@ from nbconvert.filters.markdown_mistune import (
     IPythonRenderer,
     MarkdownWithMath,
 )
+
 from .static_file_handler import TemplateStaticFileHandler
 from .utils import create_include_assets_functions
 

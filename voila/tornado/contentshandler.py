@@ -5,10 +5,10 @@ try:
     from jupyter_client.jsonutil import json_default
 except ImportError:
     from jupyter_client.jsonutil import date_default as json_default
-from tornado import web
+from jupyter_core.utils import ensure_async
 from jupyter_server.base.handlers import APIHandler
 from jupyter_server.services.contents.handlers import validate_model
-from jupyter_core.utils import ensure_async
+from tornado import web
 
 
 class VoilaContentsHandler(APIHandler):
