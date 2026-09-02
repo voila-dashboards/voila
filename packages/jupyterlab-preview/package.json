@@ -32,8 +32,8 @@
   ],
   "scripts": {
     "build": "jlpm run build:lib && jlpm run build:labextension:dev",
-    "build:labextension": "jupyter labextension build .",
-    "build:labextension:dev": "jupyter labextension build --development True .",
+    "build:labextension": "jupyter-builder build .",
+    "build:labextension:dev": "jupyter-builder build --development True .",
     "build:lib": "tsc",
     "build:prod": "jlpm run build:lib && jlpm run build:labextension",
     "build:test": "tsc --build tsconfig.test.json",
@@ -63,7 +63,7 @@
   "devDependencies": {
     "@babel/core": "^7.10.2",
     "@babel/preset-env": "^7.10.2",
-    "@jupyterlab/builder": "^4.0.0",
+    "@jupyter/builder": "^1.0.2",
     "@jupyterlab/testutils": "^4.0.0",
     "@types/react": "^18.0.0",
     "@types/react-dom": "^18.0.0",

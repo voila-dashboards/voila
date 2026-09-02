@@ -37,8 +37,8 @@ jobs:
             jupyterlab_pygments=0.1.0
             pytest-cov
             pytest-rerunfailures
-            nodejs=18
-            yarn=3
+            nodejs>=24,<25
+            yarn
             ipywidgets
             matplotlib
             xeus-cpp
@@ -99,8 +99,8 @@ jobs:
             jupyterlab_pygments=0.1.0
             pytest-cov
             pytest-rerunfailures
-            nodejs=18
-            yarn=3
+            nodejs>=24,<25
+            yarn
             ipywidgets
             matplotlib
             xeus-cpp

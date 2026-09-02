@@ -135,7 +135,7 @@ added in JupyterLab 3.0. To setup the development environment:
 python -m pip install -e .
 
 # link your development version of the extension with JupyterLab
-jupyter labextension develop . --overwrite
+jupyter-builder develop . --overwrite
 
 # build the lab extension
 jlpm run build --scope @voila-dashboards/jupyterlab-preview

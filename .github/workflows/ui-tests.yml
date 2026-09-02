@@ -34,7 +34,7 @@ jobs:
           python -m pip install jupyter-server==${{ matrix.jupyter-server-version }}
           jlpm
           jlpm build
-          jupyter labextension develop . --overwrite
+          jupyter-builder develop . --overwrite
           cd ui-tests
           jlpm install
 
@@ -47,7 +47,7 @@ jobs:
           python -m pip install jupyter-server==${{ matrix.jupyter-server-version }}
           jlpm
           jlpm build
-          jupyter labextension develop . --overwrite
+          jupyter-builder develop . --overwrite
           cd ui-tests
           jlpm install
 
