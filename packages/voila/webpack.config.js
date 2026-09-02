@@ -7,8 +7,8 @@ const path = require('path');
 const webpack = require('webpack');
 const merge = require('webpack-merge').default;
 const { ModuleFederationPlugin } = webpack.container;
-const Build = require('@jupyterlab/builder').Build;
-const baseConfig = require('@jupyterlab/builder/lib/webpack.config.base');
+const Build = require('@jupyter/builder').Build;
+const baseConfig = require('@jupyter/builder/lib/webpack.config.base');
 
 const data = require('./package.json');
 
