@@ -4,9 +4,9 @@
 
 const fs = require('fs-extra');
 const path = require('path');
-const webpack = require('webpack');
+const rspack = require('@rspack/core');
 const merge = require('webpack-merge').default;
-const { ModuleFederationPlugin } = webpack.container;
+const { ModuleFederationPlugin } = rspack.container;
 const Build = require('@jupyter/builder').Build;
 const baseConfig = require('@jupyter/builder/lib/webpack.config.base');
 
