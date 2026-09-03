@@ -4,5 +4,6 @@ channels:
 dependencies:
     - pip
     - python-build
+    - nodejs>=24,<25
     - yarn=4
     - jupyterlab>=4.6

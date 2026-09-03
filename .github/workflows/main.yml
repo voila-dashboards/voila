@@ -101,7 +101,7 @@ jobs:
             pytest-cov
             pytest-rerunfailures
             nodejs>=24,<25
-            yarn
+            yarn=4
             ipywidgets
             matplotlib
             xeus-cpp
