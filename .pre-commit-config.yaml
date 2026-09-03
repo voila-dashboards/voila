@@ -39,11 +39,11 @@ repos:
     hooks:
       - id: prettier
         name: prettier
-        entry: 'yarn run prettier'
-        language: node
+        entry: 'yarn && yarn run prettier'
+        language: system
         types_or: [json, ts, tsx, javascript, jsx, css]
       - id: eslint
         name: eslint
-        entry: 'yarn run eslint'
-        language: node
+        entry: 'yarn && yarn run eslint'
+        language: system
         types_or: [ts, tsx, javascript, jsx]
