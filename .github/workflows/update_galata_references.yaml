@@ -36,6 +36,14 @@ jobs:
       - name: Configure git to use https
         run: git config --global hub.protocol https
 
+      - name: Install Conda environment with Micromamba
+        uses: mamba-org/setup-micromamba@v2
+        with:
+          environment-name: voila-dev
+          environment-file: dev-environment.yml
+          create-args: >-
+            python=${{ matrix.python-version }}
+
       - name: Install dependencies
         run: |
           python -m pip install -r requirements-visual-test.txt

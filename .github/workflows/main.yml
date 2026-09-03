@@ -135,14 +135,13 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - name: Set up Python
-        uses: actions/setup-python@v5
+      - name: Install Conda environment with Micromamba
+        uses: mamba-org/setup-micromamba@v2
         with:
-          python-version: ${{ matrix.python-version }}
-
-      - uses: actions/setup-node@v2
-        with:
-          node-version: '24'
+          environment-name: voila-dev
+          environment-file: dev-environment.yml
+          create-args: >-
+            python=${{ matrix.python-version }}
 
       - name: Install dependencies
         run: |

@@ -1,0 +1,8 @@
+name: voila-dev
+channels:
+    - https://prefix.dev/conda-forge
+dependencies:
+    - pip
+    - python-build
+    - yarn=4
+    - jupyterlab>=4.6
