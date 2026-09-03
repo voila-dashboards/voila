@@ -32,7 +32,7 @@ export async function createModule(
     return factory();
   } catch (e) {
     console.warn(
-      `Failed to create module: package: ${scope}; module: ${module}`
+      `Failed to create module: package: ${scope}; module: ${module} ${e}`
     );
     throw e;
   }

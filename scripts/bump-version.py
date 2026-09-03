@@ -19,7 +19,7 @@ def patch(force=False):
     run("hatch version patch", quiet=True)
 
     # Version the changed
-    cmd = "jlpm && jlpm run lerna version patch --no-push --force-publish --no-git-tag-version"
+    cmd = "yarn && yarn run lerna version patch --no-push --force-publish --no-git-tag-version"
     if force:
         cmd += " --yes"
     run(cmd)
@@ -68,7 +68,7 @@ def update(spec, force=False):
     if lerna_version == "preminor":
         lerna_version += " --preid=alpha"
 
-    cmd = f"jlpm && jlpm run lerna version --force-publish --no-push --no-git-tag-version {lerna_version}"
+    cmd = f"yarn && yarn run lerna version --force-publish --no-push --no-git-tag-version {lerna_version}"
     if force:
         cmd += " --yes"
 

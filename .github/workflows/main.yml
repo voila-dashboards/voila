@@ -14,6 +14,10 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
+defaults:
+  run:
+    shell: bash -l {0}
+
 jobs:
   test-linux:
     runs-on: ${{ matrix.os }}
@@ -37,8 +41,8 @@ jobs:
             jupyterlab_pygments=0.1.0
             pytest-cov
             pytest-rerunfailures
-            nodejs=18
-            yarn=3
+            nodejs>=24,<25
+            yarn
             ipywidgets
             matplotlib
             xeus-cpp
@@ -46,7 +50,6 @@ jobs:
             ipykernel
 
       - name: Install dependencies
-        shell: bash -l {0}
         run: |
           whereis python
           python --version
@@ -56,12 +59,10 @@ jobs:
           (cd tests/skip_template; pip install .)
 
       - name: Lint check
-        shell: bash -l {0}
         run: |
           pre-commit run --all-files --show-diff-on-failure
 
       - name: Run tests
-        shell: bash -l {0}
         run: |
           VOILA_TEST_XEUS_CPP=1 py.test tests/app --async-test-timeout=240 --reruns 2 --reruns-delay 1
           VOILA_TEST_XEUS_CPP=1 py.test tests/server --async-test-timeout=240 --reruns 2 --reruns-delay 1 --trace
@@ -99,8 +100,8 @@ jobs:
             jupyterlab_pygments=0.1.0
             pytest-cov
             pytest-rerunfailures
-            nodejs=18
-            yarn=3
+            nodejs>=24,<25
+            yarn=4
             ipywidgets
             matplotlib
             xeus-cpp
@@ -108,7 +109,6 @@ jobs:
             ipykernel
 
       - name: Install dependencies
-        shell: bash -l {0}
         run: |
           whereis python
           python --version
@@ -118,7 +118,6 @@ jobs:
           (cd tests/skip_template; pip install .)
 
       - name: Run tests
-        shell: bash -l {0}
         run: |
           py.test tests/app --async-test-timeout=240 --reruns 2 --reruns-delay 1
           py.test tests/server --async-test-timeout=240 --reruns 2 --reruns-delay 1 --trace
@@ -135,14 +134,13 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - name: Set up Python
-        uses: actions/setup-python@v5
+      - name: Install Conda environment with Micromamba
+        uses: mamba-org/setup-micromamba@v2
         with:
-          python-version: ${{ matrix.python-version }}
-
-      - uses: actions/setup-node@v2
-        with:
-          node-version: '18'
+          environment-name: voila-dev
+          environment-file: dev-environment.yml
+          create-args: >-
+            python=${{ matrix.python-version }}
 
       - name: Install dependencies
         run: |

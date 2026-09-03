@@ -45,5 +45,9 @@
     "prettier": "^2.8.6",
     "rimraf": "^3.0.2",
     "shell-quote": "^1.7.2"
+  },
+  "resolutions": {
+    "backbone@npm:1.4.0": "patch:backbone@npm%3A1.4.0#~/.yarn/patches/backbone-npm-1.4.0-054c19a6ab.patch",
+    "backbone@npm:1.2.3": "patch:backbone@npm%3A1.4.0#~/.yarn/patches/backbone-npm-1.4.0-054c19a6ab.patch"
   }
 }

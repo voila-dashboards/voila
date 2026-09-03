@@ -6,6 +6,10 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
+defaults:
+  run:
+    shell: bash -l {0}
+
 jobs:
   ui-tests:
     name: Visual Regression
@@ -25,6 +29,14 @@ jobs:
       - name: Base Setup
         uses: jupyterlab/maintainer-tools/.github/actions/base-setup@v1
 
+      - name: Install Conda environment with Micromamba
+        uses: mamba-org/setup-micromamba@v2
+        with:
+          environment-name: voila-dev
+          environment-file: dev-environment.yml
+          create-args: >-
+            python=${{ matrix.python-version }}
+
       - name: Install dependencies
         if: ${{ matrix.ipywidgets == 'latest' }}
         run: |
@@ -32,11 +44,11 @@ jobs:
           python -m pip install jupyterlab_miami_nights --no-deps
           python -m pip install ".[test]"
           python -m pip install jupyter-server==${{ matrix.jupyter-server-version }}
-          jlpm
-          jlpm build
-          jupyter labextension develop . --overwrite
+          yarn
+          yarn build
+          jupyter-builder develop . --overwrite
           cd ui-tests
-          jlpm install
+          yarn install
 
       - name: Install dependencies
         if: ${{ matrix.ipywidgets == '7' }}
@@ -45,11 +57,11 @@ jobs:
           python -m pip install jupyterlab_miami_nights --no-deps
           python -m pip install ".[test7]"
           python -m pip install jupyter-server==${{ matrix.jupyter-server-version }}
-          jlpm
-          jlpm build
-          jupyter labextension develop . --overwrite
+          yarn
+          yarn build
+          jupyter-builder develop . --overwrite
           cd ui-tests
-          jlpm install
+          yarn install
 
       - name: Install browser
         run: npx playwright install chromium
@@ -58,7 +70,7 @@ jobs:
       - name: Test
         env:
           PROGRESSIVE_RENDERING: ${{ matrix.progressive_rendering }}
-        run: jlpm run test
+        run: yarn run test
         working-directory: ui-tests
 
       - name: Set test report name for progressive rendering
