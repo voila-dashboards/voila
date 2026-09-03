@@ -2,5 +2,5 @@
 
 set -e
 
-jlpm && jlpm run build
+yarn && yarn run build
 python -m pip install .

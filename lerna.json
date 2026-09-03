@@ -1,4 +1,4 @@
 {
-  "npmClient": "jlpm",
+  "npmClient": "yarn",
   "version": "independent"
 }

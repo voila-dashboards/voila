@@ -40,11 +40,11 @@ jobs:
         run: |
           python -m pip install -r requirements-visual-test.txt
           python -m pip install ".[test]"
-          jlpm
-          jlpm build
+          yarn
+          yarn build
           jupyter-builder develop . --overwrite
           cd ui-tests
-          jlpm install
+          yarn install
 
       - uses: jupyterlab/maintainer-tools/.github/actions/update-snapshots@main
         with:

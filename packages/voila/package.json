@@ -79,7 +79,7 @@
     "build": "npm run build:lib && rspack --mode=development",
     "build:lib": "tsc",
     "build:prod": "npm run build:lib && rspack --mode=production",
-    "clean": "jlpm run clean:lib && jlpm run clean:asset && rimraf build",
+    "clean": "yarn run clean:lib && yarn run clean:asset && rimraf build",
     "clean:lib": "rimraf lib tsconfig.tsbuildinfo",
     "clean:asset": "rimraf ../../share/jupyter/voila/schemas ../../share/jupyter/voila/themes ../../share/jupyter/voila/style.js",
     "test": "echo \"Error: no test specified\" && exit 1",

@@ -138,10 +138,10 @@ python -m pip install -e .
 jupyter-builder develop . --overwrite
 
 # build the lab extension
-jlpm run build --scope @voila-dashboards/jupyterlab-preview
+yarn run build --scope @voila-dashboards/jupyterlab-preview
 
 # it is also possible to start in watch mode to pick up changes automatically
-jlpm run watch
+yarn run watch
 ```
 
 ### Frontend Packages
@@ -154,10 +154,10 @@ To build all the frontend packages at once, run the following commands:
 
 ```bash
 # install dependencies
-jlpm
+yarn
 
 # build the packages
-jlpm run build
+yarn run build
 ```
 
 This will run the `build` script in each of the packages.
@@ -167,13 +167,13 @@ To lint the packages:
 
 ```bash
 # install dependencies
-jlpm
+yarn
 
 # run ESLint
-jlpm run eslint
+yarn run eslint
 
 # run prettier
-jlpm run prettier
+yarn run prettier
 ```
 
 ## About the Voila Frontend

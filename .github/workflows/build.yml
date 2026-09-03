@@ -44,6 +44,6 @@ jobs:
 
       - name: Lint
         run: |
-          jlpm
-          jlpm run eslint:check
-          jlpm run prettier:check
+          yarn
+          yarn run eslint:check
+          yarn run prettier:check

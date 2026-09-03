@@ -32,11 +32,11 @@ jobs:
           python -m pip install jupyterlab_miami_nights --no-deps
           python -m pip install ".[test]"
           python -m pip install jupyter-server==${{ matrix.jupyter-server-version }}
-          jlpm
-          jlpm build
+          yarn
+          yarn build
           jupyter-builder develop . --overwrite
           cd ui-tests
-          jlpm install
+          yarn install
 
       - name: Install dependencies
         if: ${{ matrix.ipywidgets == '7' }}
@@ -45,11 +45,11 @@ jobs:
           python -m pip install jupyterlab_miami_nights --no-deps
           python -m pip install ".[test7]"
           python -m pip install jupyter-server==${{ matrix.jupyter-server-version }}
-          jlpm
-          jlpm build
+          yarn
+          yarn build
           jupyter-builder develop . --overwrite
           cd ui-tests
-          jlpm install
+          yarn install
 
       - name: Install browser
         run: npx playwright install chromium
@@ -58,7 +58,7 @@ jobs:
       - name: Test
         env:
           PROGRESSIVE_RENDERING: ${{ matrix.progressive_rendering }}
-        run: jlpm run test
+        run: yarn run test
         working-directory: ui-tests
 
       - name: Set test report name for progressive rendering
