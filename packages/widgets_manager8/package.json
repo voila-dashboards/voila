@@ -59,6 +59,10 @@
         "extension": true,
         "outputDir": "../../voila/labextensions/widgets-manager8",
         "sharedPackages": {
+            "backbone": {
+                "bundled": true,
+                "singleton": true
+            },
             "@jupyter-widgets/base": {
                 "bundled": true,
                 "singleton": true

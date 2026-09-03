@@ -1,0 +1,18 @@
+diff --git a/backbone.js b/backbone.js
+index 3e09d0dcb00a7020d862d77c5219db9a4720b713..c5429ede5a27660afd54bd2dc45ac6e9ec62e951 100644
+--- a/backbone.js
++++ b/backbone.js
+@@ -13,7 +13,12 @@
+             typeof global == 'object' && global.global === global && global;
+ 
+   // Set up Backbone appropriately for the environment. Start with AMD.
+-  if (typeof define === 'function' && define.amd) {
++  if (typeof module === 'object' && module.exports) {
++    var _ = require('underscore'), $;
++    try { $ = require('jquery'); } catch (e) {}
++    factory(root, module.exports, _, $);
++  // AMD
++  } else if (typeof define === 'function' && define.amd) {
+     define(['underscore', 'jquery', 'exports'], function(_, $, exports) {
+       // Export global even in AMD case in case this script is loaded with
+       // others that may still expect a global Backbone.

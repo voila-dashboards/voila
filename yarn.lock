@@ -6232,21 +6232,21 @@ __metadata:
   languageName: node
   linkType: hard
 
-"backbone@npm:1.2.3":
-  version: 1.2.3
-  resolution: "backbone@npm:1.2.3"
-  dependencies:
-    underscore: "npm:>=1.7.0"
-  checksum: 10/68050b9d49beb207158b0735ce4b5366146051005a88cd6deba7be8011e9f2f728daa39484fd1db59b1df6e7665853cc61c18cc069bc329f817ce708d0830517
-  languageName: node
-  linkType: hard
-
 "backbone@npm:1.4.0":
   version: 1.4.0
   resolution: "backbone@npm:1.4.0"
   dependencies:
     underscore: "npm:>=1.8.3"
   checksum: 10/7de3c00cd665b111e267c115ac82b4b5214f8439caef2f8ae08e3cf7a31f0ccf08eed3cd6199e63b31166d65f0d62a9bcf4c12cbf66e701ac8cd073235e8ea72
+  languageName: node
+  linkType: hard
+
+"backbone@patch:backbone@npm%3A1.4.0#~/.yarn/patches/backbone-npm-1.4.0-054c19a6ab.patch":
+  version: 1.4.0
+  resolution: "backbone@patch:backbone@npm%3A1.4.0#~/.yarn/patches/backbone-npm-1.4.0-054c19a6ab.patch::version=1.4.0&hash=c10e0f"
+  dependencies:
+    underscore: "npm:>=1.8.3"
+  checksum: 10/7856c5869791d690ca0ceeb2de1adee064faa9985142aceac608c282e34b92f1a41be20b2ceb6ddc440358be5673e030aa128044bd5d9d2bdeb427bb07c42121
   languageName: node
   linkType: hard
 
@@ -16666,7 +16666,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"underscore@npm:>=1.7.0, underscore@npm:>=1.8.3, underscore@npm:^1.8.3":
+"underscore@npm:>=1.8.3, underscore@npm:^1.8.3":
   version: 1.13.7
   resolution: "underscore@npm:1.13.7"
   checksum: 10/1ce3368dbe73d1e99678fa5d341a9682bd27316032ad2de7883901918f0f5d50e80320ccc543f53c1862ab057a818abc560462b5f83578afe2dd8dd7f779766c
