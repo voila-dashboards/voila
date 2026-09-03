@@ -39,7 +39,7 @@
     },
     "dependencies": {
         "@jupyter-widgets/base": "^6.0.10",
-        "@jupyter-widgets/jupyterlab-manager": "^5.0.13",
+        "@jupyter-widgets/jupyterlab-manager": "^5.0.16",
         "@jupyterlab/application": "^4.0.0",
         "@jupyterlab/coreutils": "^6.0.5",
         "@jupyterlab/rendermime": "^4.0.0",
