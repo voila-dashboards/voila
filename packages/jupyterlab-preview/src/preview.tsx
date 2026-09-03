@@ -2,7 +2,9 @@ import {
   IFrame,
   ToolbarButton,
   ReactWidget,
-  IWidgetTracker
+  IWidgetTracker,
+  showDialog,
+  Dialog
 } from '@jupyterlab/apputils';
 
 import {
@@ -11,7 +13,7 @@ import {
   DocumentWidget
 } from '@jupyterlab/docregistry';
 
-import { INotebookModel } from '@jupyterlab/notebook';
+import { CellList, INotebookModel } from '@jupyterlab/notebook';
 
 import { refreshIcon } from '@jupyterlab/ui-components';
 
@@ -86,7 +88,28 @@ export class VoilaPreview extends DocumentWidget<IFrame, INotebookModel> {
 
     const { getVoilaUrl, context, renderOnSave } = options;
 
-    this.content.url = getVoilaUrl(context.path);
+    const trusted = VoilaPreview.checkTrustStatus(context.model.cells);
+    if (trusted) {
+      this.content.url = getVoilaUrl(context.path);
+    } else {
+      const accept = showDialog({
+        title: 'Untrusted notebook detected',
+        hasClose: false,
+        body: 'The notebook is not trusted, do you want to render it?\nYou can trust this notebook by running the "Trust Notebook" command from the command palette.',
+        buttons: [Dialog.cancelButton(), Dialog.okButton()]
+      });
+      accept
+        .then((result) => {
+          if (result.button.accept) {
+            this.content.url = getVoilaUrl(context.path);
+          } else {
+            this.dispose();
+          }
+        })
+        .catch(() => {
+          this.dispose();
+        });
+    }
     this.content.title.icon = voilaIcon;
 
     this._renderOnSave = renderOnSave ?? false;
@@ -192,6 +215,16 @@ export namespace VoilaPreview {
      * Whether to reload the preview on context saved.
      */
     renderOnSave?: boolean;
+  }
+
+  export function checkTrustStatus(cells: CellList): boolean {
+    for (let i = 0; i < cells.length; i++) {
+      const cell = cells.get(i);
+      if (cell.type === 'code' && cell.getMetadata('trusted') === false) {
+        return false;
+      }
+    }
+    return true;
   }
 }
 
