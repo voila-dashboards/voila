@@ -16,6 +16,7 @@
   "author": "Project Jupyter",
   "license": "BSD-3-Clause",
   "dependencies": {
-    "@jupyterlab/galata": "^5.2.5"
+    "@jupyterlab/galata": "^5.6.2",
+    "@playwright/test": "^1.60.0"
   }
 }
