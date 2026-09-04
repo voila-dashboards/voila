@@ -15092,10 +15092,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"reveal.js@npm:^6.0.1":
+"reveal.js@npm:6.0.1":
   version: 6.0.1
   resolution: "reveal.js@npm:6.0.1"
   checksum: b8fa860fc1a492fc2bbffe5e6da839ef6c7f9b49c673df1f594a2c412933a3156ab848c1a444d067be47145b1d0dec8b93d3f58b182215c69d2aa1d2ea79e7cc
+  languageName: node
+  linkType: hard
+
+"reveal.js@patch:reveal.js@npm%3A6.0.1#./.yarn/patches/reveal.js-npm-6.0.1-1c7308d1ac.patch::locator=%40voila-dashboards%2Fvoila-root%40workspace%3A.":
+  version: 6.0.1
+  resolution: "reveal.js@patch:reveal.js@npm%3A6.0.1#./.yarn/patches/reveal.js-npm-6.0.1-1c7308d1ac.patch::version=6.0.1&hash=f63989&locator=%40voila-dashboards%2Fvoila-root%40workspace%3A."
+  checksum: 422d60e5c5fc85bc61a1584a350165ba9472434e6940ad7b23fb8f48c7de03ae2bd4a1c04f7168662cb4f924e2637b21414ebf9e70e51072f174b8d12bfc4944
   languageName: node
   linkType: hard
 
