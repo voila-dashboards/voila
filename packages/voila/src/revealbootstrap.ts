@@ -1,6 +1,6 @@
 // This is more or less copied from the nbconvert reveal template
 import Reveal from 'reveal.js';
-// @ts-expect-error
+// @ts-expect-error should probably look it up
 import Notes from 'reveal.js/plugin/notes';
 
 // @ts-expect-error It's provided by the template
@@ -21,37 +21,38 @@ const $ = window.$;
 
 // Full list of configuration options available here: https://github.com/hakimel/reveal.js#configuration
 Reveal.initialize({
-    controls: true,
-    progress: true,
-    history: true,
-    transition: reveal_transition,
-    slideNumber: reveal_number,
-    plugins: [Notes],
-    width: reveal_width,
-    height: reveal_height,
+  controls: true,
+  progress: true,
+  history: true,
+  transition: reveal_transition,
+  slideNumber: reveal_number,
+  plugins: [Notes],
+  width: reveal_width,
+  height: reveal_height
 });
 
-var update = function(){
-    if(MathJax.Hub.getAllJax(Reveal.getCurrentSlide())){
-        MathJax.Hub.Rerender(Reveal.getCurrentSlide());
-    }
+const update = function () {
+  if (MathJax.Hub.getAllJax(Reveal.getCurrentSlide())) {
+    MathJax.Hub.Rerender(Reveal.getCurrentSlide());
+  }
 };
 
 Reveal.addEventListener('slidechanged', update);
 
 function setScrollingSlide() {
-    var scroll = reveal_scroll;
-    if (scroll === true) {
-        var h = ($('.reveal').height() ?? 0) * 0.95;
-        $('section.present').find('section')
-        .filter(function() {
-            // @ts-expect-error hey
-            return $(this).height() > h;
-        })
-        .css('height', 'calc(95vh)')
-        .css('overflow-y', 'scroll')
-        .css('margin-top', '20px');
-    }
+  const scroll = reveal_scroll;
+  if (scroll === true) {
+    const h = ($('.reveal').height() ?? 0) * 0.95;
+    $('section.present')
+      .find('section')
+      .filter(function () {
+        // @ts-expect-error hey
+        return $(this).height() > h;
+      })
+      .css('height', 'calc(95vh)')
+      .css('overflow-y', 'scroll')
+      .css('margin-top', '20px');
+  }
 }
 
 // check and set the scrolling slide every time the slide change
