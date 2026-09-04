@@ -55,6 +55,7 @@
     "@voila-dashboards/widgets-manager8": "^0.5.12",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "reveal.js": "^6.0.1",
     "style-mod": "^4.0.3",
     "util": "^0.12.5"
   },

@@ -1,0 +1,15 @@
+diff --git a/package.json b/package.json
+index b70e852a1612e9f58b7ba0f8e409f9c1b551208c..b3426e77435de26241e550c3c63c0b7e536b4a8c 100644
+--- a/package.json
++++ b/package.json
+@@ -64,6 +64,10 @@
+ 			"import": "./dist/plugin/zoom.mjs",
+ 			"require": "./dist/plugin/zoom.js",
+ 			"default": "./dist/plugin/zoom.js"
++		},
++		"./package.json": {
++			"import": "./package.json",
++			"require": "./package.json"
+ 		}
+ 	},
+ 	"scripts": {

@@ -48,6 +48,7 @@ const extras = Build.ensureAssets({
 // Make a bootstrap entrypoint
 const entryPoint = path.join(buildDir, 'bootstrap.js');
 const treeEntryPoint = path.join(buildDir, 'treebootstrap.js');
+const revealEntryPoint = path.join(buildDir, 'revealbootstrap.js');
 
 // Also build the style bundle
 const styleDir = path.resolve(__dirname, 'style');
@@ -112,6 +113,14 @@ module.exports = [
     output: {
       path: distRoot,
       filename: 'voila-style.js'
+    }
+  }),
+  merge(baseConfig, {
+    entry: './' + path.relative(__dirname, revealEntryPoint),
+    mode: 'production',
+    output: {
+      path: distRoot,
+      filename: 'reveal.js'
     }
   })
 ].concat(extras);
