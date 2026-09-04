@@ -104,8 +104,12 @@ class AllowListFileHandler(tornado.web.StaticFileHandler):
     def get_absolute_path(self, root, path):
         # StaticFileHandler.get always calls this method first, so we use this as the
         # place to check the path. Note that now the path separator is os dependent (\\ on windows)
-        allowlisted = any(re.fullmatch(pattern, path) for pattern in self.allowlist)
-        denylisted = any(re.fullmatch(pattern, path) for pattern in self.denylist)
+        allowlisted = any(
+            re.fullmatch(pattern, path, re.IGNORECASE) for pattern in self.allowlist
+        )
+        denylisted = any(
+            re.fullmatch(pattern, path, re.IGNORECASE) for pattern in self.denylist
+        )
         if not allowlisted:
             raise tornado.web.HTTPError(403, "File not allowlisted")
         if denylisted:
