@@ -6,7 +6,6 @@ import {
   showDialog,
   Dialog
 } from '@jupyterlab/apputils';
-
 import {
   ABCWidgetFactory,
   DocumentRegistry,
@@ -50,7 +49,6 @@ export class VoilaPreview extends DocumentWidget<IFrame, INotebookModel> {
       ...options,
       content: new IFrame()
     });
-
     const iframe = this.content.node.querySelector('iframe');
     if (iframe) {
       iframe.removeAttribute('sandbox');
@@ -86,37 +84,16 @@ export class VoilaPreview extends DocumentWidget<IFrame, INotebookModel> {
       }
     };
 
+    this.content.title.icon = voilaIcon;
     const { getVoilaUrl, context, renderOnSave } = options;
 
-    const trusted = VoilaPreview.checkTrustStatus(context.model.cells);
-    if (trusted) {
-      this.content.url = getVoilaUrl(context.path);
-    } else {
-      const accept = showDialog({
-        title: 'Untrusted notebook detected',
-        hasClose: false,
-        body: 'The notebook is not trusted, do you want to render it?\nYou can trust this notebook by running the "Trust Notebook" command from the command palette.',
-        buttons: [Dialog.cancelButton(), Dialog.okButton()]
-      });
-      accept
-        .then((result) => {
-          if (result.button.accept) {
-            this.content.url = getVoilaUrl(context.path);
-          } else {
-            this.dispose();
-          }
-        })
-        .catch(() => {
-          this.dispose();
-        });
-    }
-    this.content.title.icon = voilaIcon;
-
     this._renderOnSave = renderOnSave ?? false;
-
-    context.pathChanged.connect(() => {
-      this.content.url = getVoilaUrl(context.path);
-    });
+    this._getVoilaUrl = getVoilaUrl;
+    try {
+      this._init(context);
+    } catch (e) {
+      return;
+    }
 
     const reloadButton = new ToolbarButton({
       icon: refreshIcon,
@@ -147,16 +124,7 @@ export class VoilaPreview extends DocumentWidget<IFrame, INotebookModel> {
 
     this.toolbar.addItem('reload', reloadButton);
 
-    if (context) {
-      this.toolbar.addItem('renderOnSave', renderOnSaveCheckbox);
-      void context.ready.then(() => {
-        context.fileChanged.connect(() => {
-          if (this.renderOnSave) {
-            this.reload();
-          }
-        });
-      });
-    }
+    this.toolbar.addItem('renderOnSave', renderOnSaveCheckbox);
   }
 
   /**
@@ -194,7 +162,81 @@ export class VoilaPreview extends DocumentWidget<IFrame, INotebookModel> {
     this._renderOnSave = renderOnSave;
   }
 
+  private async _init(
+    context: DocumentRegistry.IContext<INotebookModel>
+  ): Promise<void> {
+    await context.ready;
+    const trusted = VoilaPreview.checkTrustStatus(context.model.cells);
+    if (trusted) {
+      this.content.url = this._getVoilaUrl(context.path);
+    } else {
+      const body = (
+        <div
+          style={{
+            display: 'flex',
+            flexDirection: 'column',
+            maxWidth: '600px'
+          }}
+        >
+          <span>
+            It seems that you are rendering a notebook that you have received
+            from a third party.
+          </span>
+          <span>
+            Executing an untrusted Jupyter notebook may execute malicious code.
+            If you trust the content of this document, you can select{' '}
+            <b>Render anyway</b>, which will mark this notebook as trusted and
+            run it.
+          </span>
+          <span>
+            For more information, see{' '}
+            <a
+              target="_blank"
+              rel="noopener noreferrer"
+              href="https://jupyter-server.readthedocs.io/en/stable/operators/security.html#security-in-notebook-documents"
+            >
+              the Jupyter security documentation
+            </a>
+            .
+          </span>
+        </div>
+      );
+      try {
+        const result = await showDialog({
+          title: 'Untrusted notebook detected',
+          hasClose: false,
+          body,
+          buttons: [
+            Dialog.cancelButton(),
+            Dialog.okButton({ label: 'Render anyway' })
+          ]
+        });
+        if (result.button.accept) {
+          await VoilaPreview.trustNotebook({ context });
+          this.content.url = this._getVoilaUrl(context.path);
+          context.fileChanged.connect(() => {
+            if (this.renderOnSave) {
+              this.reload();
+            }
+          });
+
+          context.pathChanged.connect(() => {
+            this.content.url = this._getVoilaUrl(context.path);
+          });
+        } else {
+          this.dispose();
+          return;
+        }
+      } catch (e) {
+        console.error('Error while checking notebook trust', e);
+        this.dispose();
+        return;
+      }
+    }
+  }
+
   private _renderOnSave: boolean;
+  private _getVoilaUrl: (path: string) => string;
 }
 
 /**
@@ -217,7 +259,20 @@ export namespace VoilaPreview {
     renderOnSave?: boolean;
   }
 
-  export function checkTrustStatus(cells: CellList): boolean {
+  export async function trustNotebook({
+    context
+  }: {
+    context: DocumentRegistry.IContext<INotebookModel>;
+  }) {
+    for (const cell of context.model.cells) {
+      cell.trusted = true;
+    }
+    await context.save();
+  }
+  export function checkTrustStatus(cells?: CellList): boolean {
+    if (!cells) {
+      return true;
+    }
     for (let i = 0; i < cells.length; i++) {
       const cell = cells.get(i);
       if (cell.type === 'code' && cell.getMetadata('trusted') === false) {

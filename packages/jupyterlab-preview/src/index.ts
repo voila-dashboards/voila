@@ -185,10 +185,14 @@ const extension: JupyterFrontEndPlugin<IVoilaPreviewTracker> = {
         let context: DocumentRegistry.IContext<INotebookModel>;
         if (current) {
           context = current.context;
-          try {
-            await context.save();
-          } catch (e) {
-            console.error(e);
+          // Check if notebook is trusted before saving it
+          const trusted = VoilaPreview.checkTrustStatus(current.model?.cells);
+          if (trusted) {
+            try {
+              await context.save();
+            } catch (e) {
+              console.error(e);
+            }
           }
           commands.execute('docmanager:open', {
             path: context.path,
