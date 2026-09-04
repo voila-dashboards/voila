@@ -73,17 +73,20 @@ def collect_paths(
 
     root_dirs = root_dirs or _default_root_dirs()
 
+    if os.path.basename(template_name) != template_name:
+        raise ValueError(f"Invalid template name: {template_name!r}")
+
     # first find a list of the template 'hierarchy'
     template_names = _find_template_hierarchy(app_names, template_name, root_dirs)
 
     # the order of the loop determines the precedense of the template system
     # * first template_names, e.g. if we inherit from default template, we only
     #   want to find those files last
-    for template_name in template_names:
+    for found_template_name in template_names:
         for root_dir in root_dirs:
             for app_name in app_names:
                 app_dir = os.path.join(root_dir, app_name, "templates")
-                path = os.path.join(app_dir, template_name)
+                path = os.path.join(app_dir, found_template_name)
                 if subdir:
                     path = os.path.join(path, subdir)
                 if not prune or os.path.exists(path):
