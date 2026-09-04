@@ -5,7 +5,7 @@ channels:
 dependencies:
   - myst-parser
   - nodejs
-  - jupyterlab
+  - jupyterlab=4.5
   - sphinx
   - pydata-sphinx-theme
   - pip:
