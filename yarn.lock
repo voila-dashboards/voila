@@ -4960,6 +4960,7 @@ __metadata:
     p-limit: ^2.2.2
     react: ^18.2.0
     react-dom: ^18.2.0
+    reveal.js: ^6.0.1
     rimraf: ^3.0.2
     style-loader: ~3.3.1
     style-mod: ^4.0.3
@@ -15088,6 +15089,13 @@ __metadata:
   version: 1.0.4
   resolution: "reusify@npm:1.0.4"
   checksum: c3076ebcc22a6bc252cb0b9c77561795256c22b757f40c0d8110b1300723f15ec0fc8685e8d4ea6d7666f36c79ccc793b1939c748bf36f18f542744a4e379fcc
+  languageName: node
+  linkType: hard
+
+"reveal.js@npm:^6.0.1":
+  version: 6.0.1
+  resolution: "reveal.js@npm:6.0.1"
+  checksum: b8fa860fc1a492fc2bbffe5e6da839ef6c7f9b49c673df1f594a2c412933a3156ab848c1a444d067be47145b1d0dec8b93d3f58b182215c69d2aa1d2ea79e7cc
   languageName: node
   linkType: hard
 

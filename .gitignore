@@ -40,6 +40,7 @@ share/jupyter/voila/templates/base/static/*.ttf
 share/jupyter/voila/templates/base/static/labvariables.css
 share/jupyter/voila/templates/base/static/materialcolors.css
 share/jupyter/voila/templates/base/static/*.LICENSE.txt
+share/jupyter/voila/templates/base/static/reveal.js
 
 
 lib

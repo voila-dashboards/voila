@@ -5,7 +5,6 @@
 
 {%- block html_head_js -%}
   {%- block html_head_js_requirejs -%}
-  {{ resources.include_js("static/require.min.js") }}
   {%- endblock html_head_js_requirejs -%}
   {%- block html_head_js_logs -%}
     {{ log.js() }}
@@ -122,5 +121,12 @@
 
 {% block footer_js %}
   {{ voila_setup(resources.base_url, resources.labextensions) }}
-  {{ super() }}
+  <script type="text/javascript">
+    window.reveal_transition = "{{reveal_transition}}";
+    window.reveal_number = "{{reveal_number}}";
+    window.reveal_width = {{reveal_width}};
+    window.reveal_height = {{reveal_height}};
+    window.reveal_scroll = {{reveal_scroll}};
+  </script>
+  <script src="{{ page_config['fullStaticUrl'] | e }}/reveal.js"></script>
 {% endblock footer_js %}
