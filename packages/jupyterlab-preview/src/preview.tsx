@@ -89,11 +89,10 @@ export class VoilaPreview extends DocumentWidget<IFrame, INotebookModel> {
 
     this._renderOnSave = renderOnSave ?? false;
     this._getVoilaUrl = getVoilaUrl;
-    try {
-      this._init(context);
-    } catch (e) {
-      return;
-    }
+    void this._init(context).catch((e) => {
+      console.error('Failed to initialize the Voila preview', e);
+      this.dispose();
+    });
 
     const reloadButton = new ToolbarButton({
       icon: refreshIcon,
@@ -162,77 +161,32 @@ export class VoilaPreview extends DocumentWidget<IFrame, INotebookModel> {
     this._renderOnSave = renderOnSave;
   }
 
+  /**
+   * Initialize the preview once the context is ready.
+   *
+   * @param context The document context.
+   */
   private async _init(
     context: DocumentRegistry.IContext<INotebookModel>
   ): Promise<void> {
     await context.ready;
-    const trusted = VoilaPreview.checkTrustStatus(context.model.cells);
-    if (trusted) {
-      this.content.url = this._getVoilaUrl(context.path);
-    } else {
-      const body = (
-        <div
-          style={{
-            display: 'flex',
-            flexDirection: 'column',
-            maxWidth: '600px'
-          }}
-        >
-          <span>
-            It seems that you are rendering a notebook that you have received
-            from a third party.
-          </span>
-          <span>
-            Executing an untrusted Jupyter notebook may execute malicious code.
-            If you trust the content of this document, you can select{' '}
-            <b>Render anyway</b>, which will mark this notebook as trusted and
-            run it.
-          </span>
-          <span>
-            For more information, see{' '}
-            <a
-              target="_blank"
-              rel="noopener noreferrer"
-              href="https://jupyter-server.readthedocs.io/en/stable/operators/security.html#security-in-notebook-documents"
-            >
-              the Jupyter security documentation
-            </a>
-            .
-          </span>
-        </div>
-      );
-      try {
-        const result = await showDialog({
-          title: 'Untrusted notebook detected',
-          hasClose: false,
-          body,
-          buttons: [
-            Dialog.cancelButton(),
-            Dialog.okButton({ label: 'Render anyway' })
-          ]
-        });
-        if (result.button.accept) {
-          await VoilaPreview.trustNotebook({ context });
-          this.content.url = this._getVoilaUrl(context.path);
-          context.fileChanged.connect(() => {
-            if (this.renderOnSave) {
-              this.reload();
-            }
-          });
 
-          context.pathChanged.connect(() => {
-            this.content.url = this._getVoilaUrl(context.path);
-          });
-        } else {
-          this.dispose();
-          return;
-        }
-      } catch (e) {
-        console.error('Error while checking notebook trust', e);
-        this.dispose();
-        return;
-      }
+    if (!(await VoilaPreview.ensureTrusted(context))) {
+      this.dispose();
+      return;
     }
+
+    context.fileChanged.connect(() => {
+      if (this.renderOnSave) {
+        this.reload();
+      }
+    });
+
+    context.pathChanged.connect(() => {
+      this.content.url = this._getVoilaUrl(context.path);
+    });
+
+    this.content.url = this._getVoilaUrl(context.path);
   }
 
   private _renderOnSave: boolean;
@@ -259,26 +213,103 @@ export namespace VoilaPreview {
     renderOnSave?: boolean;
   }
 
+  /**
+   * Mark every cell of a notebook as trusted and save it.
+   *
+   * @param context The document context.
+   */
   export async function trustNotebook({
     context
   }: {
     context: DocumentRegistry.IContext<INotebookModel>;
-  }) {
+  }): Promise<void> {
     for (const cell of context.model.cells) {
       cell.trusted = true;
     }
     await context.save();
   }
+
+  /**
+   * Whether every code cell of a notebook is trusted.
+   *
+   * A missing trust status is treated as untrusted, to match the behavior of
+   * `CellModel`.
+   *
+   * @param cells The cells of the notebook.
+   */
   export function checkTrustStatus(cells?: CellList): boolean {
     if (!cells) {
-      return true;
+      return false;
     }
-    for (let i = 0; i < cells.length; i++) {
-      const cell = cells.get(i);
-      if (cell.type === 'code' && cell.getMetadata('trusted') === false) {
+    for (const cell of cells) {
+      if (cell.type === 'code' && !cell.trusted) {
         return false;
       }
     }
+    return true;
+  }
+
+  /**
+   * Make sure a notebook is trusted before Voila executes it, asking the user
+   * for confirmation if it is not.
+   *
+   * @param context The document context.
+   * @returns Whether the notebook may be rendered.
+   */
+  export async function ensureTrusted(
+    context: DocumentRegistry.IContext<INotebookModel>
+  ): Promise<boolean> {
+    if (checkTrustStatus(context.model?.cells)) {
+      return true;
+    }
+
+    const body = (
+      <div
+        style={{
+          display: 'flex',
+          flexDirection: 'column',
+          maxWidth: '600px'
+        }}
+      >
+        <span>
+          It seems that you are rendering a notebook that you have received from
+          a third party.
+        </span>
+        <span>
+          Executing an untrusted Jupyter notebook may execute malicious code. If
+          you trust the content of this document, you can select{' '}
+          <b>Render anyway</b>, which will mark this notebook as trusted and run
+          it.
+        </span>
+        <span>
+          For more information, see{' '}
+          <a
+            target="_blank"
+            rel="noopener noreferrer"
+            href="https://jupyter-server.readthedocs.io/en/stable/operators/security.html#security-in-notebook-documents"
+          >
+            the Jupyter security documentation
+          </a>
+          .
+        </span>
+      </div>
+    );
+
+    const result = await showDialog({
+      title: 'Untrusted notebook detected',
+      hasClose: false,
+      body,
+      buttons: [
+        Dialog.cancelButton(),
+        Dialog.okButton({ label: 'Render anyway' })
+      ]
+    });
+
+    if (!result.button.accept) {
+      return false;
+    }
+
+    await trustNotebook({ context });
     return true;
   }
 }

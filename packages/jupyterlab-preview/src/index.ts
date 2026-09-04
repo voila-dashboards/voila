@@ -213,6 +213,16 @@ const extension: JupyterFrontEndPlugin<IVoilaPreviewTracker> = {
         if (!current) {
           return;
         }
+        // Voila executes the notebook, so ask for confirmation first if it is
+        // not trusted.
+        try {
+          if (!(await VoilaPreview.ensureTrusted(current.context))) {
+            return;
+          }
+        } catch (e) {
+          console.error(e);
+          return;
+        }
         try {
           await current.context.save();
         } catch (e) {
