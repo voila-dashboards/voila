@@ -8,8 +8,8 @@
 #############################################################################
 import os
 
-from jupyter_server.utils import url_escape, url_path_join
 from jupyter_core.utils import ensure_async
+from jupyter_server.utils import url_escape, url_path_join
 from tornado import web
 
 from ..treehandler import VoilaTreeHandler

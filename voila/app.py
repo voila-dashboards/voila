@@ -19,13 +19,6 @@ import sys
 import tempfile
 import threading
 import webbrowser
-
-from .tornado.kernel_websocket_handler import VoilaKernelWebsocketHandler
-
-from .tornado.execution_request_handler import ExecutionRequestHandler
-
-from .tornado.contentshandler import VoilaContentsHandler
-
 from urllib.parse import urljoin
 from urllib.request import pathname2url
 
@@ -38,53 +31,55 @@ from jupyter_server.config_manager import recursive_update
 from jupyter_server.services.contents.largefilemanager import LargeFileManager
 from jupyter_server.services.kernels.handlers import KernelHandler
 
+from .tornado.contentshandler import VoilaContentsHandler
+from .tornado.execution_request_handler import ExecutionRequestHandler
+from .tornado.kernel_websocket_handler import VoilaKernelWebsocketHandler
+
 try:
     JUPYTER_SERVER_2 = True
 
+    from jupyter_core.utils import run_sync
+    from jupyter_server import DEFAULT_STATIC_FILES_PATH, DEFAULT_TEMPLATE_PATH_LIST
     from jupyter_server.auth.authorizer import AllowAllAuthorizer, Authorizer
-    from jupyter_server.auth.identity import PasswordIdentityProvider
-    from jupyter_server import DEFAULT_TEMPLATE_PATH_LIST, DEFAULT_STATIC_FILES_PATH
+    from jupyter_server.auth.identity import (
+        IdentityProvider,
+        PasswordIdentityProvider,
+    )
+    from jupyter_server.services.config.manager import ConfigManager
     from jupyter_server.services.kernels.connection.base import (
         BaseKernelWebsocketConnection,
     )
     from jupyter_server.services.kernels.connection.channels import (
         ZMQChannelsWebsocketConnection,
     )
-    from jupyter_server.auth.identity import (
-        IdentityProvider,
-    )
     from jupyter_server.utils import url_path_join
-    from jupyter_core.utils import run_sync
-    from jupyter_server.services.config.manager import ConfigManager
-
     from jupyterlab_server.themes_handler import ThemesHandler
+
     from .voila_identity_provider import VoilaLoginHandler
 except ImportError:
     JUPYTER_SERVER_2 = False
 
-    from jupyter_server.utils import url_path_join, run_sync
     from jupyter_server.services.config import ConfigManager
+    from jupyter_server.utils import run_sync, url_path_join
+
+from warnings import warn
 
 from jupyter_core.utils import run_sync
-
 from jupyterlab_server.themes_handler import ThemesHandler
-
-
 from traitlets import (
     Bool,
+    Bytes,
     Callable,
     Dict,
     Integer,
     List,
+    Type,
     Unicode,
     default,
-    Type,
-    Bytes,
     validate,
 )
 from traitlets.config.application import Application
 from traitlets.config.loader import Config
-from warnings import warn
 
 from ._version import __version__
 from .configuration import VoilaConfiguration
@@ -103,8 +98,8 @@ from .tornado.treehandler import TornadoVoilaTreeHandler
 from .utils import (
     create_include_assets_functions,
     get_data_dir,
-    pjoin,
     get_voila_labextensions_path,
+    pjoin,
 )
 from .voila_kernel_manager import voila_kernel_manager_factory
 
@@ -159,18 +154,14 @@ class Voila(Application):
             ),
         }
 
-    description = Unicode(
-        """voila [OPTIONS] NOTEBOOK_FILENAME
+    description = Unicode("""voila [OPTIONS] NOTEBOOK_FILENAME
 
         This launches a stand-alone server for read-only notebooks.
-        """
-    )
-    option_description = Unicode(
-        """
+        """)
+    option_description = Unicode("""
         notebook_path:
             File name of the Jupyter notebook to display.
-        """
-    )
+        """)
     notebook_filename = Unicode()
     port = Integer(8866, config=True, help=_("Port of the Voilà server. Default 8866."))
     autoreload = Bool(
@@ -217,13 +208,11 @@ class Voila(Application):
     base_url = Unicode(
         "/",
         config=True,
-        help=_(
-            "Path for Voilà API calls. If server_url is unset, this will be \
+        help=_("Path for Voilà API calls. If server_url is unset, this will be \
             used for both the base route of the server and the client. \
             If server_url is set, the server will server the routes prefixed \
             by server_url, while the client will prefix by base_url (this is \
-            useful in reverse proxies)."
-        ),
+            useful in reverse proxies)."),
     )
 
     server_url = Unicode(
@@ -281,14 +270,12 @@ class Voila(Application):
     open_browser = Bool(
         True,
         config=True,
-        help=_(
-            """Whether to open in a browser after starting.
+        help=_("""Whether to open in a browser after starting.
                         The specific browser used is platform dependent and
                         determined by the python standard library `webbrowser`
                         module, unless it is overridden using the --browser
                         (NotebookApp.browser) configuration option.
-                        """
-        ),
+                        """),
     )
 
     browser = Unicode(
@@ -305,8 +292,7 @@ class Voila(Application):
     webbrowser_open_new = Integer(
         2,
         config=True,
-        help=_(
-            """Specify Where to open the notebook on startup. This is the
+        help=_("""Specify Where to open the notebook on startup. This is the
                                   `new` argument passed to the standard library method `webbrowser.open`.
                                   The behaviour is not guaranteed, but depends on browser support. Valid
                                   values are:
@@ -314,31 +300,27 @@ class Voila(Application):
                                   - 1 opens a new window,
                                   - 0 opens in an existing window.
                                   See the `webbrowser.open` documentation for details.
-                                  """
-        ),
+                                  """),
     )
 
     custom_display_url = Unicode(
         "",
         config=True,
-        help=_(
-            """Override URL shown to users.
+        help=_("""Override URL shown to users.
                                  Replace actual URL, including protocol, address, port and base URL,
                                  with the given value when displaying URL to the users. Do not change
                                  the actual connection URL. If authentication token is enabled, the
                                  token is added to the custom URL automatically.
                                  This option is intended to be used when the URL to display to the user
                                  cannot be determined reliably by the Jupyter notebook server (proxified
-                                 or containerized setups for example)."""
-        ),
+                                 or containerized setups for example)."""),
     )
 
     prelaunch_hook = Callable(
         default_value=None,
         allow_none=True,
         config=True,
-        help=_(
-            """A function that is called prior to the launch of a new kernel instance
+        help=_("""A function that is called prior to the launch of a new kernel instance
             when a user visits the voila webpage. Used for custom user authorization
             or any other necessary pre-launch functions.
 
@@ -353,8 +335,7 @@ class Voila(Application):
             or to modify the notebook itself (e.g. to inject some custom structure,
             although much of this can be done by interacting with the kernel
             in javascript) the prelaunch hook lets you do that.
-            """
-        ),
+            """),
     )
 
     @validate("prelaunch_hook")

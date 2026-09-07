@@ -1,4 +1,5 @@
 from typing import Any, Optional
+
 from jupyter_server.auth.identity import IdentityProvider
 from jupyter_server.auth.login import LoginFormHandler
 
