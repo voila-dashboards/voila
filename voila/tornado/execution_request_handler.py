@@ -1,21 +1,25 @@
 import asyncio
 import json
-from typing import Awaitable, Union
+from collections.abc import Awaitable
+from typing import Union
+
 from jupyter_server.base.handlers import JupyterHandler
-from tornado.websocket import WebSocketHandler
 from tornado.web import HTTPError
+from tornado.websocket import WebSocketHandler
 
 try:
     JUPYTER_SERVER_2 = True
     from jupyter_server.base.websocket import WebSocketMixin
 except ImportError:
     JUPYTER_SERVER_2 = False
+import sys
+import traceback
+
+import nbformat
 from jupyter_core.utils import ensure_async
 from nbclient.exceptions import CellExecutionError
+
 from voila.execute import VoilaExecutor, strip_code_cell_warnings
-import nbformat
-import traceback
-import sys
 
 if JUPYTER_SERVER_2:
 
@@ -105,9 +109,7 @@ if JUPYTER_SERVER_2:
                                 {
                                     "output_type": "stream",
                                     "name": "stderr",
-                                    "text": "An exception occurred at the server (not the notebook). {}".format(
-                                        executor.cell_error_instruction
-                                    ),
+                                    "text": f"An exception occurred at the server (not the notebook). {executor.cell_error_instruction}",
                                 }
                             ]
                         else:

@@ -11,11 +11,11 @@
 import asyncio
 import os
 import re
+from collections.abc import Awaitable
 from pathlib import Path
-from typing import Awaitable, Callable, Optional
+from typing import Callable, Optional, Tuple, Type, TypeVar, Union
 from typing import Dict as TypeDict
 from typing import List as TypeList
-from typing import Tuple, Type, TypeVar, Union
 from warnings import warn
 
 from jupyter_core.utils import ensure_async

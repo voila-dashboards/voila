@@ -21,9 +21,7 @@ def voila_args_extra():
     )
     return [
         "--template=test_template",
-        "--Voila.nbconvert_template_paths=[{!r}, {!r}]".format(
-            path_test_template, path_default
-        ),
+        f"--Voila.nbconvert_template_paths=[{path_test_template!r}, {path_default!r}]",
         "--VoilaExecutor.timeout=240",
     ]
 

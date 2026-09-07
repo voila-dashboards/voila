@@ -21,9 +21,8 @@ from traitlets.traitlets import Bool
 
 from voila.tornado.execution_request_handler import ExecutionRequestHandler
 
-from .configuration import VoilaConfiguration
-
 from ._version import __version__
+from .configuration import VoilaConfiguration
 from .notebook_renderer import NotebookRenderer
 from .request_info_handler import RequestInfoSocketHandler
 from .utils import ENV_VARIABLE, create_include_assets_functions, get_page_config

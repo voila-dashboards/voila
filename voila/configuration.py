@@ -7,10 +7,10 @@
 # The full license is in the file LICENSE, distributed with this software.  #
 #############################################################################
 
+from warnings import warn
+
 import traitlets.config
 from traitlets import Bool, Callable, Dict, Enum, Int, List, Type, Unicode, validate
-
-from warnings import warn
 
 
 class VoilaConfiguration(traitlets.config.Configurable):
