@@ -63,6 +63,7 @@ class ENV_VARIABLE(StringEnum):
     QUERY_STRING = "QUERY_STRING"
     SERVER_SOFTWARE = "SERVER_SOFTWARE"
     SERVER_PROTOCOL = "SERVER_PROTOCOL"
+    JPY_SESSION_NAME = "JPY_SESSION_NAME"
 
 
 def get_server_root_dir(settings):
