@@ -133,11 +133,12 @@ def get_page_config(
         "extensionConfig": voila_configuration.extension_config,
         "progressiveRendering": voila_configuration.progressive_rendering,
     }
-    mathjax_config = settings.get("mathjax_config", "TeX-AMS_CHTML-full,Safe")
+    mathjax_config = settings.get("mathjax_config", None)
     mathjax_url = settings.get(
         "mathjax_url",
-        "https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/latest.min.js",
+        None,
     )
+
     page_config.setdefault("mathjaxConfig", mathjax_config)
     page_config.setdefault("fullMathjaxUrl", mathjax_url)
     labextensions_path = get_voila_labextensions_path(
