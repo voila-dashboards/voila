@@ -1,6 +1,8 @@
 import os
-import voila.app
+
 import pytest
+
+import voila.app
 
 
 @pytest.fixture

@@ -1,6 +1,6 @@
 import tornado
-from jupyter_server.base.handlers import APIHandler
 from jupyter_core.utils import ensure_async
+from jupyter_server.base.handlers import APIHandler
 
 
 class VoilaShutdownKernelHandler(APIHandler):

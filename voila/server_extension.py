@@ -12,35 +12,35 @@ import os
 from typing import Optional
 
 from jinja2 import Environment, FileSystemLoader
+from jupyter_core.paths import jupyter_config_path
 from jupyter_server.base.handlers import FileFindHandler, path_regex
+from jupyter_server.serverapp import ServerApp
 from jupyter_server.utils import url_path_join
 from jupyterlab_server.themes_handler import ThemesHandler
-from jupyter_core.paths import jupyter_config_path
-from jupyter_server.serverapp import ServerApp
-
-from .tornado.execution_request_handler import ExecutionRequestHandler, JUPYTER_SERVER_2
-from .tornado.contentshandler import VoilaContentsHandler
 from traitlets.config import (
-    JSONFileConfigLoader,
-    PyFileConfigLoader,
     Config,
     ConfigFileNotFound,
+    JSONFileConfigLoader,
+    PyFileConfigLoader,
 )
+
 from .configuration import VoilaConfiguration
-from .tornado.handler import TornadoVoilaHandler
 from .paths import ROOT, collect_static_paths, collect_template_paths
 from .shutdown_kernel_handler import VoilaShutdownKernelHandler
 from .static_file_handler import (
+    AllowListFileHandler,
     MultiStaticFileHandler,
     TemplateStaticFileHandler,
-    AllowListFileHandler,
 )
+from .tornado.contentshandler import VoilaContentsHandler
+from .tornado.execution_request_handler import JUPYTER_SERVER_2, ExecutionRequestHandler
+from .tornado.handler import TornadoVoilaHandler
 from .tornado.treehandler import TornadoVoilaTreeHandler
 from .utils import (
     get_data_dir,
     get_server_root_dir,
-    pjoin,
     get_voila_labextensions_path,
+    pjoin,
 )
 
 _kernel_id_regex = r"(?P<kernel_id>\w+-\w+-\w+-\w+-\w+)"
