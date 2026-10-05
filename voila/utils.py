@@ -13,20 +13,21 @@ import os
 import sys
 import threading
 import warnings
+from collections.abc import Awaitable
 from copy import deepcopy
 from functools import partial
-from pathlib import Path
-from typing import Awaitable, Dict, List, Any
 from logging import Logger
-from packaging.version import Version
+from pathlib import Path
+from typing import Any, Dict, List
 
 import websockets
 from jupyter_core.paths import jupyter_path
 from jupyter_server.config_manager import recursive_update
 from jupyter_server.utils import url_path_join
-from jupyterlab_server.config import get_page_config as gpc
 from jupyterlab_server.config import get_federated_extensions
+from jupyterlab_server.config import get_page_config as gpc
 from markupsafe import Markup
+from packaging.version import Version
 
 from ._version import __version__
 from .configuration import VoilaConfiguration

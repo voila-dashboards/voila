@@ -11,9 +11,10 @@
 import os
 import sys
 import traceback
-from functools import partial
+from collections.abc import AsyncGenerator, Generator
 from copy import deepcopy
-from typing import AsyncGenerator, Generator, List, Tuple, Union
+from functools import partial
+from typing import List, Tuple, Union
 
 import nbformat
 import tornado.web
@@ -305,9 +306,7 @@ class NotebookRenderer(LoggingConfigurable):
                         {
                             "output_type": "stream",
                             "name": "stderr",
-                            "text": "An exception occurred at the server (not the notebook). {}".format(
-                                self.executor.cell_error_instruction
-                            ),
+                            "text": f"An exception occurred at the server (not the notebook). {self.executor.cell_error_instruction}",
                         }
                     ]
                 else:
