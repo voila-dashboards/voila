@@ -1,6 +1,9 @@
 """Tests loading template of jinja2 templates"""
 
+import json
 import os
+
+import pytest
 
 from jinja2 import Environment, FileSystemLoader
 
@@ -56,3 +59,16 @@ def test_loader_bar_nbconvert():
     assert "this is block base:nested in nbconvert/default/index.tpl" in output
     assert "this is block base:nested2 in nbconvert/default/index.tpl" in output
     assert "this is block common in nbconvert/bar/parent.tpl" in output
+
+
+@pytest.mark.parametrize(
+    "parents", [{"custom": "custom"}, {"custom": "parent", "parent": "custom"}]
+)
+def test_loader_template_inheritance_cycle(tmp_path, parents):
+    for name, parent in parents.items():
+        directory = tmp_path / "voila" / "templates" / name
+        directory.mkdir(parents=True)
+        (directory / "conf.json").write_text(json.dumps({"base_template": parent}))
+
+    with pytest.raises(ValueError, match="Template inheritance cycle.*custom"):
+        collect_paths(["voila"], "custom", root_dirs=[str(tmp_path)])

@@ -145,6 +145,10 @@ def _default_root_dirs():
 def _find_template_hierarchy(app_names, template_name, root_dirs):
     template_names = []
     while template_name is not None:
+        if template_name in template_names:
+            raise ValueError(
+                f"Template inheritance cycle detected at {template_name!r}"
+            )
         template_names.append(template_name)
         conf = {}
         for root_dir in root_dirs:
